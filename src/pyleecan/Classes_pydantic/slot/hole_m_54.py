@@ -75,13 +75,15 @@ class HoleM54(Hole):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM54._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : HoleM54
             A HoleM54 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -89,7 +91,7 @@ class HoleM54(Hole):
             A dict of the slot coordinates
         """
 
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         # Compute point coordinates
         Zc0 = Rext - self.H0 + self.R1
@@ -149,7 +151,7 @@ class HoleM54(Hole):
 
         Rext = self.get_Rext(lam=lam)
         # Get all the points
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -177,13 +179,15 @@ class HoleM54(Hole):
         return surf_list
 
     # Inlined from Methods.Slot.HoleM54.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Check that the HoleM54 object is correct
 
         Parameters
         ----------
         self : HoleM54
             A HoleM54 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -214,7 +218,9 @@ class HoleM54(Hole):
             raise H54_R1CheckError("You must have H0 < R1")
 
     # Inlined from Methods.Slot.HoleM54.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True) -> dict:
+    def comp_magnetization_dict(
+        self, is_north=True, lam: Lamination | None = None
+    ) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -224,6 +230,8 @@ class HoleM54(Hole):
             a HoleM54 object
         is_north: True
             True: comp north magnetization, else add pi [rad]
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -236,13 +244,15 @@ class HoleM54(Hole):
         return mag_dict
 
     # Inlined from Methods.Slot.HoleM54.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | None = None):
         """Compute the radius of the min and max circle that contains the hole
 
         Parameters
         ----------
         self : HoleM54
             A HoleM54 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -251,9 +261,9 @@ class HoleM54(Hole):
 
         """
 
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
-        surf_list = self.build_geometry()
+        surf_list = self.build_geometry(lam=lam)
         point_list = []
         for curve in surf_list[0].line_list:
             point_list.extend(curve.discretize())
@@ -263,13 +273,15 @@ class HoleM54(Hole):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.HoleM54.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | None = None) -> float:
         """Compute the complete surface of the Hole
 
         Parameters
         ----------
         self : HoleM54
             A HoleM54 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -376,7 +388,7 @@ class HoleM54(Hole):
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo(lam=lam)
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:

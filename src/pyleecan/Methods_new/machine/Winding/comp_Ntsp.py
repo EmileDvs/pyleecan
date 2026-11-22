@@ -41,7 +41,7 @@ def comp_Ntsp(self, Zs: int | None = None, lam: Lamination | None = None) -> flo
 
     # effective number of turns in series per phase from connection matrix
     Ntspc_eff_ = (
-        abs(self.get_connection_mat(Zs).sum(axis=(0, 1))).sum(axis=0) / self.Npcp / 2
+        abs(self.get_connection_mat(Zs, lam=lam).sum(axis=(0, 1))).sum(axis=0) / self.Npcp / 2
     )
     if Ntspc_eff_.std() != 0:
         get_logger(self).warning(

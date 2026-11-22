@@ -1,20 +1,26 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : HoleMLSRPM
         A HoleMLSRPM object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
     point_dict: dict
         A dict of the slot coordinates
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
     # Z1
     delta1 = np.arcsin((self.R1 + self.W2) / (self.R1 + self.R3))
     alpha1 = self.W1 - delta1

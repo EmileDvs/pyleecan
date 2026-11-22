@@ -25,6 +25,13 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
   through the shim `to_legacy_names`: keep the import forms it translates
   (imports of `Classes_new` / `Functions_new`, class loads as local imports).
   After editing `Methods_new`, regenerate the classes.
+- **`Tests/New` frozen since Step 16 (2026-11-22)**: hand-maintained
+  (`TESTS_NEW_FROZEN` in `generate_test_new_classes.py`, the test generator
+  copies nothing); a change of a legacy test is ported by hand. The tests
+  pass the containers of the methods (`slot.comp_height(lam=lam)`): a
+  method called from a `Tests.New` module that falls back to the parent
+  links raises (`ContainerFallbackWarning` turned into an error by
+  `Tests/New/conftest.py`).
 - The legacy folders change only through merges of upstream pull requests
   (Step 7). Since the freeze, a change merged in the legacy `Methods` or `GUI`
   is ported by hand to `Methods_new` / `GUI_new`; the other `Functions`
@@ -42,7 +49,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `Methods_new/` | Methods shared by both backends, written by the method generator from `Methods/` until the freeze | Hand-written since Step 12 (all sub-packages frozen); regenerate the classes after an edit |
 | `Functions_new/` | Functions for `Classes_new`, written by the functions generator from `Functions` | Generated, except `HAND_WRITTEN_FUNCTION_MODULES` (hand-written since Step 12) |
 | `Functions_pydantic/` | Generated from `Functions_new` by import rewriting | Never by hand |
-| `classes_common/` | Backend-agnostic support: class lookup, `ClassInfo`, errors, checks, legacy dump/values, equality, custom setters, parent types | Hand-written (incl. `logger_context.py`: loggers without parents; `parents.py`: `container_or_parent` / `ancestor_with`, the only parent reads left in `Methods_new` / `Functions_new` since Step 16), except `errors.py`, `parent_types.py` and `retrocompatibility.py` (generated) |
+| `classes_common/` | Backend-agnostic support: class lookup, `ClassInfo`, errors, checks, legacy dump/values, equality, custom setters, parent types | Hand-written (incl. `logger_context.py`: loggers without parents; `parents.py`: `container_or_parent` / `ancestor_with`, the only parent reads left in `Methods_new` / `Functions_new` / `GUI_new` since Steps 16-17, emitting `ContainerFallbackWarning` when the parent gives the container), except `errors.py`, `parent_types.py` and `retrocompatibility.py` (generated) |
 | `Generator/` | Legacy generators (`ClassGenerator/*.py`, GUI, UML) and the CSV class definitions (`ClassesRef/`) | Legacy generator: never |
 | `Generator/ClassGenerator/New/` | New generators (classes, methods, functions, tests) | Yes: this is where changes go |
 | `GUI/`, `Data/`, `Results/` | Legacy GUI, reference machines/materials, outputs | GUI: never (legacy) |
@@ -124,9 +131,10 @@ Pitfalls:
 
 ## Tests
 
-- `Tests/` holds the legacy suites; `Tests/New/` holds the generated tree for
-  the new backends plus generator unit tests (`Tests/New/test_*.py`) and
-  cross-backend tests (`Tests/New/Cross`).
+- `Tests/` holds the legacy suites; `Tests/New/` holds the tree for the new
+  backends (copied from the legacy tests, hand-maintained since Step 16),
+  plus generator unit tests (`Tests/New/test_*.py`) and cross-backend tests
+  (`Tests/New/Cross`).
 - Backend selection: `pytest --backend=dataclass|pydantic` (default
   `dataclass`). Tests import through the alias packages `backend_classes` /
   `backend_functions` (`Tests/New/_backend.py`, `Tests/New/conftest.py`).
@@ -139,6 +147,8 @@ uv run pytest Tests/New/Classes --backend=pydantic
 uv run pytest Tests/Classes
 ```
 
+- Run the tests headless: `MPLBACKEND=Agg QT_QPA_PLATFORM=offscreen` (no figure
+  or Qt window left open).
 - Lint and types: `ruff`, `ty` (for example `uv run ty check src/pyleecan/Methods_new/slot`).
 
 ## Conventions

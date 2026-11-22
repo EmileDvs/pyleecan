@@ -33,7 +33,7 @@ class Test_HoleM50_meth(object):
                 H3=6.8e-3,
             )
         )
-        result = test_obj.hole[0].comp_alpha()
+        result = test_obj.hole[0].comp_alpha(lam=test_obj)
 
         a = result
         b = 0.45304022
@@ -81,7 +81,7 @@ class Test_HoleM50_meth(object):
                 H3=6.8e-3,
             )
         )
-        result = test_obj.hole[0].comp_surface()
+        result = test_obj.hole[0].comp_surface(lam=test_obj)
         a = result
         b = 3.7803e-04
         assert abs((a - b) / a - 0) < DELTA
@@ -104,7 +104,7 @@ class Test_HoleM50_meth(object):
                 H3=6.8e-3,
             )
         )
-        result = test_obj.hole[0].comp_W5()
+        result = test_obj.hole[0].comp_W5(lam=test_obj)
 
         a = result
         b = 5.09275e-3
@@ -378,65 +378,65 @@ class Test_HoleM50_meth(object):
         )
 
         # Hole is correctly defined by default
-        lam.hole[0].check()
+        lam.hole[0].check(lam=lam)
         # Check all None parameters
         with pytest.raises(S50_NoneError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].W0 = None
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_NoneError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].W1 = None
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_NoneError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].W2 = None
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_NoneError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].W3 = None
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_NoneError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].W4 = None
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_NoneError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].H0 = None
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_NoneError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].H1 = None
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_NoneError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].H2 = None
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_NoneError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].H3 = None
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_NoneError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].H4 = None
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         # Wrong definition
         with pytest.raises(S50_W01CheckError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].W0 = test_obj.hole[0].W1 * 0.8
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_H23CheckError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].H3 = test_obj.hole[0].H2 * 0.8
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_H01CheckError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].H0 = test_obj.hole[0].H1 * 0.8
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         with pytest.raises(S50_W3CheckError) as context:
             test_obj = lam.copy()
             test_obj.hole[0].W3 = 0.1 * 1e-3
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
 
 
 if __name__ == "__main__":

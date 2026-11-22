@@ -44,7 +44,7 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
     vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
     mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z1 = point_dict["Z1"]
     Z2 = point_dict["Z2"]
     Z3 = point_dict["Z3"]

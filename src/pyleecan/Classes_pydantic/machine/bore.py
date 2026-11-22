@@ -48,13 +48,15 @@ class Bore(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Bore.comp_Rmax
-    def comp_Rmax(self) -> float:
+    def comp_Rmax(self, lam: Lamination | None = None) -> float:
         """Compute the maximum radius of the Bore shape
 
         Parameters
         ----------
         self : Bore
             A Bore object
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
@@ -62,7 +64,7 @@ class Bore(LegacyModel):
             Maximum radius of the Bore shape [m]
         """
 
-        line_list = self.get_bore_line()
+        line_list = self.get_bore_line(lam=lam)
         point_list = []
 
         for line in line_list:
@@ -71,13 +73,15 @@ class Bore(LegacyModel):
         return np.max(np.abs(np.array(point_list)))
 
     # Inlined from Methods.Machine.Bore.comp_Rmin
-    def comp_Rmin(self) -> float:
+    def comp_Rmin(self, lam: Lamination | None = None) -> float:
         """Compute the minimum radius of the Bore shape
 
         Parameters
         ----------
         self : Bore
             A Bore object
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
@@ -85,7 +89,7 @@ class Bore(LegacyModel):
             Minimum radius of the Bore shape
         """
 
-        line_list = self.get_bore_line()
+        line_list = self.get_bore_line(lam=lam)
         point_list = []
 
         for line in line_list:
@@ -94,13 +98,15 @@ class Bore(LegacyModel):
         return np.min(np.abs(np.array(point_list)))
 
     # Inlined from Methods.Machine.Bore.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | None = None) -> float:
         """Returns the area of the shape
 
         Parameters
         ----------
         self : Bore
             A Bore object
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
@@ -108,16 +114,18 @@ class Bore(LegacyModel):
             Area of the bore
         """
 
-        return self.get_surface().comp_surface()
+        return self.get_surface(lam=lam).comp_surface()
 
     # Inlined from Methods.Machine.Bore.get_surface
-    def get_surface(self) -> Surface:
+    def get_surface(self, lam: Lamination | None = None) -> Surface:
         """Returns the bore shape as a Surface object
 
         Parameters
         ----------
         self : Bore
             A Bore object
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
@@ -125,7 +133,7 @@ class Bore(LegacyModel):
             Surface object to draw the bore
         """
 
-        line_list = self.get_bore_line()
+        line_list = self.get_bore_line(lam=lam)
 
         return SurfLine(line_list=line_list, point_ref=0, label="Bore")
 
@@ -155,7 +163,13 @@ class Bore(LegacyModel):
             )
 
     # Inlined from Methods.Machine.Bore.merge_slot
-    def merge_slot(self, radius_desc_list: list, prop_dict: dict, sym: int) -> list:
+    def merge_slot(
+        self,
+        radius_desc_list: list,
+        prop_dict: dict,
+        sym: int,
+        lam: Lamination | None = None,
+    ) -> list:
         """Merge the Bore shape with notches/slot on the bore/yoke
 
         Parameters
@@ -166,6 +180,8 @@ class Bore(LegacyModel):
             Property dictionary to apply on the radius lines (not on slot/notch)
         sym : int
             Symmetry factor (1= full machine, 2= half of the machine...)
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
@@ -174,11 +190,11 @@ class Bore(LegacyModel):
         """
         if self.type_merge_slot == 0:
             return self.merge_slot_connect(
-                radius_desc_list, prop_dict=prop_dict, sym=sym
+                radius_desc_list, prop_dict=prop_dict, sym=sym, lam=lam
             )
         if self.type_merge_slot == 1:
             return self.merge_slot_intersect(
-                radius_desc_list, prop_dict=prop_dict, sym=sym
+                radius_desc_list, prop_dict=prop_dict, sym=sym, lam=lam
             )
         if self.type_merge_slot == 2:
             return self.merge_slot_translate(
@@ -189,7 +205,11 @@ class Bore(LegacyModel):
 
     # Inlined from Methods.Machine.Bore.merge_slot_connect
     def merge_slot_connect(
-        self, radius_desc_list: list, prop_dict: dict, sym: int
+        self,
+        radius_desc_list: list,
+        prop_dict: dict,
+        sym: int,
+        lam: Lamination | None = None,
     ) -> list:
         """Merge the Bore shape with notches/slot on the bore/yoke
         Connect method: Add lines between radius and notch/slot
@@ -204,6 +224,8 @@ class Bore(LegacyModel):
             Property dictionary to apply on the radius lines (not on slot/notch)
         sym : int
             Symmetry factor (1= full machine, 2= half of the machine...)
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
@@ -212,7 +234,7 @@ class Bore(LegacyModel):
         """
 
         # Get all Radius lines (0 to 2*pi)
-        radius_lines = self.get_bore_line()
+        radius_lines = self.get_bore_line(lam=lam)
 
         # Update begin and end angle if Radius (next step already cut lines)
         if sym != 1 and radius_desc_list[0]["label"] == "Radius":
@@ -289,7 +311,11 @@ class Bore(LegacyModel):
 
     # Inlined from Methods.Machine.Bore.merge_slot_intersect
     def merge_slot_intersect(
-        self, radius_desc_list: list, prop_dict: dict, sym: int
+        self,
+        radius_desc_list: list,
+        prop_dict: dict,
+        sym: int,
+        lam: Lamination | None = None,
     ) -> list:
         """Merge the Bore shape with notches/slot on the bore/yoke
         Intersect method: cut lines of notch/slot to make the radius end match notch/slot begin
@@ -303,6 +329,8 @@ class Bore(LegacyModel):
             Property dictionary to apply on the radius lines (not on slot/notch)
         sym : int
             Symmetry factor (1= full machine, 2= half of the machine...)
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
@@ -311,7 +339,7 @@ class Bore(LegacyModel):
         """
 
         # Get all Radius lines (0 to 2*pi)
-        radius_lines = self.get_bore_line()
+        radius_lines = self.get_bore_line(lam=lam)
 
         # Update begin and end angle if Radius (next step already cut lines)
         if sym != 1 and radius_desc_list[0]["label"] == "Radius":
@@ -471,7 +499,10 @@ class Bore(LegacyModel):
 
     # Inlined from Methods.Machine.Bore.plot
     def plot(
-        self, fig: Figure | None = None, ax: Axes | None = None
+        self,
+        fig: Figure | None = None,
+        ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot the Bore in a matplotlib fig
 
@@ -482,6 +513,8 @@ class Bore(LegacyModel):
         fig :
             if None, open a new fig and plot, else add to the current
             one (Default value = None)
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
@@ -490,7 +523,7 @@ class Bore(LegacyModel):
         ax : Matplotlib.axes.Axes object
             Axis containing the plot
         """
-        surf = self.get_surface()
+        surf = self.get_surface(lam=lam)
 
         # Display the result
         (fig, ax, patch_leg, label_leg) = init_fig(fig, ax)

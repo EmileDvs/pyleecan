@@ -5,9 +5,13 @@ from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.utils.labels import DRAW_PROP_LAB, BOUNDARY_PROP_LAB
 
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
-def get_notches_surf(self, sym: int):
+def get_notches_surf(self, sym: int, machine: Machine | None = None):
     """Return the list of surfaces for notches
 
     Parameters
@@ -16,6 +20,8 @@ def get_notches_surf(self, sym: int):
         A Lamination object
     sym : int
         Symmetry factor (1= full machine, 2= half of the machine...)
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Return
     ------
@@ -40,11 +46,11 @@ def get_notches_surf(self, sym: int):
             continue  # Key surface overlap closing surface
         # Get the original surface
         Nsurf = notch.notch_shape.get_surface()
-        Nsurf.label = self.get_label() + "_" + NOTCH_LAB + "_R" + str(ii) + "-T0-S0"
+        Nsurf.label = self.get_label(machine=machine) + "_" + NOTCH_LAB + "_R" + str(ii) + "-T0-S0"
         Nsurf.rotate(angle=notch.alpha)
         # Label definition
-        BC_prop_right = self.get_label() + "_" + YSNR_LAB
-        BC_prop_left = self.get_label() + "_" + YSNL_LAB
+        BC_prop_right = self.get_label(machine=machine) + "_" + YSNR_LAB
+        BC_prop_left = self.get_label(machine=machine) + "_" + YSNL_LAB
         # Generate all the surfaces (handle cut on sym axis)
         surf_list.extend(
             Hole.transform_hole_surf(

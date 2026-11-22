@@ -301,6 +301,7 @@ class Data1D(Data):
         -------
         Vector of axis values
         """
+        # Local import to avoid an import loop
 
         if unit != "SI" and unit != self.unit:
             if unit in self.normalizations and normalization is None:

@@ -19,7 +19,7 @@ class PHoleM53(Gen_PHoleM53, QWidget):
     hole_name = "Hole Type 53"
     hole_type = HoleM53
 
-    def __init__(self, hole=None, material_dict=None):
+    def __init__(self, hole=None, material_dict=None, lam=None, machine=None):
         """Initialize the widget according to hole
 
         Parameters
@@ -30,12 +30,18 @@ class PHoleM53(Gen_PHoleM53, QWidget):
             current hole to edit
         material_dict: dict
             Materials dictionary (library + machine)
+        lam : Lamination
+            Lamination holding the hole
+        machine : Machine
+            Machine holding the lamination
         """
         # Build the interface according to the .ui file
         QWidget.__init__(self)
         self.setupUi(self)
 
         self.hole = hole
+        self.lam = lam
+        self.machine = machine
         self.material_dict = material_dict
 
         # Set FloatEdit unit
@@ -77,14 +83,14 @@ class PHoleM53(Gen_PHoleM53, QWidget):
         # Adapt GUI with/without magnet
         if hole.magnet_0 is None:  # SyRM
             self.img_slot.setPixmap(QPixmap(pixmap_dict["HoleM53_empty_int_rotor"]))
-            self.w_mat_0.update(self.hole, "mat_void", self.material_dict)
+            self.w_mat_0.update(self.hole, "mat_void", self.material_dict, machine=self.machine)
             self.w_mat_1.hide()
             self.w_mat_2.hide()
         else:
             # Set current material
-            self.w_mat_0.update(self.hole, "mat_void", self.material_dict)
-            self.w_mat_1.update(self.hole.magnet_0, "mat_type", self.material_dict)
-            self.w_mat_2.update(self.hole.magnet_1, "mat_type", self.material_dict)
+            self.w_mat_0.update(self.hole, "mat_void", self.material_dict, machine=self.machine)
+            self.w_mat_1.update(self.hole.magnet_0, "mat_type", self.material_dict, machine=self.machine)
+            self.w_mat_2.update(self.hole.magnet_1, "mat_type", self.material_dict, machine=self.machine)
 
         # Fill the fields with the machine values (if they're filled)
         self.lf_W1.setValue(self.hole.W1)
@@ -231,9 +237,9 @@ class PHoleM53(Gen_PHoleM53, QWidget):
         if self.check() is None:
             # We compute the output only if the hole is correctly set
             # Compute all the needed output as string
-            s_surf = format(self.u.get_m2(self.hole.comp_surface()), ".4g")
-            m_surf = format(self.u.get_m2(self.hole.comp_surface_magnets()), ".4g")
-            W5 = format(self.u.get_m(self.hole.comp_W5()), ".4g")
+            s_surf = format(self.u.get_m2(self.hole.comp_surface(lam=self.lam)), ".4g")
+            m_surf = format(self.u.get_m2(self.hole.comp_surface_magnets(lam=self.lam)), ".4g")
+            W5 = format(self.u.get_m(self.hole.comp_W5(lam=self.lam)), ".4g")
 
             # Update the GUI to display the Output
             self.out_slot_surface.setText(
@@ -267,6 +273,6 @@ class PHoleM53(Gen_PHoleM53, QWidget):
 
         # Constraints and None
         try:
-            self.hole.check()
+            self.hole.check(lam=self.lam)
         except SlotCheckError as error:
             return str(error)

@@ -17,7 +17,7 @@ class PCondType11(Gen_PCondType11, QWidget):
     cond_type = CondType11
     cond_name = "Form wound"
 
-    def __init__(self, lamination=None, material_dict=None):
+    def __init__(self, lamination=None, material_dict=None, machine=None):
         """Initialize the widget according to lamination
 
         Parameters
@@ -26,6 +26,10 @@ class PCondType11(Gen_PCondType11, QWidget):
             A PCondType11 widget
         lamination : Lamination
             current lamination to edit
+        material_dict: dict
+            Materials dictionary (library + machine)
+        machine : Machine
+            Machine holding the lamination (for the material library)
         """
 
         # Build the interface according to the .ui file
@@ -33,6 +37,7 @@ class PCondType11(Gen_PCondType11, QWidget):
         self.setupUi(self)
 
         self.material_dict = material_dict
+        self.machine = machine
 
         self.w_mat_0.setText("Conductor material")
         self.w_mat_0.def_mat = "Copper1"
@@ -96,8 +101,8 @@ class PCondType11(Gen_PCondType11, QWidget):
         self.update_ins_layout()
 
         # Set conductor and insulator material
-        self.w_mat_0.update(self.lam.winding.conductor, "cond_mat", self.material_dict)
-        self.w_mat_1.update(self.lam.winding.conductor, "ins_mat", self.material_dict)
+        self.w_mat_0.update(self.lam.winding.conductor, "cond_mat", self.material_dict, machine=self.machine)
+        self.w_mat_1.update(self.lam.winding.conductor, "ins_mat", self.material_dict, machine=self.machine)
 
         # Display the conductor main output
         self.w_out.comp_output()

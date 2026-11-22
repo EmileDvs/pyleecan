@@ -28,7 +28,7 @@ def comp_periodicity(self, wind_mat: np.ndarray | None = None, lam: Lamination |
     """
 
     if wind_mat is None:
-        wind_mat = self.get_connection_mat()
+        wind_mat = self.get_connection_mat(lam=lam)
 
     assert wind_mat.ndim == 4, "dim 4 expected for wind_mat"
 

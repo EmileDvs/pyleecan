@@ -2,9 +2,13 @@ import numpy as np
 
 from ....Functions_new.utils.geometry import cut_lines_between_angles
 from ....Classes_new.geometry.segment import Segment
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def merge_slot_connect(self, radius_desc_list: list, prop_dict: dict, sym: int) -> list:
+def merge_slot_connect(self, radius_desc_list: list, prop_dict: dict, sym: int, lam: Lamination | None = None) -> list:
     """Merge the Bore shape with notches/slot on the bore/yoke
     Connect method: Add lines between radius and notch/slot
     (To use when the radius shape have circular part matchine the radius
@@ -18,6 +22,8 @@ def merge_slot_connect(self, radius_desc_list: list, prop_dict: dict, sym: int) 
         Property dictionary to apply on the radius lines (not on slot/notch)
     sym : int
         Symmetry factor (1= full machine, 2= half of the machine...)
+    lam : Lamination, optional
+        Lamination holding the bore (default: the parent)
 
     Returns
     -------
@@ -26,7 +32,7 @@ def merge_slot_connect(self, radius_desc_list: list, prop_dict: dict, sym: int) 
     """
 
     # Get all Radius lines (0 to 2*pi)
-    radius_lines = self.get_bore_line()
+    radius_lines = self.get_bore_line(lam=lam)
 
     # Update begin and end angle if Radius (next step already cut lines)
     if sym != 1 and radius_desc_list[0]["label"] == "Radius":

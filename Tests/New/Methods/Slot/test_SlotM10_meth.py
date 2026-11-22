@@ -51,7 +51,7 @@ class Test_Magnet_Type_10_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -59,7 +59,7 @@ class Test_Magnet_Type_10_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface(test_obj.slot)
+        b = Slot.comp_surface(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -75,7 +75,7 @@ class Test_Magnet_Type_10_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface_active(test_obj.slot)
+        b = Slot.comp_surface_active(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -83,7 +83,7 @@ class Test_Magnet_Type_10_meth(object):
     def test_comp_height(self, test_dict):
         """Check that the computation of the height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]
@@ -91,7 +91,7 @@ class Test_Magnet_Type_10_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_height(test_obj.slot)
+        b = Slot.comp_height(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -99,7 +99,7 @@ class Test_Magnet_Type_10_meth(object):
     def test_comp_height_active(self, test_dict):
         """Check that the computation of the active height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height_active()
+        result = test_obj.slot.comp_height_active(lam=test_obj)
 
         a = result
         b = test_dict["HA_exp"]
@@ -107,7 +107,7 @@ class Test_Magnet_Type_10_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_height_active(test_obj.slot)
+        b = Slot.comp_height_active(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -115,10 +115,10 @@ class Test_Magnet_Type_10_meth(object):
     def test_comp_angle_opening(self, test_dict):
         """Check that the computation of the average opening angle is correct"""
         test_obj = test_dict["test_obj"]
-        a = test_obj.slot.comp_angle_opening()
+        a = test_obj.slot.comp_angle_opening(lam=test_obj)
         assert a == 2 * arcsin(test_obj.slot.W0 / (2 * 0.1325))
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_angle_opening(test_obj.slot)
+        b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 

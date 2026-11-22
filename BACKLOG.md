@@ -722,12 +722,12 @@ generated first so that the same passes rewrite its calls.
       `Methods_new` that are neither fields nor attributes of their class: 9,
       all false positives (helper exception and Elmer classes, `ModelBH`
       fields of its daughters) except `RuleComplex._set_fct_name`, see below.
-- [ ] `RuleComplex(fct_name=...)`: `other_to_P` / `P_to_other` are not set on
-      both backends (the inlined `_set_fct_name` is not a wired custom
-      setter; legacy sets them in its constructor). Unused by the new
-      `convert_to_P` / `convert_to_other` (they call `rule_function_module`):
-      drop the two assignments from the method, or declare them if the
-      setter is wired.
+- [x] (2026-11-22) `RuleComplex(fct_name=...)`: `other_to_P` /
+      `P_to_other` are not set on both backends (the inlined
+      `_set_fct_name` is not a wired custom setter; legacy sets them in its
+      constructor). Unused by the new `convert_to_P` / `convert_to_other`
+      (they call `rule_function_module`): the two assignments dropped from
+      the method.
 - [x] `Tests/New/GUI` generated against `GUI_new` / `GUI_pydantic` (2026-11-21:
       alias `backend_gui` in `Tests/New/_backend.py`, the `pyleecan.GUI` and
       `pyleecan.GUI_new` imports and `mock.patch` strings rewritten by the
@@ -1084,10 +1084,12 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
 - [x] (2026-11-22) CLAUDE.md: `Methods_new`, `GUI_new` and the hand-written
       `Functions_new` modules edited by hand; the class generator still reads
       `Methods_new` (through the shim).
-- [ ] After the freeze, by hand: the two dynamic imports
+- [x] (2026-11-22) After the freeze, by hand: the two dynamic imports
       `__import__("pyleecan.Classes.Norm_vector")` of `Data1D.get_values` /
-      `DataLinspace.get_values` (static local imports); the `DXF_Slot`
-      container call (Step 17).
+      `DataLinspace.get_values` are static local imports of `NormVector`
+      (the class generator already rewrote them); the `DXF_Slot` /
+      `DXF_Hole` dialogs pass their lamination to the slot / hole plots and
+      the slot active surface.
 
 ## Step 13: custom property setters and getters
 
@@ -1257,16 +1259,20 @@ Review list by package (behaviour or class definition to decide):
         `SlotW14`/`SlotW29.comp_surface_wedge` (`wedge_type` other than 0 and 1),
         `SlotW23.get_H1` (second `if self.H1_is_rad` always true),
         `HoleUD.comp_surface_magnet_id` (unknown label), `HoleM52R.plot_schematics`;
-  - [ ] `Hole.plot`: `mag_surf` stays `None` when no magnet surface matches its
-        label (an `AttributeError` follows): raise an explicit error;
-  - [ ] `HoleM52R.plot_schematics`: `ax.get_legend()` may be `None`.
+  - [x] (2026-11-22) `Hole.plot`: `mag_surf` stays `None` when no magnet
+        surface matches its label (an `AttributeError` followed): explicit
+        `ValueError`;
+  - [x] (2026-11-22) `HoleM52R.plot_schematics`: `ax.get_legend()` may be
+        `None`: removed only when there is one.
 - Material:
   - [ ] `ModelBH.fit_model` (after the Step 5 fix).
 - Machine:
-  - [ ] `Winding.export_to_csv`, `WindingUD.import_from_csv`: `file_path=None`
-        but used as a str (required parameter?);
-  - [ ] `LamHole`/`LamHoleNS._plot_arrow_mag`: the magnet surface stays `None`
-        when no label matches, `ax` may be `None`;
+  - [x] (2026-11-22) `Winding.export_to_csv`, `WindingUD.import_from_csv`:
+        `file_path` required (its `None` default always failed, as
+        `ref_simu`; every caller passes it);
+  - [x] (2026-11-22) `LamHole`/`LamHoleNS._plot_arrow_mag`: explicit
+        `ValueError` when no magnet surface matches, `plt.gca()` when `ax`
+        is `None`;
   - [ ] `LamSlotMag.get_all_mag_obj`: optional `mat_type`/`mag` fields assigned
         without check;
   - [x] (2026-11-22) implicit `None` returns: `Frame.plot`, `LamSquirrelCage.plot_schematics_scr`,
@@ -1322,7 +1328,15 @@ Review list by package (behaviour or class definition to decide):
 
 Then:
 
-- [ ] `py.typed` marker; checker made stricter step by step.
+- [x] (2026-11-22) `py.typed` marker (`src/pyleecan/py.typed`).
+- [ ] Checker made stricter step by step.
+- [ ] **To decide**: the `init_dict=` constructor argument in `Methods_new`
+      (legacy layer only, 14 sites: `type(surf)(init_dict=surf.as_dict())`
+      copies in `build_geometry`, `get_polar_eq`, the `ParamExplorerSet` /
+      `LamSlotWind` conversions, the custom setters of `Data` / `VarLoad` /
+      `SlotUD2`): target replacement `model_copy(deep=True)` for the copies
+      and `X.model_validate(obj.model_dump())` for the conversions, or kept
+      until Phase 2 removes the legacy layer.
 
 ## Step 15: utility functions
 
@@ -1634,11 +1648,36 @@ Same signature rule as Step 11 (optional container argument, fallback through
         every method of it taking `lam`; the laminations pass `lam=self`
         (401 modules). Fallback warnings of the `Tests/New` run: about 81000
         -> 7400, none left at a test or GUI call.
-  - [ ] The machine down to the slot geometry: the slot labels read
-        `lam.get_label()`, which needs the machine (the index of the
-        lamination): `build_geometry`, `build_geometry_active`,
-        `get_surface_active` / `_opening` of the Slot family get a `machine`
-        argument too, or the lamination passes its label (to decide).
+  - [x] (2026-11-22) The same tool on the other families: pass-through
+        `lam` for the Hole (73 modules), Winding, Bore and Notch helpers,
+        `machine` for the Lamination ones (`build_geometry`,
+        `build_yoke_side_line`, `comp_angle_d_axis`, `comp_mmf_dir`, ...),
+        the callers holding them pass them; the edited `check` modules
+        import their errors by name (`from . import *` kept the class
+        generator from collecting them: `S50_NoneError` missing from
+        `errors.py`). The origin of each remaining fallback recorded (the
+        first frame up the stack that does not hold the container as a
+        None local): 509 more test calls given their container by the tool
+        (`Slot.comp_height(test_obj.slot, lam=test_obj)` included), 11 by
+        hand (`test_SlotUD` no longer sets `slot_2.parent`).
+  - [ ] **To decide**: the machine down to the slot geometry. The slot and
+        hole labels read `lam.get_label()`, which needs the machine (the
+        index of the lamination: `Stator-0`); the slot geometry methods
+        (`build_geometry`, `build_geometry_active`, `get_surface_active` /
+        `_opening` of the Slot family, the Hole `build_geometry`) do not
+        receive it, so they still fall back to the lamination's parent
+        (most of the fallbacks left). Options: (a) a `machine` argument
+        passed through the slot geometry too (the laminations pass theirs);
+        (b) the lamination passes its label (`lam_label`) instead, the slot
+        no longer reads the machine; (c) the lamination label stored on the
+        lamination when it is put in a machine. (b) is the smallest change
+        and keeps the slots independent of the machine.
+  - [ ] **To decide**: the slot of a notch (`NotchEvenDist.notch_shape`):
+        its container `lam` is the Notch, and `lam.get_Rbo()` /
+        `is_outwards()` of the notch need the notch's lamination, which the
+        slot does not see (fallback to the notch's parent). Options: the
+        notch passes a lamination-like view, or the Notch methods called by
+        the slot take the lamination as a second argument (`lam_of_notch`).
 - [x] (2026-11-22) No parent read left in `Methods_new` and `Functions_new`
       outside `container_or_parent` (and `ancestor_with`, its walk of an
       unknown depth); the parent links stay only in the legacy layer.
@@ -1660,12 +1699,29 @@ Same signature rule as Step 11 (optional container argument, fallback through
 
 ## Step 17: GUI, second pass
 
-- [ ] Direct parent reads of the dialogs (9 in 5 modules: hole and magnet
-      pages reading `hole.parent.parent`, lamination copies): the container
-      passed explicitly to the page.
-- [ ] Parent wiring the dialogs rely on (an object edited inside its
-      container so that its methods see the lamination): replaced by the
-      explicit container of Step 16.
+- [x] (2026-11-22) Direct parent reads of the dialogs: none left in
+      `GUI_new` (the `self.parent` left are Qt widget parents).
+      - the hole pages (`PHole*`) take `lam` and `machine` (given by
+        `WHoleMag`), their hole calls pass `lam=self.lam`; `PHoleM51` tests
+        `isinstance(self.machine, MachineIPMSM)` (no machine given: kept as
+        a magnet hole; the legacy page failed on `None.parent`);
+        `PHoleMUD` copies `self.lam` for its plot, gives it to the DXF
+        dialog, and sets the reloaded hole again in its lamination instead
+        of saving / restoring `hole.parent`;
+      - `WMatSelect` / `WMatSelectV.update(..., machine=None)` instead of
+        the parent walk up to the machine (the material library dialog
+        edits the machine materials): the 57 calls of the pages pass
+        `machine=self.machine`; `PCondType11/12` (from `SWindCond`),
+        `WSlotMag` (from `SMSlot`), the `PMSlot*` pages and
+        `WWSlotMag.update` take the machine;
+      - tests: the hole page tests give `lam` (and `machine` for
+        `PHoleM51`).
+- [x] (2026-11-22) Parent wiring the dialogs rely on: the GUI calls pass
+      the containers the pages hold (tool on the receivers:
+      `lam.slot.comp_angle_opening(lam=lam)`, `self.slot...(lam=
+      self.lamination)`, the lamination plots and mmf `machine=
+      self.machine`). The fallbacks left come from the slot geometry
+      labels (Step 16, to decide).
 - [ ] Input validation on the target model: the dialog edits a working copy,
       validation by the model (validated assignment or `model_validate` of the
       edited dump), errors reported per field; widget limits from `ClassInfo`

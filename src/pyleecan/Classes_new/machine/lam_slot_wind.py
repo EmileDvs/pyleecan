@@ -87,6 +87,7 @@ class LamSlotWind(LamSlot):
         alpha: float = 0,
         delta: complex = 0,
         is_circular_radius: bool = False,
+        machine: Machine | None = None,
     ) -> list:
         """Build the geometry of the Lamination with winding in slots
 
@@ -102,6 +103,8 @@ class LamSlotWind(LamSlot):
             Complex value for translation
         is_circular_radius : bool
             True to add surfaces to "close" the Lamination radii
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -129,7 +132,7 @@ class LamSlotWind(LamSlot):
                 surf_Wind = []
             else:
                 try:
-                    Nrad, Ntan = self.winding.get_dim_wind()
+                    Nrad, Ntan = self.winding.get_dim_wind(lam=self)
                 except Exception:
                     Nrad, Ntan = 1, 1
 
@@ -141,7 +144,7 @@ class LamSlotWind(LamSlot):
                     lam=self,
                 )
 
-            st = self.get_label()
+            st = self.get_label(machine=machine)
             assert (self.slot.Zs % sym) == 0, (
                 "ERROR, Wrong symmetry for "
                 + st
@@ -258,7 +261,9 @@ class LamSlotWind(LamSlot):
         """
 
     # Inlined from Methods.Machine.LamSlotWind.comp_angle_d_axis
-    def comp_angle_d_axis(self, is_plot: bool = False) -> float:
+    def comp_angle_d_axis(
+        self, is_plot: bool = False, machine: Machine | None = None
+    ) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
         Parameters
@@ -267,6 +272,8 @@ class LamSlotWind(LamSlot):
             A LamSlotWind object
         is_plot : bool
             True to plot d axis position regarding unit mmf
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
         Returns
         -------
         d_angle : float
@@ -282,7 +289,7 @@ class LamSlotWind(LamSlot):
 
         p = self.get_pole_pair_number()
 
-        MMF, _ = self.comp_mmf_unit(Nt=100, Na=400 * p)
+        MMF, _ = self.comp_mmf_unit(Nt=100, Na=400 * p, machine=machine)
 
         # Get angle values
         results1 = MMF.get_along("angle[oneperiod]")
@@ -346,7 +353,7 @@ class LamSlotWind(LamSlot):
             return 0
         else:
             # compute the number of conductors per slot
-            Ncps = self.winding.comp_Ncps()
+            Ncps = self.winding.comp_Ncps(lam=self)
 
             # compute the winding surfaces
             S_slot_wind = self.slot.comp_surface_active(lam=self)
@@ -475,6 +482,7 @@ class LamSlotWind(LamSlot):
         current_dir: int | None = None,
         phase_dir: int | None = None,
         is_plot: bool = False,
+        machine: Machine | None = None,
     ) -> int:
         """Compute the rotation direction of the fundamental magnetomotive force induced by the winding
 
@@ -488,6 +496,8 @@ class LamSlotWind(LamSlot):
             Stator winding phasor rotation direction +/-1
         is_plot: bool
             True to plot fft2 of stator MMF
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -499,7 +509,11 @@ class LamSlotWind(LamSlot):
         # Compute unit mmf
         # 20 points per pole over time and space is enough to capture rotating direction of fundamental mmf
         MMF, _ = self.comp_mmf_unit(
-            Nt=20 * p, Na=20 * p, current_dir=current_dir, phase_dir=phase_dir
+            Nt=20 * p,
+            Na=20 * p,
+            current_dir=current_dir,
+            phase_dir=phase_dir,
+            machine=machine,
         )
 
         # Extract fundamental from unit mmf
@@ -757,7 +771,7 @@ class LamSlotWind(LamSlot):
 
         # Angular periodicity
         if self.winding is not None and self.winding.conductor is not None:
-            per_a_w, is_antiper_a_w = self.winding.get_periodicity()
+            per_a_w, is_antiper_a_w = self.winding.get_periodicity(lam=self)
             per_a = int(np.gcd(per_a, per_a_w))
             is_antiper_a = is_antiper_a and is_antiper_a_w
 
@@ -902,14 +916,14 @@ class LamSlotWind(LamSlot):
 
         qs = self.winding.qs  # number of phases
         # Number of point on rad and tan direction
-        Nrad, Ntan = self.winding.get_dim_wind()
+        Nrad, Ntan = self.winding.get_dim_wind(lam=self)
         Zs = self.slot.Zs  # Number of slot
         Zs0 = int(Zs / per_a)
 
         slot_angle = self.slot.comp_angle_active_eq(lam=self)
         slot_opening = self.slot.comp_angle_opening(lam=self)
 
-        wind_mat = self.winding.get_connection_mat(Zs)
+        wind_mat = self.winding.get_connection_mat(Zs, lam=self)
         # sum wind_mat along Nlay_rad axis
         wind_mat = np.sum(wind_mat, axis=0)
 
@@ -1086,7 +1100,9 @@ class LamSlotWind(LamSlot):
             is_winding_connection = False
 
         # Get the LamSlot surface(s)
-        surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+        surf_list = self.build_geometry(
+            sym=sym, alpha=alpha, delta=delta, machine=machine
+        )
 
         patches = []
         # getting the number of phases and winding connection matrix
@@ -1096,7 +1112,7 @@ class LamSlotWind(LamSlot):
                 qs = 1
             else:
                 try:
-                    wind_mat = self.winding.get_connection_mat(self.get_Zs())
+                    wind_mat = self.winding.get_connection_mat(self.get_Zs(), lam=self)
                     qs = self.winding.qs
                     # Calling swat-em method for the winding if we want to plot the radial pattern
                     if is_winding_connection:
@@ -1131,7 +1147,7 @@ class LamSlotWind(LamSlot):
                         color, sign = Winding._find_wind_phase_color(surf.label, None)
                     else:
                         color, sign = self.winding.find_wind_phase_color(
-                            label=surf.label, wind_mat=wind_mat
+                            label=surf.label, wind_mat=wind_mat, lam=self
                         )
                     if sign == "+" and is_add_sign:
                         hatch = self.PLUS_HATCH
@@ -1180,7 +1196,7 @@ class LamSlotWind(LamSlot):
             # Detecting the direction of the layer (tangential or radial)
             # If Nlayer > 1 then we have to precise if the direction is tangential or radial
             # If Nlayer ==1 then checking radial but value always equal to 0
-            Nrad, Ntan = self.winding.get_dim_wind()
+            Nrad, Ntan = self.winding.get_dim_wind(lam=self)
             if Nrad < Ntan:
                 layer_id_name = "T_id"
             else:
@@ -1536,17 +1552,17 @@ class LamSlotWind(LamSlot):
 
         # We compute the wind_mat only if needed
         if wind_mat is None:
-            wind_mat = self.winding.get_connection_mat(self.slot.Zs)
+            wind_mat = self.winding.get_connection_mat(self.slot.Zs, lam=self)
 
         # Number of point on rad and tan direction
-        Nrad, Ntan = self.winding.get_dim_wind()
+        Nrad, Ntan = self.winding.get_dim_wind(lam=self)
         Zs = self.slot.Zs  # Number of slot
 
         # Number of Slot to plot
         if all_slot:  # Every Slot
             Nplot = Zs
         else:  # Only the needed one (sym)
-            Nperw, _ = self.winding.get_periodicity()  # Symmetry of the winding
+            Nperw, _ = self.winding.get_periodicity(lam=self)  # Symmetry of the winding
             Nplot = Zs // Nperw
 
         qs = wind_mat.shape[3]  # Number of phase

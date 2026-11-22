@@ -40,9 +40,8 @@ def get_values(
     -------
     Vector of axis values
     """
-    # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes.Norm_vector", fromlist=["Norm_vector"])
-    Norm_vector = module.Norm_vector
+    # Local import to avoid an import loop
+    from ....Classes_new.scidatatool.norm_vector import NormVector as Norm_vector
 
     if unit != "SI" and unit != self.unit:
         if unit in self.normalizations and normalization is None:

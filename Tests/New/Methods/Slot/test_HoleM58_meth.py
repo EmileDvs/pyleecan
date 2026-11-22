@@ -54,7 +54,7 @@ class Test_HoleM58_meth(object):
         """Check that the schematics is correct"""
         test_obj = test_dict["test_obj"]
 
-        point_dict = test_obj.hole[0]._comp_point_coordinate()
+        point_dict = test_obj.hole[0]._comp_point_coordinate(lam=test_obj)
         Rbo = test_obj.hole[0].get_Rbo(lam=test_obj)
 
         # W0
@@ -133,7 +133,7 @@ class Test_HoleM58_meth(object):
     def test_comp_radius(self, test_dict):
         """Check that comp_radius return the correct result (analytical+num)"""
         test_obj = test_dict["test_obj"]
-        Rmin, Rmax = test_obj.hole[0].comp_radius()
+        Rmin, Rmax = test_obj.hole[0].comp_radius(lam=test_obj)
 
         Rmax_a = test_dict["Rmax"]
         Rmin_a = test_dict["Rmin"]
@@ -144,7 +144,7 @@ class Test_HoleM58_meth(object):
         msg = f"For Rmax: Return {a} expected {b}"
         assert abs((a - b) / a - 0) < DELTA, msg
 
-        Rmin_a, Rmax_a = Hole.comp_radius(test_obj.hole[0])
+        Rmin_a, Rmax_a = Hole.comp_radius(test_obj.hole[0], lam=test_obj)
         a, b = Rmin, Rmin_a
         msg = f"For Rmin: Return {a} expected {b}"
         assert abs((a - b) / a - 0) < DELTA, msg

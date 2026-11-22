@@ -549,10 +549,10 @@ class DXF_Slot(Ui_DXF_Slot, QDialog):
             try:
                 # Left single slot with point index, Right Lamination with slot
                 fig, (ax1, ax2) = plt.subplots(1, 2)
-                slot.plot(fig=fig, ax=ax1)
+                slot.plot(fig=fig, ax=ax1, lam=lam)
                 # Add the winding to slot if defined
                 if not self.is_notch and slot.wind_begin_index is not None:
-                    surf_wind = slot.get_surface_active()
+                    surf_wind = slot.get_surface_active(lam=lam)
                     surf_wind.plot(fig=fig, ax=ax1, color=WIND_COLOR, is_show_fig=False)
                 if not self.is_notch:
                     # Add point index for winding definition

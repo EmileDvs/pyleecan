@@ -3,6 +3,7 @@
 
 from typing import TYPE_CHECKING, ClassVar
 
+import matplotlib.pyplot as plt
 import numpy as np
 from pydantic import Field
 
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
 
     from ..slot.hole import Hole
+    from .machine import Machine
 
 
 class LamHoleNS(LamH):
@@ -62,10 +64,12 @@ class LamHoleNS(LamH):
         delta : complex
             complex for translation (Default value = 0)
         """
+        if ax is None:
+            ax = plt.gca()
 
         for hole in self.hole_north:
-            H = hole.comp_height()
-            mag_dict = hole.comp_magnetization_dict()
+            H = hole.comp_height(lam=self)
+            mag_dict = hole.comp_magnetization_dict(lam=self)
             for magnet_name, mag_dir in mag_dict.items():
                 # Get the correct surface
                 mag_surf = None
@@ -80,6 +84,11 @@ class LamHoleNS(LamH):
                         ):
                             mag_surf = surf
                             break
+                    if mag_surf is None:
+                        raise ValueError(
+                            f"{type(self).__name__}: no surface of {magnet_name} in the "
+                            "geometry of its hole"
+                        )
                     # Create arrow coordinates
                     Zh = hole.Zh
                     for ii in range(int(Zh / sym / 2)):
@@ -102,8 +111,8 @@ class LamHoleNS(LamH):
                         )
 
         for hole in self.hole_south:
-            H = hole.comp_height()
-            mag_dict = hole.comp_magnetization_dict()
+            H = hole.comp_height(lam=self)
+            mag_dict = hole.comp_magnetization_dict(lam=self)
             for magnet_name, mag_dir in mag_dict.items():
                 # Get the correct surface
                 mag_surf = None
@@ -118,6 +127,11 @@ class LamHoleNS(LamH):
                         ):
                             mag_surf = surf
                             break
+                    if mag_surf is None:
+                        raise ValueError(
+                            f"{type(self).__name__}: no surface of {magnet_name} in the "
+                            "geometry of its hole"
+                        )
                     # Create arrow coordinates
                     Zh = hole.Zh
                     for ii in range(int(Zh / sym / 2)):
@@ -146,6 +160,7 @@ class LamHoleNS(LamH):
         alpha: float = 0,
         delta: complex = 0,
         is_circular_radius: bool = False,
+        machine: Machine | None = None,
     ) -> list:
         """Build the geometry of the LamHoleNS object
 
@@ -161,6 +176,8 @@ class LamHoleNS(LamH):
             Complex value for translation
         is_circular_radius : bool
             True to add surfaces to "close" the Lamination radii
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------

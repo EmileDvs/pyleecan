@@ -109,25 +109,33 @@ class Test_Slot_10_plot(object):
         # 2 for lam + 6*4 for wind
         assert len(fig.axes[0].patches) == 26
 
-        lines = test_obj.stator.slot.build_geometry_half_tooth(is_top=False)
+        lines = test_obj.stator.slot.build_geometry_half_tooth(
+            is_top=False, lam=test_obj.stator
+        )
         surf = SurfLine(line_list=lines)
         surf.plot_lines(is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s10_Tooth_bottom_out.png"))
 
-        lines = test_obj.stator.slot.build_geometry_half_tooth(is_top=True)
+        lines = test_obj.stator.slot.build_geometry_half_tooth(
+            is_top=True, lam=test_obj.stator
+        )
         surf = SurfLine(line_list=lines)
         surf.plot_lines(is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s10_Tooth_top_out.png"))
 
-        lines = test_obj.rotor.slot.build_geometry_half_tooth(is_top=False)
+        lines = test_obj.rotor.slot.build_geometry_half_tooth(
+            is_top=False, lam=test_obj.rotor
+        )
         surf = SurfLine(line_list=lines)
         surf.plot_lines(is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s10_Tooth_bottom_in.png"))
 
-        lines = test_obj.rotor.slot.build_geometry_half_tooth(is_top=True)
+        lines = test_obj.rotor.slot.build_geometry_half_tooth(
+            is_top=True, lam=test_obj.rotor
+        )
         surf = SurfLine(line_list=lines)
         surf.plot_lines(is_show_fig=False)
         fig = plt.gcf()
@@ -174,7 +182,9 @@ class Test_Slot_10_plot(object):
             H1_is_rad=False,
         )
 
-        lines = test_obj.stator.slot.build_geometry_half_tooth(is_top=False)
+        lines = test_obj.stator.slot.build_geometry_half_tooth(
+            is_top=False, lam=test_obj.stator
+        )
         assert len(lines) == 7
 
         # Testing comp_angle_d_axis

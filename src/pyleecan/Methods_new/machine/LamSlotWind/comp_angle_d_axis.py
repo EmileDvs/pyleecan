@@ -1,7 +1,11 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
-def comp_angle_d_axis(self, is_plot: bool = False) -> float:
+def comp_angle_d_axis(self, is_plot: bool = False, machine: Machine | None = None) -> float:
     """Compute the angle between the X axis and the first d+ axis
     By convention a "Tooth" is centered on the X axis
     Parameters
@@ -10,6 +14,8 @@ def comp_angle_d_axis(self, is_plot: bool = False) -> float:
         A LamSlotWind object
     is_plot : bool
         True to plot d axis position regarding unit mmf
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
     Returns
     -------
     d_angle : float
@@ -21,7 +27,7 @@ def comp_angle_d_axis(self, is_plot: bool = False) -> float:
 
     p = self.get_pole_pair_number()
 
-    MMF, _ = self.comp_mmf_unit(Nt=100, Na=400 * p)
+    MMF, _ = self.comp_mmf_unit(Nt=100, Na=400 * p, machine=machine)
 
     # Get angle values
     results1 = MMF.get_along("angle[oneperiod]")

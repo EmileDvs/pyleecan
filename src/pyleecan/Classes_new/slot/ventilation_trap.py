@@ -69,13 +69,15 @@ class VentilationTrap(Hole):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.VentilationTrap._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
         """Compute the point coordinates needed to plot the Hole.
 
         Parameters
         ----------
         self : VentilationPolar
             A VentilationPolar object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -157,13 +159,15 @@ class VentilationTrap(Hole):
         return surf_list
 
     # Inlined from Methods.Slot.VentilationTrap.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Make sure that the ventialtion parameters are correctly set
 
         Parameters
         ----------
         self : VentilationTrap
             A VentilationTrap object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
         """
 
         if not isinstance(self.Zh, int):
@@ -176,7 +180,7 @@ class VentilationTrap(Hole):
             raise VentilationTrapInstanceError("Alpha0 must be a float or int")
 
     # Inlined from Methods.Slot.VentilationTrap.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | None = None):
         """Compute the radius of the two circle that contains all the ventilation
         ducts
 
@@ -184,6 +188,8 @@ class VentilationTrap(Hole):
         ----------
         self : VentilationTrap
             A VentilationTrap object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -192,7 +198,7 @@ class VentilationTrap(Hole):
 
         """
 
-        self.check()
+        self.check(lam=lam)
 
         Rmin = np.sqrt(self.W1**2 + self.H0**2)
         Rmax = np.sqrt(self.W2**2 + (self.H0 + self.D0) ** 2)
@@ -200,13 +206,15 @@ class VentilationTrap(Hole):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.VentilationTrap.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | None = None) -> float:
         """Compute the surface of all the axial ventilation ducts
 
         Parameters
         ----------
         self : VentilationTrap
             A VentilationTrap object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -215,7 +223,7 @@ class VentilationTrap(Hole):
 
         """
 
-        self.check()
+        self.check(lam=lam)
 
         return (self.W1 + self.W2) * 0.5 * self.D0
 
@@ -342,7 +350,7 @@ class VentilationTrap(Hole):
                 fig=fig,
                 ax=ax,
             )  # center hole on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:

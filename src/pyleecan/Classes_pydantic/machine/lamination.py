@@ -179,6 +179,7 @@ class Lamination(LegacyModel):
         alpha: float = 0,
         delta: complex = 0,
         is_circular_radius: bool = False,
+        machine: Machine | None = None,
     ):
         """Build the geometry of the Lamination
 
@@ -198,11 +199,13 @@ class Lamination(LegacyModel):
         Returns
         surf_list : list
             list of surfaces needed to draw the lamination
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         """
         # Label setup
 
-        label = self.get_label()
+        label = self.get_label(machine=machine)
         label_lam = label + "_" + LAM_LAB
         label_bore = label + "_" + LAM_LAB + BORE_LAB
         label_yoke = label + "_" + LAM_LAB + YOKE_LAB
@@ -258,7 +261,7 @@ class Lamination(LegacyModel):
 
         # Add the closing surfaces if requested
         if is_circular_radius:
-            surf_list.extend(self.get_surfaces_closing(sym=sym))
+            surf_list.extend(self.get_surfaces_closing(sym=sym, machine=machine))
 
         # Create the Lamination surfaces
         point_ref = self.comp_point_ref(sym=sym)
@@ -311,6 +314,7 @@ class Lamination(LegacyModel):
                 ZTR=ZTR,
                 ZBL=ZBL,
                 ZTL=ZTL,
+                machine=machine,
             )
             # Create lines
             curve_list: list[Line] = []
@@ -641,6 +645,7 @@ class Lamination(LegacyModel):
         ZTR: complex | None = None,
         ZBL: complex | None = None,
         ZTL: complex | None = None,
+        machine: Machine | None = None,
         *,
         DELTA=1e-06,
     ):
@@ -662,6 +667,8 @@ class Lamination(LegacyModel):
             Yoke Side Limit point Bottom Left
         ZTL : Complex
             Yoke Side Limit point Top Left
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -692,7 +699,7 @@ class Lamination(LegacyModel):
             ZBL = ZBR * np.exp(1j * alpha)
             ZTL = ZTR * np.exp(1j * alpha)
 
-        lam_lab = self.get_label()
+        lam_lab = self.get_label(machine=machine)
         if self.is_internal:
             right_list = self.merge_line_list(
                 ZBR, ZTR, lam_lab + "_" + YSR_LAB, inter_line_list_R
@@ -782,7 +789,7 @@ class Lamination(LegacyModel):
             raise LC_RadiusError("The internal radius is greater than the external one")
 
         for vent in self.axial_vent:
-            vent.check()
+            vent.check(lam=self)
 
             # The ventilation duct must be on the yoke
             if vent.Zh > 0:
@@ -793,7 +800,7 @@ class Lamination(LegacyModel):
                     Rin = self.Rint + self.comp_height_yoke()
                     Rout = self.Rext
 
-                (Rmin, Rmax) = vent.comp_radius()
+                (Rmin, Rmax) = vent.comp_radius(lam=self)
 
                 if Rmin < Rin:
                     raise LC_VentYokeIn(
@@ -805,7 +812,7 @@ class Lamination(LegacyModel):
                     )
 
     # Inlined from Methods.Machine.Lamination.comp_angle_q_axis
-    def comp_angle_q_axis(self) -> float:
+    def comp_angle_q_axis(self, machine: Machine | None = None) -> float:
         """Compute the angle between the X axis and the first q+ axis
         By convention a "Tooth" is centered on the X axis
         By convention the first magnet is +
@@ -814,6 +821,8 @@ class Lamination(LegacyModel):
         ----------
         self : Lamination
             A Lamination object
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -821,7 +830,7 @@ class Lamination(LegacyModel):
             angle between the X axis and the first d+ axis
         """
 
-        q_angle = self.comp_angle_d_axis()
+        q_angle = self.comp_angle_d_axis(machine=machine)
         p = self.get_pole_pair_number()
         return q_angle + np.pi / p / 2
 
@@ -1104,7 +1113,7 @@ class Lamination(LegacyModel):
         if self.axial_vent not in [None, []]:
             R1, R2 = Rref, Rref
             for vent in self.axial_vent:
-                (Rmin, Rmax) = vent.comp_radius()
+                (Rmin, Rmax) = vent.comp_radius(lam=self)
                 R1 = min(R1, Rmin)
                 R2 = max(R2, Rmax)
             if self.is_internal:
@@ -1337,7 +1346,7 @@ class Lamination(LegacyModel):
         return gen_name(self.winding.qs)
 
     # Inlined from Methods.Machine.Lamination.get_notches_surf
-    def get_notches_surf(self, sym: int):
+    def get_notches_surf(self, sym: int, machine: Machine | None = None):
         """Return the list of surfaces for notches
 
         Parameters
@@ -1346,6 +1355,8 @@ class Lamination(LegacyModel):
             A Lamination object
         sym : int
             Symmetry factor (1= full machine, 2= half of the machine...)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Return
         ------
@@ -1369,11 +1380,18 @@ class Lamination(LegacyModel):
                 continue  # Key surface overlap closing surface
             # Get the original surface
             Nsurf = notch.notch_shape.get_surface()
-            Nsurf.label = self.get_label() + "_" + NOTCH_LAB + "_R" + str(ii) + "-T0-S0"
+            Nsurf.label = (
+                self.get_label(machine=machine)
+                + "_"
+                + NOTCH_LAB
+                + "_R"
+                + str(ii)
+                + "-T0-S0"
+            )
             Nsurf.rotate(angle=notch.alpha)
             # Label definition
-            BC_prop_right = self.get_label() + "_" + YSNR_LAB
-            BC_prop_left = self.get_label() + "_" + YSNL_LAB
+            BC_prop_right = self.get_label(machine=machine) + "_" + YSNR_LAB
+            BC_prop_left = self.get_label(machine=machine) + "_" + YSNL_LAB
             # Generate all the surfaces (handle cut on sym axis)
             surf_list.extend(
                 Hole.transform_hole_surf(
@@ -1452,7 +1470,9 @@ class Lamination(LegacyModel):
             return self.Rext
 
     # Inlined from Methods.Machine.Lamination.get_surfaces_closing
-    def get_surfaces_closing(self, sym: int = 1) -> list:
+    def get_surfaces_closing(
+        self, sym: int = 1, machine: Machine | None = None
+    ) -> list:
         """Return the surfaces needed to close the radii of the Lamination
 
         Parameters
@@ -1461,6 +1481,8 @@ class Lamination(LegacyModel):
             A Lamination object
         sym : int
             Symmetry factor (1= full machine, 2= half of the machine...)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -1470,7 +1492,7 @@ class Lamination(LegacyModel):
 
         # No notch when bore shape
         if self.bore is None:
-            return self.get_notches_surf(sym=sym)
+            return self.get_notches_surf(sym=sym, machine=machine)
         else:
             return []
 
@@ -1616,7 +1638,9 @@ class Lamination(LegacyModel):
 
         (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
-        surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+        surf_list = self.build_geometry(
+            sym=sym, alpha=alpha, delta=delta, machine=machine
+        )
         patches = []
 
         # Color Selection for Surfaces

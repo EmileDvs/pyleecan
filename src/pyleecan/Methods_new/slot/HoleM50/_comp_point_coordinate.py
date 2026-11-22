@@ -1,15 +1,21 @@
 import numpy as np
 
 from scipy.optimize import fsolve
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : HoleM50
         A HoleM50 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -17,7 +23,7 @@ def _comp_point_coordinate(self) -> dict:
         A dict of the slot coordinates
     """
 
-    Rext = self.get_Rext()
+    Rext = self.get_Rext(lam=lam)
 
     # magnet pole pitch angle, must be <2*pi/2*p
     alpham = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))  # angle (Z9,0,Z9')

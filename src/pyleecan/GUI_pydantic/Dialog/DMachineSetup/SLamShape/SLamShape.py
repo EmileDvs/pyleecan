@@ -78,7 +78,7 @@ class SLamShape(Gen_SLamShape, QWidget):
         # Material setup
         self.w_mat.setText("Lamination Material")
         self.w_mat.def_mat = "M400-50A"
-        self.w_mat.update(self.obj, "mat_type", self.material_dict)
+        self.w_mat.update(self.obj, "mat_type", self.material_dict, machine=self.machine)
 
         # Ventilation setup
         if self.obj.axial_vent is None:

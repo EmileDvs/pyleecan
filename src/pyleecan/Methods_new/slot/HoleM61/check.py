@@ -1,15 +1,21 @@
 from ..Slot import SlotCheckError
-from . import *
+from . import S61_NoneError, S61_WCheckError
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Check that the HoleM61 object is correct
 
     Parameters
     ----------
     self : HoleM61
         A HoleM61 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------

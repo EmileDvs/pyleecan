@@ -359,7 +359,7 @@ class PWSlot11(Gen_PWSlot11, QWidget):
 
         # Check that everything is set right
         if lam.slot.W3 is not None:
-            lam.slot._comp_W()
+            lam.slot._comp_W(lam=lam)
 
         # Output
         try:

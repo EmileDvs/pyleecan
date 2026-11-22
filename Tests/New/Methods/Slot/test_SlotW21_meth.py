@@ -67,7 +67,7 @@ class Test_SlotW21_meth:
     def test_schematics(self, test_dict):
         """Check that the schematics is correct"""
         test_obj = test_dict["test_obj"]
-        point_dict = test_obj.slot._comp_point_coordinate()
+        point_dict = test_obj.slot._comp_point_coordinate(lam=test_obj)
 
         # Check width
         assert abs(point_dict["Z1"] - point_dict["Z8"]) == pytest.approx(
@@ -143,7 +143,7 @@ class Test_SlotW21_meth:
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -151,7 +151,7 @@ class Test_SlotW21_meth:
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface(test_obj.slot)
+        b = Slot.comp_surface(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -167,7 +167,7 @@ class Test_SlotW21_meth:
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface_active(test_obj.slot)
+        b = Slot.comp_surface_active(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -175,7 +175,7 @@ class Test_SlotW21_meth:
     def test_comp_surface_opening(self, test_dict):
         """Check that the computation of the opening surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_opening()
+        result = test_obj.slot.comp_surface_opening(lam=test_obj)
 
         a = result
         b = test_dict["SO_exp"]
@@ -183,7 +183,7 @@ class Test_SlotW21_meth:
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface_opening(test_obj.slot, Ndisc=400)
+        b = Slot.comp_surface_opening(test_obj.slot, Ndisc=400, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -191,7 +191,7 @@ class Test_SlotW21_meth:
     def test_comp_height(self, test_dict):
         """Check that the computation of the height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]
@@ -199,7 +199,7 @@ class Test_SlotW21_meth:
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_height(test_obj.slot)
+        b = Slot.comp_height(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -207,10 +207,10 @@ class Test_SlotW21_meth:
     def test_comp_angle_opening(self, test_dict):
         """Check that the computation of the average opening angle iscorrect"""
         test_obj = test_dict["test_obj"]
-        a = test_obj.slot.comp_angle_opening()
+        a = test_obj.slot.comp_angle_opening(lam=test_obj)
         assert a == 2 * arcsin(test_obj.slot.W0 / (2 * 0.1))
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_angle_opening(test_obj.slot)
+        b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -218,7 +218,7 @@ class Test_SlotW21_meth:
     def test_comp_angle_active_eq(self, test_dict):
         """Check that the computation of the average angle is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_angle_active_eq()
+        result = test_obj.slot.comp_angle_active_eq(lam=test_obj)
 
         a = result
         b = test_dict["Aw"]
@@ -250,7 +250,7 @@ class Test_SlotW21_meth:
         assert len(result[0].get_lines()) == 6
         assert result[0].is_inside(result[0].point_ref)
 
-        result = lam.slot.get_surface()
+        result = lam.slot.get_surface(lam=lam)
         assert len(result.get_lines()) == 8
         assert result.is_inside(result.point_ref)
 

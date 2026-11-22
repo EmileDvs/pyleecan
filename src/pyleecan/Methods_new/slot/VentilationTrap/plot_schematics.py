@@ -111,7 +111,7 @@ def plot_schematics(
             fig=fig,
             ax=ax,
         )  # center hole on Ox axis
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         # Adding point label
         if is_add_point_label:

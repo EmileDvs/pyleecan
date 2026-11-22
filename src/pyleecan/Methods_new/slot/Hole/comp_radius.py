@@ -1,13 +1,19 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_radius(self):
+def comp_radius(self, lam: Lamination | None = None):
     """Compute the radius of the min and max circle that contains the hole
 
     Parameters
     ----------
     self : Hole
         A Hole object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -16,7 +22,7 @@ def comp_radius(self):
 
     """
 
-    surf_list = self.build_geometry()
+    surf_list = self.build_geometry(lam=lam)
     point_list = list()
     for surf in surf_list:
         for curve in surf.get_lines():

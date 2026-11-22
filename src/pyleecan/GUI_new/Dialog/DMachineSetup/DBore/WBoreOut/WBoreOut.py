@@ -51,7 +51,7 @@ class WBoreOut(QGroupBox):
 
         if parent.check(lam) is None:
             # Compute all the needed output as string
-            Rmin = format(gui_option.unit.get_m(lam.bore.comp_Rmin()), ".4g")
+            Rmin = format(gui_option.unit.get_m(lam.bore.comp_Rmin(lam=lam)), ".4g")
             S = format(gui_option.unit.get_m2(lam.comp_surfaces()["Slam"]), ".4g")
 
             # Update the GUI to display the Output

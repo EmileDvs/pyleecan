@@ -97,7 +97,7 @@ class SMachineDimension(Ui_SMachineDimension, QWidget):
             self.lf_Wfra.setValue(machine.frame.comp_height_eq())
             if machine.frame.Lfra is not None:
                 self.lf_Lfra.setValue(machine.frame.Lfra)
-            self.w_mat_1.update(self.machine.frame, "mat_type", self.material_dict)
+            self.w_mat_1.update(self.machine.frame, "mat_type", self.material_dict, machine=self.machine)
 
         # Adapt the GUI to the topology of the machine
         self.out_Drsh.hide()  # Never show Drsh, internal parameter
@@ -148,7 +148,7 @@ class SMachineDimension(Ui_SMachineDimension, QWidget):
                 + gui_option.unit.get_m_name()
                 + "]"
             )
-            self.w_mat_0.update(self.machine.shaft, "mat_type", self.material_dict)
+            self.w_mat_0.update(self.machine.shaft, "mat_type", self.material_dict, machine=self.machine)
             if self.machine.shaft.Lshaft is None:
                 Lshaft = 0
             else:
@@ -321,7 +321,7 @@ class SMachineDimension(Ui_SMachineDimension, QWidget):
             else:
                 self.machine.frame.Rint = None
                 self.machine.frame.Rext = None
-            self.w_mat_1.update(self.machine.frame, "mat_type", self.material_dict)
+            self.w_mat_1.update(self.machine.frame, "mat_type", self.material_dict, machine=self.machine)
             self.lf_Wfra.clear()
             self.lf_Lfra.clear()
         else:
@@ -364,7 +364,7 @@ class SMachineDimension(Ui_SMachineDimension, QWidget):
             else:
                 self.out_Drsh.setText(self.tr("Drsh = "))
                 self.machine.shaft.Drsh = None
-            self.w_mat_0.update(self.machine.shaft, "mat_type", self.material_dict)
+            self.w_mat_0.update(self.machine.shaft, "mat_type", self.material_dict, machine=self.machine)
             # machine.rotor.Rint editable only if there is a shaft
             self.lf_RRint.setEnabled(True)
 

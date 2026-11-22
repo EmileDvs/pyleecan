@@ -60,7 +60,7 @@ class PCondType21(Gen_PCondType21, QWidget):
 
         self.lf_Hbar.setValue(conductor.Hbar)
         self.lf_Wbar.setValue(conductor.Wbar)
-        self.w_mat.update(conductor, "cond_mat", self.material_dict)
+        self.w_mat.update(conductor, "cond_mat", self.material_dict, machine=self.machine)
 
         # No insulation for Bar
         if conductor.Wins is None:

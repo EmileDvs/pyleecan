@@ -1,8 +1,18 @@
 from ..Slot import SlotCheckError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
-    """Check that the HoleUD is correctly defined"""
+def check(self, lam: Lamination | None = None) -> None:
+    """Check that the HoleUD is correctly defined
+
+    Parameters
+    ----------
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
+    """
     if self.surf_list is None:
         self.surf_list = list()
     if self.magnet_dict is None:

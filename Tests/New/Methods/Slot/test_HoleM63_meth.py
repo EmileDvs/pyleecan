@@ -55,7 +55,7 @@ class Test_HoleM63_meth(object):
         """Check that the schematics is correct"""
         test_obj = test_dict["test_obj"]
 
-        point_dict = test_obj.hole[0]._comp_point_coordinate()
+        point_dict = test_obj.hole[0]._comp_point_coordinate(lam=test_obj)
         Rbo = test_obj.hole[0].get_Rbo(lam=test_obj)
 
         # H0
@@ -88,7 +88,7 @@ class Test_HoleM63_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"].copy()
-        result = test_obj.hole[0].comp_surface()
+        result = test_obj.hole[0].comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -96,7 +96,7 @@ class Test_HoleM63_meth(object):
         # assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Hole.comp_surface(test_obj.hole[0])
+        b = Hole.comp_surface(test_obj.hole[0], lam=test_obj)
         msg = f"Return {a} expected {b}"
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -104,7 +104,7 @@ class Test_HoleM63_meth(object):
     def test_comp_radius(self, test_dict):
         """Check that the computation of the radius is correct"""
         test_obj = test_dict["test_obj"]
-        Rmin, Rmax = test_obj.hole[0].comp_radius()
+        Rmin, Rmax = test_obj.hole[0].comp_radius(lam=test_obj)
 
         Rmax_a = test_dict["Rmax_exp"]
         Rmin_a = test_dict["Rmin_exp"]
@@ -115,7 +115,7 @@ class Test_HoleM63_meth(object):
         msg = f"For Rmax: Return {a} expected {b}"
         assert abs((a - b) / a - 0) < DELTA, msg
 
-        Rmin_a, Rmax_a = Hole.comp_radius(test_obj.hole[0])
+        Rmin_a, Rmax_a = Hole.comp_radius(test_obj.hole[0], lam=test_obj)
         a, b = Rmin, Rmin_a
         msg = f"For Rmin: Return {a} expected {b}"
         assert abs((a - b) / a - 0) < DELTA, msg

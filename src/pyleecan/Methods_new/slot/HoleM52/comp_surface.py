@@ -1,13 +1,19 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_surface(self) -> float:
+def comp_surface(self, lam: Lamination | None = None) -> float:
     """Compute the surface of the Hole
 
     Parameters
     ----------
     self : HoleM52
         A HoleM52 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -16,9 +22,9 @@ def comp_surface(self) -> float:
 
     """
 
-    Rext = self.get_Rext()
+    Rext = self.get_Rext(lam=lam)
 
-    alpha = self.comp_alpha()
+    alpha = self.comp_alpha(lam=lam)
 
     # Angle between (P1,P2) and (0,P0) is slot_pitch /2
     # It is also the angle (P1,P2,S)
@@ -32,7 +38,7 @@ def comp_surface(self) -> float:
 
     W1 = D19 / 2.0 - D1S - self.W0 / 2.0
 
-    Smag = self.comp_surface_magnets()
+    Smag = self.comp_surface_magnets(lam=lam)
     # Two air trapeze area
     Strap = ((D19 / 2.0 - self.W0 / 2.0) + W1) * (self.H1 - self.H2)
 

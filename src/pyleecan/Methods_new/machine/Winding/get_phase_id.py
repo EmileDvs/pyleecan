@@ -2,9 +2,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import numpy as np
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def get_phase_id(self, Nrad: int, Ntan: int, Zs: int, wind_mat: np.ndarray | None = None) -> int:
+def get_phase_id(self, Nrad: int, Ntan: int, Zs: int, wind_mat: np.ndarray | None = None, lam: Lamination | None = None) -> int:
     """Return the id of the corresponding phase for the zone (Nrad,Ntan,Zs)
 
     Parameters
@@ -20,6 +21,8 @@ def get_phase_id(self, Nrad: int, Ntan: int, Zs: int, wind_mat: np.ndarray | Non
         Zone tagential coordinate
     Zs : int
         Zone slot number coordinate
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     Returns
     -------
@@ -27,5 +30,5 @@ def get_phase_id(self, Nrad: int, Ntan: int, Zs: int, wind_mat: np.ndarray | Non
         Id of the phase
     """
     if wind_mat is None:
-        wind_mat = self.get_connection_mat()
+        wind_mat = self.get_connection_mat(lam=lam)
     return self._get_phase_id(wind_mat, Nrad, Ntan, Zs)

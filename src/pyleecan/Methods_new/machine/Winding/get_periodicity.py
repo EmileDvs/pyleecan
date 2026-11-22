@@ -1,10 +1,18 @@
-def get_periodicity(self) -> tuple[int, bool]:
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+
+
+def get_periodicity(self, lam: Lamination | None = None) -> tuple[int, bool]:
     """Computes the winding matrix (anti-)periodicity
 
     Parameters
     ----------
     self : Winding
         A Winding object
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     Returns
     -------
@@ -16,6 +24,6 @@ def get_periodicity(self) -> tuple[int, bool]:
     """
 
     if self.per_a is None or self.is_aper_a is None:
-        self.per_a, self.is_aper_a = self.comp_periodicity()
+        self.per_a, self.is_aper_a = self.comp_periodicity(lam=lam)
 
     return self.per_a, self.is_aper_a

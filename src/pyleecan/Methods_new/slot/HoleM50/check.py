@@ -1,16 +1,22 @@
 import numpy as np
 
 from ..Slot import SlotCheckError
-from . import *
+from . import S50_H01CheckError, S50_H23CheckError, S50_NoneError, S50_SpCheckError, S50_W01CheckError, S50_W3CheckError, S50_W5CheckError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Check that the HoleM50 object is correct
 
     Parameters
     ----------
     self : HoleM50
         A HoleM50 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -29,7 +35,7 @@ def check(self) -> None:
     S50_SpCheckError
         Slot pitch too small for the slot, reduce Zh, W3 or W0
     """
-    Rext = self.get_Rext()
+    Rext = self.get_Rext(lam=lam)
 
     # Check that everything is set
     if self.W0 is None:
@@ -62,7 +68,7 @@ def check(self) -> None:
     if self.H0 <= self.H1:
         raise S50_H01CheckError("You must have H1 < H0")
 
-    if self.comp_W5() < 0:
+    if self.comp_W5(lam=lam) < 0:
         raise S50_W5CheckError("You must have W5 >=0")
 
     alpha_0 = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))  # W0 in rad
@@ -70,7 +76,7 @@ def check(self) -> None:
     if alpha_0 + alpha_3 > 2 * np.pi / self.Zh:
         raise S50_SpCheckError("Slot pitch too small for the slot, reduce Zh, W3 or W0")
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     if abs(point_dict["Z1"]) > abs(point_dict["Z11"]):
         raise S50_W3CheckError(
             "Points are colliding: unable to fulfill W3 constraints, for instance try increasing W3"

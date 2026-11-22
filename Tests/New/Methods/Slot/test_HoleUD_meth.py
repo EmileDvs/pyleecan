@@ -59,8 +59,8 @@ class Test_HoleUD_meth(object):
 
     def test_comp_surface(self):
         """Check that the computation of the slot surface is correct"""
-        exp = Toyota_Prius.rotor.hole[0].comp_surface()
-        result = IPMSM_B.rotor.hole[0].comp_surface()
+        exp = Toyota_Prius.rotor.hole[0].comp_surface(lam=Toyota_Prius.rotor)
+        result = IPMSM_B.rotor.hole[0].comp_surface(lam=IPMSM_B.rotor)
 
         assert exp == pytest.approx(result, rel=0.01)
 
@@ -147,7 +147,7 @@ class Test_HoleUD_meth(object):
         simu.struct = None
 
         simu_UD = simu.copy()
-        hole = Toyota_Prius.rotor.hole[0].convert_to_UD()
+        hole = Toyota_Prius.rotor.hole[0].convert_to_UD(lam=Toyota_Prius.rotor)
         assert len(hole.surf_list) == 5
         assert len(hole.magnet_dict) == 2
         assert "magnet_0" in hole.magnet_dict
@@ -162,8 +162,8 @@ class Test_HoleUD_meth(object):
         assert isinstance(hole.magnetization_dict_offset["magnet_1"], float)
         simu_UD.machine.rotor.hole[0] = hole
 
-        (R1, R2) = simu.machine.rotor.hole[0].comp_radius()
-        (R3, R4) = simu_UD.machine.rotor.hole[0].comp_radius()
+        (R1, R2) = simu.machine.rotor.hole[0].comp_radius(lam=simu.machine.rotor)
+        (R3, R4) = simu_UD.machine.rotor.hole[0].comp_radius(lam=simu_UD.machine.rotor)
         assert R1 == pytest.approx(R3)
         assert R2 == pytest.approx(R4)
         out = simu.run()

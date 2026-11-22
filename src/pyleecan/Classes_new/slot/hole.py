@@ -70,13 +70,15 @@ class Hole(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.Hole.comp_height
-    def comp_height(self) -> float:
+    def comp_height(self, lam: Lamination | None = None) -> float:
         """Compute the height of the Hole (Rmax-Rmin)
 
         Parameters
         ----------
         self : Hole
             A Hole object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -85,11 +87,13 @@ class Hole(LegacyClass):
 
         """
 
-        (Rmin, Rmax) = self.comp_radius()
+        (Rmin, Rmax) = self.comp_radius(lam=lam)
         return Rmax - Rmin
 
     # Inlined from Methods.Slot.Hole.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True) -> dict:
+    def comp_magnetization_dict(
+        self, is_north=True, lam: Lamination | None = None
+    ) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -99,6 +103,8 @@ class Hole(LegacyClass):
             a Hole object
         is_north: True
             True: comp north magnetization, else add pi [rad]
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -116,13 +122,15 @@ class Hole(LegacyClass):
             return {}
 
     # Inlined from Methods.Slot.Hole.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | None = None):
         """Compute the radius of the min and max circle that contains the hole
 
         Parameters
         ----------
         self : Hole
             A Hole object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -131,7 +139,7 @@ class Hole(LegacyClass):
 
         """
 
-        surf_list = self.build_geometry()
+        surf_list = self.build_geometry(lam=lam)
         point_list = []
         for surf in surf_list:
             for curve in surf.get_lines():
@@ -143,13 +151,15 @@ class Hole(LegacyClass):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.Hole.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | None = None) -> float:
         """Compute the Hole total surface (by numerical computation).
 
         Parameters
         ----------
         self : Hole
             A Hole object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -158,7 +168,7 @@ class Hole(LegacyClass):
 
         """
 
-        surf_list = self.build_geometry()
+        surf_list = self.build_geometry(lam=lam)
         S = 0
         for surf in surf_list:
             S += surf.comp_surface()
@@ -166,14 +176,20 @@ class Hole(LegacyClass):
         return S
 
     # Inlined from Methods.Slot.Hole.convert_to_UD
-    def convert_to_UD(self):
-        """Convert the hole to HoleUD"""
+    def convert_to_UD(self, lam: Lamination | None = None):
+        """Convert the hole to HoleUD
+
+        Parameters
+        ----------
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
+        """
         # Local import: avoids circular imports
         from .hole_ud import HoleUD
 
-        surf_list = self.build_geometry()
+        surf_list = self.build_geometry(lam=lam)
         magnet_dict = self.get_magnet_dict()
-        magnetization_dict = self.comp_magnetization_dict()
+        magnetization_dict = self.comp_magnetization_dict(lam=lam)
 
         return HoleUD(
             surf_list=surf_list,
@@ -365,6 +381,7 @@ class Hole(LegacyClass):
         is_add_ref: bool = False,
         is_show_fig: bool = True,
         is_all_hole: bool = False,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot the Hole in a matplotlib fig
 
@@ -385,6 +402,8 @@ class Hole(LegacyClass):
             True to add the reference points of the surfaces
         is_all_hole : bool
             True to plot the Zh holes
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -400,7 +419,7 @@ class Hole(LegacyClass):
         else:
             color = "w"
 
-        surf_hole = self.build_geometry()
+        surf_hole = self.build_geometry(lam=lam)
         if is_all_hole:
             # Duplicate the hole surfaces
             surf_hole = self.transform_hole_surf(
@@ -429,8 +448,8 @@ class Hole(LegacyClass):
 
         # Magnetization
         if is_add_arrow:
-            H = self.comp_height()
-            mag_dict = self.comp_magnetization_dict()
+            H = self.comp_height(lam=lam)
+            mag_dict = self.comp_magnetization_dict(lam=lam)
             for magnet_name, mag_dir in mag_dict.items():
                 # Get the correct surface
                 mag_surf = None
@@ -443,6 +462,11 @@ class Hole(LegacyClass):
                     ):
                         mag_surf = surf
                         break
+                if mag_surf is None:
+                    raise ValueError(
+                        f"{type(self).__name__}.plot: no surface of {magnet_name} "
+                        "in the geometry of the hole"
+                    )
                 # Create arrow coordinates
                 Z1 = mag_surf.point_ref
                 Z2 = mag_surf.point_ref + H / 5 * np.exp(1j * mag_dir)
@@ -463,7 +487,7 @@ class Hole(LegacyClass):
         # Axis Setup
         ax.axis("equal")
         try:
-            Lim = self.get_Rbo() * 1.2
+            Lim = self.get_Rbo(lam=lam) * 1.2
             ax.set_xlim(-Lim, Lim)
             ax.set_ylim(-Lim, Lim)
         except ParentMissingError:

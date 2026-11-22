@@ -40,7 +40,7 @@ class Test_Hole_54_plot(object):
         fig.savefig(join(save_path, "test_Lam_Hole_s54-Rotor.png"))
         assert len(fig.axes[0].patches) == 18
 
-        test_obj.rotor.hole[0].plot(is_show_fig=False)
+        test_obj.rotor.hole[0].plot(is_show_fig=False, lam=test_obj.rotor)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_s54-Rotor hole.png"))
         assert len(fig.axes[0].patches) == 1

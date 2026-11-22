@@ -28,7 +28,7 @@ def test_plot_radius():
 
     fig, ax = BMW.rotor.plot(is_show_fig=False, edgecolor="k", machine=BMW)
     # Top and Bottom arc
-    (Rint, Rext) = BMW.rotor.hole[0].comp_radius()
+    (Rint, Rext) = BMW.rotor.hole[0].comp_radius(lam=BMW.rotor)
     line = Arc1(
         begin=Rext * exp(1j * pi / 4),
         end=Rext * exp(1j * 3 * pi / 4),

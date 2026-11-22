@@ -46,7 +46,7 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
     Rext = self.get_Rext(lam=lam)
 
     # Get all the points
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z1 = point_dict["Z1"]
     Z2 = point_dict["Z2"]
     Z3 = point_dict["Z3"]

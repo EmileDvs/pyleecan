@@ -43,7 +43,7 @@ class LamSlotM(LamSlot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamSlotM.comp_angle_d_axis
-    def comp_angle_d_axis(self) -> float:
+    def comp_angle_d_axis(self, machine: Machine | None = None) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
         By convention the first magnet is +
@@ -52,6 +52,8 @@ class LamSlotM(LamSlot):
         ----------
         self : LamSlotM
             A LamSlotM object
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -203,7 +205,9 @@ class LamSlotM(LamSlot):
         (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
         # Get the lamination surfaces
-        surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+        surf_list = self.build_geometry(
+            sym=sym, alpha=alpha, delta=delta, machine=machine
+        )
         patches = []
         for surf in surf_list:
             label_dict = decode_label(surf.label)

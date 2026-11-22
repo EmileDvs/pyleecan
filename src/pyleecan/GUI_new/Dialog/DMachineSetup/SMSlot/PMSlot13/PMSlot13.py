@@ -20,7 +20,7 @@ class PMSlot13(Gen_PMSlot13, QWidget):
     slot_name = "Rectangular Magnet with curved top"
     slot_type = SlotM13
 
-    def __init__(self, lamination=None, material_dict=None):
+    def __init__(self, lamination=None, material_dict=None, machine=None):
         """Initialize the widget according to lamination
 
         Parameters
@@ -31,12 +31,15 @@ class PMSlot13(Gen_PMSlot13, QWidget):
             current lamination to edit
         material_dict: dict
             Materials dictionary (library + machine)
+        machine : Machine
+            Machine holding the lamination (for the material library)
         """
 
         # Build the interface according to the .ui file
         QWidget.__init__(self)
         self.setupUi(self)
         self.lamination = lamination
+        self.machine = machine
         self.slot = lamination.slot
         self.material_dict = material_dict
 
@@ -69,7 +72,7 @@ class PMSlot13(Gen_PMSlot13, QWidget):
 
         self.key_mat = None
         # Setup the widgets according to current values
-        self.w_mag.update(lamination, self.material_dict)
+        self.w_mag.update(lamination, self.material_dict, machine=self.machine)
 
         # Connect the signal
         self.lf_W0.editingFinished.connect(self.set_W0)

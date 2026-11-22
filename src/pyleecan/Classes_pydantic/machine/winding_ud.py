@@ -36,7 +36,7 @@ class WindingUD(Winding):
     # Inlined from Methods.Machine.WindingUD.import_from_csv
     def import_from_csv(
         self,
-        file_path: str | None = None,
+        file_path: str,
         lam: Lamination | None = None,
         *,
         ZS_COL=0,

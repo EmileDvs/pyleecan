@@ -61,7 +61,9 @@ class MachineUD(Machine):
             )
 
         for lam in self.lam_list:
-            surf_list.extend(lam.build_geometry(sym=sym, alpha=alpha, delta=delta))
+            surf_list.extend(
+                lam.build_geometry(sym=sym, alpha=alpha, delta=delta, machine=self)
+            )
 
         if self.shaft is not None:
             surf_list.extend(

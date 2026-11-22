@@ -1,13 +1,19 @@
 from ..Slot import SlotCheckError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Check that the HoleMLSRPM object is correct
 
     Parameters
     ----------
     self : HoleMLSRPM
         A HoleMLSRPM object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------

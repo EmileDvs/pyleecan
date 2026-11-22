@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/NotchEvenDist.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -10,6 +10,9 @@ from ...Functions_pydantic.utils.labels import KEY_LAB, YSNL_LAB, YSNR_LAB
 from ..slot.hole import Hole
 from ..slot.slot import Slot
 from .notch import Notch
+
+if TYPE_CHECKING:
+    from .lamination import Lamination
 
 
 class NotchEvenDist(Notch):
@@ -35,7 +38,12 @@ class NotchEvenDist(Notch):
 
     # Inlined from Methods.Machine.NotchEvenDist.build_geometry_key
     def build_geometry_key(
-        self, index: int = 0, sym: int = 1, alpha: float = 0, delta: complex = 0
+        self,
+        index: int = 0,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | None = None,
     ) -> list:
         """Build the geometry of the keys inside the notch
 
@@ -51,6 +59,8 @@ class NotchEvenDist(Notch):
             Angle for rotation [rad]
         delta : complex
             Complex value for translation
+        lam : Lamination, optional
+            Lamination holding the notch (default: the parent)
 
         Returns
         -------
@@ -63,11 +73,13 @@ class NotchEvenDist(Notch):
 
         # Get the original surface
         Nsurf = self.notch_shape.get_surface_active(lam=self)
-        Nsurf.label = self.get_label() + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
+        Nsurf.label = (
+            self.get_label(lam=lam) + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
+        )
         Nsurf.rotate(angle=self.alpha)
         # Label definition
-        BC_prop_right = self.get_label() + "_" + YSNR_LAB
-        BC_prop_left = self.get_label() + "_" + YSNL_LAB
+        BC_prop_right = self.get_label(lam=lam) + "_" + YSNR_LAB
+        BC_prop_left = self.get_label(lam=lam) + "_" + YSNL_LAB
         # Generate all the surfaces (handle cut on sym axis)
         surf_list.extend(
             Hole.transform_hole_surf(
@@ -128,13 +140,15 @@ class NotchEvenDist(Notch):
         return self.notch_shape.Zs * self.notch_shape.comp_surface(lam=self)
 
     # Inlined from Methods.Machine.NotchEvenDist.get_key_Ox_radius
-    def get_key_Ox_radius(self) -> float | None:
+    def get_key_Ox_radius(self, lam: Lamination | None = None) -> float | None:
         """Return the Key max/min radius on Ox to close the sliding band in FEMM
 
         Parameters
         ----------
         self : NotchEvenDist
             A NotchEvenDist object
+        lam : Lamination, optional
+            Lamination holding the notch (default: the parent)
 
         Returns
         -------
@@ -143,7 +157,7 @@ class NotchEvenDist(Notch):
         """
 
         # Get all surfaces
-        surf_list = self.build_geometry_key(sym=1)
+        surf_list = self.build_geometry_key(sym=1, lam=lam)
 
         # Cut to find a surface on Ox
         Z_list = []
@@ -158,7 +172,7 @@ class NotchEvenDist(Notch):
         Rright = [Z.real for Z in Z_list if Z.real > 0]
         if len(Rright) == 0:
             return None
-        elif self.is_outwards():  # Outer lamination
+        elif self.is_outwards(lam=lam):  # Outer lamination
             return min(Rright)
         else:
             return max(Rright)

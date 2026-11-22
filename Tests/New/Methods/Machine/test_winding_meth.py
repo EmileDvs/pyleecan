@@ -34,7 +34,9 @@ test_obj.slot.Zs = 36
 test_obj.winding = Winding(qs=3, p=3, Nlayer=2, coil_pitch=5, Ntcoil=9)
 exp_shape = (2, 1, 36, 3)
 exp_imp_list.append({"test_obj": test_obj, "exp_shape": exp_shape})
-wind_per = test_obj.winding.get_connection_mat()  # For periodicity import test
+wind_per = test_obj.winding.get_connection_mat(
+    lam=test_obj
+)  # For periodicity import test
 
 # Ntan = 1 ; Ntan = 2
 test_obj = LamSlotWind()
@@ -63,7 +65,10 @@ def test_export_import_Head_Full(test_dict):
     # Header=True, Skip=False
     save_path_1 = join(save_path, wind_name + "_" + "Head_Full.csv")
     test_dict["test_obj"].winding.export_to_csv(
-        file_path=save_path_1, is_add_header=True, is_skip_empty=False
+        file_path=save_path_1,
+        is_add_header=True,
+        is_skip_empty=False,
+        lam=test_dict["test_obj"],
     )
     result = WindingUD()
     result.import_from_csv(save_path_1)

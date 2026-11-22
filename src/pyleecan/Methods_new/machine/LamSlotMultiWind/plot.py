@@ -90,7 +90,7 @@ def plot(
             qs = 1
         else:
             try:
-                wind_mat = self.winding.get_connection_mat(self.get_Zs())
+                wind_mat = self.winding.get_connection_mat(self.get_Zs(), lam=self)
                 qs = self.winding.qs
             except:
                 wind_mat = None
@@ -100,7 +100,7 @@ def plot(
         qs = 1
 
     # Get the LamSlot surface(s)
-    surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+    surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta, machine=machine)
     patches = list()
     for surf in surf_list:
         label_dict = decode_label(surf.label)
@@ -110,7 +110,7 @@ def plot(
                     color, sign = Winding._find_wind_phase_color(surf.label, None)
                 else:
                     color, sign = self.winding.find_wind_phase_color(
-                        label=surf.label, wind_mat=wind_mat
+                        label=surf.label, wind_mat=wind_mat, lam=self
                     )
                 if sign == "+" and is_add_sign:
                     hatch = PLUS_HATCH

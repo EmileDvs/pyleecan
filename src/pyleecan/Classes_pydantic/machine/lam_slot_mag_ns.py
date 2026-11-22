@@ -25,6 +25,7 @@ from .lam_slot_m import LamSlotM
 from .magnet import Magnet
 
 if TYPE_CHECKING:
+    from .machine import Machine
     from .magnet import Magnet
 
 
@@ -62,6 +63,7 @@ class LamSlotMagNS(LamSlotM):
         alpha: float = 0,
         delta: complex = 0,
         is_circular_radius: bool = False,
+        machine: Machine | None = None,
     ) -> list:
         """Build the geometry of the LamSlotMag
 
@@ -79,6 +81,8 @@ class LamSlotMagNS(LamSlotM):
             Complex value for translation
         is_circular_radius : bool
             True to add surfaces to "close" the Lamination radii
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -87,7 +91,7 @@ class LamSlotMagNS(LamSlotM):
 
         """
 
-        st = self.get_label()
+        st = self.get_label(machine=machine)
 
         assert (self.slot.Zs % sym) == 0, (
             "ERROR, Wrong symmetry for "
@@ -155,7 +159,7 @@ class LamSlotMagNS(LamSlotM):
                                 )
             # Update Magnets BC when no lamination
             if self.Rint == self.Rext and self.Rint != 0:
-                label_yoke = self.get_label() + "_" + LAM_LAB + YOKE_LAB
+                label_yoke = self.get_label(machine=machine) + "_" + LAM_LAB + YOKE_LAB
                 for surf in mag_surf_list:
                     label_dict = decode_label(surf.label)
                     if label_dict["R_id"] == 0:
@@ -214,7 +218,7 @@ class LamSlotMagNS(LamSlotM):
                                 )
             # Update Magnets BC when no lamination
             if self.Rint == self.Rext and self.Rint != 0:
-                label_yoke = self.get_label() + "_" + LAM_LAB + YOKE_LAB
+                label_yoke = self.get_label(machine=machine) + "_" + LAM_LAB + YOKE_LAB
                 for surf in mag_surf_list:
                     label_dict = decode_label(surf.label)
                     if label_dict["R_id"] == 0:

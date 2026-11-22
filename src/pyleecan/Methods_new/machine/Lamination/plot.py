@@ -66,7 +66,7 @@ def plot(
     from ....Classes_new.machine.machine import Machine
     (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
-    surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+    surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta, machine=machine)
     patches = list()
 
     # Color Selection for Surfaces

@@ -201,7 +201,7 @@ class DNotchTab(Ui_DNotchTab, QDialog):
 
         if error == None:
             try:
-                self.obj.build_geometry()
+                self.obj.build_geometry(machine=self.machine)
             except NotchError as e:
                 error = str(e)
 

@@ -38,7 +38,7 @@ def comp_Ncspc(self, Zs: int | None = None, lam: Lamination | None = None) -> fl
 
         Zs = lam.slot.Zs
 
-    (Nrad, Ntan) = self.get_dim_wind()
+    (Nrad, Ntan) = self.get_dim_wind(lam=lam)
     Ncspc = Zs * Nrad * Ntan / (2.0 * self.qs * self.Npcp)
 
     return Ncspc

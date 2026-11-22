@@ -50,7 +50,7 @@ class HoleMag(Hole):
                 Lmag = lam.L1
             else:
                 Lmag = mag_list[index].Lmag
-            return self.comp_surface_magnet_id(index) * Lmag
+            return self.comp_surface_magnet_id(index, lam=lam) * Lmag
 
     # Inlined from Methods.Slot.HoleMag.comp_mass_magnets
     def comp_mass_magnets(self, lam: Lamination | None = None) -> float:
@@ -74,7 +74,7 @@ class HoleMag(Hole):
         mag_list = self.get_magnet_list()
         for ii, mag in enumerate(mag_list):
             if mag is not None:
-                Smag = self.comp_surface_magnet_id(ii)
+                Smag = self.comp_surface_magnet_id(ii, lam=lam)
                 if mag.Lmag is None:
                     Lmag = lam.L1
                 else:
@@ -91,13 +91,15 @@ class HoleMag(Hole):
         return M
 
     # Inlined from Methods.Slot.HoleMag.comp_surface_magnets
-    def comp_surface_magnets(self) -> float:
+    def comp_surface_magnets(self, lam: Lamination | None = None) -> float:
         """Compute the surface of all the magnet(s)
 
         Parameters
         ----------
         self : HoleMag
             A HoleMag object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -108,7 +110,7 @@ class HoleMag(Hole):
         mag_list = self.get_magnet_list()
         Smag = 0
         for ii in range(len(mag_list)):
-            Smag += self.comp_surface_magnet_id(ii)
+            Smag += self.comp_surface_magnet_id(ii, lam=lam)
         return Smag
 
     # Inlined from Methods.Slot.HoleMag.comp_volume_magnets
@@ -133,7 +135,7 @@ class HoleMag(Hole):
         mag_list = self.get_magnet_list()
         for ii, mag in enumerate(mag_list):
             if mag is not None:
-                Smag = self.comp_surface_magnet_id(ii)
+                Smag = self.comp_surface_magnet_id(ii, lam=lam)
                 if mag.Lmag is None:
                     Lmag = lam.L1
                 else:

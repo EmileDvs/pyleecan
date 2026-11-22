@@ -1,14 +1,20 @@
 from ..Slot import SlotCheckError
-from . import *
+from . import S52_H12CheckError, S52_NoneError, S52_W1CheckError, S52_alphaCheckError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Check that the HoleM52 object is correct
 
     Parameters
     ----------
     self : HoleM52
         A HoleM52 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -39,12 +45,12 @@ def check(self) -> None:
     if self.H2 >= self.H1:
         raise S52_H12CheckError("You must have H2 < H1")
 
-    alpha = self.comp_alpha()
+    alpha = self.comp_alpha(lam=lam)
     if alpha <= 0:
         raise S52_alphaCheckError(
             "The teeth are too wide for the lamination (reduce W3 or H0)"
         )
 
-    W1 = self.comp_W1()
+    W1 = self.comp_W1(lam=lam)
     if W1 <= 0:
         raise S52_W1CheckError("W1 is <=0, you must reduce W0 or W3")

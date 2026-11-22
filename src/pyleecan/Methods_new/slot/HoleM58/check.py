@@ -1,14 +1,20 @@
 from ..Slot import SlotCheckError
-from . import *
+from . import S58_NoneError, S58_WCheckError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Check that the HoleM58 object is correct
 
     Parameters
     ----------
     self : HoleM58
         A HoleM58 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -37,7 +43,7 @@ def check(self) -> None:
     elif self.H2 is None:
         raise S58_NoneError("You must set H2 !")
 
-    Rext = self.get_Rext()
+    Rext = self.get_Rext(lam=lam)
 
     if self.W0 < self.W1 + self.W2:
         raise S58_WCheckError("You must have W1+W2 <= W0")

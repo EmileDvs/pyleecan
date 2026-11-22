@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.lamination import Lamination
 
 MAGNET_COLOR = config_dict["PLOT"]["COLOR_DICT"]["MAGNET_COLOR"]
 ARROW_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
@@ -24,7 +25,7 @@ def plot(
     is_add_arrow: bool = False,
     is_add_ref: bool = False,
     is_show_fig: bool = True,
-    is_all_hole: bool = False,
+    is_all_hole: bool = False, lam: Lamination | None = None,
 ) -> tuple[Figure, Axes]:
     """Plot the Hole in a matplotlib fig
 
@@ -45,6 +46,8 @@ def plot(
         True to add the reference points of the surfaces
     is_all_hole : bool
         True to plot the Zh holes
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -60,7 +63,7 @@ def plot(
     else:
         color = "w"
 
-    surf_hole = self.build_geometry()
+    surf_hole = self.build_geometry(lam=lam)
     if is_all_hole:
         # Duplicate the hole surfaces
         surf_hole = self.transform_hole_surf(
@@ -89,8 +92,8 @@ def plot(
 
     # Magnetization
     if is_add_arrow:
-        H = self.comp_height()
-        mag_dict = self.comp_magnetization_dict()
+        H = self.comp_height(lam=lam)
+        mag_dict = self.comp_magnetization_dict(lam=lam)
         for magnet_name, mag_dir in mag_dict.items():
             # Get the correct surface
             mag_surf = None
@@ -103,6 +106,11 @@ def plot(
                 ):
                     mag_surf = surf
                     break
+            if mag_surf is None:
+                raise ValueError(
+                    f"{type(self).__name__}.plot: no surface of {magnet_name} "
+                    "in the geometry of the hole"
+                )
             # Create arrow coordinates
             Z1 = mag_surf.point_ref
             Z2 = mag_surf.point_ref + H / 5 * np.exp(1j * mag_dir)
@@ -121,7 +129,7 @@ def plot(
     # Axis Setup
     ax.axis("equal")
     try:
-        Lim = self.get_Rbo() * 1.2
+        Lim = self.get_Rbo(lam=lam) * 1.2
         ax.set_xlim(-Lim, Lim)
         ax.set_ylim(-Lim, Lim)
     except ParentMissingError:

@@ -1,13 +1,19 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_surface_magnet(self) -> float:
+def comp_surface_magnet(self, lam: Lamination | None = None) -> float:
     """Compute the surface of the Hole
 
     Parameters
     ----------
     self : HoleMLSRPM
         A HoleMLSRPM object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -16,7 +22,7 @@ def comp_surface_magnet(self) -> float:
 
     """
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z3 = point_dict["Z3"]
     Z4 = point_dict["Z4"]
     Z7 = point_dict["Z7"]

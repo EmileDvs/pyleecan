@@ -58,20 +58,22 @@ class VentilationCirc(Hole):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.VentilationCirc._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
         """Compute the point coordinates needed to plot the Hole.
 
         Parameters
         ----------
         self : VentilationCirc
             A VentilationCirc object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
         point_dict: dict
             A dict of the slot point coordinates
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         Z1 = (self.H0 - self.D0 / 2) * np.exp(1j * self.Alpha0)
         Z2 = (self.H0 + self.D0 / 2) * np.exp(1j * self.Alpha0)
@@ -142,13 +144,15 @@ class VentilationCirc(Hole):
         return surf_list
 
     # Inlined from Methods.Slot.VentilationCirc.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Make sure that the ventilation parameters are correctly set
 
         Parameters
         ----------
         self : VentilationCirc
             A VentilationCirc object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -173,7 +177,7 @@ class VentilationCirc(Hole):
             raise VentilationCircInstanceError("Alpha0 must be a float ot int")
 
     # Inlined from Methods.Slot.VentilationCirc.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | None = None):
         """Compute the radius of the two circle that contains all the ventilation
         ducts
 
@@ -181,6 +185,8 @@ class VentilationCirc(Hole):
         ----------
         self : VentilationCirc
             A VentilationCirc object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -189,7 +195,7 @@ class VentilationCirc(Hole):
 
         """
 
-        self.check()
+        self.check(lam=lam)
 
         Rmin = self.H0 - self.D0 / 2.0
         Rmax = self.H0 + self.D0 / 2.0
@@ -197,13 +203,15 @@ class VentilationCirc(Hole):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.VentilationCirc.comp_surface
-    def comp_surface(self):
+    def comp_surface(self, lam: Lamination | None = None):
         """Compute the surface of all the axial ventilation ducts
 
         Parameters
         ----------
         self : VentilationCirc
             A VentilationCirc object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -212,7 +220,7 @@ class VentilationCirc(Hole):
 
         """
 
-        self.check()
+        self.check(lam=lam)
 
         return np.pi * ((self.D0 / 2.0) ** 2)
 
@@ -341,7 +349,7 @@ class VentilationCirc(Hole):
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo(lam=lam)
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:

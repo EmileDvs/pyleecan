@@ -83,7 +83,7 @@ def plot(
     # List of surface to plot the lamination
     (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
-    surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+    surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta, machine=machine)
     patches = list()
 
     for surf in surf_list:

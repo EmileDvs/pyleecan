@@ -13,7 +13,7 @@ RAD_COL = 2  # Rad layer id
 TAN_COL = 3  # Tan layer id
 
 
-def import_from_csv(self, file_path: str | None = None, lam: Lamination | None = None) -> None:
+def import_from_csv(self, file_path: str, lam: Lamination | None = None) -> None:
     """Import the winding matrix from a csv file.
     One matrix for each phase
     Column Slot id, Ntcoil, Rad id, Tan id

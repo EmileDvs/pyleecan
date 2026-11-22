@@ -21,7 +21,7 @@ def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
 
     # Angular periodicity
     if self.winding is not None and self.winding.conductor is not None:
-        per_a_w, is_antiper_a_w = self.winding.get_periodicity()
+        per_a_w, is_antiper_a_w = self.winding.get_periodicity(lam=self)
         per_a = int(np.gcd(per_a, per_a_w))
         is_antiper_a = is_antiper_a and is_antiper_a_w
 

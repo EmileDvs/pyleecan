@@ -1,20 +1,26 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : HoleM53
         A HoleM53 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
     point_dict: dict
         A dict of the slot coordinates
     """
-    Rext = self.get_Rext()
+    Rext = self.get_Rext(lam=lam)
 
     Z0 = Rext - self.H0
     Z2 = Z0 + 1j * (self.W0 / 2)

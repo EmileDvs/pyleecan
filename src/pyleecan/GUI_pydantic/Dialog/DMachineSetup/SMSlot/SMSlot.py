@@ -129,7 +129,9 @@ class SMSlot(Ui_SMSlot, QWidget):
         """
         self.tab_slot.clear()  # remove previous tabs
         if isinstance(self.obj, LamSlotMag):  # one pole
-            tab = WSlotMag(lam=self.obj, material_dict=self.material_dict)
+            tab = WSlotMag(
+                lam=self.obj, material_dict=self.material_dict, machine=self.machine
+            )
             tab.saveNeeded.connect(self.emit_save)
             self.tab_slot.addTab(tab, "Pole")
         elif isinstance(self.obj, LamSlotMagNS):  # two poles
@@ -140,6 +142,7 @@ class SMSlot(Ui_SMSlot, QWidget):
             tab_north = WSlotMag(
                 lam=lam_north,
                 material_dict=self.material_dict,
+                machine=self.machine,
             )
             tab_north.typeSlotShanged.connect(self.update_slot_type)
             tab_north.saveNeeded.connect(self.emit_save)
@@ -151,6 +154,7 @@ class SMSlot(Ui_SMSlot, QWidget):
             tab_south = WSlotMag(
                 lam=lam_south,
                 material_dict=self.material_dict,
+                machine=self.machine,
             )
             tab_south.typeSlotShanged.connect(self.update_slot_type)
             tab_south.saveNeeded.connect(self.emit_save)

@@ -7,9 +7,13 @@ from ....Classes_new.geometry.surf_ring import SurfRing
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Functions_new.utils.labels import update_RTS_index
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
-def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False) -> list:
+def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False, machine: Machine | None = None) -> list:
     """Build the geometry of the LamHole object
 
     Parameters
@@ -24,6 +28,8 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
         Complex value for translation
     is_circular_radius : bool
         True to add surfaces to "close" the Lamination radii
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Returns
     -------

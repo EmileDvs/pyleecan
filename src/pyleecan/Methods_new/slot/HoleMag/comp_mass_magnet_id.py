@@ -32,4 +32,4 @@ def comp_mass_magnet_id(self, index: int, lam: Lamination | None = None) -> floa
             Lmag = lam.L1
         else:
             Lmag = mag_list[index].Lmag
-        return self.comp_surface_magnet_id(index) * Lmag
+        return self.comp_surface_magnet_id(index, lam=lam) * Lmag

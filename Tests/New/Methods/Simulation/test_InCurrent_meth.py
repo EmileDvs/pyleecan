@@ -182,7 +182,7 @@ class Test_InCurrent_meth(object):
         rot_dir = ROT_DIR_REF
         assert rot_dir == -1
         # mmf_dir is the rotation direction of the fundamental magnetic field
-        mmf_dir = Toyota_Prius.stator.comp_mmf_dir(current_dir=current_dir)
+        mmf_dir = Toyota_Prius.stator.comp_mmf_dir(current_dir=current_dir, machine=Toyota_Prius)
         assert mmf_dir == 1
         Ia = (
             A_rms

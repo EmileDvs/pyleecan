@@ -139,7 +139,7 @@ class Test_SlotW23_meth(object):
     def test_schematics(self, test_dict):
         """Check that the schematics is correct"""
         test_obj = test_dict["test_obj"].copy()
-        point_dict = test_obj.slot._comp_point_coordinate()
+        point_dict = test_obj.slot._comp_point_coordinate(lam=test_obj)
 
         # Check width
         assert abs(point_dict["Z1"] - point_dict["Z8"]) == pytest.approx(
@@ -156,7 +156,7 @@ class Test_SlotW23_meth(object):
             test_obj.slot.H0
         )
         assert abs(point_dict["Z2"].real - point_dict["Z3"].real) == pytest.approx(
-            test_obj.slot.get_H1()
+            test_obj.slot.get_H1(lam=test_obj)
         )
         assert abs(point_dict["Z3"] - point_dict["Z4"]) == pytest.approx(
             test_obj.slot.H2
@@ -165,7 +165,7 @@ class Test_SlotW23_meth(object):
             test_obj.slot.H0
         )
         assert abs(point_dict["Z6"].real - point_dict["Z7"].real) == pytest.approx(
-            test_obj.slot.get_H1()
+            test_obj.slot.get_H1(lam=test_obj)
         )
         assert abs(point_dict["Z5"] - point_dict["Z6"]) == pytest.approx(
             test_obj.slot.H2
@@ -223,7 +223,7 @@ class Test_SlotW23_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"].copy()
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -231,7 +231,7 @@ class Test_SlotW23_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface(test_obj.slot)
+        b = Slot.comp_surface(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -239,7 +239,7 @@ class Test_SlotW23_meth(object):
     def test_comp_surface_active(self, test_dict):
         """Check that the computation of the winding surface is correct"""
         test_obj = test_dict["test_obj"].copy()
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         a = result
         b = test_dict["SW_exp"]
@@ -247,7 +247,7 @@ class Test_SlotW23_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface_active(test_obj.slot)
+        b = Slot.comp_surface_active(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -255,7 +255,7 @@ class Test_SlotW23_meth(object):
     def test_comp_surface_opening(self, test_dict):
         """Check that the computation of the opening surface is correct"""
         test_obj = test_dict["test_obj"].copy()
-        result = test_obj.slot.comp_surface_opening()
+        result = test_obj.slot.comp_surface_opening(lam=test_obj)
 
         a = result
         b = test_dict["SO_exp"]
@@ -263,7 +263,7 @@ class Test_SlotW23_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface_opening(test_obj.slot, Ndisc=400)
+        b = Slot.comp_surface_opening(test_obj.slot, Ndisc=400, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -271,7 +271,7 @@ class Test_SlotW23_meth(object):
     def test_comp_height(self, test_dict):
         """Check that the computation of the height is correct"""
         test_obj = test_dict["test_obj"].copy()
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]
@@ -279,7 +279,7 @@ class Test_SlotW23_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_height(test_obj.slot)
+        b = Slot.comp_height(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -287,10 +287,10 @@ class Test_SlotW23_meth(object):
     def test_comp_angle_opening(self, test_dict):
         """Check that the computation of the average opening angle iscorrect"""
         test_obj = test_dict["test_obj"].copy()
-        a = test_obj.slot.comp_angle_opening()
+        a = test_obj.slot.comp_angle_opening(lam=test_obj)
         assert a == 2 * arcsin(test_obj.slot.W0 / (2 * 0.1325))
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_angle_opening(test_obj.slot)
+        b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -298,7 +298,7 @@ class Test_SlotW23_meth(object):
     def test_comp_angle_active_eq(self, test_dict):
         """Check that the computation of the average angle is correct"""
         test_obj = test_dict["test_obj"].copy()
-        result = test_obj.slot.comp_angle_active_eq()
+        result = test_obj.slot.comp_angle_active_eq(lam=test_obj)
 
         a = result
         b = test_dict["Aw"]
@@ -332,7 +332,7 @@ class Test_SlotW23_meth(object):
         assert len(result[0].get_lines()) == 6
         assert result[0].is_inside(result[0].point_ref)
 
-        result = lam.slot.get_surface()
+        result = lam.slot.get_surface(lam=lam)
         assert len(result.get_lines()) == 8
         assert result.is_inside(result.point_ref)
 
@@ -348,7 +348,7 @@ class Test_SlotW23_meth(object):
             W3=10e-3,
             is_cstt_tooth=True,
         )
-        lam.slot._comp_W()
+        lam.slot._comp_W(lam=lam)
         assert lam.slot.W1 == pytest.approx(0.012681779210634543)
         assert lam.slot.W2 == pytest.approx(0.0074524346457750515)
 
@@ -362,7 +362,7 @@ class Test_SlotW23_meth(object):
             W3=10e-3,
             is_cstt_tooth=True,
         )
-        lam.slot._comp_W()
+        lam.slot._comp_W(lam=lam)
         assert lam.slot.W1 == pytest.approx(0.017303874301855315)
         assert lam.slot.W2 == pytest.approx(0.022533218866714805)
 
@@ -372,7 +372,7 @@ class Test_SlotW23_meth(object):
 
         assert test_obj.slot.W1 is None
         assert test_obj.slot.W2 is None
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
         assert test_obj.slot.W1 is not None
         assert test_obj.slot.W2 is not None
 
@@ -388,11 +388,11 @@ class Test_SlotW23_meth(object):
         assert test_obj.slot.W2 != W2
         assert test_obj.slot.W1 != W1
 
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
 
         # Check if methods constant thooth change surface
         c = result
-        b = Slot.comp_surface(test_obj.slot)
+        b = Slot.comp_surface(test_obj.slot, lam=test_obj)
         msg = "Error if " + str(c) + " and " + str(b) + "are equal"
         assert Lam_CT_surf != b, msg
 
@@ -414,7 +414,7 @@ class Test_SlotW23_meth(object):
             is_cstt_tooth=True,
         )
 
-        a = lam.slot.get_H1()
+        a = lam.slot.get_H1(lam=lam)
         b = 0.0005362698781809228
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
@@ -431,7 +431,7 @@ class Test_SlotW23_meth(object):
             is_cstt_tooth=False,
         )
 
-        a = lam.slot.get_H1()
+        a = lam.slot.get_H1(lam=lam)
         b = 0.004
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg

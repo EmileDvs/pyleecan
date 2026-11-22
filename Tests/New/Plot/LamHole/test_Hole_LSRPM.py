@@ -78,14 +78,14 @@ def test_Lam_Hole_LSRPM_no_mag(machine):
 
 def test_Lam_Hole_LSRPM_mag_mass(machine):
     """Test calculate the magnet mass"""
-    machine.rotor.hole[0].comp_mass_magnet()
+    machine.rotor.hole[0].comp_mass_magnet(lam=machine.rotor)
 
 
 def test_Lam_Hole_LSRPM_mag_surface(machine):
     """Test calculate the magnet mass"""
-    machine.rotor.hole[0].comp_surface_magnet()
+    machine.rotor.hole[0].comp_surface_magnet(lam=machine.rotor)
 
 
 def test_Lam_Hole_LSRPM_mag_volume(machine):
     """Test calculate the magnet mass"""
-    machine.rotor.hole[0].comp_volume_magnet()
+    machine.rotor.hole[0].comp_volume_magnet(lam=machine.rotor)

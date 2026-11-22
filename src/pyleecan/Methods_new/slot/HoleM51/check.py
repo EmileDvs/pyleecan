@@ -1,14 +1,20 @@
 import numpy as np
-from . import *
+from . import S51_AlphaCheckError, S51_NoneError, S51_RHCheckError, S51_WCheckError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Check that the HoleM51 object is correct
 
     Parameters
     ----------
     self : HoleM51
         A HoleM51 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -39,8 +45,8 @@ def check(self) -> None:
     elif self.H2 is None:
         raise S51_NoneError("You must set H2 !")
 
-    Rext = self.get_Rext()
-    alpha = self.comp_alpha()
+    Rext = self.get_Rext(lam=lam)
+    alpha = self.comp_alpha(lam=lam)
 
     if self.W0 < (self.W2 + self.W3):
         raise S51_WCheckError("You must have W2+W3 < W0")

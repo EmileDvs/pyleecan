@@ -1,7 +1,11 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_magnetization_dict(self, is_north=True) -> dict:
+def comp_magnetization_dict(self, is_north=True, lam: Lamination | None = None) -> dict:
     """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
     Mangetization angle with Hole centered on Ox axis
 
@@ -11,6 +15,8 @@ def comp_magnetization_dict(self, is_north=True) -> dict:
         a Hole object
     is_north: True
         True: comp north magnetization, else add pi [rad]
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------

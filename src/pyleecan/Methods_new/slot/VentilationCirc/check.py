@@ -1,14 +1,20 @@
-from . import *
+from . import VentilationCircInstanceError
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Make sure that the ventilation parameters are correctly set
 
     Parameters
     ----------
     self : VentilationCirc
         A VentilationCirc object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------

@@ -1,16 +1,22 @@
 import numpy as np
 
 from ..Slot import SlotCheckError
-from . import *
+from . import S52R_H12CheckError, S52R_NoneError, S52R_R0CheckError, S52R_widthCheckError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Check that the HoleM52 object is correct
 
     Parameters
     ----------
     self : HoleM52R
         A HoleM52R object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -51,7 +57,7 @@ def check(self) -> None:
 
     h = self.H1 - self.H2
     w = self.W0 + self.W1
-    Z2 = np.sqrt((self.get_Rext() - self.H0) ** 2 - h**2) - h + 1j * w / 2
+    Z2 = np.sqrt((self.get_Rext(lam=lam) - self.H0) ** 2 - h**2) - h + 1j * w / 2
 
     if np.angle(Z2) >= np.pi / self.Zh:
         raise S52R_widthCheckError(

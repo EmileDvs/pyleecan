@@ -45,17 +45,17 @@ def plot_winding(
 
     # We compute the wind_mat only if needed
     if wind_mat is None:
-        wind_mat = self.winding.get_connection_mat(self.slot.Zs)
+        wind_mat = self.winding.get_connection_mat(self.slot.Zs, lam=self)
 
     # Number of point on rad and tan direction
-    Nrad, Ntan = self.winding.get_dim_wind()
+    Nrad, Ntan = self.winding.get_dim_wind(lam=self)
     Zs = self.slot.Zs  # Number of slot
 
     # Number of Slot to plot
     if all_slot:  # Every Slot
         Nplot = Zs
     else:  # Only the needed one (sym)
-        Nperw, _ = self.winding.get_periodicity()  # Symmetry of the winding
+        Nperw, _ = self.winding.get_periodicity(lam=self)  # Symmetry of the winding
         Nplot = Zs // Nperw
 
     qs = wind_mat.shape[3]  # Number of phase

@@ -1,13 +1,19 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_surface(self) -> float:
+def comp_surface(self, lam: Lamination | None = None) -> float:
     """Compute the Hole total surface (by analytical computation).
 
     Parameters
     ----------
     self : HoleM60
         A HoleM60 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------

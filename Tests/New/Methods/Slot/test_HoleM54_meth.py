@@ -41,7 +41,7 @@ class Test_HoleM54_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Hole.comp_surface(test_obj.hole[0])
+        b = Hole.comp_surface(test_obj.hole[0], lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < 1e-4, msg
 
@@ -49,7 +49,7 @@ class Test_HoleM54_meth(object):
     def test_comp_radius(self, test_dict):
         """Check that the computation of the radius is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_radius()
+        result = test_obj.hole[0].comp_radius(lam=test_obj)
 
         a = result[0]
         b = test_dict["Rmin"]

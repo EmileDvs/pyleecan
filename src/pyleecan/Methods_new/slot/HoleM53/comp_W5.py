@@ -2,15 +2,21 @@ import numpy as np
 
 from ....Functions_new.utils.geometry import inter_line_circle
 from . import Slot53InterError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_W5(self) -> float:
+def comp_W5(self, lam: Lamination | None = None) -> float:
     """Compute the W5 width of the hole (cf schematics)
 
     Parameters
     ----------
     self : HoleM53
         a HoleM53 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -23,7 +29,7 @@ def comp_W5(self) -> float:
 
     """
 
-    Rext = self.get_Rext()
+    Rext = self.get_Rext(lam=lam)
 
     Z7 = Rext - self.H0 - 1j * self.W1 / 2
     Z8 = Z7 + (self.H2 - self.H3) * np.sin(self.W4)

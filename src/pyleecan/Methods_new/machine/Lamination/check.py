@@ -1,4 +1,4 @@
-from . import *
+from . import LC_RadiusError, LC_VentYokeIn, LC_VentYokeOut
 
 
 def check(self) -> None:
@@ -29,7 +29,7 @@ def check(self) -> None:
         raise LC_RadiusError("The internal radius is greater than the " "external one")
 
     for vent in self.axial_vent:
-        vent.check()
+        vent.check(lam=self)
 
         # The ventilation duct must be on the yoke
         if vent.Zh > 0:
@@ -40,7 +40,7 @@ def check(self) -> None:
                 Rin = self.Rint + self.comp_height_yoke()
                 Rout = self.Rext
 
-            (Rmin, Rmax) = vent.comp_radius()
+            (Rmin, Rmax) = vent.comp_radius(lam=self)
 
             if Rmin < Rin:
                 raise LC_VentYokeIn(

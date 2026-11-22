@@ -6,10 +6,11 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from typing import Any
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.machine import Machine
 
 
 
-def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False):
+def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False, machine: Machine | None = None):
     """Build the geometry of the Lamination
 
     Parameters
@@ -28,11 +29,13 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
     Returns
     surf_list : list
         list of surfaces needed to draw the lamination
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     """
     # Label setup
     from ....Classes_new.slot.hole import Hole
-    label = self.get_label()
+    label = self.get_label(machine=machine)
     label_lam = label + "_" + LAM_LAB
     label_bore = label + "_" + LAM_LAB + BORE_LAB
     label_yoke = label + "_" + LAM_LAB + YOKE_LAB
@@ -84,7 +87,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
 
     # Add the closing surfaces if requested
     if is_circular_radius:
-        surf_list.extend(self.get_surfaces_closing(sym=sym))
+        surf_list.extend(self.get_surfaces_closing(sym=sym, machine=machine))
 
     # Create the Lamination surfaces
     point_ref = self.comp_point_ref(sym=sym)
@@ -129,7 +132,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
                 ZBR = None
                 ZBL = None
         right_list, left_list = self.build_yoke_side_line(
-            sym=sym, vent_surf_list=vent_surf_list, ZBR=ZBR, ZTR=ZTR, ZBL=ZBL, ZTL=ZTL
+            sym=sym, vent_surf_list=vent_surf_list, ZBR=ZBR, ZTR=ZTR, ZBL=ZBL, ZTL=ZTL, machine=machine
         )
         # Create lines
         curve_list: list[Line] = list()

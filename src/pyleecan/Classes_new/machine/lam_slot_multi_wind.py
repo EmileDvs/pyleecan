@@ -61,6 +61,7 @@ class LamSlotMultiWind(LamSlotMulti):
         alpha: float = 0,
         delta: complex = 0,
         is_circular_radius: bool = False,
+        machine: Machine | None = None,
     ) -> list:
         """Build the geometry of the LamSlotMulti with winding in slots
 
@@ -74,6 +75,8 @@ class LamSlotMultiWind(LamSlotMulti):
             Complex value for translation
         is_circular_radius : bool
             True to add surfaces to "close" the Lamination radii
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -106,7 +109,7 @@ class LamSlotMultiWind(LamSlotMulti):
                 surf_Wind = []
             else:
                 try:
-                    Nrad, Ntan = self.winding.get_dim_wind()
+                    Nrad, Ntan = self.winding.get_dim_wind(lam=self)
                 except Exception:
                     Nrad, Ntan = 1, 1
 
@@ -132,7 +135,9 @@ class LamSlotMultiWind(LamSlotMulti):
         return surf_list
 
     # Inlined from Methods.Machine.LamSlotMultiWind.comp_angle_d_axis
-    def comp_angle_d_axis(self, is_plot: bool = False) -> float:
+    def comp_angle_d_axis(
+        self, is_plot: bool = False, machine: Machine | None = None
+    ) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
 
@@ -142,6 +147,8 @@ class LamSlotMultiWind(LamSlotMulti):
             A LamSlotWind object
         is_plot : bool
             True to plot d axis position regarding unit mmf
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -162,6 +169,7 @@ class LamSlotMultiWind(LamSlotMulti):
         current_dir: int | None = None,
         phase_dir: int | None = None,
         is_plot: bool = False,
+        machine: Machine | None = None,
     ) -> int:
         """Compute the rotation direction of the fundamental magnetomotive force induced by the winding
 
@@ -177,6 +185,8 @@ class LamSlotMultiWind(LamSlotMulti):
             Stator winding phasor rotation direction +/-1
         is_plot: bool
             True to plot fft2 of stator MMF
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -282,7 +292,7 @@ class LamSlotMultiWind(LamSlotMulti):
 
         qs = self.winding.qs  # number of phases
         # Number of point on rad and tan direction
-        Nrad, Ntan = self.winding.get_dim_wind()
+        Nrad, Ntan = self.winding.get_dim_wind(lam=self)
         Zs = self.get_Zs()  # Number of slot
         Zs0 = int(Zs / per_a)
 
@@ -291,7 +301,7 @@ class LamSlotMultiWind(LamSlotMulti):
         else:
             slot_list = self.slot_list
 
-        wind_mat = self.winding.get_connection_mat(Zs)
+        wind_mat = self.winding.get_connection_mat(Zs, lam=self)
         # sum wind_mat along Nlay_rad axis
         wind_mat = np.sum(wind_mat, axis=0)
 
@@ -422,7 +432,7 @@ class LamSlotMultiWind(LamSlotMulti):
                 qs = 1
             else:
                 try:
-                    wind_mat = self.winding.get_connection_mat(self.get_Zs())
+                    wind_mat = self.winding.get_connection_mat(self.get_Zs(), lam=self)
                     qs = self.winding.qs
                 except:
                     wind_mat = None
@@ -432,7 +442,9 @@ class LamSlotMultiWind(LamSlotMulti):
             qs = 1
 
         # Get the LamSlot surface(s)
-        surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+        surf_list = self.build_geometry(
+            sym=sym, alpha=alpha, delta=delta, machine=machine
+        )
         patches = []
         for surf in surf_list:
             label_dict = decode_label(surf.label)
@@ -445,7 +457,7 @@ class LamSlotMultiWind(LamSlotMulti):
                         color, sign = Winding._find_wind_phase_color(surf.label, None)
                     else:
                         color, sign = self.winding.find_wind_phase_color(
-                            label=surf.label, wind_mat=wind_mat
+                            label=surf.label, wind_mat=wind_mat, lam=self
                         )
                     if sign == "+" and is_add_sign:
                         hatch = self.PLUS_HATCH

@@ -26,7 +26,7 @@ def comp_point_ref(self, sym: int = 1):
     if self.axial_vent not in [None, list()]:
         R1, R2 = Rref, Rref
         for vent in self.axial_vent:
-            (Rmin, Rmax) = vent.comp_radius()
+            (Rmin, Rmax) = vent.comp_radius(lam=self)
             R1 = min(R1, Rmin)
             R2 = max(R2, Rmax)
         if self.is_internal:

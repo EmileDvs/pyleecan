@@ -64,13 +64,15 @@ class VentilationPolar(Hole):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.VentilationPolar._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
         """Compute the point coordinates needed to plot the Hole.
 
         Parameters
         ----------
         self : VentilationPolar
             A VentilationPolar object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -155,13 +157,15 @@ class VentilationPolar(Hole):
         return surf_list
 
     # Inlined from Methods.Slot.VentilationPolar.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Make sure that the ventilation parameters are correctly set
 
         Parameters
         ----------
         self : VentilationPolar
             A VentilationPolar object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -186,7 +190,7 @@ class VentilationPolar(Hole):
             raise VentilationPolarInstanceError("Alpha0 must be a float or int")
 
     # Inlined from Methods.Slot.VentilationPolar.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | None = None):
         """Compute the radius of the two circle that contains all the ventilation
         ducts
 
@@ -194,6 +198,8 @@ class VentilationPolar(Hole):
         ----------
         self : VentilationPolar
             A VentilationPolar object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -202,7 +208,7 @@ class VentilationPolar(Hole):
 
         """
 
-        self.check()
+        self.check(lam=lam)
 
         Rmin = self.H0
         Rmax = self.D0 + self.H0
@@ -210,13 +216,15 @@ class VentilationPolar(Hole):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.VentilationPolar.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | None = None) -> float:
         """Compute the surface of all the axial ventilation ducts
 
         Parameters
         ----------
         self : VentilationPolar
             A VentilationPolar object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -225,7 +233,7 @@ class VentilationPolar(Hole):
 
         """
 
-        self.check()
+        self.check(lam=lam)
 
         return np.pi * ((self.H0 + self.D0) ** 2 - self.H0**2) / (2 * np.pi / self.W1)
 
@@ -351,7 +359,7 @@ class VentilationPolar(Hole):
                 fig=fig,
                 ax=ax,
             )  # center hole on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:

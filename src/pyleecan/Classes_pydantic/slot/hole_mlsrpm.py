@@ -91,20 +91,22 @@ class HoleMLSRPM(HoleMag):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleMLSRPM._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : HoleMLSRPM
             A HoleMLSRPM object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
         point_dict: dict
             A dict of the slot coordinates
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         # Z1
         delta1 = np.arcsin((self.R1 + self.W2) / (self.R1 + self.R3))
         alpha1 = self.W1 - delta1
@@ -210,7 +212,7 @@ class HoleMLSRPM(HoleMag):
         vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-T0-S0"
         mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-T0-S0"
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -342,13 +344,15 @@ class HoleMLSRPM(HoleMag):
         return surf_list
 
     # Inlined from Methods.Slot.HoleMLSRPM.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Check that the HoleMLSRPM object is correct
 
         Parameters
         ----------
         self : HoleMLSRPM
             A HoleMLSRPM object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -378,7 +382,9 @@ class HoleMLSRPM(HoleMag):
             raise SLSRPM_NoneError("You must set magnet_0 !")
 
     # Inlined from Methods.Slot.HoleMLSRPM.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True) -> dict:
+    def comp_magnetization_dict(
+        self, is_north=True, lam: Lamination | None = None
+    ) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -388,6 +394,8 @@ class HoleMLSRPM(HoleMag):
             a HoleMLSRPM object
         is_north: True
             True: comp north magnetization, else add pi [rad]
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -396,7 +404,7 @@ class HoleMLSRPM(HoleMag):
         """
 
         # Comp magnet
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         mag_dict = {}
         Z3 = point_dict["Z3"]
@@ -421,13 +429,15 @@ class HoleMLSRPM(HoleMag):
         return mag_dict
 
     # Inlined from Methods.Slot.HoleMLSRPM.comp_mass_magnet
-    def comp_mass_magnet(self) -> float:
+    def comp_mass_magnet(self, lam: Lamination | None = None) -> float:
         """Compute the mass of the magnet (if any)
 
         Parameters
         ----------
         self : HoleMLSRPM
             A HoleMLSRPM object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -437,7 +447,7 @@ class HoleMLSRPM(HoleMag):
         """
 
         # Simplify the calculate of the magnet surface
-        V_magnet = self.comp_volume_magnet()
+        V_magnet = self.comp_volume_magnet(lam=lam)
 
         if self.magnet_0:
             return V_magnet * self.magnet_0.mat_type.struct.rho
@@ -445,13 +455,15 @@ class HoleMLSRPM(HoleMag):
             return 0
 
     # Inlined from Methods.Slot.HoleMLSRPM.comp_surface_magnet
-    def comp_surface_magnet(self) -> float:
+    def comp_surface_magnet(self, lam: Lamination | None = None) -> float:
         """Compute the surface of the Hole
 
         Parameters
         ----------
         self : HoleMLSRPM
             A HoleMLSRPM object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -460,7 +472,7 @@ class HoleMLSRPM(HoleMag):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z3 = point_dict["Z3"]
         Z4 = point_dict["Z4"]
         Z7 = point_dict["Z7"]
@@ -486,13 +498,15 @@ class HoleMLSRPM(HoleMag):
         return S_magnet
 
     # Inlined from Methods.Slot.HoleMLSRPM.comp_volume_magnet
-    def comp_volume_magnet(self) -> float:
+    def comp_volume_magnet(self, lam: Lamination | None = None) -> float:
         """Compute the volume of the magnet (if any)
 
         Parameters
         ----------
         self : HoleMLSRPM
             A HoleMLSRPM object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -500,7 +514,7 @@ class HoleMLSRPM(HoleMag):
             Volume of the magnet [m**3]
 
         """
-        S_magnet = self.comp_surface_magnet()
+        S_magnet = self.comp_surface_magnet(lam=lam)
 
         if self.magnet_0:
             return S_magnet * self.magnet_0.Lmag
@@ -648,7 +662,7 @@ class HoleMLSRPM(HoleMag):
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo(lam=lam)
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:

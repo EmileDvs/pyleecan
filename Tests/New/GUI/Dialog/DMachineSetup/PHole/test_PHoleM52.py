@@ -44,7 +44,7 @@ class TestPHoleM52(object):
             Material(name="Magnet3"),
         ]
 
-        self.widget = PHoleM52(test_obj.hole[0], material_dict)
+        self.widget = PHoleM52(test_obj.hole[0], material_dict, lam=test_obj)
         self.test_obj = test_obj
         self.material_dict = material_dict
 
@@ -66,7 +66,7 @@ class TestPHoleM52(object):
         self.test_obj.hole.append(HoleM52(H0=0.10, H1=0.11, H2=0.12, W0=0.13, W3=0.17))
         self.test_obj.hole[0].magnet_0 == None
 
-        self.widget = PHoleM52(self.test_obj.hole[0], self.material_dict)
+        self.widget = PHoleM52(self.test_obj.hole[0], self.material_dict, lam=self.test_obj)
         assert not self.widget.w_mat_1.isHidden()
 
     def test_set_W0(self):
@@ -141,6 +141,7 @@ class TestPHoleM52(object):
             HoleM52(H0=0.0010, H1=0.11, H2=0.00012, W0=0.0013, W3=0.0017)
         )
         self.widget.hole = self.test_obj.hole[0]
+        self.widget.lam = self.test_obj
         self.widget.comp_output()
 
         # Nan are there because the value are not correct for the sin, cos and tan methods. But with true values, it works.

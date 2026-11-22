@@ -100,20 +100,22 @@ class HoleM58(HoleMag):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM58._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : HoleM53
             A HoleM53 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
         point_dict: dict
             A dict of the slot coordinates
         """
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         Z0 = Rext - self.H0
         Z2 = Z0 + 1j * (self.W0 / 2)
@@ -279,7 +281,7 @@ class HoleM58(HoleMag):
         R0 = self.R0
 
         # Get all the points
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -367,13 +369,15 @@ class HoleM58(HoleMag):
         return surf_list
 
     # Inlined from Methods.Slot.HoleM58.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Check that the HoleM58 object is correct
 
         Parameters
         ----------
         self : HoleM58
             A HoleM58 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -402,13 +406,15 @@ class HoleM58(HoleMag):
         elif self.H2 is None:
             raise S58_NoneError("You must set H2 !")
 
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         if self.W0 < self.W1 + self.W2:
             raise S58_WCheckError("You must have W1+W2 <= W0")
 
     # Inlined from Methods.Slot.HoleM58.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True) -> dict:
+    def comp_magnetization_dict(
+        self, is_north=True, lam: Lamination | None = None
+    ) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -418,6 +424,8 @@ class HoleM58(HoleMag):
             a HoleM58 object
         is_north: True
             True: comp north magnetization, else add pi [rad]
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -426,7 +434,7 @@ class HoleM58(HoleMag):
         """
 
         # Comp magnet
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         mag_dict = {}
         S0 = Segment(begin=point_dict["Z6"], end=point_dict["Z7"])
@@ -442,20 +450,22 @@ class HoleM58(HoleMag):
         return mag_dict
 
     # Inlined from Methods.Slot.HoleM58.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | None = None):
         """Compute the radius of the min and max circle that contains the hole
 
         Parameters
         ----------
         self : HoleM58
             A HoleM58 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
         (Rmin,Rmax): tuple
             Radius of the circle that contains the hole [m]
         """
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         Rmax = Rext - self.H1
         Rmin = Rext - self.H0 - self.H2
@@ -463,7 +473,9 @@ class HoleM58(HoleMag):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.HoleM58.comp_surface_magnet_id
-    def comp_surface_magnet_id(self, index: int) -> float:
+    def comp_surface_magnet_id(
+        self, index: int, lam: Lamination | None = None
+    ) -> float:
         """Compute the surface of the hole magnet of the corresponding index
 
         Parameters
@@ -472,6 +484,8 @@ class HoleM58(HoleMag):
             A HoleM58 object
         index : int
             Index of the magnet to compute the surface
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -608,7 +622,7 @@ class HoleM58(HoleMag):
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo(lam=lam)
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:

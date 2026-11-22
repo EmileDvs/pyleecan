@@ -190,7 +190,7 @@ def test_axis_LamWind():
     axes.text(Zly.real, Zly.imag, "Y axis")
 
     # D axis
-    D_axis = SCIM_001.stator.comp_angle_d_axis()
+    D_axis = SCIM_001.stator.comp_angle_d_axis(machine=SCIM_001)
     # assert D_axis == pytest.approx(1.6577, rel=0.01)
     Zd = R1 * exp(1j * D_axis)
     plt.arrow(0, 0, Zd.real, Zd.imag, color=CURVE_COLORS[1])
@@ -198,7 +198,7 @@ def test_axis_LamWind():
     axes.text(Zld.real - 0.1, Zld.imag, "D axis")
 
     # Q axis
-    Q_axis = SCIM_001.stator.comp_angle_q_axis()
+    Q_axis = SCIM_001.stator.comp_angle_q_axis(machine=SCIM_001)
     Zq = R1 * exp(1j * Q_axis)
     plt.arrow(0, 0, Zq.real, Zq.imag, color=CURVE_COLORS[1])
     Zlq = R2 * exp(1j * Q_axis)

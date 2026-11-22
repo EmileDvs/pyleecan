@@ -484,7 +484,7 @@ def test_WindingUD_layer():
     rotor.slot = SlotW11(
         Zs=6, H0=15e-3, W0=60e-3, W1=100e-3, W2=100e-3, H1=20e-3, H2=200e-3, R1=1e-3
     )
-    rotor.slot = rotor.slot.convert_to_SlotUD2()
+    rotor.slot = rotor.slot.convert_to_SlotUD2(lam=rotor)
     assert isinstance(rotor.slot, SlotUD2)
     key = "Nrad=2, Ntan=2"
     Top, Bottom = rotor.slot.active_surf.split_line(0, 100, is_join=True)

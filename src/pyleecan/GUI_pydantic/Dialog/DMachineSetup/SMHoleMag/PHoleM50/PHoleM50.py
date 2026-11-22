@@ -20,7 +20,7 @@ class PHoleM50(Gen_PHoleM50, QWidget):
     hole_name = "Hole Type 50"
     hole_type = HoleM50
 
-    def __init__(self, hole=None, material_dict=None):
+    def __init__(self, hole=None, material_dict=None, lam=None, machine=None):
         """Initialize the widget according to hole
 
         Parameters
@@ -31,6 +31,10 @@ class PHoleM50(Gen_PHoleM50, QWidget):
             current hole to edit
         material_dict: dict
             Materials dictionary (library + machine)
+        lam : Lamination
+            Lamination holding the hole
+        machine : Machine
+            Machine holding the lamination
         """
         # Build the interface according to the .ui file
         QWidget.__init__(self)
@@ -38,6 +42,8 @@ class PHoleM50(Gen_PHoleM50, QWidget):
 
         self.material_dict = material_dict
         self.hole = hole
+        self.lam = lam
+        self.machine = machine
 
         # Set FloatEdit unit
         self.lf_W0.unit = "m"
@@ -65,14 +71,14 @@ class PHoleM50(Gen_PHoleM50, QWidget):
         # Adapt GUI with/without magnet
         if hole.magnet_0 is None:  # SyRM
             self.img_slot.setPixmap(QPixmap(pixmap_dict["HoleM50_empty_int_rotor"]))
-            self.w_mat_0.update(self.hole, "mat_void", self.material_dict)
+            self.w_mat_0.update(self.hole, "mat_void", self.material_dict, machine=self.machine)
             self.w_mat_1.hide()
             self.w_mat_2.hide()
         else:
             # Set current material
-            self.w_mat_0.update(self.hole, "mat_void", self.material_dict)
-            self.w_mat_1.update(self.hole.magnet_0, "mat_type", self.material_dict)
-            self.w_mat_2.update(self.hole.magnet_1, "mat_type", self.material_dict)
+            self.w_mat_0.update(self.hole, "mat_void", self.material_dict, machine=self.machine)
+            self.w_mat_1.update(self.hole.magnet_0, "mat_type", self.material_dict, machine=self.machine)
+            self.w_mat_2.update(self.hole.magnet_1, "mat_type", self.material_dict, machine=self.machine)
 
         # Set unit name (m ou mm)
         self.u = gui_option.unit
@@ -261,7 +267,7 @@ class PHoleM50(Gen_PHoleM50, QWidget):
         """
         # Hole surface
         try:
-            s_surf = format(self.u.get_m2(self.hole.comp_surface()), ".4g")
+            s_surf = format(self.u.get_m2(self.hole.comp_surface(lam=self.lam)), ".4g")
             self.out_slot_surface.setText(
                 "Hole surface: " + s_surf + " [" + self.u.get_m2_name() + "]"
             )
@@ -270,7 +276,7 @@ class PHoleM50(Gen_PHoleM50, QWidget):
 
         # Magnet surface
         try:
-            m_surf = format(self.u.get_m2(self.hole.comp_surface_magnets()), ".4g")
+            m_surf = format(self.u.get_m2(self.hole.comp_surface_magnets(lam=self.lam)), ".4g")
             self.out_magnet_surface.setText(
                 "Magnet surf.: " + m_surf + " [" + self.u.get_m2_name() + "]"
             )
@@ -279,7 +285,7 @@ class PHoleM50(Gen_PHoleM50, QWidget):
 
         # Alpha
         try:
-            alpha = self.hole.comp_alpha()
+            alpha = self.hole.comp_alpha(lam=self.lam)
             alpha_rad = "%.4g" % alpha
             alpha_deg = "%.4g" % (alpha * 180 / pi)
             self.out_alpha.setText(
@@ -291,7 +297,7 @@ class PHoleM50(Gen_PHoleM50, QWidget):
         # Magnet width
         try:
             Mag_width = format(
-                self.u.get_m(self.hole.W2 + self.hole.W4 + self.hole.comp_W5()),
+                self.u.get_m(self.hole.W2 + self.hole.W4 + self.hole.comp_W5(lam=self.lam)),
                 ".4g",
             )
             # Update the GUI to display the Output
@@ -317,7 +323,7 @@ class PHoleM50(Gen_PHoleM50, QWidget):
 
         # Constraints and None
         try:
-            self.hole.check()
+            self.hole.check(lam=self.lam)
         except SlotCheckError as error:
             return str(error)
 

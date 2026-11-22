@@ -72,6 +72,7 @@ class LamSquirrelCage(LamSlotWind):
         alpha: float = 0,
         delta: complex = 0,
         is_circular_radius: bool = False,
+        machine: Machine | None = None,
     ) -> list:
         """Build geometry of the LamSquirrelCage
 
@@ -87,6 +88,8 @@ class LamSquirrelCage(LamSlotWind):
             Complex value for translation
         is_circular_radius : bool
             True to add surfaces to "close" the Lamination radii
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -139,7 +142,7 @@ class LamSquirrelCage(LamSlotWind):
             raise SCC_WrongCond("A LamSquirrelCage's conductor must be a type 2_1")
 
     # Inlined from Methods.Machine.LamSquirrelCage.comp_angle_d_axis
-    def comp_angle_d_axis(self) -> float:
+    def comp_angle_d_axis(self, machine: Machine | None = None) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
 
@@ -147,6 +150,8 @@ class LamSquirrelCage(LamSlotWind):
         ----------
         self : LamSquirrelCage
             A LamSquirrelCage object
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------

@@ -66,7 +66,7 @@ class Test_SlotDC_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface of the slotDC is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -74,7 +74,7 @@ class Test_SlotDC_meth(object):
         assert a == pytest.approx(b, rel=DELTA), msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface(test_obj.slot, Ndisc=2000)
+        b = Slot.comp_surface(test_obj.slot, Ndisc=2000, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert a == pytest.approx(b, rel=DELTA), msg
 
@@ -82,7 +82,7 @@ class Test_SlotDC_meth(object):
     def test_comp_surface_active(self, test_dict):
         """Check that the computation of the winding surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         a = result
         b = test_dict["SW_exp"]
@@ -90,7 +90,7 @@ class Test_SlotDC_meth(object):
         assert a == pytest.approx(b, rel=DELTA), msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface_active(test_obj.slot, Ndisc=2000)
+        b = Slot.comp_surface_active(test_obj.slot, Ndisc=2000, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert a == pytest.approx(b, rel=DELTA), msg
 
@@ -98,7 +98,7 @@ class Test_SlotDC_meth(object):
     def test_comp_height(self, test_dict):
         """Check that the computation of the height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]
@@ -106,7 +106,7 @@ class Test_SlotDC_meth(object):
         assert a == pytest.approx(b, rel=DELTA), msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_height(test_obj.slot)
+        b = Slot.comp_height(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert a == pytest.approx(b, rel=DELTA), msg
 
@@ -114,10 +114,10 @@ class Test_SlotDC_meth(object):
     def test_comp_angle_opening(self, test_dict):
         """Check that the computation of the average opening angle is correct"""
         test_obj = test_dict["test_obj"]
-        a = test_obj.slot.comp_angle_opening()
+        a = test_obj.slot.comp_angle_opening(lam=test_obj)
         assert a == 2 * arcsin(test_obj.slot.W1 / (2 * test_dict["test_obj"].get_Rbo()))
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_angle_opening(test_obj.slot)
+        b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert a == pytest.approx(b, rel=DELTA), msg
 
@@ -148,7 +148,7 @@ class Test_SlotDC_meth(object):
             Zc1,
             Zc2,
             Zc3,
-        ] = test_obj.slot._comp_point_coordinate()
+        ] = test_obj.slot._comp_point_coordinate(lam=test_obj)
 
         # Check W1
         assert np_abs(Z1 - Z12), pytest.approx(test_obj.slot.W1, rel=DELTA)

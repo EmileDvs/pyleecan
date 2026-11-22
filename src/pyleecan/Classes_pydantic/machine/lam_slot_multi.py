@@ -331,7 +331,9 @@ class LamSlotMulti(Lamination):
 
         (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
-        surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+        surf_list = self.build_geometry(
+            sym=sym, alpha=alpha, delta=delta, machine=machine
+        )
         patches = []
         for surf in surf_list:
             color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)

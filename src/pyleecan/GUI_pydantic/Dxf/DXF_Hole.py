@@ -828,7 +828,9 @@ class DXF_Hole(Ui_DXF_Hole, QDialog):
             hole.plot(is_add_arrow=True)
         else:
             fig, (ax1, ax2) = plt.subplots(1, 2)
-            hole.plot(fig=fig, ax=ax1, is_add_arrow=True, is_add_ref=False)
+            hole.plot(
+                fig=fig, ax=ax1, is_add_arrow=True, is_add_ref=False, lam=self.lam
+            )
             self.lam.hole = [hole]
             self.lam.plot(fig=fig, ax=ax2)
 

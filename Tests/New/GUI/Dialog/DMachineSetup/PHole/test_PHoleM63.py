@@ -45,7 +45,7 @@ class TestPHoleM63(object):
             Material(name="Magnet0"),
         ]
 
-        self.widget = PHoleM63(test_obj.hole[0], material_dict)
+        self.widget = PHoleM63(test_obj.hole[0], material_dict, lam=test_obj)
         self.test_obj = test_obj
         self.material_dict = material_dict
 
@@ -57,7 +57,7 @@ class TestPHoleM63(object):
         assert self.widget.lf_W0.value() == 0.13
 
         self.test_obj.hole[0] = HoleM63(H0=0.21, H1=0.22, W0=0.8, top_flat=True)
-        self.widget = PHoleM63(self.test_obj.hole[0], self.material_dict)
+        self.widget = PHoleM63(self.test_obj.hole[0], self.material_dict, lam=self.test_obj)
         assert self.widget.lf_H0.value() == 0.21
         assert self.widget.lf_H1.value() == 0.22
         assert self.widget.lf_W0.value() == 0.8

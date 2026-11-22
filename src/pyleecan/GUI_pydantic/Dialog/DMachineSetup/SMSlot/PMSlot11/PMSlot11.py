@@ -26,7 +26,7 @@ class PMSlot11(Gen_PMSlot11, QWidget):
     notch_name = "Polar"
     slot_type = SlotM11
 
-    def __init__(self, lamination=None, notch_obj=None, material_dict=None):
+    def __init__(self, lamination=None, notch_obj=None, material_dict=None, machine=None):
         """Initialize the widget according to lamination
 
         Parameters
@@ -39,12 +39,15 @@ class PMSlot11(Gen_PMSlot11, QWidget):
             current notch to edit
         material_dict: dict
             Materials dictionary (library + machine)
+        machine : Machine
+            Machine holding the lamination (for the material library)
         """
 
         # Build the interface according to the .ui file
         QWidget.__init__(self)
         self.setupUi(self)
         self.lamination = lamination
+        self.machine = machine
         self.slot = lamination.slot
         self.is_notch = notch_obj is not None
         self.notch_obj = notch_obj
@@ -83,7 +86,7 @@ class PMSlot11(Gen_PMSlot11, QWidget):
             self.set_key()
         else:
             # Setup the widgets according to current values
-            self.w_mag.update(lamination, self.material_dict)
+            self.w_mag.update(lamination, self.material_dict, machine=self.machine)
 
             # Use schematics on the inner without magnet
             self.img_slot.setPixmap(QPixmap(pixmap_dict["SlotM11_mag_int_rotor"]))

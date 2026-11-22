@@ -1,15 +1,21 @@
 import numpy as np
 from ....Functions_new.utils.geometry import inter_line_circle
 from ....Functions_new.utils.geometry import inter_line_line
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : HoleM61
         A HoleM61 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -17,7 +23,7 @@ def _comp_point_coordinate(self) -> dict:
         A dict of the slot coordinates
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # comp point coordinate (in complex)
 

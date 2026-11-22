@@ -44,7 +44,7 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
     R_id, surf_type = self.get_R_id(lam=lam)
     mag_label = f"{lam_label}_{HOLEM_LAB}_R{R_id}-"
     vent_label = f"{lam_label}_{surf_type}_R{R_id}-"
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
 
     surf_list = list()
     # Create all the surfaces for all the case

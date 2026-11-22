@@ -60,7 +60,7 @@ class TestPHoleM50(object):
             Material(name="Magnet3"),
         ]
 
-        self.widget = PHoleM50(self.test_obj.hole[0], self.material_dict)
+        self.widget = PHoleM50(self.test_obj.hole[0], self.material_dict, lam=self.test_obj)
 
     def test_init(self):
         """Check that the Widget spinbox initialise to the lamination value"""
@@ -95,7 +95,7 @@ class TestPHoleM50(object):
             H4=0.28,
             W4=0.29,
         )
-        self.widget = PHoleM50(self.test_obj.hole[0], self.material_dict)
+        self.widget = PHoleM50(self.test_obj.hole[0], self.material_dict, lam=self.test_obj)
         assert self.widget.lf_H0.value() == 0.20
         assert self.widget.lf_H1.value() == 0.21
         assert self.widget.lf_H2.value() == 0.22
@@ -245,6 +245,7 @@ class TestPHoleM50(object):
             )
         )
         self.widget.hole = self.test_obj.hole[0]
+        self.widget.lam = self.test_obj
         self.widget.comp_output()
 
         # Nan are there because the value are not correct for the sin, cos and tan methods. But with true values, it works.

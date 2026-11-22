@@ -42,7 +42,7 @@ class TestPHoleM54(object):
             Material(name="Magnet2"),
             Material(name="Magnet3"),
         ]
-        self.widget = PHoleM54(test_obj.hole[0], material_dict=material_dict)
+        self.widget = PHoleM54(test_obj.hole[0], material_dict=material_dict, lam=test_obj)
         self.test_obj = test_obj
         self.material_dict = material_dict
 

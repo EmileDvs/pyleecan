@@ -133,7 +133,7 @@ class WMachineTable(Ui_WMachineTable, QWidget):
                 sym *= 2
             # Set Current (constant J in a layer)
             S_slot = self.machine.stator.slot.comp_surface_active(lam=self.machine.stator)
-            (Nrad, Ntan) = self.machine.stator.winding.get_dim_wind()
+            (Nrad, Ntan) = self.machine.stator.winding.get_dim_wind(lam=self.machine.stator)
             Ntcoil = self.machine.stator.winding.Ntcoil
             Sphase = S_slot / (Nrad * Ntan)
             J = 5e6

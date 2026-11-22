@@ -1,13 +1,19 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_W1(self) -> float:
+def comp_W1(self, lam: Lamination | None = None) -> float:
     """Compute W1 (cf schematics)
 
     Parameters
     ----------
     self : HoleM52
         A HoleM52 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -16,9 +22,9 @@ def comp_W1(self) -> float:
 
     """
 
-    Rext = self.get_Rext()
+    Rext = self.get_Rext(lam=lam)
 
-    alpha = self.comp_alpha()
+    alpha = self.comp_alpha(lam=lam)
 
     # Angle between (P1,P2) and (0,P0) is slot_pitch /2
     # It is also the angle (P1,P2,S)

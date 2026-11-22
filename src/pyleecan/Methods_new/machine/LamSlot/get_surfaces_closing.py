@@ -1,9 +1,13 @@
 import numpy as np
 from ....Functions_new.utils.labels import update_RTS_index
 from ....Classes_new.machine.lamination import Lamination
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
-def get_surfaces_closing(self, sym: int = 1) -> list:
+def get_surfaces_closing(self, sym: int = 1, machine: Machine | None = None) -> list:
     """Return the surfaces needed to close the radii of the Lamination
 
     Parameters
@@ -12,6 +16,8 @@ def get_surfaces_closing(self, sym: int = 1) -> list:
         A LamSlot object
     sym : int
         Symmetry factor (1= full machine, 2= half of the machine...)
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Returns
     -------

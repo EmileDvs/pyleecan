@@ -1,13 +1,19 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_W5(self) -> float:
+def comp_W5(self, lam: Lamination | None = None) -> float:
     """Compute the W5 width of the slot (cf schematics)
 
     Parameters
     ----------
     self : HoleM50
         a HoleM50 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -16,7 +22,7 @@ def comp_W5(self) -> float:
 
     """
 
-    alpha = self.comp_alpha()
+    alpha = self.comp_alpha(lam=lam)
 
     # Distance fromZ8 to Z9
     L89 = (self.W0 / 2 - self.W1 / 2) / np.cos(alpha)

@@ -3,10 +3,14 @@ import numpy as np
 
 DELTA = 1e-6
 from ....Classes_new.geometry.segment import Segment
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
 def build_yoke_side_line(
-    self, sym: int, vent_surf_list, ZBR: complex | None = None, ZTR: complex | None = None, ZBL: complex | None = None, ZTL: complex | None = None
+    self, sym: int, vent_surf_list, ZBR: complex | None = None, ZTR: complex | None = None, ZBL: complex | None = None, ZTL: complex | None = None, machine: Machine | None = None
 ):
     """Define the Yoke Side lines of a Lamination by taking into account sym and vent
 
@@ -26,6 +30,8 @@ def build_yoke_side_line(
         Yoke Side Limit point Bottom Left
     ZTL : Complex
         Yoke Side Limit point Top Left
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Returns
     -------
@@ -56,7 +62,7 @@ def build_yoke_side_line(
         ZBL = ZBR * np.exp(1j * alpha)
         ZTL = ZTR * np.exp(1j * alpha)
 
-    lam_lab = self.get_label()
+    lam_lab = self.get_label(machine=machine)
     if self.is_internal:
         right_list = merge_line_list(
             ZBR, ZTR, lam_lab + "_" + YSR_LAB, inter_line_list_R

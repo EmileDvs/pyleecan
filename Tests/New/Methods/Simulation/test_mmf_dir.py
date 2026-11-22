@@ -57,9 +57,9 @@ def test_mmf_dir(param_dict, nb_worker=int(cpu_count() / 2)):
     assert_almost_equal(resistance, param_dict["resistance"], decimal=5)
 
     # Check that the DQ axis are correct for the stator
-    d_axis = machine.stator.comp_angle_d_axis()
+    d_axis = machine.stator.comp_angle_d_axis(machine=machine)
     assert_almost_equal(d_axis, param_dict["stator_d_axis"], decimal=4)
-    q_axis = machine.stator.comp_angle_q_axis()
+    q_axis = machine.stator.comp_angle_q_axis(machine=machine)
     assert_almost_equal(q_axis, param_dict["stator_d_axis"] + pi / 2 / p, decimal=4)
 
     # Check that the DQ axis are correct for the rotor
@@ -69,12 +69,12 @@ def test_mmf_dir(param_dict, nb_worker=int(cpu_count() / 2)):
     assert_almost_equal(q_axis, param_dict["rotor_d_axis"] + pi / 2 / p, decimal=4)
 
     # Check mmf rotating direction with current rotating in default
-    mmf_dir = machine.stator.comp_mmf_dir(is_plot=False, current_dir=current_dir_ref)
+    mmf_dir = machine.stator.comp_mmf_dir(is_plot=False, current_dir=current_dir_ref, machine=machine)
     assert mmf_dir == param_dict["mmf_dir"]
 
     # Check mmf rotating direction by reversing current rotating direction
     mmf_dir_inv = machine.stator.comp_mmf_dir(
-        is_plot=False, current_dir=-current_dir_ref
+        is_plot=False, current_dir=-current_dir_ref, machine=machine
     )
     assert (
         mmf_dir_inv == -mmf_dir
@@ -86,7 +86,7 @@ def test_mmf_dir(param_dict, nb_worker=int(cpu_count() / 2)):
         not machine_B.stator.winding.is_reverse_wind
     )
     mmf_dir_rev_wind = machine_B.stator.comp_mmf_dir(
-        is_plot=False, current_dir=current_dir_ref
+        is_plot=False, current_dir=current_dir_ref, machine=machine_B
     )
     assert (
         mmf_dir_rev_wind == -mmf_dir

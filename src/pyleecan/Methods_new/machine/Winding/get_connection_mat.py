@@ -2,9 +2,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import numpy as np
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def get_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np.ndarray:
+def get_connection_mat(self, Zs: int | None = None, p: int | None = None, lam: Lamination | None = None) -> np.ndarray:
     """Get the Winding Matrix
 
     Parameters
@@ -15,6 +16,8 @@ def get_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np.
         Number of Slot (Integer >0)
     p : int
         Number of pole pairs (Integer >0)
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     Returns
     -------
@@ -25,11 +28,11 @@ def get_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np.
     """
 
     if self.wind_mat is None:
-        self.wind_mat = self.comp_connection_mat(Zs=Zs, p=p)
+        self.wind_mat = self.comp_connection_mat(Zs=Zs, p=p, lam=lam)
     elif Zs is not None and self.wind_mat.shape[2] != Zs:
         # Winding matrix is outdated
         self.clean()
-        self.wind_mat = self.comp_connection_mat(Zs=Zs, p=p)
+        self.wind_mat = self.comp_connection_mat(Zs=Zs, p=p, lam=lam)
 
     wind_mat = self.wind_mat.copy()
     # Apply the transformations

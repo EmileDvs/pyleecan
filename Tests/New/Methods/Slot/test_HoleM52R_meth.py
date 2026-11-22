@@ -74,7 +74,7 @@ class Test_Hole52_meth(object):
         """Check that the schematics is correct"""
         test_obj = test_dict["test_obj"]
         hole = test_obj.hole[0]
-        point_dict = hole._comp_point_coordinate()
+        point_dict = hole._comp_point_coordinate(lam=test_obj)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -105,7 +105,7 @@ class Test_Hole52_meth(object):
         assert abs(Z1) == pytest.approx(test_obj.get_Rbo() - hole.H0)
 
         # check alpha
-        alpha = hole.comp_alpha()
+        alpha = hole.comp_alpha(lam=test_obj)
         assert angle(Z1) - angle(Z9) == pytest.approx(alpha)
 
     @pytest.mark.parametrize("test_dict", HoleM52R_test)
@@ -145,7 +145,7 @@ class Test_Hole52_meth(object):
     def test_comp_alpha(self, test_dict):
         """Check that the computation of the alpha is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_alpha()
+        result = test_obj.hole[0].comp_alpha(lam=test_obj)
 
         a = result
         b = test_dict["alpha"]
@@ -156,7 +156,7 @@ class Test_Hole52_meth(object):
     def test_comp_radius(self, test_dict):
         """Check that the computation of the radius is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_radius()
+        result = test_obj.hole[0].comp_radius(lam=test_obj)
 
         a = result[0]
         b = test_dict["Rmin"]
@@ -240,7 +240,7 @@ class Test_Hole52_meth(object):
             test_obj.hole[0].check()
         test_obj.hole = [HoleM52R(Zh=8, W0=99e-3, W1=1e-3, H0=12e-3, H1=18e-3, H2=2e-3)]
         with pytest.raises(S52R_widthCheckError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
 
 
 if __name__ == "__main__":

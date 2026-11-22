@@ -77,13 +77,15 @@ class HoleM62(HoleMag):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM62._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : HoleM62
             A HoleM62 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -91,7 +93,7 @@ class HoleM62(HoleMag):
             A dict of the slot coordinates
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         point_dict = {}
         # comp point coordinate (in complex)
         if self.W0_is_rad:
@@ -158,7 +160,7 @@ class HoleM62(HoleMag):
         R_id, surf_type = self.get_R_id(lam=lam)
         mag_label = f"{lam_label}_{HOLEM_LAB}_R{R_id}-"
         vent_label = f"{lam_label}_{surf_type}_R{R_id}-"
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         surf_list = []
         # Create all the surfaces for all the case
@@ -208,13 +210,15 @@ class HoleM62(HoleMag):
         return surf_list
 
     # Inlined from Methods.Slot.HoleM62.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Check that the HoleM62 object is correct
 
         Parameters
         ----------
         self : HoleM62
             A HoleM62 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -234,7 +238,9 @@ class HoleM62(HoleMag):
             raise S62_NoneError("You must set H1 !")
 
     # Inlined from Methods.Slot.HoleM62.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True) -> dict:
+    def comp_magnetization_dict(
+        self, is_north=True, lam: Lamination | None = None
+    ) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -244,6 +250,8 @@ class HoleM62(HoleMag):
             a HoleM62 object
         is_north: True
             True: comp north magnetization, else add pi [rad]
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -252,8 +260,8 @@ class HoleM62(HoleMag):
         """
 
         # Comp magnet
-        point_dict = self._comp_point_coordinate()
-        Rbo = self.get_Rbo()
+        point_dict = self._comp_point_coordinate(lam=lam)
+        Rbo = self.get_Rbo(lam=lam)
 
         mag_dict = {}
 
@@ -275,13 +283,15 @@ class HoleM62(HoleMag):
         return mag_dict
 
     # Inlined from Methods.Slot.HoleM62.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | None = None):
         """Compute the radius of the min and max circle that contains the slot
 
         Parameters
         ----------
         self : HoleM62
             A HoleM62 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -289,12 +299,12 @@ class HoleM62(HoleMag):
             Radius of the circle that contains the slot [m]
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         Rmax = Rbo - self.H1
 
         if not self.W0_is_rad:
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             Rmin = np.abs(point_dict["Z1"])
         else:
             Rmin = Rbo - self.H1 - self.H0
@@ -302,13 +312,15 @@ class HoleM62(HoleMag):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.HoleM62.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | None = None) -> float:
         """Compute the surface of the Hole
 
         Parameters
         ----------
         self : HoleM62
             A HoleM62 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -316,7 +328,7 @@ class HoleM62(HoleMag):
             Surface of the Hole. [m**2]
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         if self.W0_is_rad:  # Polar Arc
             return (
                 self.W0 * (Rbo - self.H1) ** 2 / 2
@@ -324,13 +336,13 @@ class HoleM62(HoleMag):
             )
 
         else:  # Parallel side
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             # Top surface
             alpha = 2 * np.arcsin((self.W0 / 2) / (Rbo - self.H1))
             Stop = ((Rbo - self.H1) ** 2) * (alpha - np.sin(alpha)) / 2
 
             # Bottom surface
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             Z1 = point_dict["Z1"]
             R1 = abs(Z1)
             alpha = 2 * np.arcsin((self.W0 / 2) / R1)
@@ -339,7 +351,9 @@ class HoleM62(HoleMag):
             return self.H0 * self.W0 + Stop - Sbot
 
     # Inlined from Methods.Slot.HoleM62.comp_surface_magnet_id
-    def comp_surface_magnet_id(self, index: int) -> float:
+    def comp_surface_magnet_id(
+        self, index: int, lam: Lamination | None = None
+    ) -> float:
         """Compute the surface of the hole magnet of the corresponding index
 
         Parameters
@@ -348,6 +362,8 @@ class HoleM62(HoleMag):
             A HoleM62 object
         index : int
             Index of the magnet to compute the surface
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -358,7 +374,7 @@ class HoleM62(HoleMag):
         if index != 0:
             raise Exception("Only one magnet for HoleM62")
         if self.magnet_0 is not None:
-            return self.comp_surface()  # Full magnet, no air
+            return self.comp_surface(lam=lam)  # Full magnet, no air
         return 0
 
     # Inlined from Methods.Slot.HoleM62.has_magnet
@@ -480,7 +496,7 @@ class HoleM62(HoleMag):
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo(lam=lam)
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:
@@ -725,7 +741,7 @@ class HoleM62(HoleMag):
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo(lam=lam)
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:

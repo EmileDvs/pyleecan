@@ -34,10 +34,12 @@ def _plot_arrow_mag(
     delta : complex
         complex for translation (Default value = 0)
     """
+    if ax is None:
+        ax = plt.gca()
 
     for hole in self.hole:
-        H = hole.comp_height()
-        mag_dict = hole.comp_magnetization_dict()
+        H = hole.comp_height(lam=self)
+        mag_dict = hole.comp_magnetization_dict(lam=self)
         for magnet_name, mag_dir in mag_dict.items():
             # Get the correct surface
             mag_surf = None
@@ -52,6 +54,11 @@ def _plot_arrow_mag(
                     ):
                         mag_surf = surf
                         break
+                if mag_surf is None:
+                    raise ValueError(
+                        f"{type(self).__name__}: no surface of {magnet_name} in the "
+                        "geometry of its hole"
+                    )
                 # Create arrow coordinates
                 Zh = hole.Zh
                 for ii in range(int(Zh / sym)):

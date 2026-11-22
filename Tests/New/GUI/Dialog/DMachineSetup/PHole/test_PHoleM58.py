@@ -48,7 +48,7 @@ class TestPHoleM58(object):
             Material(name="Magnet3"),
         ]
 
-        self.widget = PHoleM58(test_obj.hole[0], material_dict)
+        self.widget = PHoleM58(test_obj.hole[0], material_dict, lam=test_obj)
         self.test_obj = test_obj
         self.material_dict = material_dict
 
@@ -70,7 +70,7 @@ class TestPHoleM58(object):
         self.test_obj.hole[0] = HoleM58(
             H0=0.20, H1=0.21, H2=0.22, W0=0.23, W1=0.24, W2=0.25, W3=0.27, R0=0.29
         )
-        self.widget = PHoleM58(self.test_obj.hole[0], self.material_dict)
+        self.widget = PHoleM58(self.test_obj.hole[0], self.material_dict, lam=self.test_obj)
         assert self.widget.lf_H0.value() == 0.20
         assert self.widget.lf_H1.value() == 0.21
         assert self.widget.lf_H2.value() == 0.22
@@ -183,7 +183,7 @@ class TestPHoleM58(object):
             )
         )
 
-        self.widget = PHoleM58(self.test_obj.hole[1], self.material_dict)
+        self.widget = PHoleM58(self.test_obj.hole[1], self.material_dict, lam=self.test_obj)
 
         assert self.widget.W1 == 0
         assert self.widget.W2 == 0

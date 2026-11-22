@@ -1,4 +1,8 @@
 from ....Functions_new.Winding.gen_phase_list import gen_name
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 ZS_NAME = "Slot Id"
 COIL_NAME = "Ntcoil"
@@ -7,7 +11,7 @@ TAN_NAME = "Tan Layer Id"
 SEP = ","
 
 
-def export_to_csv(self, file_path: str | None = None, is_add_header: bool = True, is_skip_empty: bool = False) -> None:
+def export_to_csv(self, file_path: str, is_add_header: bool = True, is_skip_empty: bool = False, lam: Lamination | None = None) -> None:
     """Export the winding matrix to a csv file. One matrix for each phase
     Column Slot id, Ntcoil, Rad id, Tan id
 
@@ -21,6 +25,8 @@ def export_to_csv(self, file_path: str | None = None, is_add_header: bool = True
         True to add first line and first column
     is_skip_empty : bool
         True to remove the lines with Ntcoil=0
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
     """
 
     # parse file_path
@@ -28,7 +34,7 @@ def export_to_csv(self, file_path: str | None = None, is_add_header: bool = True
         file_path += ".csv"
 
     # Get matrix
-    wind_mat = self.get_connection_mat()
+    wind_mat = self.get_connection_mat(lam=lam)
     Nrad = wind_mat.shape[0]
     Ntan = wind_mat.shape[1]
     Zs = wind_mat.shape[2]

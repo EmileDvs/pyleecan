@@ -340,13 +340,15 @@ class Winding(LegacyModel):
             return self.Lewout + self.end_winding.comp_length(winding=self)
 
     # Inlined from Methods.Machine.Winding.comp_Ncps
-    def comp_Ncps(self) -> float:
+    def comp_Ncps(self, lam: Lamination | None = None) -> float:
         """Compute the number of conductors per slot
 
         Parameters
         ----------
         self : Winding
             A Winding object
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -354,7 +356,7 @@ class Winding(LegacyModel):
             Number of conductors per slot
 
         """
-        Ncps_ = abs(self.get_connection_mat().sum(axis=(0, 1))).sum(axis=1)
+        Ncps_ = abs(self.get_connection_mat(lam=lam).sum(axis=(0, 1))).sum(axis=1)
         Ncps = Ncps_.mean()
 
         if Ncps_.std() != 0:
@@ -400,7 +402,7 @@ class Winding(LegacyModel):
 
             Zs = lam.slot.Zs
 
-        (Nrad, Ntan) = self.get_dim_wind()
+        (Nrad, Ntan) = self.get_dim_wind(lam=lam)
         Ncspc = Zs * Nrad * Ntan / (2.0 * self.qs * self.Npcp)
 
         return Ncspc
@@ -440,7 +442,7 @@ class Winding(LegacyModel):
 
         # effective number of turns in series per phase from connection matrix
         Ntspc_eff_ = (
-            abs(self.get_connection_mat(Zs).sum(axis=(0, 1))).sum(axis=0)
+            abs(self.get_connection_mat(Zs, lam=lam).sum(axis=(0, 1))).sum(axis=0)
             / self.Npcp
             / 2
         )
@@ -480,7 +482,7 @@ class Winding(LegacyModel):
         """
 
         if wind_mat is None:
-            wind_mat = self.get_connection_mat()
+            wind_mat = self.get_connection_mat(lam=lam)
 
         assert wind_mat.ndim == 4, "dim 4 expected for wind_mat"
 
@@ -578,7 +580,7 @@ class Winding(LegacyModel):
         assert Zs > 0, "Zs must be >0"
         assert Zs % 1 == 0, "Zs must be an integer"
 
-        wind_mat = self.get_connection_mat(Zs)
+        wind_mat = self.get_connection_mat(Zs, lam=lam)
         p = self.p
         qs = self.qs  # number of phases
 
@@ -636,7 +638,7 @@ class Winding(LegacyModel):
         assert Zs > 0, "Zs must be >0"
         assert Zs % 1 == 0, "Zs must be an integer"
 
-        wind_mat = self.get_connection_mat(Zs)
+        wind_mat = self.get_connection_mat(Zs, lam=lam)
         p = self.p
 
         # slot electrical angle
@@ -660,9 +662,10 @@ class Winding(LegacyModel):
     # Inlined from Methods.Machine.Winding.export_to_csv
     def export_to_csv(
         self,
-        file_path: str | None = None,
+        file_path: str,
         is_add_header: bool = True,
         is_skip_empty: bool = False,
+        lam: Lamination | None = None,
         *,
         ZS_NAME="Slot Id",
         COIL_NAME="Ntcoil",
@@ -683,6 +686,8 @@ class Winding(LegacyModel):
             True to add first line and first column
         is_skip_empty : bool
             True to remove the lines with Ntcoil=0
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
         """
 
         # parse file_path
@@ -690,7 +695,7 @@ class Winding(LegacyModel):
             file_path += ".csv"
 
         # Get matrix
-        wind_mat = self.get_connection_mat()
+        wind_mat = self.get_connection_mat(lam=lam)
         Nrad = wind_mat.shape[0]
         Ntan = wind_mat.shape[1]
         Zs = wind_mat.shape[2]
@@ -740,7 +745,7 @@ class Winding(LegacyModel):
 
     # Inlined from Methods.Machine.Winding.get_connection_mat
     def get_connection_mat(
-        self, Zs: int | None = None, p: int | None = None
+        self, Zs: int | None = None, p: int | None = None, lam: Lamination | None = None
     ) -> np.ndarray:
         """Get the Winding Matrix
 
@@ -752,6 +757,8 @@ class Winding(LegacyModel):
             Number of Slot (Integer >0)
         p : int
             Number of pole pairs (Integer >0)
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -762,11 +769,11 @@ class Winding(LegacyModel):
         """
 
         if self.wind_mat is None:
-            self.wind_mat = self.comp_connection_mat(Zs=Zs, p=p)
+            self.wind_mat = self.comp_connection_mat(Zs=Zs, p=p, lam=lam)
         elif Zs is not None and self.wind_mat.shape[2] != Zs:
             # Winding matrix is outdated
             self.clean()
-            self.wind_mat = self.comp_connection_mat(Zs=Zs, p=p)
+            self.wind_mat = self.comp_connection_mat(Zs=Zs, p=p, lam=lam)
 
         wind_mat = self.wind_mat.copy()
         # Apply the transformations
@@ -783,13 +790,15 @@ class Winding(LegacyModel):
         return wind_mat
 
     # Inlined from Methods.Machine.Winding.get_dim_wind
-    def get_dim_wind(self):
+    def get_dim_wind(self, lam: Lamination | None = None):
         """Get the two first dimension of the winding matrix
 
         Parameters
         ----------
         self : Winding
             A Winding object
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -798,18 +807,20 @@ class Winding(LegacyModel):
 
         """
 
-        wind_mat = self.get_connection_mat()
+        wind_mat = self.get_connection_mat(lam=lam)
 
         return wind_mat.shape[0:2]
 
     # Inlined from Methods.Machine.Winding.get_periodicity
-    def get_periodicity(self) -> tuple[int, bool]:
+    def get_periodicity(self, lam: Lamination | None = None) -> tuple[int, bool]:
         """Computes the winding matrix (anti-)periodicity
 
         Parameters
         ----------
         self : Winding
             A Winding object
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -821,7 +832,7 @@ class Winding(LegacyModel):
         """
 
         if self.per_a is None or self.is_aper_a is None:
-            self.per_a, self.is_aper_a = self.comp_periodicity()
+            self.per_a, self.is_aper_a = self.comp_periodicity(lam=lam)
 
         return self.per_a, self.is_aper_a
 
@@ -903,7 +914,7 @@ class Winding(LegacyModel):
 
         # Detecting the direction of the layer (tangential or radial)
         # If Nlayer > 1 then we have to precise if the direction is tangential or radial to draw the coil at the right location in the slot
-        Nrad, Ntan = self.get_dim_wind()
+        Nrad, Ntan = self.get_dim_wind(lam=lam)
         if Nrad < Ntan:
             is_tangential_layer = True
         else:
@@ -1462,7 +1473,10 @@ class Winding(LegacyModel):
 
     # Inlined from Methods.Machine.Winding.find_wind_phase_color
     def find_wind_phase_color(
-        self, label: str, wind_mat: np.ndarray | None = None
+        self,
+        label: str,
+        wind_mat: np.ndarray | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[str | list, str | None]:
         """Returns Color phase of the Winding surface
 
@@ -1475,6 +1489,8 @@ class Winding(LegacyModel):
         wind_mat : numpy.ndarray
             A matrix [Nrad,Ntan,Zs,qs] representing the winding
             (default: self.get_connection_mat())
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -1484,7 +1500,7 @@ class Winding(LegacyModel):
             "+" or "-" (None without phase)
         """
         if wind_mat is None:
-            wind_mat = self.get_connection_mat()
+            wind_mat = self.get_connection_mat(lam=lam)
         return self._find_wind_phase_color(label, wind_mat)
 
     # Inlined from Methods.Machine.Winding._get_phase_id
@@ -1519,7 +1535,12 @@ class Winding(LegacyModel):
 
     # Inlined from Methods.Machine.Winding.get_phase_id
     def get_phase_id(
-        self, Nrad: int, Ntan: int, Zs: int, wind_mat: np.ndarray | None = None
+        self,
+        Nrad: int,
+        Ntan: int,
+        Zs: int,
+        wind_mat: np.ndarray | None = None,
+        lam: Lamination | None = None,
     ) -> int:
         """Return the id of the corresponding phase for the zone (Nrad,Ntan,Zs)
 
@@ -1536,6 +1557,8 @@ class Winding(LegacyModel):
             Zone tagential coordinate
         Zs : int
             Zone slot number coordinate
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -1543,5 +1566,5 @@ class Winding(LegacyModel):
             Id of the phase
         """
         if wind_mat is None:
-            wind_mat = self.get_connection_mat()
+            wind_mat = self.get_connection_mat(lam=lam)
         return self._get_phase_id(wind_mat, Nrad, Ntan, Zs)

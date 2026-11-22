@@ -136,12 +136,12 @@ slotCirc_test.append(
 ###################
 Conv_test = slotCirc_test[0].copy()
 Conv_test["test_obj"] = Conv_test["test_obj"].copy()
-Conv_test["test_obj"].slot.convert_to_H0_bore()
+Conv_test["test_obj"].slot.convert_to_H0_bore(lam=Conv_test["test_obj"])
 slotCirc_test.append(Conv_test)
 
 Conv_test = slotCirc_test[1].copy()
 Conv_test["test_obj"] = Conv_test["test_obj"].copy()
-Conv_test["test_obj"].slot.convert_to_H0_bore()
+Conv_test["test_obj"].slot.convert_to_H0_bore(lam=Conv_test["test_obj"])
 slotCirc_test.append(Conv_test)
 
 
@@ -153,8 +153,8 @@ class Test_SlotCirc_meth(object):
     def test_schematics(self, test_dict):
         """Check that the schematics is correct"""
         test_obj = test_dict["test_obj"]
-        point_dict = test_obj.slot._comp_point_coordinate()
-        line_dict = test_obj.slot._comp_line_dict()
+        point_dict = test_obj.slot._comp_point_coordinate(lam=test_obj)
+        line_dict = test_obj.slot._comp_line_dict(lam=test_obj)
 
         assert point_dict["Z1"].imag < 0
         assert point_dict["Z2"].imag > 0
@@ -218,7 +218,7 @@ class Test_SlotCirc_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -227,7 +227,7 @@ class Test_SlotCirc_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface(test_obj.slot, Ndisc=400)
+        b = Slot.comp_surface(test_obj.slot, Ndisc=400, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -235,7 +235,7 @@ class Test_SlotCirc_meth(object):
     def test_comp_surface_active(self, test_dict):
         """Check that the computation of the winding surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         a = result
         b = test_dict["SW_exp"]
@@ -244,7 +244,7 @@ class Test_SlotCirc_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface_active(test_obj.slot)
+        b = Slot.comp_surface_active(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -263,7 +263,7 @@ class Test_SlotCirc_meth(object):
     def test_comp_height(self, test_dict):
         """Check that the computation of the height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]
@@ -272,7 +272,7 @@ class Test_SlotCirc_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_height(test_obj.slot)
+        b = Slot.comp_height(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -280,13 +280,13 @@ class Test_SlotCirc_meth(object):
     def test_comp_angle_opening(self, test_dict):
         """Check that the computation of the average opening angle iscorrect"""
         test_obj = test_dict["test_obj"]
-        a = test_obj.slot.comp_angle_opening()
+        a = test_obj.slot.comp_angle_opening(lam=test_obj)
         b = test_dict["Ao"]
         msg = "For Angle Op: Return " + str(a) + " expected " + str(b)
         # print(msg)
         assert abs((a - b) / a - 0) < DELTA, msg
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_angle_opening(test_obj.slot)
+        b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -294,7 +294,7 @@ class Test_SlotCirc_meth(object):
     def test_comp_angle_active_eq(self, test_dict):
         """Check that the computation of the average angle is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_angle_active_eq()
+        result = test_obj.slot.comp_angle_active_eq(lam=test_obj)
 
         a = result
         b = test_dict["Aw"]
@@ -314,7 +314,7 @@ class Test_SlotCirc_meth(object):
         result = lam.slot.get_surface_opening()
         assert len(result) == 0
 
-        result = lam.slot.get_surface()
+        result = lam.slot.get_surface(lam=lam)
         assert len(result.get_lines()) == 3
         assert result.is_inside(result.point_ref)
 

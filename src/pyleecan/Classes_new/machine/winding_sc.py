@@ -151,13 +151,15 @@ class WindingSC(Winding):
             return None, False
 
     # Inlined from Methods.Machine.WindingSC.get_dim_wind
-    def get_dim_wind(self):
+    def get_dim_wind(self, lam: Lamination | None = None):
         """Get the two first dimension of the winding matrix
 
         Parameters
         ----------
         self : Winding
             A Winding object
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------

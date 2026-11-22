@@ -103,7 +103,10 @@ class WHoleMag(Ui_WHoleMag, QWidget):
         self.w_hole.hide()  # Deleted by Qt (no garbage collection crash)
         self.w_hole.deleteLater()
         self.w_hole = self.wid_list[self.c_hole_type.currentIndex()](
-            hole=self.obj.hole[index], material_dict=self.material_dict
+            hole=self.obj.hole[index],
+            material_dict=self.material_dict,
+            lam=self.obj,
+            machine=parent.machine,
         )
         # Refresh the GUI
         self.main_layout.removeWidget(self.w_hole)
@@ -150,7 +153,10 @@ class WHoleMag(Ui_WHoleMag, QWidget):
         self.w_hole.hide()  # Deleted by Qt (no garbage collection crash)
         self.w_hole.deleteLater()
         self.w_hole = self.wid_list[c_index](
-            hole=self.obj.hole[self.index], material_dict=self.material_dict
+            hole=self.obj.hole[self.index],
+            material_dict=self.material_dict,
+            lam=self.obj,
+            machine=self.parent.machine,
         )
         self.w_hole.saveNeeded.connect(self.emit_save)
         # Refresh the GUI

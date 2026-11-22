@@ -78,7 +78,7 @@ class Test_HoleM53_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_surface()
+        result = test_obj.hole[0].comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -100,7 +100,7 @@ class Test_HoleM53_meth(object):
     def test_comp_radius(self, test_dict):
         """Check that the computation of the radius is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_radius()
+        result = test_obj.hole[0].comp_radius(lam=test_obj)
 
         a = result[0]
         b = test_dict["Rmin"]
@@ -117,7 +117,7 @@ class Test_HoleM53_meth(object):
         """Check that the computation of W5 iscorrect"""
         test_obj = test_dict["test_obj"]
 
-        a = test_obj.hole[0].comp_W5()
+        a = test_obj.hole[0].comp_W5(lam=test_obj)
         b = test_dict["W5"]
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
@@ -139,7 +139,7 @@ class Test_HoleM53_meth(object):
                 W4=2.28,
             )
         )
-        a = test_obj2.hole[0].comp_W5()
+        a = test_obj2.hole[0].comp_W5(lam=test_obj2)
         assert a == pytest.approx(-0.0014380265690122837, rel=1e-12)
 
     @pytest.mark.parametrize("test_dict", HoleM53_test)

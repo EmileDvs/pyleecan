@@ -201,7 +201,7 @@ class SWPole(Ui_SWPole, QWidget):
             self.test_err_msg = error
             QMessageBox().critical(self, self.tr("Error"), self.test_err_msg)
         else:  # No error => Plot the lamination
-            self.obj.plot()
+            self.obj.plot(machine=self.machine)
             set_plot_gui_icon()
 
     @staticmethod

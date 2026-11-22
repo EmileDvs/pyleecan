@@ -77,7 +77,7 @@ class SBar(Gen_SBar, QWidget):
         self.w_mat_scr.def_mat = "Copper1"
         self.w_mat_scr.setText("Ring material")
         # self.w_mat_scr.is_hide_button = True
-        self.w_mat_scr.update(self.machine.rotor, "ring_mat", self.material_dict)
+        self.w_mat_scr.update(self.machine.rotor, "ring_mat", self.material_dict, machine=self.machine)
 
         # Initialize the GUI with the current machine value
         self.lf_Hscr.setValue(machine.rotor.Hscr)

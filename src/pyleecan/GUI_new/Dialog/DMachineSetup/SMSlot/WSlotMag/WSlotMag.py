@@ -38,7 +38,7 @@ class WSlotMag(Ui_WSlotMag, QWidget):
     # Signal to SMSLotMag to know that a slot has changed
     typeSlotShanged = Signal()
 
-    def __init__(self, lam, material_dict):
+    def __init__(self, lam, material_dict, machine=None):
         """Initialize the GUI according to lamination
 
         Parameters
@@ -49,6 +49,8 @@ class WSlotMag(Ui_WSlotMag, QWidget):
             the lamination to edit
         material_dict: dict
             Materials dictionary (library + machine)
+        machine : Machine
+            Machine holding the lamination (for the material library)
         """
 
         # Build the interface according to the .ui file
@@ -58,6 +60,7 @@ class WSlotMag(Ui_WSlotMag, QWidget):
         self.is_stator = False
         self.lam = lam
         self.material_dict = material_dict
+        self.machine = machine
         self.wid_list = WIDGET_LIST
 
         # Fill the combobox with the available slots
@@ -79,7 +82,9 @@ class WSlotMag(Ui_WSlotMag, QWidget):
         self.w_slot.hide()  # Deleted by Qt (no garbage collection crash)
         self.w_slot.deleteLater()
         self.w_slot = self.wid_list[self.c_slot_type.currentIndex()](
-            lamination=self.lam, material_dict=self.material_dict
+            lamination=self.lam,
+            material_dict=self.material_dict,
+            machine=self.machine,
         )
         # Refresh the GUI
         self.main_layout.removeWidget(self.w_slot)

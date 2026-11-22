@@ -1,13 +1,19 @@
-from . import *
+from . import VentilationPolarInstanceError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Make sure that the ventilation parameters are correctly set
 
     Parameters
     ----------
     self : VentilationPolar
         A VentilationPolar object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------

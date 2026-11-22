@@ -1,22 +1,28 @@
 import numpy as np
 
 from ....Classes_new.geometry.arc_3 import Arc3
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_radius(self):
+def comp_radius(self, lam: Lamination | None = None):
     """Compute the radius of the min and max circle that contains the slot
 
     Parameters
     ----------
     self : HoleM60
         A HoleM60 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
     (Rmin,Rmax): tuple
         Radius of the circle that contains the slot [m]
     """
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
 
     point_list = list()
     # Discretize arcs to get the higher point and the lower point

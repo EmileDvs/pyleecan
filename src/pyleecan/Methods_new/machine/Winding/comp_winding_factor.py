@@ -42,7 +42,7 @@ def comp_winding_factor(self, Harmonics: list[float] = [1], lam: Lamination | No
     assert Zs > 0, "Zs must be >0"
     assert Zs % 1 == 0, "Zs must be an integer"
 
-    wind_mat = self.get_connection_mat(Zs)
+    wind_mat = self.get_connection_mat(Zs, lam=lam)
     p = self.p
 
     # slot electrical angle

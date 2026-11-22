@@ -350,7 +350,7 @@ class PWSlot23(Gen_PWSlot23, QWidget):
 
         # Check that everything is set right
         if lam.slot.W3 is not None:
-            lam.slot._comp_W()
+            lam.slot._comp_W(lam=lam)
 
         # Constraints
         try:

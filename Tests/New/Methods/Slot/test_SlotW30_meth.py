@@ -90,7 +90,7 @@ class Test_SlotW30_meth(object):
     def test_schematics(self, test_dict):
         """Check that the schematics is correct"""
         test_obj = test_dict["test_obj"]
-        point_dict = test_obj.slot._comp_point_coordinate()
+        point_dict = test_obj.slot._comp_point_coordinate(lam=test_obj)
 
         # Check width
         assert abs(point_dict["Z1"] - point_dict["Z12"]) == pytest.approx(
@@ -188,7 +188,7 @@ class Test_SlotW30_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -199,7 +199,7 @@ class Test_SlotW30_meth(object):
     def test_comp_surface_active(self, test_dict):
         """Check that the computation of the winding surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         a = result
         b = test_dict["SW_exp"]
@@ -210,7 +210,7 @@ class Test_SlotW30_meth(object):
     def test_comp_surface_opening(self, test_dict):
         """Check that the computation of the opening surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_opening()
+        result = test_obj.slot.comp_surface_opening(lam=test_obj)
 
         a = result
         b = test_dict["SO_exp"]
@@ -218,7 +218,7 @@ class Test_SlotW30_meth(object):
         assert abs((a - b) / a - 0) < DELTA, msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface_opening(test_obj.slot, Ndisc=400)
+        b = Slot.comp_surface_opening(test_obj.slot, Ndisc=400, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -226,14 +226,14 @@ class Test_SlotW30_meth(object):
     def test_comp_height(self, test_dict):
         """Check that the computation of the height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_height(test_obj.slot)
+        b = Slot.comp_height(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -241,12 +241,12 @@ class Test_SlotW30_meth(object):
     def test_comp_angle_opening(self, test_dict):
         """Check that the computation of the average opening angle iscorrect"""
         test_obj = test_dict["test_obj"]
-        a = test_obj.slot.comp_angle_opening()
+        a = test_obj.slot.comp_angle_opening(lam=test_obj)
 
         if test_obj.is_internal == False:
             assert a == 2 * arcsin(test_obj.slot.W0 / (2 * 0.1325))
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_angle_opening(test_obj.slot)
+        b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -254,7 +254,7 @@ class Test_SlotW30_meth(object):
     def test_comp_angle_active_eq(self, test_dict):
         """Check that the computation of the average angle is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_angle_active_eq()
+        result = test_obj.slot.comp_angle_active_eq(lam=test_obj)
 
         a = result
         b = test_dict["Aw"]
@@ -281,35 +281,35 @@ class Test_SlotW30_meth(object):
         lam.slot = SlotW30(H0=5e-3, H1=20e-3, R1=10e-3, R2=5e-3, W0=5e-3, W3=10e-3)
 
         with pytest.raises(S30_R1Error) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
         # R2 too hight
         lam = LamSlot(is_internal=False, Rint=0.1325)
         lam.slot = SlotW30(H0=5e-3, H1=20e-3, R1=1e-3, R2=15e-3, W0=5e-3, W3=10e-3)
 
         with pytest.raises(S30_R2Error) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
         # R1 + R2 > H1
         lam = LamSlot(is_internal=False, Rint=0.1325)
         lam.slot = SlotW30(H0=5e-3, H1=20e-3, R1=5e-3, R2=20e-3, W0=5e-3, W3=10e-3)
 
         with pytest.raises(S30_R1Error) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
         # W3 too high
         lam = LamSlot(is_internal=False, Rint=0.1325)
         lam.slot = SlotW30(H0=5e-3, H1=20e-3, R1=0, R2=0, W0=5e-3, W3=20e-3)
 
         with pytest.raises(S30_W3Error) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
         # W0
         lam = LamSlot(is_internal=False, Rint=0.1325)
         lam.slot = SlotW30(H0=5e-3, H1=20e-3, R1=10e-3, R2=0, W0=0, W3=20e-3)
 
         with pytest.raises(S30_W0Error) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
 
 if __name__ == "__main__":

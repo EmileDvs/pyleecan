@@ -39,7 +39,7 @@ class TestSlotUD_meth(object):
         assert Dxf_op[0].is_inside(Dxf_op[0].point_ref)
 
         # Complete surface
-        Dxf_tot = self.slot_dxf.get_surface()
+        Dxf_tot = self.slot_dxf.get_surface(lam=self.Prius_Dxf.stator)
         assert len(Dxf_tot.get_lines()) == 8
         assert Dxf_tot.is_inside(Dxf_tot.point_ref)
 
@@ -48,17 +48,20 @@ class TestSlotUD_meth(object):
         So = Dxf_op[0].comp_surface()
         St = Dxf_tot.comp_surface()
         assert Sa + So == pytest.approx(St, rel=0.1)
-        assert Sa + So == pytest.approx(self.slot.comp_surface(), rel=0.1)
+        assert Sa + So == pytest.approx(
+            self.slot.comp_surface(lam=self.Prius.stator), rel=0.1
+        )
 
     def test_to_UD2(self):
         """Check that the slot can be converted to UD2"""
-        slot_2 = self.slot_dxf.convert_to_SlotUD2()
+        slot_2 = self.slot_dxf.convert_to_SlotUD2(lam=self.Prius_Dxf.stator)
         assert isinstance(slot_2, SlotUD2)
         assert len(slot_2.line_list) == 7
         assert len(slot_2.active_surf.line_list) == 6
 
-        slot_2.parent = self.Prius.stator
-        assert slot_2.comp_surface() == pytest.approx(self.slot.comp_surface(), rel=0.1)
+        assert slot_2.comp_surface(lam=self.Prius.stator) == pytest.approx(
+            self.slot.comp_surface(lam=self.Prius.stator), rel=0.1
+        )
 
 
 if __name__ == "__main__":

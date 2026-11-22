@@ -5,12 +5,13 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.lamination import Lamination
 
 ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
 STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
 
-def plot(self, fig: Figure | None = None, ax: Axes | None = None) -> tuple[Figure, Axes]:
+def plot(self, fig: Figure | None = None, ax: Axes | None = None, lam: Lamination | None = None) -> tuple[Figure, Axes]:
     """Plot the Bore in a matplotlib fig
 
     Parameters
@@ -20,6 +21,8 @@ def plot(self, fig: Figure | None = None, ax: Axes | None = None) -> tuple[Figur
     fig :
         if None, open a new fig and plot, else add to the current
         one (Default value = None)
+    lam : Lamination, optional
+        Lamination holding the bore (default: the parent)
 
     Returns
     -------
@@ -28,7 +31,7 @@ def plot(self, fig: Figure | None = None, ax: Axes | None = None) -> tuple[Figur
     ax : Matplotlib.axes.Axes object
         Axis containing the plot
     """
-    surf = self.get_surface()
+    surf = self.get_surface(lam=lam)
 
     # Display the result
     (fig, ax, patch_leg, label_leg) = init_fig(fig, ax)

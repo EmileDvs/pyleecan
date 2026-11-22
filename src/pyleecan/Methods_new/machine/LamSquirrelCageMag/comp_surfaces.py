@@ -23,9 +23,9 @@ def comp_surfaces(self) -> dict:
     Shole = 0
     Smag = 0
     for hole in self.hole:
-        Shole += hole.Zh * hole.comp_surface()
+        Shole += hole.Zh * hole.comp_surface(lam=self)
         if hole.has_magnet():
-            Smag += hole.Zh * hole.comp_surface_magnets()
+            Smag += hole.Zh * hole.comp_surface_magnets(lam=self)
 
     Ryoke = self.get_Ryoke()
     Hyoke = self.comp_height_yoke()

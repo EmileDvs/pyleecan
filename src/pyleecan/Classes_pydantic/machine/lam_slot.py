@@ -75,7 +75,7 @@ class LamSlot(Lamination):
         """
 
     # Inlined from Methods.Machine.LamSlot.comp_angle_d_axis
-    def comp_angle_d_axis(self) -> float:
+    def comp_angle_d_axis(self, machine: Machine | None = None) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
         By convention the first magnet is +
@@ -84,6 +84,8 @@ class LamSlot(Lamination):
         ----------
         self : LamSlot
             A LamSlot object
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -252,7 +254,9 @@ class LamSlot(Lamination):
         return slot_list
 
     # Inlined from Methods.Machine.LamSlot.get_surfaces_closing
-    def get_surfaces_closing(self, sym: int = 1) -> list:
+    def get_surfaces_closing(
+        self, sym: int = 1, machine: Machine | None = None
+    ) -> list:
         """Return the surfaces needed to close the radii of the Lamination
 
         Parameters
@@ -261,6 +265,8 @@ class LamSlot(Lamination):
             A LamSlot object
         sym : int
             Symmetry factor (1= full machine, 2= half of the machine...)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -416,7 +422,9 @@ class LamSlot(Lamination):
 
         (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
-        surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+        surf_list = self.build_geometry(
+            sym=sym, alpha=alpha, delta=delta, machine=machine
+        )
         patches = []
         for surf in surf_list:
             color, legend = Machine.get_color_legend_from_surface(surf, is_lam_only)

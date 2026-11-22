@@ -3,9 +3,13 @@ import numpy as np
 from ....Classes_new.machine.winding import Winding
 from ....classes_common.errors import NotImplementedYetError
 from ....Classes_new.machine.lam_slot import LamSlot
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
-def build_geometry(self, sym=1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False) -> list:
+def build_geometry(self, sym=1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False, machine: Machine | None = None) -> list:
     """Build the geometry of the LamSlotMulti with winding in slots
 
     Parameters
@@ -18,6 +22,8 @@ def build_geometry(self, sym=1, alpha: float = 0, delta: complex = 0, is_circula
         Complex value for translation
     is_circular_radius : bool
         True to add surfaces to "close" the Lamination radii
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Returns
     -------
@@ -46,7 +52,7 @@ def build_geometry(self, sym=1, alpha: float = 0, delta: complex = 0, is_circula
             surf_Wind = list()
         else:
             try:
-                Nrad, Ntan = self.winding.get_dim_wind()
+                Nrad, Ntan = self.winding.get_dim_wind(lam=self)
             except Exception:
                 Nrad, Ntan = 1, 1
 

@@ -24,7 +24,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0) -> 
         surf_list.extend(self.frame.build_geometry(sym=sym, alpha=alpha, delta=delta))
 
     for lam in self.lam_list:
-        surf_list.extend(lam.build_geometry(sym=sym, alpha=alpha, delta=delta))
+        surf_list.extend(lam.build_geometry(sym=sym, alpha=alpha, delta=delta, machine=self))
 
     if self.shaft is not None:
         surf_list.extend(self.shaft.build_geometry(sym=sym, alpha=alpha, delta=delta))

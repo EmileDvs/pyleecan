@@ -1,13 +1,19 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_alpha(self) -> float:
+def comp_alpha(self, lam: Lamination | None = None) -> float:
     """The opening angle with a W3 teeth width and Rext - H0 radius
 
     Parameters
     ----------
     self : HoleM52
         A HoleM52 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
@@ -15,7 +21,7 @@ def comp_alpha(self) -> float:
         Angle between P1 and P9 (cf schematics) [rad]
 
     """
-    Rext = self.get_Rext()
+    Rext = self.get_Rext(lam=lam)
 
     alpha_tooth = 2 * np.arcsin(self.W3 / (2 * (Rext - self.H0)))
     slot_pitch = 2 * np.pi / self.Zh

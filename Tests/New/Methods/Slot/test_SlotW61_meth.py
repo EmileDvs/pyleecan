@@ -71,14 +71,14 @@ class Test_SlotW61_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
-        b = Slot.comp_surface(test_obj.slot)
+        b = Slot.comp_surface(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -97,14 +97,14 @@ class Test_SlotW61_meth(object):
     def test_comp_height(self, test_dict):
         """Check that the computation of the height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
-        b = Slot.comp_height(test_obj.slot)
+        b = Slot.comp_height(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -112,13 +112,13 @@ class Test_SlotW61_meth(object):
     def test_comp_angle_opening(self, test_dict):
         """Check that the computation of the average opening angle iscorrect"""
         test_obj = test_dict["test_obj"]
-        a = test_obj.slot.comp_angle_opening()
+        a = test_obj.slot.comp_angle_opening(lam=test_obj)
 
         b = test_dict["Ao"]
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
-        b = Slot.comp_angle_opening(test_obj.slot)
+        b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -126,7 +126,7 @@ class Test_SlotW61_meth(object):
     def test_comp_angle_active_eq(self, test_dict):
         """Check that the computation of the average angle is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_angle_active_eq()
+        result = test_obj.slot.comp_angle_active_eq(lam=test_obj)
 
         a = result
         b = test_dict["Aw"]
@@ -158,14 +158,14 @@ class Test_SlotW61_meth(object):
 
         test_obj.is_internal = False
         with pytest.raises(S61_InnerCheckError) as context:
-            test_obj.slot.check()
+            test_obj.slot.check(lam=test_obj)
 
     @pytest.mark.parametrize("test_dict", slotW61_test)
     def test_get_surfaces(self, test_dict):
         """Checks that the surfaces are correct"""
         test_obj = test_dict["test_obj"]
         Sact = test_obj.slot.build_geometry_active(Nrad=1, Ntan=2, lam=test_obj)
-        Sfull = test_obj.slot.get_surface()
+        Sfull = test_obj.slot.get_surface(lam=test_obj)
         Sop = test_obj.slot.get_surface_opening(lam=test_obj)
 
         # Sop[0].plot()
@@ -186,7 +186,7 @@ class Test_SlotW61_meth(object):
         test_obj.slot.W3 = 50
         test_obj.is_internal = True
         with pytest.raises(S61_WindWError) as context:
-            test_obj.slot.check()
+            test_obj.slot.check(lam=test_obj)
 
 
 if __name__ == "__main__":

@@ -382,7 +382,7 @@ can be automated is left to the frozen steps.
 ### Step 14: type hints, second pass (frozen)
 
 - [ ] Work through the review list, package by package, to a clean `ty check`.
-- [ ] `py.typed` marker; checker made stricter step by step.
+- [ ] `py.typed` marker (added 2026-11-22); checker made stricter step by step.
 
 ### Step 15: utility functions (frozen)
 
@@ -397,20 +397,28 @@ can be automated is left to the frozen steps.
       (2026-11-22: no direct parent read left in `Methods_new` and
       `Functions_new`; `container_or_parent` / `ancestor_with` only).
 - [x] Function helpers: `check_parent`, `assign_femm_surface`.
-- [ ] Tests of a refactored package become hand-maintained; parity on the
-      numerical results against legacy (parity checked 2026-11-22; freezing
-      the generated tests: to decide).
+- [x] Tests of a refactored package become hand-maintained; parity on the
+      numerical results against legacy (parity checked 2026-11-22; `Tests/New`
+      frozen 2026-11-22, `TESTS_NEW_FROZEN`; the tests pass the containers,
+      a fallback from a test is an error).
+- [x] The library calls pass the containers they hold; pass-through
+      container arguments for the helpers (Slot, Hole, Winding, Bore,
+      Notch, Lamination families); `ContainerFallbackWarning` on the
+      fallback (2026-11-22).
+- [ ] To decide (backlog): the machine down to the slot geometry labels,
+      the slot of a notch; most of the fallbacks left come from them.
 
 ### Step 17: GUI, second pass (frozen)
 
-- [ ] Remove the parent reads of the GUI itself (objects edited through
+- [x] Remove the parent reads of the GUI itself (objects edited through
       their container: `hole.parent.parent`, lamination copies): the dialogs
-      pass the container explicitly.
+      pass the container explicitly (2026-11-22: hole pages, material
+      selector, DXF dialogs).
 - [ ] Input validation on the target model: edit a working copy, validate it
       with the model and report the errors per field; no type or limit check
       left in the widgets.
-- [ ] GUI tests hand-maintained; the machines built with the GUI give the
-      same dump as with the legacy GUI.
+- [ ] GUI tests hand-maintained (done: `Tests/New` frozen); the machines
+      built with the GUI give the same dump as with the legacy GUI.
 
 ### Step 18: backend comparison (benchmark)
 

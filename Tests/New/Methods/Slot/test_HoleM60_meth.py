@@ -131,7 +131,7 @@ class Test_HoleM60_meth(object):
     def test_schematics(self, test_dict):
         """Check that the schematics is correct"""
         test_obj = test_dict["test_obj"]
-        point_dict = test_obj.hole[0]._comp_point_coordinate()
+        point_dict = test_obj.hole[0]._comp_point_coordinate(lam=test_obj)
         # test_obj.plot()
         # test_obj.hole[0].plot()
         # plt.show()
@@ -220,10 +220,10 @@ class Test_HoleM60_meth(object):
     def test_comp_radius(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        Rmin, Rmax = test_obj.hole[0].comp_radius()
+        Rmin, Rmax = test_obj.hole[0].comp_radius(lam=test_obj)
 
         # Check that the analytical method returns the same result as the numerical one
-        Rmin_a, Rmax_a = Hole.comp_radius(test_obj.hole[0])
+        Rmin_a, Rmax_a = Hole.comp_radius(test_obj.hole[0], lam=test_obj)
 
         a, b = Rmin, Rmin_a
         msg = "For Rmin: Return " + str(a) + " expected " + str(b)
@@ -236,7 +236,7 @@ class Test_HoleM60_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_surface()
+        result = test_obj.hole[0].comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -244,7 +244,7 @@ class Test_HoleM60_meth(object):
         assert a == pytest.approx(b, rel=DELTA), msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Hole.comp_surface(test_obj.hole[0])
+        b = Hole.comp_surface(test_obj.hole[0], lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert a == pytest.approx(b, rel=DELTA), msg
 

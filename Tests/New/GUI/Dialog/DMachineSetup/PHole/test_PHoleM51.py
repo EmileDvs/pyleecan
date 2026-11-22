@@ -64,7 +64,9 @@ class TestPHoleM51(object):
             Material(name="Magnet3"),
         ]
 
-        self.widget = PHoleM51(test_obj.hole[0], self.material_dict)
+        self.widget = PHoleM51(
+            test_obj.hole[0], self.material_dict, lam=test_obj, machine=self.machine
+        )
 
         self.test_obj = test_obj
 
@@ -91,7 +93,9 @@ class TestPHoleM51(object):
         test_obj2.hole[0].magnet_1 = None
         test_obj2.hole[0].magnet_2 = None
 
-        widget2 = PHoleM51(test_obj2.hole[0], self.material_dict)
+        widget2 = PHoleM51(
+            test_obj2.hole[0], self.material_dict, lam=test_obj2, machine=machine
+        )
         # Check material
         assert not widget2.w_mat_1.isHidden()
         assert not widget2.w_mat_1.isEnabled()
@@ -356,6 +360,7 @@ class TestPHoleM51(object):
         self.test_obj.hole[0].W0 = 0.5
         self.test_obj.hole[0].H0 = 0.00000001
         self.widget.hole = self.test_obj.hole[0]
+        self.widget.lam = self.test_obj
         self.widget.comp_output()
         assert not (self.widget.out_alpha.text() == "alpha: ?")
         assert not (self.widget.out_Whole.text() == "Wslot: ?")

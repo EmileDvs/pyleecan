@@ -55,7 +55,9 @@ def test_LamHole_2_notch(is_show_fig=False):
     )
 
     # Check surfaces
-    S1 = Toyota_Prius.stator.build_geometry(sym=4)[0].comp_surface()
+    S1 = Toyota_Prius.stator.build_geometry(sym=4, machine=Toyota_Prius)[
+        0
+    ].comp_surface()
     S2 = Toyota_Prius.stator.comp_surfaces()["Slam"] / 4
     assert S1 == pytest.approx(S2, rel=1e-4)
 

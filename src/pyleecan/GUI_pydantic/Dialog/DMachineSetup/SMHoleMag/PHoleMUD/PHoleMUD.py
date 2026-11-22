@@ -22,7 +22,7 @@ class PHoleMUD(Ui_PHoleMUD, QWidget):
     hole_name = "Import from DXF"
     hole_type = HoleUD
 
-    def __init__(self, hole=None, material_dict=None):
+    def __init__(self, hole=None, material_dict=None, lam=None, machine=None):
         """Initialize the widget according to hole
 
         Parameters
@@ -33,6 +33,10 @@ class PHoleMUD(Ui_PHoleMUD, QWidget):
             current hole to edit
         material_dict: dict
             Materials dictionary (library + machine)
+        lam : Lamination
+            Lamination holding the hole
+        machine : Machine
+            Machine holding the lamination
         """
         # Build the interface according to the .ui file
         QWidget.__init__(self)
@@ -41,6 +45,8 @@ class PHoleMUD(Ui_PHoleMUD, QWidget):
         # Set properties
         self.material_dict = material_dict
         self.hole = hole
+        self.lam = lam
+        self.machine = machine
         self.u = gui_option.unit
         self.w_mat_dict = dict()  # For magnet materials
 
@@ -68,7 +74,7 @@ class PHoleMUD(Ui_PHoleMUD, QWidget):
     def update_mag_list(self):
         """Update the material selector list according to hole magnet"""
         # Set void material
-        self.w_mat_0.update(self.hole, "mat_void", self.material_dict)
+        self.w_mat_0.update(self.hole, "mat_void", self.material_dict, machine=self.machine)
         # Remove previous widget:
         for wid in self.w_mat_dict.values():
             self.g_mat_layout.removeWidget(wid)
@@ -90,15 +96,15 @@ class PHoleMUD(Ui_PHoleMUD, QWidget):
             self.w_mat_dict[key].update(
                 self.hole.magnet_dict["magnet_" + str(index)],
                 "mat_type",
-                self.material_dict,
+                self.material_dict, machine=self.machine,
             )
 
     def update_graph(self):
         """Plot the lamination with/without the hole"""
         # Use a copy to avoid changing the main object
-        lam = self.hole.parent.copy()
+        lam = self.lam.copy()
         try:
-            self.hole.check()
+            self.hole.check(lam=self.lam)
             lam.hole = [self.hole]
         except SlotCheckError:
             # Plot only the lamination
@@ -140,10 +146,14 @@ class PHoleMUD(Ui_PHoleMUD, QWidget):
 
         # Update the hole object
         Zh = self.hole.Zh
-        parent = self.hole.parent
         self.hole.__init__(init_dict=hole.as_dict())  # keep pointer
         self.hole.Zh = Zh
-        self.hole.parent = parent
+        if self.lam is not None:
+            # Set again in its lamination (the container links the hole)
+            index = next(
+                ii for ii, item in enumerate(self.lam.hole) if item is self.hole
+            )
+            self.lam.hole[index] = self.hole
 
         # Update the new GUI according to the slot
         self.update_graph()
@@ -156,7 +166,7 @@ class PHoleMUD(Ui_PHoleMUD, QWidget):
         # Init GUI with lamination parameters
         try:
             self.dxf_gui = DXF_Hole(
-                Zh=self.hole.Zh, Lmag=self.hole.parent.L1, lam=self.hole.parent
+                Zh=self.hole.Zh, Lmag=self.lam.L1, lam=self.lam
             )
             self.dxf_gui.setWindowFlags(Qt.Window)  # To maximize the GUI
             self.dxf_gui.show()
@@ -186,9 +196,9 @@ class PHoleMUD(Ui_PHoleMUD, QWidget):
             try:
                 # We compute the output only if the hole is correctly set
                 # Compute all the needed output as string
-                s_surf = format(self.u.get_m2(self.hole.comp_surface()), ".4g")
-                m_surf = format(self.u.get_m2(self.hole.comp_surface_magnets()), ".4g")
-                (Rmin, Rmax) = self.hole.comp_radius()
+                s_surf = format(self.u.get_m2(self.hole.comp_surface(lam=self.lam)), ".4g")
+                m_surf = format(self.u.get_m2(self.hole.comp_surface_magnets(lam=self.lam)), ".4g")
+                (Rmin, Rmax) = self.hole.comp_radius(lam=self.lam)
                 Rmin_txt = format(self.u.get_m(Rmin), ".4g")
                 Rmax_txt = format(self.u.get_m(Rmax), ".4g")
 
@@ -237,7 +247,7 @@ class PHoleMUD(Ui_PHoleMUD, QWidget):
 
         # Constraints and None
         try:
-            self.hole.check()
+            self.hole.check(lam=self.lam)
         except SlotCheckError as error:
             return str(error)
 

@@ -120,7 +120,7 @@ def test_Lam_Wind_LSRPM_wind_tan(machine):
 
 def test_stator_slot_angle_opening(machine):
     """Test calculate the angle opening"""
-    machine.slot.comp_angle_opening()
+    machine.slot.comp_angle_opening(lam=machine)
 
 
 def test_stator_slot_height_damper(machine):

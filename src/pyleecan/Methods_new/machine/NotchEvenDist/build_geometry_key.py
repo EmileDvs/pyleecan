@@ -1,9 +1,13 @@
 from ....Functions_new.utils.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
 
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def build_geometry_key(self, index: int = 0, sym: int = 1, alpha: float = 0, delta: complex = 0) -> list:
+def build_geometry_key(self, index: int = 0, sym: int = 1, alpha: float = 0, delta: complex = 0, lam: Lamination | None = None) -> list:
     """Build the geometry of the keys inside the notch
 
     Parameters
@@ -18,6 +22,8 @@ def build_geometry_key(self, index: int = 0, sym: int = 1, alpha: float = 0, del
         Angle for rotation [rad]
     delta : complex
         Complex value for translation
+    lam : Lamination, optional
+        Lamination holding the notch (default: the parent)
 
     Returns
     -------
@@ -31,11 +37,11 @@ def build_geometry_key(self, index: int = 0, sym: int = 1, alpha: float = 0, del
 
     # Get the original surface
     Nsurf = self.notch_shape.get_surface_active(lam=self)
-    Nsurf.label = self.get_label() + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
+    Nsurf.label = self.get_label(lam=lam) + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
     Nsurf.rotate(angle=self.alpha)
     # Label definition
-    BC_prop_right = self.get_label() + "_" + YSNR_LAB
-    BC_prop_left = self.get_label() + "_" + YSNL_LAB
+    BC_prop_right = self.get_label(lam=lam) + "_" + YSNR_LAB
+    BC_prop_left = self.get_label(lam=lam) + "_" + YSNL_LAB
     # Generate all the surfaces (handle cut on sym axis)
     surf_list.extend(
         Hole.transform_hole_surf(

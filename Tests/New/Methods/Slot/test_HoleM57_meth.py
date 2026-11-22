@@ -40,7 +40,7 @@ class Test_HoleM57_meth(object):
     def test_schematics(self, test_dict):
         """Check that the schematics is correct"""
         test_obj = test_dict["test_obj"]
-        point_dict = test_obj.hole[0]._comp_point_coordinate()
+        point_dict = test_obj.hole[0]._comp_point_coordinate(lam=test_obj)
 
         # Check width
         assert abs(point_dict["Z3"] - point_dict["Z2"]) == pytest.approx(
@@ -85,10 +85,10 @@ class Test_HoleM57_meth(object):
     def test_comp_radius(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        Rmin, Rmax = test_obj.hole[0].comp_radius()
+        Rmin, Rmax = test_obj.hole[0].comp_radius(lam=test_obj)
 
         # Check that the analytical method returns the same result as the numerical one
-        Rmin_a, Rmax_a = Hole.comp_radius(test_obj.hole[0])
+        Rmin_a, Rmax_a = Hole.comp_radius(test_obj.hole[0], lam=test_obj)
 
         a, b = Rmin, Rmin_a
         msg = "Return " + str(a) + " expected " + str(b)

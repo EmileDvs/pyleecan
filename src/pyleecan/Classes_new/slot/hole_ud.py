@@ -115,8 +115,14 @@ class HoleUD(HoleMag):
         return surf_list
 
     # Inlined from Methods.Slot.HoleUD.check
-    def check(self) -> None:
-        """Check that the HoleUD is correctly defined"""
+    def check(self, lam: Lamination | None = None) -> None:
+        """Check that the HoleUD is correctly defined
+
+        Parameters
+        ----------
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
+        """
         if self.surf_list is None:
             self.surf_list = []
         if self.magnet_dict is None:
@@ -131,7 +137,9 @@ class HoleUD(HoleMag):
                 )
 
     # Inlined from Methods.Slot.HoleUD.comp_surface_magnet_id
-    def comp_surface_magnet_id(self, index: int) -> float:
+    def comp_surface_magnet_id(
+        self, index: int, lam: Lamination | None = None
+    ) -> float:
         """Compute the surface of the hole magnet of the corresponding index
 
         Parameters
@@ -140,6 +148,8 @@ class HoleUD(HoleMag):
             A HoleUD object
         index : int
             Index of the magnet to compute the surface
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------

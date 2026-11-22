@@ -43,6 +43,7 @@ class LamSquirrelCageMag(LamSquirrelCage):
         alpha: float = 0,
         delta: complex = 0,
         is_circular_radius: bool = False,
+        machine: Machine | None = None,
     ) -> list:
         """Build geometry of the LamSquirrelCage
 
@@ -58,6 +59,8 @@ class LamSquirrelCageMag(LamSquirrelCage):
             Complex value for translation
         is_circular_radius : bool
             True to add surfaces to "close" the Lamination radii
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -163,9 +166,9 @@ class LamSquirrelCageMag(LamSquirrelCage):
         Shole = 0
         Smag = 0
         for hole in self.hole:
-            Shole += hole.Zh * hole.comp_surface()
+            Shole += hole.Zh * hole.comp_surface(lam=self)
             if hole.has_magnet():
-                Smag += hole.Zh * hole.comp_surface_magnets()
+                Smag += hole.Zh * hole.comp_surface_magnets(lam=self)
 
         Ryoke = self.get_Ryoke()
         Hyoke = self.comp_height_yoke()

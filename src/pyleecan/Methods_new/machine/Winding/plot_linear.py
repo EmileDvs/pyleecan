@@ -97,7 +97,7 @@ def plot_linear(
 
     # Detecting the direction of the layer (tangential or radial)
     # If Nlayer > 1 then we have to precise if the direction is tangential or radial to draw the coil at the right location in the slot
-    Nrad, Ntan = self.get_dim_wind()
+    Nrad, Ntan = self.get_dim_wind(lam=lam)
     if Nrad < Ntan:
         is_tangential_layer = True
     else:

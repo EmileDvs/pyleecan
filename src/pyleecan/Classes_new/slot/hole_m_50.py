@@ -128,13 +128,15 @@ class HoleM50(HoleMag):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM50._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : HoleM50
             A HoleM50 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -142,7 +144,7 @@ class HoleM50(HoleMag):
             A dict of the slot coordinates
         """
 
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         # magnet pole pitch angle, must be <2*pi/2*p
         alpham = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))  # angle (Z9,0,Z9')
@@ -264,7 +266,7 @@ class HoleM50(HoleMag):
         mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
 
         # Get all the points
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -680,13 +682,15 @@ class HoleM50(HoleMag):
         return surf_list
 
     # Inlined from Methods.Slot.HoleM50.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Check that the HoleM50 object is correct
 
         Parameters
         ----------
         self : HoleM50
             A HoleM50 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -705,7 +709,7 @@ class HoleM50(HoleMag):
         S50_SpCheckError
             Slot pitch too small for the slot, reduce Zh, W3 or W0
         """
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         # Check that everything is set
         if self.W0 is None:
@@ -738,7 +742,7 @@ class HoleM50(HoleMag):
         if self.H0 <= self.H1:
             raise S50_H01CheckError("You must have H1 < H0")
 
-        if self.comp_W5() < 0:
+        if self.comp_W5(lam=lam) < 0:
             raise S50_W5CheckError("You must have W5 >=0")
 
         alpha_0 = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))  # W0 in rad
@@ -748,7 +752,7 @@ class HoleM50(HoleMag):
                 "Slot pitch too small for the slot, reduce Zh, W3 or W0"
             )
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         if abs(point_dict["Z1"]) > abs(point_dict["Z11"]):
             raise S50_W3CheckError(
                 "Points are colliding: unable to fulfill W3 constraints, for instance try increasing W3"
@@ -759,20 +763,22 @@ class HoleM50(HoleMag):
             )
 
     # Inlined from Methods.Slot.HoleM50.comp_alpha
-    def comp_alpha(self) -> float:
+    def comp_alpha(self, lam: Lamination | None = None) -> float:
         """Compute the alpha angle of the slot (cf schematics)
 
         Parameters
         ----------
         self : HoleM50
             a HoleM50 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
         alpha: float
             Cf schematics [rad]
         """
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         alpham = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))
 
@@ -780,7 +786,9 @@ class HoleM50(HoleMag):
         return np.arctan((self.H0 - self.H1 - Harc) / (self.W0 / 2 - self.W1 / 2))
 
     # Inlined from Methods.Slot.HoleM50.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True) -> dict:
+    def comp_magnetization_dict(
+        self, is_north=True, lam: Lamination | None = None
+    ) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -790,6 +798,8 @@ class HoleM50(HoleMag):
             a HoleM50 object
         is_north: True
             True: comp north magnetization, else add pi [rad]
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -798,7 +808,7 @@ class HoleM50(HoleMag):
         """
 
         # Comp magnet
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         mag_dict = {}
         S0 = Segment(begin=point_dict["Z5"], end=point_dict["Z4"])
@@ -817,13 +827,15 @@ class HoleM50(HoleMag):
         return mag_dict
 
     # Inlined from Methods.Slot.HoleM50.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | None = None):
         """Compute the radius of the min and max circle that contains the slot
 
         Parameters
         ----------
         self : HoleM50
             A HoleM50 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -831,15 +843,17 @@ class HoleM50(HoleMag):
             Radius of the circle that contains the slot [m]
         """
 
-        Rmax = self.get_Rext() - self.H1
+        Rmax = self.get_Rext(lam=lam) - self.H1
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Rmin = min(abs(point_dict["Z5"]), abs(point_dict["Z7"]))
 
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.HoleM50.comp_surface_magnet_id
-    def comp_surface_magnet_id(self, index: int) -> float:
+    def comp_surface_magnet_id(
+        self, index: int, lam: Lamination | None = None
+    ) -> float:
         """Compute the surface of the hole magnet of the corresponding index
 
         Parameters
@@ -848,6 +862,8 @@ class HoleM50(HoleMag):
             A HoleM50 object
         index : int
             Index of the magnet to compute the surface
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -862,13 +878,15 @@ class HoleM50(HoleMag):
         return 0
 
     # Inlined from Methods.Slot.HoleM50.comp_W5
-    def comp_W5(self) -> float:
+    def comp_W5(self, lam: Lamination | None = None) -> float:
         """Compute the W5 width of the slot (cf schematics)
 
         Parameters
         ----------
         self : HoleM50
             a HoleM50 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -877,7 +895,7 @@ class HoleM50(HoleMag):
 
         """
 
-        alpha = self.comp_alpha()
+        alpha = self.comp_alpha(lam=lam)
 
         # Distance fromZ8 to Z9
         L89 = (self.W0 / 2 - self.W1 / 2) / np.cos(alpha)
@@ -1026,7 +1044,7 @@ class HoleM50(HoleMag):
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo(lam=lam)
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:

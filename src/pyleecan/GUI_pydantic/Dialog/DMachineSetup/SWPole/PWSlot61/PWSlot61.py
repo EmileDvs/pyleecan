@@ -229,7 +229,7 @@ class PWSlot61(Gen_PWSlot61, QWidget):
                 gui_option.unit.get_m2(self.slot.comp_surface_active(lam=self.lamination)), ".4g"
             )
             tot_surf = format(gui_option.unit.get_m2(self.slot.comp_surface(lam=self.lamination)), ".4g")
-            op_angle = "%.4g" % self.slot.comp_angle_opening()
+            op_angle = "%.4g" % self.slot.comp_angle_opening(lam=self.lamination)
             # tooth_width = format(
             #     gui_option.unit.get_m(self.slot.comp_tooth_widths()["WTooth_average"]),
             #     ".4g",

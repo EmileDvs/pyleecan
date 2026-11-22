@@ -16,13 +16,7 @@ def _set_fct_name(self, value: str) -> None:
     # Check that value is a str
     check_var("_fct_name", value, "str")
 
+    # The rule functions are found from the name when the rule runs
+    # (convert_to_P / convert_to_other call rule_function_module): the legacy
+    # other_to_P / P_to_other attributes are not set
     self._fct_name = value
-
-    # Load the function
-    if self._fct_name is not None:
-        # Local import (circular: the registry imports the rule modules)
-        from ....Functions_new.Converter.rule_functions import rule_function_module
-
-        module = rule_function_module(self.fct_name)
-        self.other_to_P = getattr(module, "other_to_P")
-        self.P_to_other = getattr(module, "P_to_other")

@@ -3,9 +3,13 @@ import numpy as np
 from ....Classes_new.machine.lam_slot import LamSlot
 from ....Functions_new.utils.labels import update_RTS_index
 from ....Functions_new.utils.labels import BOUNDARY_PROP_LAB, COND_BOUNDARY_PROP_LAB, WIND_LAB, YSMR_LAB, YSML_LAB, decode_label
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
-def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False) -> list:
+def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_circular_radius: bool = False, machine: Machine | None = None) -> list:
     """Build the geometry of the Lamination with winding in slots
 
     Parameters
@@ -20,6 +24,8 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
         Complex value for translation
     is_circular_radius : bool
         True to add surfaces to "close" the Lamination radii
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Returns
     -------
@@ -43,7 +49,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
             surf_Wind = list()
         else:
             try:
-                Nrad, Ntan = self.winding.get_dim_wind()
+                Nrad, Ntan = self.winding.get_dim_wind(lam=self)
             except Exception:
                 Nrad, Ntan = 1, 1
 
@@ -54,7 +60,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
                 delta=delta, lam=self,
             )
 
-        st = self.get_label()
+        st = self.get_label(machine=machine)
         assert (self.slot.Zs % sym) == 0, (
             "ERROR, Wrong symmetry for "
             + st

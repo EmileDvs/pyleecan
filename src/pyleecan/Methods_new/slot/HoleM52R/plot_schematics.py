@@ -115,7 +115,7 @@ def plot_schematics(
         Rbo = self.get_Rbo(lam=lam)
         fig = plt.gcf()
         ax = plt.gca()
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         # Adding point label
         if is_add_point_label:
@@ -359,7 +359,9 @@ def plot_schematics(
         if manager is not None:
             manager.set_window_title(type(self).__name__ + " Schematics")
         ax.set_title("")
-        ax.get_legend().remove()
+        legend = ax.get_legend()
+        if legend is not None:
+            legend.remove()
         ax.set_axis_off()
         fig.tight_layout()
 

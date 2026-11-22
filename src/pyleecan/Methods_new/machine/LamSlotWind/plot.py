@@ -109,7 +109,7 @@ def plot(
         is_winding_connection = False
 
     # Get the LamSlot surface(s)
-    surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+    surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta, machine=machine)
 
     patches = list()
     # getting the number of phases and winding connection matrix
@@ -119,7 +119,7 @@ def plot(
             qs = 1
         else:
             try:
-                wind_mat = self.winding.get_connection_mat(self.get_Zs())
+                wind_mat = self.winding.get_connection_mat(self.get_Zs(), lam=self)
                 qs = self.winding.qs
                 # Calling swat-em method for the winding if we want to plot the radial pattern
                 if is_winding_connection:
@@ -151,7 +151,7 @@ def plot(
                     color, sign = Winding._find_wind_phase_color(surf.label, None)
                 else:
                     color, sign = self.winding.find_wind_phase_color(
-                        label=surf.label, wind_mat=wind_mat
+                        label=surf.label, wind_mat=wind_mat, lam=self
                     )
                 if sign == "+" and is_add_sign:
                     hatch = PLUS_HATCH
@@ -200,7 +200,7 @@ def plot(
         # Detecting the direction of the layer (tangential or radial)
         # If Nlayer > 1 then we have to precise if the direction is tangential or radial
         # If Nlayer ==1 then checking radial but value always equal to 0
-        Nrad, Ntan = self.winding.get_dim_wind()
+        Nrad, Ntan = self.winding.get_dim_wind(lam=self)
         if Nrad < Ntan:
             layer_id_name = "T_id"
         else:

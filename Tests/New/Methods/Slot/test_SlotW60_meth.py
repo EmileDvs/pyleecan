@@ -68,14 +68,14 @@ class Test_SlotW60_meth(object):
 
         """
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
-        b = Slot.comp_surface(test_obj.slot)
+        b = Slot.comp_surface(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -114,14 +114,14 @@ class Test_SlotW60_meth(object):
 
         """
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
-        b = Slot.comp_height(test_obj.slot)
+        b = Slot.comp_height(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -142,7 +142,7 @@ class Test_SlotW60_meth(object):
         a = test_obj.slot.comp_angle_opening()
         assert a == 2 * pi / test_obj.slot.Zs
 
-        b = Slot.comp_angle_opening(test_obj.slot)
+        b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
 
@@ -160,7 +160,7 @@ class Test_SlotW60_meth(object):
 
         """
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_angle_active_eq()
+        result = test_obj.slot.comp_angle_active_eq(lam=test_obj)
 
         a = result
         b = test_dict["Aw"]
@@ -182,7 +182,7 @@ class Test_SlotW60_meth(object):
         """Checks that the surfaces are correct"""
         test_obj = test_dict["test_obj"]
         Sact = test_obj.slot.build_geometry_active(Nrad=1, Ntan=2, lam=test_obj)
-        Sfull = test_obj.slot.get_surface()
+        Sfull = test_obj.slot.get_surface(lam=test_obj)
         Sop = test_obj.slot.get_surface_opening(lam=test_obj)
 
         # Sop[0].plot()
@@ -219,7 +219,7 @@ class Test_SlotW60_meth(object):
         )
 
         with pytest.raises(S60_InnerCheckError) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
         lam = LamSlot(is_internal=True, Rext=0.1325)
         lam.slot = SlotW60(
@@ -234,7 +234,7 @@ class Test_SlotW60_meth(object):
             W3=2e-3,
         )
         with pytest.raises(S60_RCheckError) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
         lam.slot = SlotW60(
             Zs=12,
@@ -248,7 +248,7 @@ class Test_SlotW60_meth(object):
             W3=2,
         )
         with pytest.raises(S60_WindWError) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
 
 if __name__ == "__main__":

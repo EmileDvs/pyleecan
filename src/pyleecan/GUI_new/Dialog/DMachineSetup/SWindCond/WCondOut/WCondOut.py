@@ -105,7 +105,7 @@ class WCondOut(QGroupBox):
         except Exception:  # Unable to compute the conductor active surface
             Sact = "?"
         try:
-            Ncps = str(int(lam.winding.comp_Ncps()))
+            Ncps = str(int(lam.winding.comp_Ncps(lam=lam)))
         except Exception:  # Unable to compute the number of conductors per slot
             Ncps = "?"
         try:

@@ -1,13 +1,19 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_Rmax(self) -> float:
+def comp_Rmax(self, lam: Lamination | None = None) -> float:
     """Compute the maximum radius of the Bore shape
 
     Parameters
     ----------
     self : Bore
         A Bore object
+    lam : Lamination, optional
+        Lamination holding the bore (default: the parent)
 
     Returns
     -------
@@ -15,7 +21,7 @@ def comp_Rmax(self) -> float:
         Maximum radius of the Bore shape [m]
     """
 
-    line_list = self.get_bore_line()
+    line_list = self.get_bore_line(lam=lam)
     point_list = list()
 
     for line in line_list:

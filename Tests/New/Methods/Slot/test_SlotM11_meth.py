@@ -66,7 +66,7 @@ class Test_Magnet_Type_11_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface()
+        result = test_obj.slot.comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -74,7 +74,7 @@ class Test_Magnet_Type_11_meth(object):
         assert a == pytest.approx(b, rel=DELTA), msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface(test_obj.slot)
+        b = Slot.comp_surface(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert a == pytest.approx(b, rel=DELTA), msg
 
@@ -82,7 +82,7 @@ class Test_Magnet_Type_11_meth(object):
     def test_comp_surface_active(self, test_dict):
         """Check that the computation of the active surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         a = result
         b = test_dict["SA_exp"]
@@ -90,7 +90,7 @@ class Test_Magnet_Type_11_meth(object):
         assert a == pytest.approx(b, rel=DELTA), msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_surface_active(test_obj.slot)
+        b = Slot.comp_surface_active(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert a == pytest.approx(b, rel=DELTA), msg
 
@@ -106,7 +106,7 @@ class Test_Magnet_Type_11_meth(object):
         assert a == pytest.approx(b, rel=DELTA), msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_height(test_obj.slot)
+        b = Slot.comp_height(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert a == pytest.approx(b, rel=DELTA), msg
 
@@ -122,7 +122,7 @@ class Test_Magnet_Type_11_meth(object):
         assert a == pytest.approx(b, rel=DELTA), msg
 
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_height_active(test_obj.slot)
+        b = Slot.comp_height_active(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert a == pytest.approx(b, rel=DELTA), msg
 
@@ -133,7 +133,7 @@ class Test_Magnet_Type_11_meth(object):
         a = test_obj.slot.comp_angle_opening()
         assert a == pytest.approx(test_obj.slot.W0, rel=DELTA)
         # Check that the analytical method returns the same result as the numerical one
-        b = Slot.comp_angle_opening(test_obj.slot)
+        b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)
         msg = "Return " + str(a) + " expected " + str(b)
         assert a == pytest.approx(b, rel=DELTA)
 
@@ -142,7 +142,7 @@ class Test_Magnet_Type_11_meth(object):
         """Check that the computation of the average opening width is correct"""
         test_obj = test_dict["test_obj"]
         a = test_obj.slot.comp_width_opening(lam=test_obj)
-        point_dict = test_obj.slot._comp_point_coordinate()
+        point_dict = test_obj.slot._comp_point_coordinate(lam=test_obj)
         assert a == pytest.approx(abs(point_dict["Z1"] - point_dict["Z4"]), rel=DELTA)
 
     @pytest.mark.parametrize("test_dict", Mag11_test)

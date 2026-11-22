@@ -31,7 +31,7 @@ class LamH(Lamination):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.LamH.comp_angle_d_axis
-    def comp_angle_d_axis(self) -> float:
+    def comp_angle_d_axis(self, machine: Machine | None = None) -> float:
         """Compute the angle between the X axis and the first d+ axis
         By convention a "Tooth" is centered on the X axis
         By convention the first magnet is +
@@ -40,6 +40,8 @@ class LamH(Lamination):
         ----------
         self : LamH
             A LamH object
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -351,7 +353,9 @@ class LamH(Lamination):
         # List of surface to plot the lamination
         (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
-        surf_list = self.build_geometry(sym=sym, alpha=alpha, delta=delta)
+        surf_list = self.build_geometry(
+            sym=sym, alpha=alpha, delta=delta, machine=machine
+        )
         patches = []
 
         for surf in surf_list:

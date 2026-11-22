@@ -16,7 +16,7 @@ def comp_fill_factor(self) -> float:
         return 0
     else:
         # compute the number of conductors per slot
-        Ncps = self.winding.comp_Ncps()
+        Ncps = self.winding.comp_Ncps(lam=self)
 
         # compute the winding surfaces
         S_slot_wind = self.slot.comp_surface_active(lam=self)

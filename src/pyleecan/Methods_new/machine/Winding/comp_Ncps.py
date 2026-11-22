@@ -1,14 +1,20 @@
 from ....classes_common.logger_context import get_logger
 from . import WindingError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_Ncps(self) -> float:
+def comp_Ncps(self, lam: Lamination | None = None) -> float:
     """Compute the number of conductors per slot
 
     Parameters
     ----------
     self : Winding
         A Winding object
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     Returns
     -------
@@ -16,7 +22,7 @@ def comp_Ncps(self) -> float:
         Number of conductors per slot
 
     """
-    Ncps_ = abs(self.get_connection_mat().sum(axis=(0, 1))).sum(axis=1)
+    Ncps_ = abs(self.get_connection_mat(lam=lam).sum(axis=(0, 1))).sum(axis=1)
     Ncps = Ncps_.mean()
 
     if Ncps_.std() != 0:

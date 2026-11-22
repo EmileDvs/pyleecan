@@ -34,14 +34,14 @@ def comp_wind_function(self, angle: np.ndarray | None = None, Na: int = 2048, al
 
     qs = self.winding.qs  # number of phases
     # Number of point on rad and tan direction
-    Nrad, Ntan = self.winding.get_dim_wind()
+    Nrad, Ntan = self.winding.get_dim_wind(lam=self)
     Zs = self.slot.Zs  # Number of slot
     Zs0 = int(Zs / per_a)
 
     slot_angle = self.slot.comp_angle_active_eq(lam=self)
     slot_opening = self.slot.comp_angle_opening(lam=self)
 
-    wind_mat = self.winding.get_connection_mat(Zs)
+    wind_mat = self.winding.get_connection_mat(Zs, lam=self)
     # sum wind_mat along Nlay_rad axis
     wind_mat = np.sum(wind_mat, axis=0)
 

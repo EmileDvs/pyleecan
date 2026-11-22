@@ -20,7 +20,7 @@ class PHoleM52R(Gen_PHoleM52R, QWidget):
     hole_name = "Hole Type 52R"
     hole_type = HoleM52R
 
-    def __init__(self, hole=None, material_dict=None):
+    def __init__(self, hole=None, material_dict=None, lam=None, machine=None):
         """Initialize the widget according to hole
 
         Parameters
@@ -31,6 +31,10 @@ class PHoleM52R(Gen_PHoleM52R, QWidget):
             current hole to edit
         material_dict: dict
             Materials dictionary (library + machine)
+        lam : Lamination
+            Lamination holding the hole
+        machine : Machine
+            Machine holding the lamination
         """
         # Build the interface according to the .ui file
         QWidget.__init__(self)
@@ -38,6 +42,8 @@ class PHoleM52R(Gen_PHoleM52R, QWidget):
 
         self.material_dict = material_dict
         self.hole = hole
+        self.lam = lam
+        self.machine = machine
 
         # Set FloatEdit unit
         self.lf_W0.unit = "m"
@@ -72,11 +78,11 @@ class PHoleM52R(Gen_PHoleM52R, QWidget):
         # Adapt GUI with/without magnet
         if hole.magnet_0 is None:  # SyRM
             self.img_slot.setPixmap(QPixmap(pixmap_dict["HoleM52R_empty_int_rotor"]))
-            self.w_mat_0.update(self.hole, "mat_void", self.material_dict)
+            self.w_mat_0.update(self.hole, "mat_void", self.material_dict, machine=self.machine)
             self.w_mat_1.hide()
         else:
-            self.w_mat_0.update(self.hole, "mat_void", self.material_dict)
-            self.w_mat_1.update(self.hole.magnet_0, "mat_type", self.material_dict)
+            self.w_mat_0.update(self.hole, "mat_void", self.material_dict, machine=self.machine)
+            self.w_mat_1.update(self.hole.magnet_0, "mat_type", self.material_dict, machine=self.machine)
 
         # Fill the fields with the machine values (if they're filled)
         self.lf_W0.setValue(self.hole.W0)
@@ -193,9 +199,9 @@ class PHoleM52R(Gen_PHoleM52R, QWidget):
         if self.check() is None:
             # We compute the output only if the hole is correctly set
             # Compute all the needed output as string
-            s_surf = format(self.u.get_m2(self.hole.comp_surface()), ".4g")
-            m_surf = format(self.u.get_m2(self.hole.comp_surface_magnets()), ".4g")
-            alpha = self.hole.comp_alpha()
+            s_surf = format(self.u.get_m2(self.hole.comp_surface(lam=self.lam)), ".4g")
+            m_surf = format(self.u.get_m2(self.hole.comp_surface_magnets(lam=self.lam)), ".4g")
+            alpha = self.hole.comp_alpha(lam=self.lam)
             alpha_rad = "%.4g" % alpha
             alpha_deg = "%.4g" % (alpha * 180 / pi)
 
@@ -231,6 +237,6 @@ class PHoleM52R(Gen_PHoleM52R, QWidget):
 
         # Constraints and None
         try:
-            self.hole.check()
+            self.hole.check(lam=self.lam)
         except SlotCheckError as error:
             return str(error)

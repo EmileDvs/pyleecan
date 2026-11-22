@@ -1,20 +1,26 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_alpha(self) -> float:
+def comp_alpha(self, lam: Lamination | None = None) -> float:
     """Compute the alpha angle of the slot (cf schematics)
 
     Parameters
     ----------
     self : HoleM50
         a HoleM50 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------
     alpha: float
         Cf schematics [rad]
     """
-    Rext = self.get_Rext()
+    Rext = self.get_Rext(lam=lam)
 
     alpham = 2 * np.arcsin(self.W0 / (2 * (Rext - self.H1)))
 

@@ -26,7 +26,7 @@ def comp_volume_magnets(self, lam: Lamination | None = None) -> float:
     mag_list = self.get_magnet_list()
     for ii, mag in enumerate(mag_list):
         if mag is not None:
-            Smag = self.comp_surface_magnet_id(ii)
+            Smag = self.comp_surface_magnet_id(ii, lam=lam)
             if mag.Lmag is None:
                 Lmag = lam.L1
             else:

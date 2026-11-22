@@ -111,7 +111,7 @@ class SWinding(Gen_SWinding, QWidget):
                 try:
                     # To recover Nrad and Ntan we have to compute the connection matrix. If Star of slot method is unable to do so,
                     # Setting the number of layer to 1
-                    Nrad, Ntan = self.obj.winding.get_dim_wind()
+                    Nrad, Ntan = self.obj.winding.get_dim_wind(lam=self.obj)
                 except Exception as e:
                     err_msg = str(e)
                 if err_msg is None:
@@ -279,12 +279,12 @@ class SWinding(Gen_SWinding, QWidget):
         self.obj.winding.clean()  # Enforce now computation
         # Check winding
         try:
-            self.obj.winding.get_connection_mat()
+            self.obj.winding.get_connection_mat(lam=self.obj)
             self.b_generate.setEnabled(False)
 
             # Correcting the winding matrix if the one generated does not have the direction specified by the user
             if self.obj.winding.Nlayer > 1:
-                Nrad, Ntan = self.obj.winding.get_dim_wind()
+                Nrad, Ntan = self.obj.winding.get_dim_wind(lam=self.obj)
                 if (
                     self.c_layer_def.currentIndex() == IDX_DOUBLE_LAYER_RAD
                     and Nrad < Ntan
@@ -301,7 +301,7 @@ class SWinding(Gen_SWinding, QWidget):
                     )
                 elif Nrad == Ntan:
                     self.obj.winding.is_change_layer = False
-                self.obj.winding.get_connection_mat()
+                self.obj.winding.get_connection_mat(lam=self.obj)
 
         except Exception as e:
             log_error(
@@ -360,7 +360,7 @@ class SWinding(Gen_SWinding, QWidget):
             if self.obj.winding.Nlayer == 1:
                 self.c_layer_def.setCurrentIndex(IDX_SINGLE_LAYER)
             else:
-                Nrad, Ntan = self.obj.winding.get_dim_wind()
+                Nrad, Ntan = self.obj.winding.get_dim_wind(lam=self.obj)
                 if Nrad < Ntan:
                     self.c_layer_def.setCurrentIndex(IDX_DOUBLE_LAYER_TAN)
                 else:
@@ -486,7 +486,7 @@ class SWinding(Gen_SWinding, QWidget):
         if save_file_path not in ["", None]:
             try:
                 self.obj.winding.export_to_csv(
-                    file_path=save_file_path, is_add_header=True, is_skip_empty=False
+                    file_path=save_file_path, is_add_header=True, is_skip_empty=False, lam=self.obj
                 )
             except Exception as e:
                 log_error(self, "Error while exporting the winding:\n" + str(e))
@@ -523,7 +523,7 @@ class SWinding(Gen_SWinding, QWidget):
         wind = self.obj.winding  # For readability
 
         try:
-            mmf_dir = self.obj.comp_mmf_dir()
+            mmf_dir = self.obj.comp_mmf_dir(machine=self.machine)
             if mmf_dir == 1:
                 mmf_dir = "CCW"
             elif mmf_dir == -1:
@@ -675,7 +675,7 @@ class SWinding(Gen_SWinding, QWidget):
             Error message (return None if no error)
         """
         try:
-            wind_mat = lamination.winding.get_connection_mat()
+            wind_mat = lamination.winding.get_connection_mat(lam=lamination)
         except Exception as e:
             return "Error in winding matrix generation:\n" + str(e)
         try:

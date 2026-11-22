@@ -57,7 +57,7 @@ class Test_Hole52_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_surface()
+        result = test_obj.hole[0].comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -79,7 +79,7 @@ class Test_Hole52_meth(object):
     def test_comp_alpha(self, test_dict):
         """Check that the computation of the alpha is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_alpha()
+        result = test_obj.hole[0].comp_alpha(lam=test_obj)
 
         a = result
         b = test_dict["alpha"]
@@ -91,7 +91,7 @@ class Test_Hole52_meth(object):
         """Check that the computation of W1 is correct"""
         test_obj = test_dict["test_obj"]
 
-        a = test_obj.hole[0].comp_W1()
+        a = test_obj.hole[0].comp_W1(lam=test_obj)
         b = test_dict["W1"]
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < DELTA, msg
@@ -100,7 +100,7 @@ class Test_Hole52_meth(object):
     def test_comp_radius(self, test_dict):
         """Check that the computation of the radius is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_radius()
+        result = test_obj.hole[0].comp_radius(lam=test_obj)
 
         a = result[0]
         b = test_dict["Rmin"]
@@ -181,4 +181,4 @@ class Test_Hole52_meth(object):
             HoleM52(Zh=8, W0=0.9999999, W3=15e-3, H0=12e-3, H1=18e-3, H2=2e-3)
         ]
         with pytest.raises(S52_W1CheckError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)

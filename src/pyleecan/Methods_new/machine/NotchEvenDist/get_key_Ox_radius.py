@@ -1,10 +1,18 @@
-def get_key_Ox_radius(self) -> float | None:
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+
+
+def get_key_Ox_radius(self, lam: Lamination | None = None) -> float | None:
     """Return the Key max/min radius on Ox to close the sliding band in FEMM
 
     Parameters
     ----------
     self : NotchEvenDist
         A NotchEvenDist object
+    lam : Lamination, optional
+        Lamination holding the notch (default: the parent)
 
     Returns
     -------
@@ -13,7 +21,7 @@ def get_key_Ox_radius(self) -> float | None:
     """
 
     # Get all surfaces
-    surf_list = self.build_geometry_key(sym=1)
+    surf_list = self.build_geometry_key(sym=1, lam=lam)
 
     # Cut to find a surface on Ox
     Z_list = list()
@@ -28,7 +36,7 @@ def get_key_Ox_radius(self) -> float | None:
     Rright = [Z.real for Z in Z_list if Z.real > 0]
     if len(Rright) == 0:
         return None
-    elif self.is_outwards():  # Outer lamination
+    elif self.is_outwards(lam=lam):  # Outer lamination
         return min(Rright)
     else:
         return max(Rright)

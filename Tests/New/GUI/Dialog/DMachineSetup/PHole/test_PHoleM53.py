@@ -48,7 +48,7 @@ class TestPHoleM53(object):
             Material(name="Magnet2"),
             Material(name="Magnet3"),
         ]
-        self.widget = PHoleM53(test_obj.hole[0], material_dict)
+        self.widget = PHoleM53(test_obj.hole[0], material_dict, lam=test_obj)
         self.test_obj = test_obj
         self.material_dict = material_dict
 
@@ -178,6 +178,7 @@ class TestPHoleM53(object):
             W3=0.0000017,
         )
         self.widget.hole = self.test_obj.hole[0]
+        self.widget.lam = self.test_obj
         self.widget.comp_output()
 
         assert self.widget.out_slot_surface.text() == "Slot suface (2 part): 0.01033 m²"
@@ -199,7 +200,7 @@ class TestPHoleM53(object):
             )
         )
 
-        self.widget = PHoleM53(self.test_obj.hole[1], self.material_dict)
+        self.widget = PHoleM53(self.test_obj.hole[1], self.material_dict, lam=self.test_obj)
 
         assert self.widget.w_mat_1.isHidden()
         assert self.widget.w_mat_2.isHidden()

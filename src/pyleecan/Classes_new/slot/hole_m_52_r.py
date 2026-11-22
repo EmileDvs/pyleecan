@@ -97,13 +97,15 @@ class HoleM52R(HoleMag):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM52R._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : HoleM52R
             A HoleM52R object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -111,9 +113,9 @@ class HoleM52R(HoleMag):
             A dict of the slot coordinates
         """
 
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
-        alpha1 = self.comp_alpha()
+        alpha1 = self.comp_alpha(lam=lam)
         Z1 = (Rext - self.H0) * np.exp(1j * alpha1 / 2)  # top corner of void
         Z9 = (Rext - self.H0) * np.exp(-1j * alpha1 / 2)
 
@@ -185,7 +187,7 @@ class HoleM52R(HoleMag):
         vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
         mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -284,13 +286,15 @@ class HoleM52R(HoleMag):
         return surf_list
 
     # Inlined from Methods.Slot.HoleM52R.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Check that the HoleM52 object is correct
 
         Parameters
         ----------
         self : HoleM52R
             A HoleM52R object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -331,7 +335,7 @@ class HoleM52R(HoleMag):
 
         h = self.H1 - self.H2
         w = self.W0 + self.W1
-        Z2 = np.sqrt((self.get_Rext() - self.H0) ** 2 - h**2) - h + 1j * w / 2
+        Z2 = np.sqrt((self.get_Rext(lam=lam) - self.H0) ** 2 - h**2) - h + 1j * w / 2
 
         if np.angle(Z2) >= np.pi / self.Zh:
             raise S52R_widthCheckError(
@@ -339,13 +343,15 @@ class HoleM52R(HoleMag):
             )
 
     # Inlined from Methods.Slot.HoleM52R.comp_alpha
-    def comp_alpha(self) -> float:
+    def comp_alpha(self, lam: Lamination | None = None) -> float:
         """The opening angle incl. W1 width and a Rext - H0 radius
 
         Parameters
         ----------
         self : HoleM52
             A HoleM52 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -353,14 +359,16 @@ class HoleM52R(HoleMag):
             Angle between P1 and P9 (cf schematics) [rad]
 
         """
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         alpha = 2 * np.arcsin((2 * self.W1 + self.W0) / (2 * (Rext - self.H0)))
 
         return alpha
 
     # Inlined from Methods.Slot.HoleM52R.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True) -> dict:
+    def comp_magnetization_dict(
+        self, is_north=True, lam: Lamination | None = None
+    ) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -370,6 +378,8 @@ class HoleM52R(HoleMag):
             a HoleM52R object
         is_north: True
             True: comp north magnetization, else add pi [rad]
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -378,7 +388,7 @@ class HoleM52R(HoleMag):
         """
 
         # Comp magnet
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         mag_dict = {}
         S0 = Segment(begin=point_dict["Z4"], end=point_dict["Z6"])
@@ -394,13 +404,15 @@ class HoleM52R(HoleMag):
         return mag_dict
 
     # Inlined from Methods.Slot.HoleM52R.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | None = None):
         """Compute the radius of the min and max circle that contains the hole
 
         Parameters
         ----------
         self : HoleM52
             A HoleM52R object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -409,11 +421,11 @@ class HoleM52R(HoleMag):
 
         """
 
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         Rmax = Rext - self.H0
 
-        alpha = self.comp_alpha()
+        alpha = self.comp_alpha(lam=lam)
         Z1 = (Rext - self.H0) * np.exp(1j * alpha / 2)
         Z5 = Z1.real - self.H1
         Rmin = abs(Z5)
@@ -421,13 +433,15 @@ class HoleM52R(HoleMag):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.HoleM52R.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | None = None) -> float:
         """Compute the surface of the Hole
 
         Parameters
         ----------
         self : HoleM52R
             A HoleM52R object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -436,14 +450,16 @@ class HoleM52R(HoleMag):
 
         """
 
-        Smag = self.comp_surface_magnets()
+        Smag = self.comp_surface_magnets(lam=lam)
         # one side rectangular air area
         Srect = self.W1 * (self.H1 - self.H2) - (4 - np.pi) * self.R0**2 / 4
 
         return Smag + 2 * Srect
 
     # Inlined from Methods.Slot.HoleM52R.comp_surface_magnet_id
-    def comp_surface_magnet_id(self, index: int) -> float:
+    def comp_surface_magnet_id(
+        self, index: int, lam: Lamination | None = None
+    ) -> float:
         """Compute the surface of the hole magnet of the corresponding index
 
         Parameters
@@ -452,6 +468,8 @@ class HoleM52R(HoleMag):
             A HoleM52R object
         index : int
             Index of the magnet to compute the surface
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -602,7 +620,7 @@ class HoleM52R(HoleMag):
             Rbo = self.get_Rbo(lam=lam)
             fig = plt.gcf()
             ax = plt.gca()
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:
@@ -859,7 +877,9 @@ class HoleM52R(HoleMag):
             if manager is not None:
                 manager.set_window_title(type(self).__name__ + " Schematics")
             ax.set_title("")
-            ax.get_legend().remove()
+            legend = ax.get_legend()
+            if legend is not None:
+                legend.remove()
             ax.set_axis_off()
             fig.tight_layout()
 

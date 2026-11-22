@@ -1,13 +1,19 @@
-from . import *
+from . import VentilationTrapInstanceError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Make sure that the ventialtion parameters are correctly set
 
     Parameters
     ----------
     self : VentilationTrap
         A VentilationTrap object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
     """
 
     if not isinstance(self.Zh, int):

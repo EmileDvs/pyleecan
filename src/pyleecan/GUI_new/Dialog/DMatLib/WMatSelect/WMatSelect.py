@@ -1,7 +1,6 @@
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget
 
-from .....Classes_new.machine.machine import Machine
 from .....GUI_new.Tools.log_error import log_error
 from .....GUI_new.Dialog.DMatLib.DMatLib import LIB_KEY, MACH_KEY, DMatLib
 from .....GUI_new.Dialog.DMatLib.WMatSelect.Ui_WMatSelect import Ui_WMatSelect
@@ -52,7 +51,7 @@ class WMatSelect(Ui_WMatSelect, QWidget):
         self.c_mat_type.currentIndexChanged.connect(self.set_mat_type)
         self.b_matlib.clicked.connect(self.s_open_matlib)
 
-    def update(self, obj, mat_attr_name, material_dict):
+    def update(self, obj, mat_attr_name, material_dict, machine=None):
         """
         Set a reference to a material libray and material data path,
         updates the Combobox by the material names of the libary
@@ -68,6 +67,9 @@ class WMatSelect(Ui_WMatSelect, QWidget):
             A string of the material attribute name
         material_dict: dict
             Materials dictionary (library + machine)
+        machine : Machine
+            Machine holding obj, whose materials the library dialog edits
+            (None: no machine material)
 
         Returns
         -------
@@ -79,6 +81,7 @@ class WMatSelect(Ui_WMatSelect, QWidget):
         self.obj = obj
         self.mat_attr_name = mat_attr_name
         self.material_dict = material_dict
+        self.machine = machine
 
         if self.is_hide_button:
             self.b_matlib.hide()
@@ -98,12 +101,6 @@ class WMatSelect(Ui_WMatSelect, QWidget):
             self.c_mat_type.setCurrentIndex(-1)
             self.c_mat_type.blockSignals(False)
             return
-
-        # Get machine object to update the materials
-        parent = obj.parent
-        while parent is not None and not isinstance(parent, Machine):
-            parent = parent.parent
-        self.machine = parent
 
         mat = getattr(self.obj, mat_attr_name, None)
         if mat is None or mat.name is None:

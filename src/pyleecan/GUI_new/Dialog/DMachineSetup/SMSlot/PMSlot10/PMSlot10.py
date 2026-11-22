@@ -23,7 +23,7 @@ class PMSlot10(Gen_PMSlot10, QWidget):
     notch_name = "Rectangular"
     slot_type = SlotM10
 
-    def __init__(self, lamination=None, notch_obj=None, material_dict=None):
+    def __init__(self, lamination=None, notch_obj=None, material_dict=None, machine=None):
         """Initialize the widget according to lamination
 
         Parameters
@@ -36,6 +36,8 @@ class PMSlot10(Gen_PMSlot10, QWidget):
             current notch to edit
         material_dict: dict
             Materials dictionary (library + machine)
+        machine : Machine
+            Machine holding the lamination (for the material library)
         """
 
         # Build the interface according to the .ui file
@@ -43,6 +45,7 @@ class PMSlot10(Gen_PMSlot10, QWidget):
         self.setupUi(self)
 
         self.lamination = lamination
+        self.machine = machine
         self.slot = lamination.slot
         self.is_notch = notch_obj is not None
         self.notch_obj = notch_obj
@@ -88,7 +91,7 @@ class PMSlot10(Gen_PMSlot10, QWidget):
 
         else:  # magnet case
             # Setup the widgets according to current values
-            self.w_mag.update(lamination, self.material_dict)
+            self.w_mag.update(lamination, self.material_dict, machine=self.machine)
 
             # Use schematics on the inner without magnet
             self.img_slot.setPixmap(QPixmap(pixmap_dict["SlotM10_mag_int_rotor"]))

@@ -33,7 +33,7 @@ class Test_VentilationPolar(object):
     def test_comp_surface(self, vent, lam):
         """Check that the computation of the surface is correct"""
         # Check that the analytical method returns the same result as the numerical one
-        a = vent.comp_surface()
-        b = Hole.comp_surface(vent)
+        a = vent.comp_surface(lam=lam)
+        b = Hole.comp_surface(vent, lam=lam)
         msg = "Return " + str(a) + " expected " + str(b)
         assert abs((a - b) / a - 0) < 1e-4, msg

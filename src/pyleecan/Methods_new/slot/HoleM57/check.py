@@ -1,13 +1,19 @@
-from . import *
+from . import S57_NoneError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | None = None) -> None:
     """Check that the HoleM57 object is correct
 
     Parameters
     ----------
     self : HoleM57
         A HoleM57 object
+    lam : Lamination, optional
+        Lamination holding the hole (default: the parent)
 
     Returns
     -------

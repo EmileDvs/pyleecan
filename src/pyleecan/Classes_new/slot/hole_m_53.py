@@ -115,20 +115,22 @@ class HoleM53(HoleMag):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleM53._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : HoleM53
             A HoleM53 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
         point_dict: dict
             A dict of the slot coordinates
         """
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         Z7 = Rext - self.H0 - 1j * self.W1 / 2
         Z6 = Z7 - 1j * (self.H2 - self.H3) * np.cos(self.W4)
@@ -225,7 +227,7 @@ class HoleM53(HoleMag):
         mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
 
         # Get all the points
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -510,13 +512,15 @@ class HoleM53(HoleMag):
         return surf_list
 
     # Inlined from Methods.Slot.HoleM53.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Check that the HoleM53 object is correct
 
         Parameters
         ----------
         self : HoleM53
             A HoleM53 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -552,7 +556,7 @@ class HoleM53(HoleMag):
         elif self.H3 is None:
             raise S53_NoneError("You must set H3 !")
 
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         if Rext <= self.H0:
             raise S53_Rext0CheckError("You must have H0 < Rext")
@@ -563,20 +567,22 @@ class HoleM53(HoleMag):
         if np.pi / 2 <= self.W4:
             raise S53_W4CheckError("You must have W4 < pi/2")
 
-        if self.comp_W5() < 0:
+        if self.comp_W5(lam=lam) < 0:
             raise S53_W5CheckError("You must have W5 >=0")
 
         if self.H2 < self.H3:
             raise S53_W5CheckError("You must have H3 < H2")
 
     # Inlined from Methods.Slot.HoleM53.comp_alpha
-    def comp_alpha(self) -> float:
+    def comp_alpha(self, lam: Lamination | None = None) -> float:
         """Compute the magnets angle of the slot type 53
 
         Parameters
         ----------
         self : HoleM53
             a HoleM53 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -586,7 +592,9 @@ class HoleM53(HoleMag):
         return np.pi / 2 - self.W4
 
     # Inlined from Methods.Slot.HoleM53.comp_magnetization_dict
-    def comp_magnetization_dict(self, is_north=True) -> dict:
+    def comp_magnetization_dict(
+        self, is_north=True, lam: Lamination | None = None
+    ) -> dict:
         """Compute the dictionary of the magnetization direction of the magnets (key=magnet_X, value=angle[rad])
         Mangetization angle with Hole centered on Ox axis
 
@@ -596,6 +604,8 @@ class HoleM53(HoleMag):
             a HoleM53 object
         is_north: True
             True: comp north magnetization, else add pi [rad]
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -604,7 +614,7 @@ class HoleM53(HoleMag):
         """
 
         # Comp magnet
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         mag_dict = {}
         S0 = Segment(begin=point_dict["Z4"], end=point_dict["Z3"])
@@ -623,13 +633,15 @@ class HoleM53(HoleMag):
         return mag_dict
 
     # Inlined from Methods.Slot.HoleM53.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | None = None):
         """Compute the radius of the min and max circle that contains the hole
 
         Parameters
         ----------
         self : HoleM53
             A HoleM53 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -638,7 +650,7 @@ class HoleM53(HoleMag):
 
         """
 
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         Rmax = Rext - self.H1
         Z7 = Rext - self.H0 - 1j * self.W1 / 2
@@ -649,7 +661,9 @@ class HoleM53(HoleMag):
         return (Rmin, Rmax)
 
     # Inlined from Methods.Slot.HoleM53.comp_surface_magnet_id
-    def comp_surface_magnet_id(self, index: int) -> float:
+    def comp_surface_magnet_id(
+        self, index: int, lam: Lamination | None = None
+    ) -> float:
         """Compute the surface of the hole magnet of the corresponding index
 
         Parameters
@@ -658,6 +672,8 @@ class HoleM53(HoleMag):
             A HoleM53 object
         index : int
             Index of the magnet to compute the surface
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -672,13 +688,15 @@ class HoleM53(HoleMag):
         return 0
 
     # Inlined from Methods.Slot.HoleM53.comp_W5
-    def comp_W5(self) -> float:
+    def comp_W5(self, lam: Lamination | None = None) -> float:
         """Compute the W5 width of the hole (cf schematics)
 
         Parameters
         ----------
         self : HoleM53
             a HoleM53 object
+        lam : Lamination, optional
+            Lamination holding the hole (default: the parent)
 
         Returns
         -------
@@ -691,7 +709,7 @@ class HoleM53(HoleMag):
 
         """
 
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         Z7 = Rext - self.H0 - 1j * self.W1 / 2
         Z8 = Z7 + (self.H2 - self.H3) * np.sin(self.W4)
@@ -843,7 +861,7 @@ class HoleM53(HoleMag):
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
             Rbo = self.get_Rbo(lam=lam)
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:
