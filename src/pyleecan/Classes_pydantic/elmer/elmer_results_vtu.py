@@ -51,7 +51,7 @@ class ElmerResultsVTU(Elmer):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Elmer.ElmerResultsVTU.build_meshsolution
-    def build_meshsolution(self) -> bool:
+    def build_meshsolution(self) -> MeshSolution:
         """Get the mesh and solution data from an Elmer VTU results file
 
         Parameters
@@ -61,8 +61,8 @@ class ElmerResultsVTU(Elmer):
 
         Returns
         -------
-        success: bool
-            Information if meshsolution could be created
+        meshsol: MeshSolution
+            Mesh solution built from the results
 
         """
         # create meshsolution

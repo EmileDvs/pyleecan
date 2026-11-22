@@ -1286,6 +1286,18 @@ Review list by package (behaviour or class definition to decide):
         `Machine.get_color_legend_from_surface` hinted `tuple[str | None,
         str | None]`; `WindingSC.comp_periodicity` with a `None`
         periodicity. `ty` on `Methods_new`: 439 -> 397.
+  - [x] (2026-11-22) more legacy bugs found by `ty` (fail when run):
+        `ForceTensor.element_loop` used `np.float` (removed from numpy);
+        `Output.print_memory` named `Output` without importing it
+        (`NameError`); `LUT.set_default_simulation` called a missing
+        `VarLoadCurrent.set_OP_matrix_obj` (now sets the `OP_matrix`
+        field); `EEC_SCIM._comp_Lm_FEA` gave `Id_ref` / `Iq_ref` / `N0` /
+        `felec` to `InputCurrent` (older API: now `OP=OPdq(...)`). Return
+        hints fixed: `ElmerResultsVTU.build_meshsolution` (`MeshSolution`),
+        `ElmerResults.load_data` (`bool`), `ImportMatrixXls.get_data`
+        (`ndarray | tuple[ndarray, dict]`); the `VectorField` methods build
+        `type(self)(...)` (they named their own class, defined only once
+        inlined). `ty` on `Methods_new`: 397 -> 380.
   - [ ] `LamSlotWind.comp_mmf_unit`: lists given to ndarray fields of `Data1D`;
         `LamSlotWind.plot`: lists for `FancyArrowPatch` positions (tuple);
         `Machine.plot_anim_rotor`: `Patch.xy`.

@@ -58,7 +58,7 @@ class ImportMatrixXls(ImportMatrix):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Import.ImportMatrixXls.get_data
-    def get_data(self) -> np.ndarray:
+    def get_data(self) -> np.ndarray | tuple[np.ndarray, dict]:
         """Return the object's matrix
 
         Parameters
@@ -69,7 +69,7 @@ class ImportMatrixXls(ImportMatrix):
         Returns
         -------
         matrix: ndarray
-            The object's matrix
+            The object's matrix (with its axes dict when the file gives them)
 
         """
         file_path = abs_file_path(self.file_path, is_check=False)

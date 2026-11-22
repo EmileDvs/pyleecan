@@ -61,7 +61,7 @@ def element_loop(
         nb_node = mesh.node.nb_node
 
         # Nodal forces init
-        f = np.zeros((nb_node, dim, Nt_tot), dtype=np.float)
+        f = np.zeros((nb_node, dim, Nt_tot), dtype=float)
 
         # ref_element = mesh.element_dict[key].ref_element // pas besoin d'interpoler car tout est cst
 

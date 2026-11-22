@@ -23,4 +23,4 @@ def get_vectorfield_along(self, *args, unit="SI", is_norm: bool = False, axis_da
             *args, unit=unit, is_norm=is_norm, axis_data=axis_data
         )
 
-    return VectorField(name=self.name, symbol=self.symbol, components=comp_dict)
+    return type(self)(name=self.name, symbol=self.symbol, components=comp_dict)

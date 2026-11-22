@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 # TODO add groups, see get_meshsolution of MagFEMM
 
 
-def build_meshsolution(self) -> bool:
+def build_meshsolution(self) -> MeshSolution:
     """Get the mesh and solution data from an Elmer VTU results file
 
     Parameters
@@ -31,8 +31,8 @@ def build_meshsolution(self) -> bool:
 
     Returns
     -------
-    success: bool
-        Information if meshsolution could be created
+    meshsol: MeshSolution
+        Mesh solution built from the results
 
     """
     # create meshsolution

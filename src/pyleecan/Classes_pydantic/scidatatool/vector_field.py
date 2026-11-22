@@ -359,7 +359,7 @@ class VectorField(LegacyModel):
         for key, comp in self.components.items():
             comp_dict[key] = comp.freq_to_time()
 
-        return VectorField(name=self.name, symbol=self.symbol, components=comp_dict)
+        return type(self)(name=self.name, symbol=self.symbol, components=comp_dict)
 
     # Inlined from Methods.SciDataTool.VectorField.get_axes
     def get_axes(self, *args):
@@ -1470,7 +1470,7 @@ class VectorField(LegacyModel):
                 *args, unit=unit, is_norm=is_norm, axis_data=axis_data
             )
 
-        return VectorField(name=self.name, symbol=self.symbol, components=comp_dict)
+        return type(self)(name=self.name, symbol=self.symbol, components=comp_dict)
 
     # Inlined from Methods.SciDataTool.VectorField.get_xyz_along
     def get_xyz_along(
@@ -2528,7 +2528,7 @@ class VectorField(LegacyModel):
         for key, comp in self.components.items():
             comp_dict[key] = comp.time_to_freq()
 
-        return VectorField(name=self.name, symbol=self.symbol, components=comp_dict)
+        return type(self)(name=self.name, symbol=self.symbol, components=comp_dict)
 
     # Inlined from Methods.SciDataTool.VectorField.to_rphiz
     def to_rphiz(self):
@@ -2583,7 +2583,7 @@ class VectorField(LegacyModel):
                 Comp_z = self.components["axial"].copy()
                 comp_dict["comp_z"] = Comp_z
 
-            return VectorField(name=self.name, symbol=self.symbol, components=comp_dict)
+            return type(self)(name=self.name, symbol=self.symbol, components=comp_dict)
 
     # Inlined from Methods.SciDataTool.VectorField.to_xyz
     def to_xyz(self):
@@ -2636,4 +2636,4 @@ class VectorField(LegacyModel):
                 Comp_z = self.components["axial"].copy()
                 comp_dict["comp_z"] = Comp_z
 
-            return VectorField(name=self.name, symbol=self.symbol, components=comp_dict)
+            return type(self)(name=self.name, symbol=self.symbol, components=comp_dict)

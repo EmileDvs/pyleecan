@@ -20,6 +20,8 @@ def print_memory(self, tab_level: int = 0, detail_level: int = 1, is_print: bool
     mem_str: str
         if is_print == False, return the string that descibe the memory usage of the object
     """
+    # Local import (the class of the module itself, circular import)
+    from ....Classes_new.output.output import Output
 
     tab = ""
     for _ in range(tab_level):

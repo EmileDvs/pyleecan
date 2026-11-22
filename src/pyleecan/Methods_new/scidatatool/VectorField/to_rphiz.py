@@ -57,4 +57,4 @@ def to_rphiz(self):
             Comp_z = self.components["axial"].copy()
             comp_dict["comp_z"] = Comp_z
 
-        return VectorField(name=self.name, symbol=self.symbol, components=comp_dict)
+        return type(self)(name=self.name, symbol=self.symbol, components=comp_dict)

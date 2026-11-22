@@ -147,7 +147,7 @@ class LUT(XOutput):
             stop_if_error=True,
         )
         if OP_matrix is not None:
-            simu.var_simu.set_OP_matrix_obj(OP_matrix)
+            simu.var_simu.OP_matrix = OP_matrix  # no set_OP_matrix_obj method
 
         # Define second simu for FEMM comparison
         simu.mag = MagFEMM(is_periodicity_a=True, is_periodicity_t=True, nb_worker=4)

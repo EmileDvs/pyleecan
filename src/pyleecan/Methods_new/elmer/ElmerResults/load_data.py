@@ -4,7 +4,7 @@ import numpy as np
 from . import ElmerResultsError
 
 
-def load_data(self) -> list:
+def load_data(self) -> bool:
     """Method to load the Elmer simulation results (as an alternative for direct input)
 
     Parameters
@@ -14,8 +14,8 @@ def load_data(self) -> list:
 
     Returns
     -------
-    data : list
-        list of data
+    success : bool
+        True if the data are loaded (False: no file or no data)
 
     """
     # TODO allow relative path

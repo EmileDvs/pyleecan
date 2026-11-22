@@ -228,6 +228,7 @@ class EEC_SCIM(EEC):
         # Local import: avoids circular imports
         from ..magnetics.mag_femm import MagFEMM
         from ..simulation.input_current import InputCurrent
+        from ..simulation.op_dq import OPdq
         from ..simulation.simu_1 import Simu1
 
         p = machine.get_pole_pair_number()
@@ -268,12 +269,11 @@ class EEC_SCIM(EEC):
         # Definition of the enforced output of the electrical module
         simu.input = InputCurrent(
             Is=None,
-            Id_ref=self.I,
-            Iq_ref=0,
+            # The operating point (the legacy call gave Id_ref, Iq_ref, N0 and
+            # felec to InputCurrent, which takes none of them: TypeError)
+            OP=OPdq(Id_ref=self.I, Iq_ref=0, N0=N0, felec=felec),
             Ir=Ir,  # zero current for the rotor
-            N0=N0,
             time=time,
-            felec=felec,
         )
 
         # Definition of the magnetic simulation (no symmetry)

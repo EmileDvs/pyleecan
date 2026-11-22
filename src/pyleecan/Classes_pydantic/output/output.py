@@ -824,6 +824,7 @@ class Output(LegacyModel):
         mem_str: str
             if is_print == False, return the string that descibe the memory usage of the object
         """
+        # Local import (the class of the module itself, circular import)
 
         tab = ""
         for _ in range(tab_level):

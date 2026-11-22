@@ -20,4 +20,4 @@ def freq_to_time(self):
     for key, comp in self.components.items():
         comp_dict[key] = comp.freq_to_time()
 
-    return VectorField(name=self.name, symbol=self.symbol, components=comp_dict)
+    return type(self)(name=self.name, symbol=self.symbol, components=comp_dict)

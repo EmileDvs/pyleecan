@@ -37,6 +37,7 @@ def _comp_Lm_FEA(self, machine: Machine, K21Z: float, Xke_skinS: float) -> tuple
     # Local import: avoids circular imports
     from ....Classes_new.simulation.simu_1 import Simu1
     from ....Classes_new.simulation.input_current import InputCurrent
+    from ....Classes_new.simulation.op_dq import OPdq
     from ....Classes_new.magnetics.mag_femm import MagFEMM
 
 
@@ -78,12 +79,11 @@ def _comp_Lm_FEA(self, machine: Machine, K21Z: float, Xke_skinS: float) -> tuple
     # Definition of the enforced output of the electrical module
     simu.input = InputCurrent(
         Is=None,
-        Id_ref=self.I,
-        Iq_ref=0,
+        # The operating point (the legacy call gave Id_ref, Iq_ref, N0 and
+        # felec to InputCurrent, which takes none of them: TypeError)
+        OP=OPdq(Id_ref=self.I, Iq_ref=0, N0=N0, felec=felec),
         Ir=Ir,  # zero current for the rotor
-        N0=N0,
         time=time,
-        felec=felec,
     )
 
     # Definition of the magnetic simulation (no symmetry)
