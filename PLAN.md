@@ -186,7 +186,7 @@ Methods receive their context explicitly instead, for example
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | merge + generator | done (open points in the backlog) |
 | 8. Refactor the remaining `Functions` modules | generator | done |
 | 9. Logger chain | generator | done (parent fallback kept until Phase 2) |
-| 10. GUI, first pass | generator | in progress (GUI_new / GUI_pydantic generated) |
+| 10. GUI, first pass | generator | done (GUI tests pass on both backends; open points in the backlog) |
 | 11. Parent links, first pass | generator | in progress (classification, helper, passes 1-2) |
 | 12. Freeze | gate | to do |
 | 13. Custom property setters and getters | frozen | to do |
@@ -314,7 +314,7 @@ generator pass, before the freeze.
 - [ ] Remove the parent fallback and the base `get_logger` method in
       Phase 2, with the parent links (decided 2026-11-21: kept in Phase 1).
 
-### Step 10: GUI, first pass (generator)
+### Step 10: GUI, first pass (generator) — done
 
 The GUI (`GUI`, 375 modules) builds and edits the machine objects: it imports
 about 100 classes, relies on the parent links (a few direct reads, mostly
