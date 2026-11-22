@@ -1,9 +1,13 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Slot/HoleMag.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
+from ...classes_common.parents import container_or_parent
 from .hole import Hole
+
+if TYPE_CHECKING:
+    from ..machine.lamination import Lamination
 
 
 class HoleMag(Hole):
@@ -17,7 +21,7 @@ class HoleMag(Hole):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.HoleMag.comp_mass_magnet_id
-    def comp_mass_magnet_id(self, index: int) -> float:
+    def comp_mass_magnet_id(self, index: int, lam: Lamination | None = None) -> float:
         """Compute the mass of the hole magnet of the corresponding index
 
         Parameters
@@ -26,37 +30,43 @@ class HoleMag(Hole):
             A HoleMag object
         index : int
             Index of the magnet to compute the surface
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
         Mmag: float
             Mass of the Magnet [m**2]
         """
+        lam = container_or_parent(self, lam, "lam")
 
         mag_list = self.get_magnet_list()
         if mag_list[index] is None:
             return 0
         else:
             if mag_list[index].Lmag is None:
-                Lmag = self.parent.L1
+                Lmag = lam.L1
             else:
                 Lmag = mag_list[index].Lmag
             return self.comp_surface_magnet_id(index) * Lmag
 
     # Inlined from Methods.Slot.HoleMag.comp_mass_magnets
-    def comp_mass_magnets(self) -> float:
+    def comp_mass_magnets(self, lam: Lamination | None = None) -> float:
         """Compute the mass of the hole magnets (some of them may be missing)
 
         Parameters
         ----------
         self : HoleMag
             A HoleMag object
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
         Mmag: float
             mass of the magnets [kg]
         """
+        lam = container_or_parent(self, lam, "lam")
 
         M = 0
         mag_list = self.get_magnet_list()
@@ -64,7 +74,7 @@ class HoleMag(Hole):
             if mag is not None:
                 Smag = self.comp_surface_magnet_id(ii)
                 if mag.Lmag is None:
-                    Lmag = self.parent.L1
+                    Lmag = lam.L1
                 else:
                     Lmag = mag.Lmag
                 # Check material definition
@@ -100,19 +110,22 @@ class HoleMag(Hole):
         return Smag
 
     # Inlined from Methods.Slot.HoleMag.comp_volume_magnets
-    def comp_volume_magnets(self) -> float:
+    def comp_volume_magnets(self, lam: Lamination | None = None) -> float:
         """Compute the volume of the hole magnets (some of them may be missing)
 
         Parameters
         ----------
         self : HoleMag
             A HoleMag object
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
         Vmag: float
             volume of the magnets [m**3]
         """
+        lam = container_or_parent(self, lam, "lam")
 
         V = 0
         mag_list = self.get_magnet_list()
@@ -120,7 +133,7 @@ class HoleMag(Hole):
             if mag is not None:
                 Smag = self.comp_surface_magnet_id(ii)
                 if mag.Lmag is None:
-                    Lmag = self.parent.L1
+                    Lmag = lam.L1
                 else:
                     Lmag = mag.Lmag
                 V += Smag * Lmag

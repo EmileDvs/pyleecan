@@ -253,8 +253,8 @@ class LamSlotMagNS(LamSlotM):
         """
         super(type(self), self).check()
 
-        self.slot.check()
-        self.slot_south.check()
+        self.slot.check(lam=self)
+        self.slot_south.check(lam=self)
 
         if self.comp_height_yoke() < 0:
             raise LMC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
@@ -281,14 +281,14 @@ class LamSlotMagNS(LamSlotM):
         Mmag = 0
         if self.magnet_north is not None:
             Mmag += p * (
-                self.slot.comp_surface_active()
+                self.slot.comp_surface_active(lam=self)
                 * self.magnet_north.Nseg
                 * self.magnet_north.Lmag
                 * self.magnet_north.mat_type.struct.rho
             )
         if self.magnet_south is not None:
             Mmag += p * (
-                self.slot_south.comp_surface_active()
+                self.slot_south.comp_surface_active(lam=self)
                 * self.magnet_south.Nseg
                 * self.magnet_south.Lmag
                 * self.magnet_south.mat_type.struct.rho
@@ -381,9 +381,9 @@ class LamSlotMagNS(LamSlotM):
         S_dict = LamSlot.comp_surfaces(self)
         Smag = 0
         if self.magnet_north is not None:
-            Smag += self.slot.comp_surface_active()
+            Smag += self.slot.comp_surface_active(lam=self)
         if self.magnet_south is not None:
-            Smag += self.slot_south.comp_surface_active()
+            Smag += self.slot_south.comp_surface_active(lam=self)
 
         S_dict["Smag"] = Smag
 
@@ -408,9 +408,11 @@ class LamSlotMagNS(LamSlotM):
         V_dict = LamSlot.comp_volumes(self)
         Vmag = 0
         if self.magnet_north is not None:
-            Vmag += self.slot.comp_surface_active() * self.magnet_north.Lmag
+            Vmag += self.slot.comp_surface_active(lam=self) * self.magnet_north.Lmag
         if self.magnet_south is not None:
-            Vmag += self.slot_south.comp_surface_active() * self.magnet_south.Lmag
+            Vmag += (
+                self.slot_south.comp_surface_active(lam=self) * self.magnet_south.Lmag
+            )
 
         V_dict["Vmag"] = Vmag
 

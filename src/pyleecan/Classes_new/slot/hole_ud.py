@@ -2,15 +2,19 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from ...classes_common.errors import SlotCheckError
+from ...classes_common.parents import container_or_parent
 from ...Functions_new.utils.labels import HOLEM_LAB, HOLEV_LAB, LAM_LAB
 from ..geometry.surface import Surface
 from ..machine.magnet import Magnet
 from .hole_mag import HoleMag
+
+if TYPE_CHECKING:
+    from ..machine.lamination import Lamination
 
 
 @dataclass(eq=False)
@@ -44,7 +48,11 @@ class HoleUD(HoleMag):
 
     # Inlined from Methods.Slot.HoleUD.build_geometry
     def build_geometry(
-        self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_simplified: bool = False,
+        lam: Lamination | None = None,
     ) -> list:
         """Compute the curve (Segment) needed to plot the Hole.
         The ending point of a curve is the starting point of the next curve in
@@ -60,21 +68,24 @@ class HoleUD(HoleMag):
             Complex to translate the slot (Default value = 0)
         is_simplified : bool
             True to avoid line superposition (not used)
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
         surf_list: list
             List of SurfLine needed to draw the Hole
         """
+        lam = container_or_parent(self, lam, "lam")
 
         surf_list = [surf.copy() for surf in self.surf_list]
 
         # Get correct label for surfaces
-        if self.parent is not None:
-            lam_label = self.parent.get_label()
+        if lam is not None:
+            lam_label = lam.get_label()
         else:
             lam_label = LAM_LAB
-        R_id, surf_type = self.get_R_id()
+        R_id, surf_type = self.get_R_id(lam=lam)
         vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-T"
         mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-T"
 

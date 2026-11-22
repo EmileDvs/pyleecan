@@ -1,4 +1,4 @@
-from . import *
+from . import LSC_SlotTooLong
 
 
 def check(self) -> None:
@@ -25,7 +25,7 @@ def check(self) -> None:
 
     super(type(self), self).check()
 
-    self.slot.check()
+    self.slot.check(lam=self)
 
     if self.comp_height_yoke() < 0:
         raise LSC_SlotTooLong("The Slot is too long for the lamination " "(HYoke <0)")

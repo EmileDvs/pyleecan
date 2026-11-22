@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -27,6 +28,7 @@ def plot_schematics(
     type_add_active=True,
     save_path: str | None = None,
     is_show_fig: bool = True,
+    lam: Lamination | None = None,
 ) -> tuple[Figure, Axes] | Lamination:
     """Plot the schematics of the slot
 
@@ -50,6 +52,8 @@ def plot_schematics(
         full path including folder, name and extension of the file to save if save_path is not None
     is_show_fig : bool
         To call show at the end of the method
+    lam : Lamination
+        Lamination of the hole (default: the parent of the hole)
 
     Returns
     -------
@@ -61,6 +65,7 @@ def plot_schematics(
     lam : LamHole / LamSlot
         Default lamination used for the schematics
     """
+    lam = container_or_parent(self, lam, "lam")
 
     # Use some default parameter
     if is_default:
@@ -80,10 +85,11 @@ def plot_schematics(
                 type_add_active=type_add_active,
                 save_path=save_path,
                 is_show_fig=is_show_fig,
+                lam=lam,
             )
     elif type_add_active == 0:
         # Remove magnets
-        lam = self.parent.copy()
+        lam = lam.copy()
         lam.hole[0].remove_magnet()
         return lam.hole[0].plot_schematics(
             is_default=False,
@@ -93,12 +99,12 @@ def plot_schematics(
             type_add_active=2,
             save_path=save_path,
             is_show_fig=is_show_fig,
+            lam=lam,
         )
     else:
         # Getting the main plot
-        if self.parent is None:
+        if lam is None:
             raise ParentMissingError("Error: The hole is not inside a Lamination")
-        lam = self.parent
         alpha = np.pi / 2  # To rotate the schematics
         lam.plot(
             alpha=np.pi / self.Zh + alpha,
@@ -106,7 +112,7 @@ def plot_schematics(
             is_lam_only=type_add_active == 0,
         )  # center hole on Ox axis
         sp = 2 * np.pi / self.Zh
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         fig = plt.gcf()
         ax = plt.gca()
         point_dict = self._comp_point_coordinate()
@@ -344,7 +350,7 @@ def plot_schematics(
         # Zooming and cleaning
         W = -1 * (point_dict["Z9"] * np.exp(1j * sp) * np.exp(1j * alpha)).real * 1.2
         Rint = (point_dict["Z5"] * np.exp(1j * alpha)).imag * 0.9
-        Rext = self.parent.Rext * 1.1
+        Rext = lam.Rext * 1.1
 
         plt.axis("equal")
         ax.set_ylim(Rint, Rext)

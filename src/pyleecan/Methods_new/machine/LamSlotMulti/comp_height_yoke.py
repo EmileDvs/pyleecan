@@ -14,5 +14,5 @@ def comp_height_yoke(self) -> float:
     """
     H = 0
     for slot in self.slot_list:
-        H = max(H, slot.comp_height())
+        H = max(H, slot.comp_height(lam=self))
     return self.Rext - self.Rint - H

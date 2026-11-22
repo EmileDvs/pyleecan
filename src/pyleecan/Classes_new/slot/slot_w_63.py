@@ -393,13 +393,15 @@ class SlotW63(Slot):
         return surf_list
 
     # Inlined from Methods.Slot.SlotW63.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | Notch | None = None) -> None:
         """Check that the SlotW63 object is correct
 
         Parameters
         ----------
         self : SlotW63
             A SlotW63 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -443,7 +445,7 @@ class SlotW63(Slot):
         return slot_pitch - tooth_angle
 
     # Inlined from Methods.Slot.SlotW63.comp_height
-    def comp_height(self) -> float:
+    def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -451,6 +453,8 @@ class SlotW63(Slot):
         ----------
         self : SlotW63
             A SlotW63 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -491,7 +495,7 @@ class SlotW63(Slot):
         return abs(Zw1 - Zw2)
 
     # Inlined from Methods.Slot.SlotW63.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -499,6 +503,8 @@ class SlotW63(Slot):
         ----------
         self : SlotW63
             A SlotW63 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -542,13 +548,15 @@ class SlotW63(Slot):
         return Sring - (St + Sarc_top - Sarc_bot1) + Sarc_bot2
 
     # Inlined from Methods.Slot.SlotW63.comp_surface_active
-    def comp_surface_active(self) -> float:
+    def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot inner surface for winding
 
         Parameters
         ----------
         self : SlotW63
             A SlotW63 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -557,7 +565,7 @@ class SlotW63(Slot):
 
         """
         Rbo = self.get_Rbo()
-        surface = self.comp_surface()
+        surface = self.comp_surface(lam=lam)
 
         point_dict = self._comp_point_coordinate()
         Zw1 = point_dict["Zw1"]
@@ -714,6 +722,7 @@ class SlotW63(Slot):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -741,6 +750,8 @@ class SlotW63(Slot):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -752,6 +763,7 @@ class SlotW63(Slot):
         lam : LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -781,12 +793,12 @@ class SlotW63(Slot):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
-            lam = self.parent
             fig, ax = lam.plot(
                 is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis

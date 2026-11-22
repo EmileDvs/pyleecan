@@ -101,11 +101,11 @@ class WWSlotOut(QGroupBox):
         if check:
             # Compute all the needed output as string
             w_surf = format(
-                gui_option.unit.get_m2(lam.slot.comp_surface_active()), ".4g"
+                gui_option.unit.get_m2(lam.slot.comp_surface_active(lam=lam)), ".4g"
             )
-            tot_surf = format(gui_option.unit.get_m2(lam.slot.comp_surface()), ".4g")
+            tot_surf = format(gui_option.unit.get_m2(lam.slot.comp_surface(lam=lam)), ".4g")
             op_angle = "%.4g" % lam.slot.comp_angle_opening()
-            slot_height = format(gui_option.unit.get_m(lam.slot.comp_height()), ".4g")
+            slot_height = format(gui_option.unit.get_m(lam.slot.comp_height(lam=lam)), ".4g")
             yoke_height = format(gui_option.unit.get_m(lam.comp_height_yoke()), ".4g")
 
             # Update the GUI to display the Output

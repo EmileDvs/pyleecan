@@ -13,6 +13,6 @@ def comp_height_yoke(self) -> float:
 
     """
     if self.slot is not None and self.slot.Zs > 0:
-        return self.Rext - self.Rint - self.slot.comp_height()
+        return self.Rext - self.Rint - self.slot.comp_height(lam=self)
     else:
         return self.Rext - self.Rint

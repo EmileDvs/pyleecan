@@ -215,13 +215,13 @@ class PWSlot60(Gen_PWSlot60, QWidget):
         if self.check(self.lamination) is None:
             # Compute all the needed output as string
             w_surf = format(
-                gui_option.unit.get_m2(self.slot.comp_surface_active()), ".4g"
+                gui_option.unit.get_m2(self.slot.comp_surface_active(lam=self.lamination)), ".4g"
             )
-            tot_surf = format(gui_option.unit.get_m2(self.slot.comp_surface()), ".4g")
+            tot_surf = format(gui_option.unit.get_m2(self.slot.comp_surface(lam=self.lamination)), ".4g")
             op_angle = "%.4g" % self.slot.comp_angle_opening()
             # tooth_width = format(gui_option.unit.get_m(
             #    self.slot.comp_tooth_widths()["WTooth_average"]), '.4g')
-            slot_height = format(gui_option.unit.get_m(self.slot.comp_height()), ".4g")
+            slot_height = format(gui_option.unit.get_m(self.slot.comp_height(lam=self.lamination)), ".4g")
             yoke_height = format(
                 gui_option.unit.get_m(self.lamination.comp_height_yoke()), ".4g"
             )
@@ -289,7 +289,7 @@ class PWSlot60(Gen_PWSlot60, QWidget):
 
         # Constraints
         try:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
         except SlotCheckError as error:
             return str(error)
 

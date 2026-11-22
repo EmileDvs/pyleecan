@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -29,6 +30,7 @@ def plot_schematics(
     is_show_fig: bool = True,
     fig: Figure | None = None,
     ax: Axes | None = None,
+    lam: Lamination | None = None,
 ) -> tuple[Figure, Axes] | Lamination:
     """Plot the schematics of the slot
 
@@ -56,6 +58,8 @@ def plot_schematics(
         existing figure to use if None create a new one
     ax : Matplotlib.axes.Axes object
         Axis on which to plot the data
+    lam : Lamination
+        Lamination of the slot (default: the parent of the slot)
 
     Returns
     -------
@@ -67,6 +71,7 @@ def plot_schematics(
     lam : LamSlot
         Default lamination used for the schematics
     """
+    lam = container_or_parent(self, lam, "lam")
 
     # Use some default parameter
     if is_default:
@@ -88,12 +93,12 @@ def plot_schematics(
                 is_show_fig=is_show_fig,
                 fig=fig,
                 ax=ax,
+                lam=lam,
             )
     else:
         # Getting the main plot
-        if self.parent is None:
+        if lam is None:
             raise ParentMissingError("Error: The slot is not inside a Lamination")
-        lam = self.parent
         fig, ax = lam.plot(
             alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis

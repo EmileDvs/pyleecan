@@ -1,5 +1,5 @@
 from ....Classes_new.machine.lamination import Lamination
-from . import *
+from . import LWC_SlotTooLong
 
 
 def check(self) -> None:
@@ -27,7 +27,7 @@ def check(self) -> None:
     Lamination.check(self)
 
     self.winding.conductor.check()
-    self.slot.check()
+    self.slot.check(lam=self)
 
     if self.comp_height_yoke() < 0:
         raise LWC_SlotTooLong("The Slot is too long for the lamination " "(HYoke <0)")

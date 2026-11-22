@@ -128,7 +128,7 @@ class NotchEvenDist(Notch):
             surface of ALL THE NOTCHES
         """
 
-        return self.notch_shape.Zs * self.notch_shape.comp_surface()
+        return self.notch_shape.Zs * self.notch_shape.comp_surface(lam=self)
 
     # Inlined from Methods.Machine.NotchEvenDist.get_key_Ox_radius
     def get_key_Ox_radius(self) -> float | None:

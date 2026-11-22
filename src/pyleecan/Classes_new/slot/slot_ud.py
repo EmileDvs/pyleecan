@@ -79,8 +79,14 @@ class SlotUD(Slot):
         return [line.copy() for line in self.line_list]
 
     # Inlined from Methods.Slot.SlotUD.check
-    def check(self) -> None:
-        """Check that the SlotUD is correctly defined"""
+    def check(self, lam: Lamination | Notch | None = None) -> None:
+        """Check that the SlotUD is correctly defined
+
+        Parameters
+        ----------
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
+        """
 
         if self.line_list is None:
             self.line_list = []

@@ -20,9 +20,9 @@ def comp_surfaces(self) -> dict:
     S_dict = LamSlot.comp_surfaces(self)
     Smag = 0
     if self.magnet_north is not None:
-        Smag += self.slot.comp_surface_active()
+        Smag += self.slot.comp_surface_active(lam=self)
     if self.magnet_south is not None:
-        Smag += self.slot_south.comp_surface_active()
+        Smag += self.slot_south.comp_surface_active(lam=self)
 
     S_dict["Smag"] = Smag
 

@@ -20,8 +20,8 @@ def check(self) -> None:
     """
     super(type(self), self).check()
 
-    self.slot.check()
-    self.slot_south.check()
+    self.slot.check(lam=self)
+    self.slot_south.check(lam=self)
 
     if self.comp_height_yoke() < 0:
         raise LMC_SlotTooLong("The Slot is too long for the lamination " "(HYoke <0)")

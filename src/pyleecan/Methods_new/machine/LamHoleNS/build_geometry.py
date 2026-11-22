@@ -36,7 +36,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
     ii = 0
     for hole in self.hole_north:
         # Create the first hole surface(s)
-        surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh)
+        surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh, lam=self)
         surf_list.extend(
             Hole.transform_hole_surf(
                 hole_surf_list=surf_hole, Zh=int(hole.Zh / 2), sym=sym, alpha=0, delta=0
@@ -44,7 +44,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
         )
     # Holes surface(s)
     for hole in self.hole_south:
-        surf_hole = hole.build_geometry(alpha=2 * np.pi / hole.Zh)
+        surf_hole = hole.build_geometry(alpha=2 * np.pi / hole.Zh, lam=self)
         surf_list.extend(
             Hole.transform_hole_surf(
                 hole_surf_list=surf_hole,

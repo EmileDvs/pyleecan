@@ -50,7 +50,7 @@ def plot_side(self, fig: Figure | None = None, ax: Axes | None = None, is_show_f
 
     # Comp all dimensions
     Lt = self.comp_length()
-    Hs = self.slot.comp_height()
+    Hs = self.slot.comp_height(lam=self)
     Ha = self.slot.comp_height_active(lam=self)
     Ho = Hs - Ha
     Le = self.winding.Lewout

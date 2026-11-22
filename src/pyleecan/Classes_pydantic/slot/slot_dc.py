@@ -211,13 +211,15 @@ class SlotDC(Slot):
         return curve_list
 
     # Inlined from Methods.Slot.SlotDC.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | Notch | None = None) -> None:
         """Check that the SlotDC object is correct
 
         Parameters
         ----------
         self : SlotDC
             A SlotDC object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -253,7 +255,7 @@ class SlotDC(Slot):
         return float(2 * np.arcsin(self.W1 / (2 * Rbo)))
 
     # Inlined from Methods.Slot.SlotDC.comp_height
-    def comp_height(self) -> float:
+    def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the Slot.
         Caution, the top of the Slot is an Arc
 
@@ -261,6 +263,8 @@ class SlotDC(Slot):
         ----------
         self : SlotDC
             A SlotDC object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -307,7 +311,7 @@ class SlotDC(Slot):
         )
 
     # Inlined from Methods.Slot.SlotDC.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the top of the Slot is an Arc
 
@@ -315,6 +319,8 @@ class SlotDC(Slot):
         ----------
         self : SlotDC
             A SlotDC object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -343,7 +349,7 @@ class SlotDC(Slot):
 
         Rbo = self.get_Rbo()
 
-        Swind = self.comp_surface_active()
+        Swind = self.comp_surface_active(lam=lam)
         # Rectangle Z12,Z11,Z2,Z1
         S6 = self.W1 * abs(Z12.real - Z11.real)
         # Top arc of the slot (on bore radius)
@@ -356,13 +362,15 @@ class SlotDC(Slot):
             return Swind + S6 + Sarc
 
     # Inlined from Methods.Slot.SlotDC.comp_surface_active
-    def comp_surface_active(self) -> float:
+    def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot inner surface for winding (by analytical computation)
 
         Parameters
         ----------
         self : SlotDC
             A SlotDC object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Classes_new.geometry.segment import Segment
@@ -7,9 +8,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False) -> list:
+def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False, lam: Lamination | None = None) -> list:
     """Compute the curve (Line) needed to plot the Slot.
     The ending point of a curve is the starting point of the next curve in
     the list
@@ -24,6 +26,8 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
         Complex to translate the slot (Default value = 0)
     is_simplified : bool
        True to avoid line superposition
+    lam : Lamination
+        Lamination of the hole (default: the parent of the hole)
 
     Returns
     -------
@@ -31,9 +35,10 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
         List of SurfLine needed to draw the HoleM51
 
     """
+    lam = container_or_parent(self, lam, "lam")
     # Get correct label for surfaces
-    lam_label = self.parent.get_label()
-    R_id, surf_type = self.get_R_id()
+    lam_label = lam.get_label()
+    R_id, surf_type = self.get_R_id(lam=lam)
     vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
     mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
 

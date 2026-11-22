@@ -22,6 +22,6 @@ def comp_volumes(self) -> dict:
         V_dict["Vwind"] = 0
         V_dict["Vwedge"] = 0
     else:
-        V_dict["Vwind"] = Lf * self.get_Zs() * self.slot.comp_surface_active()
+        V_dict["Vwind"] = Lf * self.get_Zs() * self.slot.comp_surface_active(lam=self)
         V_dict["Vwedge"] = Lf * self.get_Zs() * self.slot.comp_surface_wedges()
     return V_dict

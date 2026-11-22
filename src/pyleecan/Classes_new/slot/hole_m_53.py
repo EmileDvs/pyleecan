@@ -16,6 +16,7 @@ from ...classes_common.errors import (
     S53_W5CheckError,
     Slot53InterError,
 )
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -187,7 +188,11 @@ class HoleM53(HoleMag):
 
     # Inlined from Methods.Slot.HoleM53.build_geometry
     def build_geometry(
-        self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_simplified: bool = False,
+        lam: Lamination | None = None,
     ) -> list:
         """Compute the curve (Segment) needed to plot the Hole.
         The ending point of a curve is the starting point of the next curve in the
@@ -203,6 +208,8 @@ class HoleM53(HoleMag):
             Complex to translate the slot (Default value = 0)
         is_simplified : bool
            True to avoid line superposition
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -210,9 +217,10 @@ class HoleM53(HoleMag):
             List of Magnet Surface and Air Surface on the slot
 
         """
+        lam = container_or_parent(self, lam, "lam")
         # Get correct label for surfaces
-        lam_label = self.parent.get_label()
-        R_id, surf_type = self.get_R_id()
+        lam_label = lam.get_label()
+        R_id, surf_type = self.get_R_id(lam=lam)
         vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
         mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
 
@@ -241,7 +249,7 @@ class HoleM53(HoleMag):
         Z9s = point_dict["Z9s"]
         Z10s = point_dict["Z10s"]
         Z11s = point_dict["Z11s"]
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
 
         # Air surface with magnet_0
         curve_list: list[Line] = []
@@ -730,6 +738,7 @@ class HoleM53(HoleMag):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -757,6 +766,8 @@ class HoleM53(HoleMag):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -768,6 +779,7 @@ class HoleM53(HoleMag):
         lam : LamHole / LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -799,10 +811,11 @@ class HoleM53(HoleMag):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
         elif type_add_active == 0:
             # Remove magnets
-            lam = self.parent.copy()
+            lam = lam.copy()
             lam.hole[0].remove_magnet()
             return lam.hole[0].plot_schematics(
                 is_default=False,
@@ -814,12 +827,12 @@ class HoleM53(HoleMag):
                 is_show_fig=is_show_fig,
                 fig=fig,
                 ax=ax,
+                lam=lam,
             )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The hole is not inside a Lamination")
-            lam = self.parent
             alpha = np.pi / 2  # To rotate the schematics
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zh + alpha,
@@ -829,7 +842,7 @@ class HoleM53(HoleMag):
                 ax=ax,
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             point_dict = self._comp_point_coordinate()
 
             # Adding point label
@@ -1060,7 +1073,7 @@ class HoleM53(HoleMag):
             # Zooming and cleaning
             W = point_dict["Z1s"].imag * 1.05
             Rint = point_dict["Z7"].real * 0.9
-            Rext = self.parent.Rext
+            Rext = lam.Rext
 
             ax.axis("equal")
             ax.set_ylim(Rint, Rext)

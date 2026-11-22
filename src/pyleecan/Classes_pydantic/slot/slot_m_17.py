@@ -67,23 +67,26 @@ class SlotM17(Slot):
         return []
 
     # Inlined from Methods.Slot.SlotM17.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | None = None) -> None:
         """Check that the SlotM17 object is correct
 
         Parameters
         ----------
         self : SlotM17
             A SlotM17 object
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
         None
         """
-        if self.parent is None:
+        lam = container_or_parent(self, lam, "lam")
+        if lam is None:
             raise SlotCheckError("SlotM17 must be inside a lamination")
         if self.Zs != 2:
             raise SlotCheckError("SlotM17 must have p=1")
-        if not self.parent.is_internal:
+        if not lam.is_internal:
             raise SlotCheckError("SlotM17 must be inside an internal lamination")
 
     # Inlined from Methods.Slot.SlotM17.comp_angle_opening
@@ -105,7 +108,7 @@ class SlotM17(Slot):
         return np.pi
 
     # Inlined from Methods.Slot.SlotM17.comp_height
-    def comp_height(self) -> float:
+    def comp_height(self, lam: Lamination | None = None) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -113,6 +116,8 @@ class SlotM17(Slot):
         ----------
         self : SlotM17
             A SlotM17 object
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -120,8 +125,9 @@ class SlotM17(Slot):
             Height of the slot [m]
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        return self.parent.Rext - self.parent.Rint
+        return lam.Rext - lam.Rint
 
     # Inlined from Methods.Slot.SlotM17.comp_height_active
     def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
@@ -145,7 +151,7 @@ class SlotM17(Slot):
         return lam.Rext - lam.Rint
 
     # Inlined from Methods.Slot.SlotM17.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | None = None) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -153,6 +159,8 @@ class SlotM17(Slot):
         ----------
         self : SlotM17
             A SlotM17 object
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -160,17 +168,20 @@ class SlotM17(Slot):
             Slot total surface [m**2]
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        return np.pi / 2 * (self.parent.Rext**2 - self.parent.Rint**2)
+        return np.pi / 2 * (lam.Rext**2 - lam.Rint**2)
 
     # Inlined from Methods.Slot.SlotM17.comp_surface_active
-    def comp_surface_active(self) -> float:
+    def comp_surface_active(self, lam: Lamination | None = None) -> float:
         """Compute the Slot inner active surface (by analytical computation)
 
         Parameters
         ----------
         self : SlotM17
             A SlotM17 object
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -178,8 +189,9 @@ class SlotM17(Slot):
             Slot inner active surface [m**2]
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        return np.pi / 2 * (self.parent.Rext**2 - self.parent.Rint**2)
+        return np.pi / 2 * (lam.Rext**2 - lam.Rint**2)
 
     # Inlined from Methods.Slot.SlotM17.get_surface_active
     def get_surface_active(
@@ -296,6 +308,7 @@ class SlotM17(Slot):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -323,6 +336,8 @@ class SlotM17(Slot):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -334,6 +349,7 @@ class SlotM17(Slot):
         lam : LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -355,12 +371,12 @@ class SlotM17(Slot):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
-            lam = self.parent
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis

@@ -1,15 +1,22 @@
 import numpy as np
 
-from . import *
+from . import S11_2_H1rCheckError, S11_2_R1CheckError, S11_2_RHCheckError, S11_2_RWCheckError, S11_2_W01CheckError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def check(self):
+def check(self, lam: Lamination | Notch | None = None):
     """Check that the SlotW11_2 object is correct
 
     Parameters
     ----------
     self : SlotW11_2
         A SlotW11_2 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------

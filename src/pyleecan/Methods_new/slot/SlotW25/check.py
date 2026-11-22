@@ -1,16 +1,23 @@
 import numpy as np
 
 from ..Slot import SlotCheckError
-from . import *
+from . import S25_HWCheckError, S25_W4CheckError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | Notch | None = None) -> None:
     """Check that the SlotW25 object is correct
 
     Parameters
     ----------
     self : SlotW25
         A SlotW25 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------

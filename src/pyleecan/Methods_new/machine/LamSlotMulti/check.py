@@ -19,7 +19,7 @@ def check(self) -> None:
 
     # Check all the slots
     for slot in self.slot_list:
-        slot.check()
+        slot.check(lam=self)
 
     #
     if len(self.alpha.shape) > 1:

@@ -1,11 +1,16 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
-from . import *
+from . import CircleBuildGeometryError
 from ....Functions_new.utils.labels import VENT_LAB
 
 from ....Classes_new.geometry.circle import Circle
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def build_geometry(self, alpha: float = 0, delta: complex = 0) -> list:
+def build_geometry(self, alpha: float = 0, delta: complex = 0, lam: Lamination | None = None) -> list:
     """Compute the curve needed to plot the ventilations
 
     Parameters
@@ -16,6 +21,8 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0) -> list:
         Angle for rotation (Default value = 0) [rad]
     delta : complex
         Complex for translation (Default value = 0)
+    lam : Lamination
+        Lamination of the hole (default: the parent of the hole)
 
     Returns
     -------
@@ -23,8 +30,9 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0) -> list:
         A list of Circle
 
     """
-    lam_label = self.parent.get_label()
-    R_id, surf_type = self.get_R_id()
+    lam = container_or_parent(self, lam, "lam")
+    lam_label = lam.get_label()
+    R_id, surf_type = self.get_R_id(lam=lam)
     RTS_id = "R" + str(R_id) + "-T0-S0"
     vent_label = lam_label + "_" + surf_type + "_" + RTS_id
 

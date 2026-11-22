@@ -290,13 +290,15 @@ class Slot(LegacyModel):
         return tooth_list
 
     # Inlined from Methods.Slot.Slot.check
-    def check(self):
+    def check(self, lam: Lamination | Notch | None = None):
         """Check that the Slot object is correct
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -352,7 +354,9 @@ class Slot(LegacyModel):
         return np.angle(Z2) - np.angle(Z1)
 
     # Inlined from Methods.Slot.Slot.comp_height
-    def comp_height(self, Ndisc: int = 200) -> float:
+    def comp_height(
+        self, Ndisc: int = 200, lam: Lamination | Notch | None = None
+    ) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -362,6 +366,8 @@ class Slot(LegacyModel):
             A Slot object
         Ndisc : int
             Number of point to discretize the lines
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -487,7 +493,9 @@ class Slot(LegacyModel):
             return Rbo - Hslot + Hwind / 2
 
     # Inlined from Methods.Slot.Slot.comp_surface
-    def comp_surface(self, Ndisc: int = 200) -> float:
+    def comp_surface(
+        self, Ndisc: int = 200, lam: Lamination | Notch | None = None
+    ) -> float:
         """Compute the Slot total surface (by numerical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -497,6 +505,8 @@ class Slot(LegacyModel):
             A Slot object
         Ndisc : int
             Number of point to discretize the lines
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -508,7 +518,9 @@ class Slot(LegacyModel):
         return surf.comp_surface(Ndisc=Ndisc)
 
     # Inlined from Methods.Slot.Slot.comp_surface_active
-    def comp_surface_active(self, Ndisc: int = 200) -> float:
+    def comp_surface_active(
+        self, Ndisc: int = 200, lam: Lamination | Notch | None = None
+    ) -> float:
         """Compute the Slot active surface (by numerical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -518,6 +530,8 @@ class Slot(LegacyModel):
             A Slot object
         Ndisc : int
             Number of point to discretize the lines
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -604,7 +618,9 @@ class Slot(LegacyModel):
         return S / H
 
     # Inlined from Methods.Slot.Slot.comp_width_opening
-    def comp_width_opening(self, is_curved: bool = False) -> float:
+    def comp_width_opening(
+        self, is_curved: bool = False, lam: Lamination | None = None
+    ) -> float:
         """Compute the average opening width of the Slot
 
         Parameters
@@ -613,20 +629,23 @@ class Slot(LegacyModel):
             A Slot object
         is_curved : bool
             width opening curved or straight
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
         W0: float
             Average opening width of the slot [m] or [rad]
         """
+        lam = container_or_parent(self, lam, "lam")
 
         if is_curved:
-            R = self.get_Rbo()
+            R = self.get_Rbo(lam=lam)
             alpha = self.comp_angle_opening()
-            Zs = self.parent.get_Zs()
+            Zs = lam.get_Zs()
             return 2 * np.pi * R / Zs - alpha * R
         else:
-            line_list = self.build_geometry()
+            line_list = self.build_geometry(lam=lam)
             Z1 = line_list[0].get_begin()
             Z2 = line_list[-1].get_end()
             return abs(Z2 - Z1)
@@ -681,13 +700,15 @@ class Slot(LegacyModel):
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
     # Inlined from Methods.Slot.Slot.get_name_lam
-    def get_name_lam(self) -> str:
+    def get_name_lam(self, lam: Lamination | None = None) -> str:
         """Return the name of the parent lamination
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -695,9 +716,10 @@ class Slot(LegacyModel):
             The name of the parent lamination
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            return self.parent.get_label()
+        if lam is not None:
+            return lam.get_label()
         else:
             return "NoLam"
 
@@ -764,13 +786,15 @@ class Slot(LegacyModel):
         return surf
 
     # Inlined from Methods.Slot.Slot.get_surface_tooth
-    def get_surface_tooth(self) -> SurfLine:
+    def get_surface_tooth(self, lam: Lamination | None = None) -> SurfLine:
         """Returns the surface delimiting the tooth (including yoke part)
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -778,9 +802,10 @@ class Slot(LegacyModel):
             A SurfLine object representing the slot
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            Ryoke = self.parent.get_Ryoke()
+        if lam is not None:
+            Ryoke = lam.get_Ryoke()
         else:
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
@@ -819,8 +844,8 @@ class Slot(LegacyModel):
         curve_list.extend(bot_list)
         curve_list.extend(top_list)
 
-        if self.parent is not None:
-            lam_label = self.parent.get_label()
+        if lam is not None:
+            lam_label = lam.get_label()
         else:
             lam_label = NO_LAM_LAB
         label = lam_label + "_" + TOOTH_LAB

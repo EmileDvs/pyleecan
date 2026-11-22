@@ -1441,7 +1441,37 @@ Same signature rule as Step 11 (optional container argument, fallback through
 [Phase 2 deprecations](#phase-2-deprecations).
 
 - [ ] Remove the reads left by Step 11, package by package (Slot, Machine,
-      Simulation, Loss, Output, Optimization).
+      Simulation, Loss, Output, Optimization). Direct `.parent` reads at the
+      start (2026-11-22): `Methods_new` 486 in 202 modules (slot 194, machine
+      148, simulation 58, output 26, loss 21, electrical 18, structural 11,
+      magnetics 5, optimization 4, force 1), `Functions_new` 7 (the three
+      hand-written modules).
+  - [x] (2026-11-22) Slot package: 194 -> 0. Same rule as Step 11 (`lam:
+        Lamination | None = None`, read once with `container_or_parent`).
+        The 56 `plot_schematics*` of the slots and holes (`if self.parent
+        is None` / `lam = self.parent` / `self.parent.Rext`; the inner
+        `plot_schematics` calls pass `lam` on, the default laminations
+        included) and the accessors reading the lamination (Hole
+        `get_R_id`, `get_Rbo`, `get_Rext`, `get_is_stator`,
+        `build_geometry`, `comp_mass_magnets`, `comp_mass_magnet_id`,
+        `comp_volume_magnets`; Slot `get_name_lam`, `get_surface_tooth`,
+        `comp_width_opening`; `SlotM17.check`, `comp_height`,
+        `comp_surface`, `comp_surface_active`), then the Step 11 pass run
+        as a tool on the frozen sources (`add_container_arguments` with the
+        two specs below, then `add_type_hints`): every override of the
+        family takes `lam` (Slot: the plots, `check`, `comp_height`,
+        `comp_surface`, `comp_surface_active`, `get_name_lam`,
+        `get_surface_tooth`, `comp_width_opening`; Hole family: the plots
+        and the accessors above), the laminations pass `self`
+        (`self.slot.comp_surface_active(lam=self)`, the holes of
+        `LamHole.build_geometry`, `NotchEvenDist`) and the GUI the
+        lamination it holds (54 calls: `lam.slot.check(lam=lam)`,
+        `self.slot.comp_surface(lam=self.lamination)`). The `from . import *`
+        of the modules edited named (the wildcard kept the class generator
+        from inlining them: 20 `check`, 3 ventilations). Checks: class tests
+        both backends, Slot / Machine method tests 1131 passed and the
+        schematics plot tests 157 passed with each backend, GUI tests of the
+        machine setup pages 524 passed with each backend; `ty` unchanged.
 - [ ] Function helpers with explicit arguments: `check_parent`,
       `assign_femm_surface`.
 - [ ] Tests of a refactored package hand-maintained; numerical parity against
@@ -1513,6 +1543,8 @@ the fallback, the parent links, and makes the argument required.
 | `run` of `Electrical`, `ElecLUTdq`, `Magnetics`, `Force`, `Structural`, `StructElmer`, `Loss`, `LossFEA` | `output` | Step 11, pass 2 |
 | `Simu1.run_single` | `output` | Step 11, pass 3 |
 | `comp_loss`, `comp_loss_freq`, `comp_loss_time`, `comp_loss_value` of the LossModel family | `loss`, `output` | Step 11, pass 4 |
+| `plot_schematics` (and `_constant_tooth`, `_top_flat`, `_radial`), `check`, `comp_height`, `comp_surface`, `comp_surface_active`, `get_name_lam`, `get_surface_tooth`, `comp_width_opening` of the Slot family | `lam` | Step 16 |
+| `plot_schematics` (and variants), `get_R_id`, `get_Rbo`, `get_Rext`, `get_is_stator`, `build_geometry`, `comp_mass_magnets`, `comp_mass_magnet_id`, `comp_volume_magnets` of the Hole family | `lam` | Step 16 |
 
 Full list: `container_arguments.fallback_methods(gen_dict, Methods_new)`.
 

@@ -63,7 +63,7 @@ class LamSlot(Lamination):
 
         super(type(self), self).check()
 
-        self.slot.check()
+        self.slot.check(lam=self)
 
         if self.comp_height_yoke() < 0:
             raise LSC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
@@ -110,7 +110,7 @@ class LamSlot(Lamination):
 
         """
         if self.slot is not None and self.slot.Zs > 0:
-            return self.Rext - self.Rint - self.slot.comp_height()
+            return self.Rext - self.Rint - self.slot.comp_height(lam=self)
         else:
             return self.Rext - self.Rint
 
@@ -171,7 +171,7 @@ class LamSlot(Lamination):
         if self.slot is None:
             Sslot = 0
         else:
-            Sslot = self.get_Zs() * self.slot.comp_surface()
+            Sslot = self.get_Zs() * self.slot.comp_surface(lam=self)
 
         Ryoke = self.get_Ryoke()
         Hyoke = self.comp_height_yoke()

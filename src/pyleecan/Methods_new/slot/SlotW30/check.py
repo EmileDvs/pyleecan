@@ -2,15 +2,22 @@ from . import S30_W0Error
 from . import S30_W3Error
 from . import S30_R1Error
 from . import S30_R2Error
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | Notch | None = None) -> None:
     """Check that the SlotW30 object is correct
 
     Parameters
     ----------
     self : SlotW30
         A SlotW30 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------

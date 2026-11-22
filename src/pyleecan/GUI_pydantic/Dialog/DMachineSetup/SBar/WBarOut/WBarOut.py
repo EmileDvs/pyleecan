@@ -55,7 +55,7 @@ class WBarOut(QGroupBox):
         txt_Sslot = self.tr("Sslot: ")
         try:
             Sslot = format(
-                self.u.get_m2(self.parent().machine.rotor.slot.comp_surface()), ".4g"
+                self.u.get_m2(self.parent().machine.rotor.slot.comp_surface(lam=self.parent().machine.rotor)), ".4g"
             )
             self.out_Sslot.setText(
                 txt_Sslot + Sslot + " [" + self.u.get_m2_name() + "]"

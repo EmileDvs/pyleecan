@@ -202,7 +202,7 @@ class LamSlotMag(LamSlotM):
         """
         super(type(self), self).check()
 
-        self.slot.check()
+        self.slot.check(lam=self)
 
         if self.comp_height_yoke() < 0:
             raise LMC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
@@ -230,7 +230,7 @@ class LamSlotMag(LamSlotM):
             2
             * p
             * (
-                self.slot.comp_surface_active()
+                self.slot.comp_surface_active(lam=self)
                 * self.magnet.Nseg
                 * self.magnet.Lmag
                 * self.magnet.mat_type.struct.rho
@@ -259,7 +259,7 @@ class LamSlotMag(LamSlotM):
         """
 
         S_dict = LamSlot.comp_surfaces(self)
-        Smag = self.slot.comp_surface_active()
+        Smag = self.slot.comp_surface_active(lam=self)
 
         S_dict["Smag"] = Smag
 
@@ -282,7 +282,7 @@ class LamSlotMag(LamSlotM):
         """
 
         V_dict = LamSlot.comp_volumes(self)
-        Vmag = self.slot.comp_surface_active() * self.magnet.Lmag
+        Vmag = self.slot.comp_surface_active(lam=self) * self.magnet.Lmag
 
         V_dict["Vmag"] = Vmag
 

@@ -1,13 +1,20 @@
-from . import *
+from . import S62_H1Error, S62_H2Error, S62_InnerCheckError, S62_W0Error, S62_W1Error, S62_W2Error, S62_WindHError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def check(self) -> None:
+def check(self, lam: Lamination | Notch | None = None) -> None:
     """Check that the SlotW62 object is correct
 
     Parameters
     ----------
     self : SlotW62
         A SlotW62 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------

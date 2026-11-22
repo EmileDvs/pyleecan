@@ -56,7 +56,7 @@ class PCondType22(Gen_PCondType22, QWidget):
 
         # Update active surface for output display
         self.machine.rotor.winding.conductor.Sbar = (
-            self.machine.rotor.slot.comp_surface()
+            self.machine.rotor.slot.comp_surface(lam=self.machine.rotor)
         )
         # Display the main output
         self.w_out.comp_output()

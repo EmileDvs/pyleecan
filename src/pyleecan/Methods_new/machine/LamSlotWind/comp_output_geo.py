@@ -26,8 +26,8 @@ def comp_output_geo(self) -> OutGeoLam:
         output.S_slot = 0
         output.S_slot_wind = 0
     else:
-        output.S_slot = self.slot.comp_surface()
-        output.S_slot_wind = self.slot.comp_surface_active()
+        output.S_slot = self.slot.comp_surface(lam=self)
+        output.S_slot_wind = self.slot.comp_surface_active(lam=self)
     # output.S_wind_act = self.winding.conductor.comp_surface_active()
 
     return output

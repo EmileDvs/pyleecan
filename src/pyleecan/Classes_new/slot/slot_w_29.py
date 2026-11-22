@@ -399,13 +399,15 @@ class SlotW29(Slot):
         return surf_list
 
     # Inlined from Methods.Slot.SlotW29.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | Notch | None = None) -> None:
         """Check that the SlotW29 object is correct
 
         Parameters
         ----------
         self : SlotW29
             A SlotW29 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -449,7 +451,7 @@ class SlotW29(Slot):
         return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # Inlined from Methods.Slot.SlotW29.comp_height
-    def comp_height(self) -> float:
+    def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -457,6 +459,8 @@ class SlotW29(Slot):
         ----------
         self : SlotW29
             A SlotW29 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -498,7 +502,7 @@ class SlotW29(Slot):
         return self.H2
 
     # Inlined from Methods.Slot.SlotW29.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -506,6 +510,8 @@ class SlotW29(Slot):
         ----------
         self : SlotW29
             A SlotW29 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -516,21 +522,23 @@ class SlotW29(Slot):
 
         if self.wedge_type == 1:
             return (
-                self.comp_surface_active()
+                self.comp_surface_active(lam=lam)
                 + self.comp_surface_opening()
                 + self.comp_surface_wedge()
             )
 
-        return self.comp_surface_active() + self.comp_surface_opening()
+        return self.comp_surface_active(lam=lam) + self.comp_surface_opening()
 
     # Inlined from Methods.Slot.SlotW29.comp_surface_active
-    def comp_surface_active(self) -> float:
+    def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot inner surface for winding (by analytical computation)
 
         Parameters
         ----------
         self : SlotW29
             A SlotW29 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -827,6 +835,7 @@ class SlotW29(Slot):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -854,6 +863,8 @@ class SlotW29(Slot):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -865,6 +876,7 @@ class SlotW29(Slot):
         lam : LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
         if type_add_active == 4 and is_default:  # type_wedge = 1
             slot = type(self)(
                 Zs=8,
@@ -893,6 +905,7 @@ class SlotW29(Slot):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
 
         # Use some default parameter
@@ -917,12 +930,12 @@ class SlotW29(Slot):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
-            lam = self.parent
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis

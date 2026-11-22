@@ -243,7 +243,7 @@ class LamSlotWind(LamSlot):
         Lamination.check(self)
 
         self.winding.conductor.check()
-        self.slot.check()
+        self.slot.check(lam=self)
 
         if self.comp_height_yoke() < 0:
             raise LWC_SlotTooLong("The Slot is too long for the lamination (HYoke <0)")
@@ -347,7 +347,7 @@ class LamSlotWind(LamSlot):
             Ncps = self.winding.comp_Ncps()
 
             # compute the winding surfaces
-            S_slot_wind = self.slot.comp_surface_active()
+            S_slot_wind = self.slot.comp_surface_active(lam=self)
             S_wind_act = self.winding.conductor.comp_surface_active() * Ncps
 
             return S_wind_act / S_slot_wind
@@ -721,8 +721,8 @@ class LamSlotWind(LamSlot):
             output.S_slot = 0
             output.S_slot_wind = 0
         else:
-            output.S_slot = self.slot.comp_surface()
-            output.S_slot_wind = self.slot.comp_surface_active()
+            output.S_slot = self.slot.comp_surface(lam=self)
+            output.S_slot_wind = self.slot.comp_surface_active(lam=self)
         # output.S_wind_act = self.winding.conductor.comp_surface_active()
 
         return output
@@ -816,7 +816,7 @@ class LamSlotWind(LamSlot):
         S_dict = LamSlot.comp_surfaces(self)
 
         if self.slot is not None:
-            S_dict["Swind"] = self.get_Zs() * self.slot.comp_surface_active()
+            S_dict["Swind"] = self.get_Zs() * self.slot.comp_surface_active(lam=self)
             S_dict["Swedge"] = self.get_Zs() * self.slot.comp_surface_wedges()
         else:
             S_dict["Swind"] = 0
@@ -846,7 +846,9 @@ class LamSlotWind(LamSlot):
             V_dict["Vwind"] = 0
             V_dict["Vwedge"] = 0
         else:
-            V_dict["Vwind"] = Lf * self.get_Zs() * self.slot.comp_surface_active()
+            V_dict["Vwind"] = (
+                Lf * self.get_Zs() * self.slot.comp_surface_active(lam=self)
+            )
             V_dict["Vwedge"] = Lf * self.get_Zs() * self.slot.comp_surface_wedges()
         return V_dict
 
@@ -953,7 +955,7 @@ class LamSlotWind(LamSlot):
 
         # Compute the polar dimension of the slot
         Hwind = self.slot.comp_height_active(lam=self)
-        Histhmus = self.slot.comp_height() - Hwind
+        Histhmus = self.slot.comp_height(lam=self) - Hwind
         Wwind = self.slot.comp_angle_active_eq()
         Wisthmus = self.slot.comp_angle_opening()
 

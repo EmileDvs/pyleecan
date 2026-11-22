@@ -20,7 +20,7 @@ def comp_surfaces(self) -> dict:
     S_dict = Lamination.comp_surfaces(self)
     Sslot = 0
     for slot in self.slot_list:
-        Sslot += slot.comp_surface()
+        Sslot += slot.comp_surface(lam=self)
 
     S_dict["Sslot"] = Sslot
     S_dict["Slam"] -= Sslot

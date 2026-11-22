@@ -91,11 +91,11 @@ class WCondOut(QGroupBox):
 
         # Compute all the needed output as string
         try:
-            Sslot = format(self.u.get_m2(lam.slot.comp_surface()), ".4g")
+            Sslot = format(self.u.get_m2(lam.slot.comp_surface(lam=lam)), ".4g")
         except Exception:  # Unable to compute the slot surface
             Sslot = "?"
         try:
-            Saslot = format(self.u.get_m2(lam.slot.comp_surface_active()), ".4g")
+            Saslot = format(self.u.get_m2(lam.slot.comp_surface_active(lam=lam)), ".4g")
         except Exception:  # Unable to compute the slot active surface
             Saslot = "?"
         try:

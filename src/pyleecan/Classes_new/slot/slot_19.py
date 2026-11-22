@@ -118,13 +118,15 @@ class Slot19(Slot):
         return curve_list
 
     # Inlined from Methods.Slot.Slot19.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | Notch | None = None) -> None:
         """Check that the Slot19 object is correct
 
         Parameters
         ----------
         self : Slot19
             A Slot19 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -193,7 +195,7 @@ class Slot19(Slot):
             return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # Inlined from Methods.Slot.Slot19.comp_height
-    def comp_height(self) -> float:
+    def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -201,6 +203,8 @@ class Slot19(Slot):
         ----------
         self : Slot19
             A Slot19 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -212,7 +216,7 @@ class Slot19(Slot):
         return self.H0
 
     # Inlined from Methods.Slot.Slot19.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -220,6 +224,8 @@ class Slot19(Slot):
         ----------
         self : Slot19
             A Slot19 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------

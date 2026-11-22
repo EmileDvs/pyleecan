@@ -12,4 +12,4 @@ def comp_surface(self) -> float:
         surface of ALL THE NOTCHES
     """
 
-    return self.notch_shape.Zs * self.notch_shape.comp_surface()
+    return self.notch_shape.Zs * self.notch_shape.comp_surface(lam=self)

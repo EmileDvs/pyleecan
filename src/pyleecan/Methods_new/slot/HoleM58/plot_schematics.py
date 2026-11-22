@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -29,6 +30,7 @@ def plot_schematics(
     is_show_fig: bool = True,
     fig: Figure | None = None,
     ax: Axes | None = None,
+    lam: Lamination | None = None,
 ) -> tuple[Figure, Axes] | Lamination:
     """Plot the schematics of the slot
 
@@ -56,6 +58,8 @@ def plot_schematics(
         existing figure to use if None create a new one
     ax : Matplotlib.axes.Axes object
         Axis on which to plot the data
+    lam : Lamination
+        Lamination of the hole (default: the parent of the hole)
 
     Returns
     -------
@@ -67,6 +71,7 @@ def plot_schematics(
     lam : LamHole / LamSlot
         Default lamination used for the schematics
     """
+    lam = container_or_parent(self, lam, "lam")
 
     # Use some default parameter
     if is_default:
@@ -98,13 +103,13 @@ def plot_schematics(
                 is_show_fig=is_show_fig,
                 fig=fig,
                 ax=ax,
+                lam=lam,
             )
 
     else:
         # Getting the main plot
-        if self.parent is None:
+        if lam is None:
             raise ParentMissingError("Error: The hole is not inside a Lamination")
-        lam = self.parent
 
         # Remove the magnets
         if type_add_active == 0:
@@ -119,7 +124,7 @@ def plot_schematics(
             ax=ax,
         )  # center hole on Ox axis
         sp = 2 * np.pi / self.Zh
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         point_dict = self._comp_point_coordinate()
 
         # Adding point label
@@ -352,7 +357,7 @@ def plot_schematics(
         # Zooming and cleaning
         W = (point_dict["Zc1"].imag + self.R0) * 1.05
         Rint = (Rbo - self.H0 - self.H2) * 0.9
-        Rext = self.parent.Rext * 1.05
+        Rext = lam.Rext * 1.05
 
         ax.axis("equal")
         ax.set_ylim(Rint, Rext)

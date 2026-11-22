@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
@@ -9,16 +10,18 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.lamination import Lamination
 
 
-
-def get_surface_tooth(self) -> SurfLine:
+def get_surface_tooth(self, lam: Lamination | None = None) -> SurfLine:
     """Returns the surface delimiting the tooth (including yoke part)
 
     Parameters
     ----------
     self : Slot
         A Slot object
+    lam : Lamination
+        Lamination of the slot (default: the parent of the slot)
 
     Returns
     -------
@@ -26,9 +29,10 @@ def get_surface_tooth(self) -> SurfLine:
         A SurfLine object representing the slot
 
     """
+    lam = container_or_parent(self, lam, "lam")
 
-    if self.parent is not None:
-        Ryoke = self.parent.get_Ryoke()
+    if lam is not None:
+        Ryoke = lam.get_Ryoke()
     else:
         raise ParentMissingError("Error: The slot is not inside a Lamination")
 
@@ -59,8 +63,8 @@ def get_surface_tooth(self) -> SurfLine:
     curve_list.extend(bot_list)
     curve_list.extend(top_list)
 
-    if self.parent is not None:
-        lam_label = self.parent.get_label()
+    if lam is not None:
+        lam_label = lam.get_label()
     else:
         lam_label = NO_LAM_LAB
     label = lam_label + "_" + TOOTH_LAB

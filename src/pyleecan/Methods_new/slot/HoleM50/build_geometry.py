@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
@@ -6,9 +7,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False) -> list:
+def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False, lam: Lamination | None = None) -> list:
     """Compute the curve (Segment) needed to plot the Slot.
     The ending point of a curve is the starting point of the next curve in
     the list
@@ -23,6 +25,8 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
         Complex to translate the slot (Default value = 0)
     is_simplified : bool
        True to avoid line superposition
+    lam : Lamination
+        Lamination of the hole (default: the parent of the hole)
 
     Returns
     -------
@@ -30,10 +34,11 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
         List of SurfLine needed to draw the HoleM50
 
     """
+    lam = container_or_parent(self, lam, "lam")
 
     # Get correct label for surfaces
-    lam_label = self.parent.get_label()
-    R_id, surf_type = self.get_R_id()
+    lam_label = lam.get_label()
+    R_id, surf_type = self.get_R_id(lam=lam)
     vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
     mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
 
@@ -65,7 +70,7 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
     Z11s = point_dict["Z11s"]
     Z8cs = point_dict["Z8cs"]
     Z8bs = point_dict["Z8bs"]
-    Rext = self.get_Rext()
+    Rext = self.get_Rext(lam=lam)
 
     # Create all the lines
     L_1_2 = Segment(begin=Z1, end=Z2, prop_dict=None)

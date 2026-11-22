@@ -408,13 +408,15 @@ class SlotWLSRPM(Slot):
         return surf_list
 
     # Inlined from Methods.Slot.SlotWLSRPM.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | Notch | None = None) -> None:
         """Check that the SlotW16 object is correct
 
         Parameters
         ----------
         self : SlotWLSRPM
             A SlotWLSRPM object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -447,7 +449,7 @@ class SlotWLSRPM(Slot):
         return 2 * (np.pi / self.Zs - np.arcsin(self.W3 / 2 / Rbo))
 
     # Inlined from Methods.Slot.SlotWLSRPM.comp_height
-    def comp_height(self) -> float:
+    def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -455,6 +457,8 @@ class SlotWLSRPM(Slot):
         ----------
         self : SlotWLSRPM
             A SlotWLSRPM object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -569,6 +573,7 @@ class SlotWLSRPM(Slot):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -596,6 +601,8 @@ class SlotWLSRPM(Slot):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -607,6 +614,7 @@ class SlotWLSRPM(Slot):
         lam : LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -637,12 +645,12 @@ class SlotWLSRPM(Slot):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
-            lam = self.parent
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis

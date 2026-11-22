@@ -15,6 +15,7 @@ from ...classes_common.errors import (
     S52R_widthCheckError,
 )
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -145,7 +146,11 @@ class HoleM52R(HoleMag):
 
     # Inlined from Methods.Slot.HoleM52R.build_geometry
     def build_geometry(
-        self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_simplified: bool = False,
+        lam: Lamination | None = None,
     ) -> list:
         """Compute the curve (Line) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
@@ -161,6 +166,8 @@ class HoleM52R(HoleMag):
             Complex to translate the slot (Default value = 0)
         is_simplified : bool
            True to avoid line superposition
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -168,9 +175,10 @@ class HoleM52R(HoleMag):
             List of SurfLine needed to draw the HoleM51
 
         """
+        lam = container_or_parent(self, lam, "lam")
         # Get correct label for surfaces
-        lam_label = self.parent.get_label()
-        R_id, surf_type = self.get_R_id()
+        lam_label = lam.get_label()
+        R_id, surf_type = self.get_R_id(lam=lam)
         vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
         mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
 
@@ -498,6 +506,7 @@ class HoleM52R(HoleMag):
         type_add_active=True,
         save_path: str | None = None,
         is_show_fig: bool = True,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -521,6 +530,8 @@ class HoleM52R(HoleMag):
             full path including folder, name and extension of the file to save if save_path is not None
         is_show_fig : bool
             To call show at the end of the method
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -532,6 +543,7 @@ class HoleM52R(HoleMag):
         lam : LamHole / LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -557,10 +569,11 @@ class HoleM52R(HoleMag):
                     type_add_active=type_add_active,
                     save_path=save_path,
                     is_show_fig=is_show_fig,
+                    lam=lam,
                 )
         elif type_add_active == 0:
             # Remove magnets
-            lam = self.parent.copy()
+            lam = lam.copy()
             lam.hole[0].remove_magnet()
             return lam.hole[0].plot_schematics(
                 is_default=False,
@@ -570,12 +583,12 @@ class HoleM52R(HoleMag):
                 type_add_active=2,
                 save_path=save_path,
                 is_show_fig=is_show_fig,
+                lam=lam,
             )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The hole is not inside a Lamination")
-            lam = self.parent
             alpha = np.pi / 2  # To rotate the schematics
             lam.plot(
                 alpha=np.pi / self.Zh + alpha,
@@ -583,7 +596,7 @@ class HoleM52R(HoleMag):
                 is_lam_only=type_add_active == 0,
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             fig = plt.gcf()
             ax = plt.gca()
             point_dict = self._comp_point_coordinate()
@@ -834,7 +847,7 @@ class HoleM52R(HoleMag):
                 * 1.2
             )
             Rint = (point_dict["Z5"] * np.exp(1j * alpha)).imag * 0.9
-            Rext = self.parent.Rext * 1.1
+            Rext = lam.Rext * 1.1
 
             plt.axis("equal")
             ax.set_ylim(Rint, Rext)

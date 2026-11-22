@@ -276,13 +276,15 @@ class SlotW28(Slot):
         return [line for line in curve_list if line is not None]
 
     # Inlined from Methods.Slot.SlotW28.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | Notch | None = None) -> None:
         """Check that the SlotW28 object is correct
 
         Parameters
         ----------
         self : SlotW28
             A SlotW28 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -346,7 +348,7 @@ class SlotW28(Slot):
         return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # Inlined from Methods.Slot.SlotW28.comp_height
-    def comp_height(self) -> float:
+    def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -354,6 +356,8 @@ class SlotW28(Slot):
         ----------
         self : SlotW28
             A SlotW28 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -403,7 +407,7 @@ class SlotW28(Slot):
         return abs(Ztan2 - Ztan1)
 
     # Inlined from Methods.Slot.SlotW28.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -411,6 +415,8 @@ class SlotW28(Slot):
         ----------
         self : SlotW28
             A SlotW28 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -418,7 +424,7 @@ class SlotW28(Slot):
             Slot total surface [m**2]
 
         """
-        return self.comp_surface_active() + self.comp_surface_opening()
+        return self.comp_surface_active(lam=lam) + self.comp_surface_opening()
 
     # Inlined from Methods.Slot.SlotW28.comp_surface_opening
     def comp_surface_opening(self) -> float:
@@ -582,6 +588,7 @@ class SlotW28(Slot):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -609,6 +616,8 @@ class SlotW28(Slot):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -620,6 +629,7 @@ class SlotW28(Slot):
         lam : LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -641,12 +651,12 @@ class SlotW28(Slot):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
-            lam = self.parent
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis

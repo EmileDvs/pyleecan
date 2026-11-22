@@ -22,14 +22,14 @@ def comp_masses(self) -> dict:
     Mmag = 0
     if self.magnet_north is not None:
         Mmag += p * (
-            self.slot.comp_surface_active()
+            self.slot.comp_surface_active(lam=self)
             * self.magnet_north.Nseg
             * self.magnet_north.Lmag
             * self.magnet_north.mat_type.struct.rho
         )
     if self.magnet_south is not None:
         Mmag += p * (
-            self.slot_south.comp_surface_active()
+            self.slot_south.comp_surface_active(lam=self)
             * self.magnet_south.Nseg
             * self.magnet_south.Lmag
             * self.magnet_south.mat_type.struct.rho

@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ...classes_common.errors import ParentMissingError, S62_NoneError
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -123,7 +124,11 @@ class HoleM62(HoleMag):
 
     # Inlined from Methods.Slot.HoleM62.build_geometry
     def build_geometry(
-        self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_simplified: bool = False,
+        lam: Lamination | None = None,
     ) -> list:
         """Compute the curve (Segment) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
@@ -139,6 +144,8 @@ class HoleM62(HoleMag):
             Complex to translate the slot (Default value = 0)
         is_simplified : bool
             True to avoid line superposition
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -146,11 +153,12 @@ class HoleM62(HoleMag):
             List of SurfLine needed to draw the HoleM58
 
         """
-        Rbo = self.get_Rbo()
+        lam = container_or_parent(self, lam, "lam")
+        Rbo = self.get_Rbo(lam=lam)
 
         # Get correct label for surfaces
-        lam_label = self.parent.get_label()
-        R_id, surf_type = self.get_R_id()
+        lam_label = lam.get_label()
+        R_id, surf_type = self.get_R_id(lam=lam)
         mag_label = f"{lam_label}_{HOLEM_LAB}_R{R_id}-"
         vent_label = f"{lam_label}_{surf_type}_R{R_id}-"
         point_dict = self._comp_point_coordinate()
@@ -386,6 +394,7 @@ class HoleM62(HoleMag):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -413,6 +422,8 @@ class HoleM62(HoleMag):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -424,6 +435,7 @@ class HoleM62(HoleMag):
         lam : LamHole / LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
         if is_default:
             hole = type(self)(
                 Zh=4,
@@ -449,13 +461,13 @@ class HoleM62(HoleMag):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
 
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The hole is not inside a Lamination")
-            lam = self.parent
 
             # Remove the magnets
             if type_add_active == 0:
@@ -470,7 +482,7 @@ class HoleM62(HoleMag):
                 ax=ax,
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             point_dict = self._comp_point_coordinate()
 
             # Adding point label
@@ -591,8 +603,8 @@ class HoleM62(HoleMag):
 
             # Zooming and cleaning
             W = (point_dict["Z1"] * np.exp(1j * sp)).imag
-            Rint = self.parent.Rint
-            Rext = self.parent.Rext
+            Rint = lam.Rint
+            Rext = lam.Rext
 
             ax.axis("equal")
             ax.set_ylim(Rint, Rext)
@@ -627,6 +639,7 @@ class HoleM62(HoleMag):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -654,6 +667,8 @@ class HoleM62(HoleMag):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -665,6 +680,7 @@ class HoleM62(HoleMag):
         lam : LamHole / LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
         if is_default:
             hole = type(self)(
                 Zh=4,
@@ -690,13 +706,13 @@ class HoleM62(HoleMag):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
 
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The hole is not inside a Lamination")
-            lam = self.parent
 
             # Remove the magnets
             if type_add_active == 0:
@@ -711,7 +727,7 @@ class HoleM62(HoleMag):
                 ax=ax,
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             point_dict = self._comp_point_coordinate()
 
             # Adding point label
@@ -838,8 +854,8 @@ class HoleM62(HoleMag):
             # Zooming and cleaning
             W = (point_dict["Z1"] * np.exp(1j * sp)).imag
 
-            Rint = self.parent.Rint
-            Rext = self.parent.Rext
+            Rint = lam.Rint
+            Rext = lam.Rext
 
             ax.axis("equal")
             ax.set_ylim(Rint, Rext)

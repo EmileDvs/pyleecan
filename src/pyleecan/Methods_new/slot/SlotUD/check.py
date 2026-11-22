@@ -1,8 +1,19 @@
 from ..Slot import SlotCheckError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def check(self) -> None:
-    """Check that the SlotUD is correctly defined"""
+def check(self, lam: Lamination | Notch | None = None) -> None:
+    """Check that the SlotUD is correctly defined
+
+    Parameters
+    ----------
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
+    """
 
     if self.line_list is None:
         self.line_list = list()

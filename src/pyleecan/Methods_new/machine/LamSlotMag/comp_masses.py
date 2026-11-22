@@ -23,7 +23,7 @@ def comp_masses(self) -> dict:
         2
         * p
         * (
-            self.slot.comp_surface_active()
+            self.slot.comp_surface_active(lam=self)
             * self.magnet.Nseg
             * self.magnet.Lmag
             * self.magnet.mat_type.struct.rho

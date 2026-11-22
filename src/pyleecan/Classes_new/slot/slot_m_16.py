@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ...classes_common.errors import ParentMissingError, S16_W01CheckError
+from ...classes_common.parents import container_or_parent
 from ...Functions_new.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -157,13 +158,15 @@ class SlotM16(Slot):
         return curve_list
 
     # Inlined from Methods.Slot.SlotM16.check
-    def check(self) -> None:
+    def check(self, lam: Lamination | Notch | None = None) -> None:
         """Check that the SlotM16 object is correct
 
         Parameters
         ----------
         self : SlotM16
             A SlotM16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -198,7 +201,7 @@ class SlotM16(Slot):
         return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
     # Inlined from Methods.Slot.SlotM16.comp_height
-    def comp_height(self) -> float:
+    def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the height of the Slot.
         Caution, the bottom of the Slot is an Arc
 
@@ -206,6 +209,8 @@ class SlotM16(Slot):
         ----------
         self : SlotM16
             A SlotM16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -257,7 +262,7 @@ class SlotM16(Slot):
         return R2 - R1
 
     # Inlined from Methods.Slot.SlotM16.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot total surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -265,6 +270,8 @@ class SlotM16(Slot):
         ----------
         self : SlotM16
             A SlotM16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -288,13 +295,15 @@ class SlotM16(Slot):
             return S0 + S1 + Sarc
 
     # Inlined from Methods.Slot.SlotM16.comp_surface_active
-    def comp_surface_active(self) -> float:
+    def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot inner surface for winding (by analytical computation)
 
         Parameters
         ----------
         self : SlotM16
             A SlotM16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -368,6 +377,7 @@ class SlotM16(Slot):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -395,6 +405,8 @@ class SlotM16(Slot):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the slot (default: the parent of the slot)
 
         Returns
         -------
@@ -406,6 +418,7 @@ class SlotM16(Slot):
         lam : LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -427,12 +440,12 @@ class SlotM16(Slot):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The slot is not inside a Lamination")
-            lam = self.parent
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis

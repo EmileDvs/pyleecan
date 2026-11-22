@@ -1,21 +1,29 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.errors import ParentMissingError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def get_is_stator(self) -> bool:
+def get_is_stator(self, lam: Lamination | None = None) -> bool:
     """Return True if the parent lamination is stator and False if is a rotor
 
     Parameters
     ----------
     self : Hole
         A Hole object
+    lam : Lamination
+        Lamination of the hole (default: the parent of the hole)
 
     Returns
     -------
     is_stator: bool
         True if the Lamination is a stator and False if not
     """
+    lam = container_or_parent(self, lam, "lam")
 
-    if self.parent is not None:
-        return self.parent.is_stator
+    if lam is not None:
+        return lam.is_stator
     else:
         raise ParentMissingError("Error: The hole is not inside a Lamination")

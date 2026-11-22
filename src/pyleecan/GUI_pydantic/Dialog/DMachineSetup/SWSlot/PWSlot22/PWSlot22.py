@@ -226,7 +226,7 @@ class PWSlot22(Gen_PWSlot22, QWidget):
         # Check that everything is set right
         # Constraints
         try:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
         except SlotCheckError as error:
             return str(error)
 

@@ -8,6 +8,7 @@ import numpy as np
 from matplotlib.patches import Patch
 
 from ...classes_common.errors import MagnetIndexError, ParentMissingError
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_new.utils.init_fig import init_fig
 from ...Functions_new.utils.labels import (
@@ -27,6 +28,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..machine.lamination import Lamination
     from ..machine.magnet import Magnet
 
 
@@ -182,22 +184,25 @@ class Hole(LegacyClass):
         )
 
     # Inlined from Methods.Slot.Hole.get_is_stator
-    def get_is_stator(self) -> bool:
+    def get_is_stator(self, lam: Lamination | None = None) -> bool:
         """Return True if the parent lamination is stator and False if is a rotor
 
         Parameters
         ----------
         self : Hole
             A Hole object
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
         is_stator: bool
             True if the Lamination is a stator and False if not
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            return self.parent.is_stator
+        if lam is not None:
+            return lam.is_stator
         else:
             raise ParentMissingError("Error: The hole is not inside a Lamination")
 
@@ -255,13 +260,15 @@ class Hole(LegacyClass):
             return magnet_dict
 
     # Inlined from Methods.Slot.Hole.get_R_id
-    def get_R_id(self) -> tuple[int, str]:
+    def get_R_id(self, lam: Lamination | None = None) -> tuple[int, str]:
         """Return the "Radial" index for label (index in lam.hole or lam.axial_vent)
 
         Parameters
         ----------
         self : Hole
             A Hole object
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -270,27 +277,27 @@ class Hole(LegacyClass):
         surf_type : str
             Label to use for the surface type (HoleV or Vent)
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is None:  # Compatibility For plotting
+        if lam is None:  # Compatibility For plotting
             return (0, HOLEV_LAB)
-        elif (
-            hasattr(self.parent, "get_hole_list")
-            and self in self.parent.get_hole_list()
-        ):
-            return (self.parent.get_hole_list().index(self), HOLEV_LAB)
-        elif self.parent.axial_vent is not None and self in self.parent.axial_vent:
-            return (self.parent.axial_vent.index(self), VENT_LAB)
+        elif hasattr(lam, "get_hole_list") and self in lam.get_hole_list():
+            return (lam.get_hole_list().index(self), HOLEV_LAB)
+        elif lam.axial_vent is not None and self in lam.axial_vent:
+            return (lam.axial_vent.index(self), VENT_LAB)
         else:
             raise Exception("Error, impossible to get Hole R-id")
 
     # Inlined from Methods.Slot.Hole.get_Rbo
-    def get_Rbo(self) -> float:
+    def get_Rbo(self, lam: Lamination | None = None) -> float:
         """Return the parent lamination bore radius
 
         Parameters
         ----------
         self : Hole
             A Hole object
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -298,20 +305,23 @@ class Hole(LegacyClass):
             The parent lamination bore radius [m]
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            return self.parent.get_Rbo()
+        if lam is not None:
+            return lam.get_Rbo()
         else:
             raise ParentMissingError("Error: The hole is not inside a Lamination")
 
     # Inlined from Methods.Slot.Hole.get_Rext
-    def get_Rext(self) -> float:
+    def get_Rext(self, lam: Lamination | None = None) -> float:
         """Return the parent lamination exterior radius
 
         Parameters
         ----------
         self : Hole
             A Hole object
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -319,9 +329,10 @@ class Hole(LegacyClass):
             The parent lamination exterior radius [m]
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            return self.parent.Rext
+        if lam is not None:
+            return lam.Rext
         else:
             raise ParentMissingError("Error: The hole is not inside a Lamination")
 

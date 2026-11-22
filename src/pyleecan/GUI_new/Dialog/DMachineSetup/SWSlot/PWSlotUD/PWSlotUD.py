@@ -109,7 +109,7 @@ class PWSlotUD(Ui_PWSlotUD, QWidget):
         # Use a copy to avoid changing the main object
         lam = self.lamination.copy()
         try:
-            self.slot.check()
+            self.slot.check(lam=self.lamination)
             lam.slot = self.slot
         except Exception:
             # Plot only the lamination
@@ -201,7 +201,7 @@ class PWSlotUD(Ui_PWSlotUD, QWidget):
 
         # Constraints
         try:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
         except SlotCheckError as error:
             return str(error)
 

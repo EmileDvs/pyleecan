@@ -12,6 +12,7 @@ from ...classes_common.errors import (
     TrapezeBuildGeometryError,
     VentilationTrapInstanceError,
 )
+from ...classes_common.parents import container_or_parent
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
     ARROW_WIDTH,
@@ -101,7 +102,9 @@ class VentilationTrap(Hole):
         return point_dict
 
     # Inlined from Methods.Slot.VentilationTrap.build_geometry
-    def build_geometry(self, alpha: float = 0, delta: complex = 0) -> list:
+    def build_geometry(
+        self, alpha: float = 0, delta: complex = 0, lam: Lamination | None = None
+    ) -> list:
         """Compute the curve needed to plot the ventilations
 
         Parameters
@@ -112,15 +115,18 @@ class VentilationTrap(Hole):
             Angle for rotation (Default value = 0) [rad]
         delta : complex
             Complex for translation (Default value = 0)
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
         surf_list: list
             A list of Trapeze
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        lam_label = self.parent.get_label()
-        R_id, surf_type = self.get_R_id()
+        lam_label = lam.get_label()
+        R_id, surf_type = self.get_R_id(lam=lam)
         RTS_id = "R" + str(R_id) + "-T0-S0"
         vent_label = lam_label + "_" + surf_type + "_" + RTS_id
 
@@ -252,6 +258,7 @@ class VentilationTrap(Hole):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -279,6 +286,8 @@ class VentilationTrap(Hole):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -290,6 +299,7 @@ class VentilationTrap(Hole):
         lam : LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -318,12 +328,12 @@ class VentilationTrap(Hole):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The hole is not inside a Lamination")
-            lam = self.parent
             fig, ax = lam.plot(
                 alpha=0,
                 is_show_fig=False,
@@ -436,8 +446,8 @@ class VentilationTrap(Hole):
 
             # Zooming and cleaning
             W = abs(point_dict["Z2"].imag) * 1.3
-            Rint = self.parent.Rint
-            Rext = self.parent.Rext
+            Rint = lam.Rint
+            Rext = lam.Rext
 
             ax.axis("equal")
             ax.set_ylim(-Rext / 10, Rext * 0.9)

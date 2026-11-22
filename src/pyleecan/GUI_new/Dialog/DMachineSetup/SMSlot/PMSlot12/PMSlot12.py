@@ -157,7 +157,7 @@ class PMSlot12(Gen_PMSlot12, QWidget):
 
         # Constraints
         try:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
         except SlotCheckError as error:
             return str(error)
 

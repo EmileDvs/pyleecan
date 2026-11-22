@@ -1,13 +1,20 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def comp_surface_active(self) -> float:
+def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
     """Compute the Slot inner surface for winding (by analytical computation)
 
     Parameters
     ----------
     self : SlotW23
         A SlotW23 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -27,12 +34,12 @@ def comp_surface_active(self) -> float:
     S2 = 0.5 * (self.W1 + self.W2) * H2
 
     if self.is_outwards():
-        Rslot = Rbo + self.comp_height()  # External radius of the slot
+        Rslot = Rbo + self.comp_height(lam=lam)  # External radius of the slot
         alpha = float(2 * np.arcsin(self.W2 / (2 * Rslot)))  # W2 in rad
         S3 = (Rslot**2.0) / 2.0 * (alpha - np.sin(alpha))
         return S2 + S3
     else:
-        Rslot = Rbo - self.comp_height()  # External radius of the slot
+        Rslot = Rbo - self.comp_height(lam=lam)  # External radius of the slot
         alpha = float(2 * np.arcsin(self.W2 / (2 * Rslot)))  # W2 in rad
         S3 = (Rslot**2.0) / 2.0 * (alpha - np.sin(alpha))
         return S2 - S3

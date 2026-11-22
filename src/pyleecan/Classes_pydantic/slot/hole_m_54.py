@@ -13,6 +13,7 @@ from ...classes_common.errors import (
     ParentMissingError,
     S54_NoneError,
 )
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_pydantic.Plot import (
     ARROW_COLOR,
@@ -110,7 +111,11 @@ class HoleM54(Hole):
 
     # Inlined from Methods.Slot.HoleM54.build_geometry
     def build_geometry(
-        self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False
+        self,
+        alpha: float = 0,
+        delta: complex = 0,
+        is_simplified: bool = False,
+        lam: Lamination | None = None,
     ) -> list:
         """Compute the curve (Arc) needed to plot the Hole.
         The ending point of a curve is the starting point of the next curve in the
@@ -126,6 +131,8 @@ class HoleM54(Hole):
             Complex to translate the slot (Default value = 0)
         is_simplified : bool
            True to avoid line superposition
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -133,13 +140,14 @@ class HoleM54(Hole):
             List of Air Surface on the slot
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Get correct label for surfaces
-        lam_label = self.parent.get_label()
-        R_id, surf_type = self.get_R_id()
+        lam_label = lam.get_label()
+        R_id, surf_type = self.get_R_id(lam=lam)
         vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
 
-        Rext = self.get_Rext()
+        Rext = self.get_Rext(lam=lam)
         # Get all the points
         point_dict = self._comp_point_coordinate()
         Z1 = point_dict["Z1"]
@@ -289,6 +297,7 @@ class HoleM54(Hole):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes] | Lamination:
         """Plot the schematics of the slot
 
@@ -316,6 +325,8 @@ class HoleM54(Hole):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination
+            Lamination of the hole (default: the parent of the hole)
 
         Returns
         -------
@@ -327,6 +338,7 @@ class HoleM54(Hole):
         lam : LamHole / LamSlot
             Default lamination used for the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -348,12 +360,12 @@ class HoleM54(Hole):
                     is_show_fig=is_show_fig,
                     fig=fig,
                     ax=ax,
+                    lam=lam,
                 )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The hole is not inside a Lamination")
-            lam = self.parent
             alpha = np.pi / 2  # To rotate the schematics
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zh + alpha,
@@ -363,7 +375,7 @@ class HoleM54(Hole):
                 ax=ax,
             )  # center hole on Ox axis
             sp = 2 * np.pi / self.Zh
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             point_dict = self._comp_point_coordinate()
 
             # Adding point label

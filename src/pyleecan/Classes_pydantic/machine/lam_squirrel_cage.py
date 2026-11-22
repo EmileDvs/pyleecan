@@ -545,7 +545,7 @@ class LamSquirrelCage(LamSlotWind):
             # Getting the main plot
             fig, ax = self.plot_side(is_show_fig=False, fig=fig, ax=ax)
             Lt = self.comp_length()
-            Hs = self.slot.comp_height()
+            Hs = self.slot.comp_height(lam=self)
             Ha = self.slot.comp_height_active(lam=self)
             Ho = Hs - Ha
             Le = self.winding.Lewout
@@ -703,7 +703,7 @@ class LamSquirrelCage(LamSlotWind):
 
         # Comp all dimensions
         Lt = self.comp_length()
-        Hs = self.slot.comp_height()
+        Hs = self.slot.comp_height(lam=self)
         Ha = self.slot.comp_height_active(lam=self)
         Ho = Hs - Ha
         Le = self.winding.Lewout

@@ -64,7 +64,7 @@ class LamSlotMulti(Lamination):
 
         # Check all the slots
         for slot in self.slot_list:
-            slot.check()
+            slot.check(lam=self)
 
         #
         if len(self.alpha.shape) > 1:
@@ -104,7 +104,7 @@ class LamSlotMulti(Lamination):
         """
         H = 0
         for slot in self.slot_list:
-            H = max(H, slot.comp_height())
+            H = max(H, slot.comp_height(lam=self))
         return self.Rext - self.Rint - H
 
     # Inlined from Methods.Machine.LamSlotMulti.comp_periodicity_spatial
@@ -156,7 +156,7 @@ class LamSlotMulti(Lamination):
         S_dict = Lamination.comp_surfaces(self)
         Sslot = 0
         for slot in self.slot_list:
-            Sslot += slot.comp_surface()
+            Sslot += slot.comp_surface(lam=self)
 
         S_dict["Sslot"] = Sslot
         S_dict["Slam"] -= Sslot

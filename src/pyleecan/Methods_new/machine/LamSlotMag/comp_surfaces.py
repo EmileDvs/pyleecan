@@ -18,7 +18,7 @@ def comp_surfaces(self) -> dict:
     """
 
     S_dict = LamSlot.comp_surfaces(self)
-    Smag = self.slot.comp_surface_active()
+    Smag = self.slot.comp_surface_active(lam=self)
 
     S_dict["Smag"] = Smag
 

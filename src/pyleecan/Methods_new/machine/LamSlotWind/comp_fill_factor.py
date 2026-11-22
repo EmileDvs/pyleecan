@@ -19,7 +19,7 @@ def comp_fill_factor(self) -> float:
         Ncps = self.winding.comp_Ncps()
 
         # compute the winding surfaces
-        S_slot_wind = self.slot.comp_surface_active()
+        S_slot_wind = self.slot.comp_surface_active(lam=self)
         S_wind_act = self.winding.conductor.comp_surface_active() * Ncps
 
         return S_wind_act / S_slot_wind
