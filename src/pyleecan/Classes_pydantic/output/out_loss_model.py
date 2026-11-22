@@ -66,15 +66,16 @@ class OutLossModel(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Output.OutLossModel.__add__
-    def __add__(self, other: OutLossModel | dict) -> OutLossModel:
+    def __add__(self, other: OutLossModel | dict | int) -> OutLossModel:
         """Add two loss models output (called for: self + other)
 
         Parameters
         ----------
         self : OutLossModel
             First loss model to add
-        other : OutLossModel or dict
+        other : OutLossModel or dict or int
             Second loss model to add
+            (0: the start value of sum(), self is returned)
 
         Returns
         -------
@@ -82,18 +83,20 @@ class OutLossModel(LegacyModel):
             Resulting Losses output
         """
 
-        if other == 0:
-            return self
-        try:
-            other_loss_density = other.loss_density
-            other_coeff_dict = other.coeff_dict
-            other_group = other.group
-            other_name = other.name
-        except AttributeError:
+        if isinstance(other, int):  # Start value of sum()
+            if other == 0:
+                return self
+            raise TypeError(f"Cannot combine an OutLossModel with {other!r}")
+        if isinstance(other, dict):  # Dump of an OutLossModel
             other_loss_density = other["loss_density"]
             other_coeff_dict = other["coeff_dict"]
             other_group = other["group"]
             other_name = other["name"]
+        else:
+            other_loss_density = other.loss_density
+            other_coeff_dict = other.coeff_dict
+            other_group = other.group
+            other_name = other.name
 
         new_loss_density = self.loss_density + other_loss_density
         new_coeff_dict = self.coeff_dict.copy()
@@ -112,33 +115,36 @@ class OutLossModel(LegacyModel):
         )
 
     # Inlined from Methods.Output.OutLossModel.__radd__
-    def __radd__(self, other: OutLossModel | dict) -> OutLossModel:
+    def __radd__(self, other: OutLossModel | dict | int) -> OutLossModel:
         """Add two loss models output (called for: other + self)
 
         Parameters
         ----------
         self : OutLossModel
             First loss model to add
-        other : OutLossModel or dict
+        other : OutLossModel or dict or int
             Second loss model to add
+            (0: the start value of sum(), self is returned)
 
         Returns
         -------
         loss_tot : OutLossModel
             Resulting Losses output
         """
-        if other == 0:
-            return self
-        try:
-            other_loss_density = other.loss_density
-            other_coeff_dict = other.coeff_dict
-            other_group = other.group
-            other_name = other.name
-        except AttributeError:
+        if isinstance(other, int):  # Start value of sum()
+            if other == 0:
+                return self
+            raise TypeError(f"Cannot combine an OutLossModel with {other!r}")
+        if isinstance(other, dict):  # Dump of an OutLossModel
             other_loss_density = other["loss_density"]
             other_coeff_dict = other["coeff_dict"]
             other_name = other["name"]
             other_group = other["group"]
+        else:
+            other_loss_density = other.loss_density
+            other_coeff_dict = other.coeff_dict
+            other_group = other.group
+            other_name = other.name
 
         new_loss_density = self.loss_density + other_loss_density
         new_coeff_dict = self.coeff_dict.copy()
@@ -157,15 +163,16 @@ class OutLossModel(LegacyModel):
         )
 
     # Inlined from Methods.Output.OutLossModel.__rsub__
-    def __rsub__(self, other: OutLossModel | dict) -> OutLossModel:
+    def __rsub__(self, other: OutLossModel | dict | int) -> OutLossModel:
         """Substract two loss models output (called for: other - self)
 
         Parameters
         ----------
         self : OutLossModel
             First loss model to sub
-        other : OutLossModel or dict
+        other : OutLossModel or dict or int
             Second loss model to sub
+            (0: the start value of sum(), self is returned)
 
         Returns
         -------
@@ -173,18 +180,20 @@ class OutLossModel(LegacyModel):
             Resulting Losses output
         """
 
-        if other == 0:
-            return self
-        try:
-            other_loss_density = other.loss_density
-            other_coeff_dict = other.coeff_dict
-            other_group = other.group
-            other_name = other.name
-        except AttributeError:
+        if isinstance(other, int):  # Start value of sum()
+            if other == 0:
+                return self
+            raise TypeError(f"Cannot combine an OutLossModel with {other!r}")
+        if isinstance(other, dict):  # Dump of an OutLossModel
             other_loss_density = other["loss_density"]
             other_coeff_dict = other["coeff_dict"]
             other_group = other["group"]
             other_name = other["name"]
+        else:
+            other_loss_density = other.loss_density
+            other_coeff_dict = other.coeff_dict
+            other_group = other.group
+            other_name = other.name
 
         new_loss_density = other_loss_density - self.loss_density
         new_coeff_dict = other_coeff_dict.copy()
@@ -203,33 +212,36 @@ class OutLossModel(LegacyModel):
         )
 
     # Inlined from Methods.Output.OutLossModel.__sub__
-    def __sub__(self, other: OutLossModel | dict) -> OutLossModel:
+    def __sub__(self, other: OutLossModel | dict | int) -> OutLossModel:
         """Substract two loss models output (called for: self - other)
 
         Parameters
         ----------
         self : OutLossModel
             First loss model to sub
-        other : OutLossModel or dict
+        other : OutLossModel or dict or int
             Second loss model to sub
+            (0: the start value of sum(), self is returned)
 
         Returns
         -------
         loss_tot : OutLossModel
             Resulting Losses output
         """
-        if other == 0:
-            return self
-        try:
-            other_loss_density = other.loss_density
-            other_coeff_dict = other.coeff_dict
-            other_group = other.group
-            other_name = other.name
-        except AttributeError:
+        if isinstance(other, int):  # Start value of sum()
+            if other == 0:
+                return self
+            raise TypeError(f"Cannot combine an OutLossModel with {other!r}")
+        if isinstance(other, dict):  # Dump of an OutLossModel
             other_loss_density = other["loss_density"]
             other_coeff_dict = other["coeff_dict"]
             other_group = other["group"]
             other_name = other["name"]
+        else:
+            other_loss_density = other.loss_density
+            other_coeff_dict = other.coeff_dict
+            other_group = other.group
+            other_name = other.name
 
         new_loss_density = self.loss_density - other_loss_density
         new_coeff_dict = self.coeff_dict.copy()

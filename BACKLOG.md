@@ -1184,7 +1184,11 @@ Recurring causes, to solve once where possible:
       (annotations) -> 620 (base class declarations). By rule:
       unresolved-attribute 190, invalid-argument-type 175, not-subscriptable
       75, invalid-return-type 53, unsupported-operator 36, unknown-argument
-      25, invalid-assignment 24.
+      25, invalid-assignment 24. Then -> 580 (explicit `SourceFunction` in
+      the VarSimu / VarLoad methods) -> 548 (`OutLossModel` operators).
+      Largest groups left: `DataND` (49, mostly the too narrow hints of the
+      SciDataTool plot functions), `EEC_SCIM` (30), `MagElmer` (27),
+      `OptiGenAlgNsga2Deap` (26), `MagFEMM` (26), `LUTdq` (22).
 - [ ] Implicit `None` returns (a missing case: raise an error or return a value).
 
 Review list by package (behaviour or class definition to decide):
@@ -1236,8 +1240,11 @@ Review list by package (behaviour or class definition to decide):
         literal assigned, then rejects `LossModelMagnet` (ty quirk, field typed
         `dict[str, LossModel]`).
 - Output:
-  - [ ] `OutLossModel.__add__`/`__radd__`/`__sub__`/`__rsub__`: `other` is also
-        `0` (`sum()` start value), not documented;
+  - [x] (2026-11-22) `OutLossModel.__add__`/`__radd__`/`__sub__`/`__rsub__`:
+        `other: OutLossModel | dict | int` (0: `sum()` start value, returns
+        self; another int: TypeError), `isinstance` branches instead of
+        `try`/`except AttributeError`. Kept from legacy: `0 - model` returns
+        `model` (not its opposite);
   - [ ] `OutElec.get_electrical`: str keys checked as indices;
   - [ ] `OutMag.store`, `OutForce.store`, getters: optional fields used without
         check; `plot_B_mesh`: decorated `plot_mesh_field` (ty: missing `self`).
