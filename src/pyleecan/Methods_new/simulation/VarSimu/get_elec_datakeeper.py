@@ -1,6 +1,11 @@
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
 
-def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
+def get_elec_datakeeper(
+    self, symbol_list: list, is_multi: bool = False, simu: Simulation | None = None
+) -> list:
     """Generate DataKeepers to store by default results from electric module
     Parameters
     ----------
@@ -10,6 +15,8 @@ def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list
         List of the existing datakeeper (to avoid duplicate)
     is_multi : bool
         True for multi-simulation of multi-simulation
+    simu : Simulation, optional
+        Simulation of the object (not used here, see VarLoadCurrent)
     Returns
     -------
     dk_list: list

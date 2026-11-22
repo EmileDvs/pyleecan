@@ -28,8 +28,15 @@ class VarParamSweep(VarParam):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarParamSweep.check_param
-    def check_param(self) -> None:
+    def check_param(self, simu: Simulation | None = None) -> None:
         """Check VarParamSweep parameters validity
+
+        Parameters
+        ----------
+        self : VarParamSweep
+            A VarParamSweep object
+        simu : Simulation, optional
+            Simulation holding the object (default: the parent)
 
         Raises
         ------
@@ -38,7 +45,7 @@ class VarParamSweep(VarParam):
         DataKeeperError: Error in DataKeeper setting
         """
         # run the base class check first
-        super(type(self), self).check_param()
+        super(type(self), self).check_param(simu=simu)
 
         # Check ParamExplorers
         for paramexplorer in self.paramexplorer_list:

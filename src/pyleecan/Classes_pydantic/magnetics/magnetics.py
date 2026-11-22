@@ -165,6 +165,8 @@ class Magnetics(LegacyModel):
             axes_dict_in=axes_dict_geo,
             is_periodicity_a=self.is_periodicity_a,
             is_periodicity_t=self.is_periodicity_t,
+            simu=output.simu,
+            output=output,
             is_periodicity_rotor=self.is_periodicity_rotor,
         )
 

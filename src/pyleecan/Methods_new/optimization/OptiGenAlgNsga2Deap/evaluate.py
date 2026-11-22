@@ -45,7 +45,7 @@ def evaluate(self, indiv: Any) -> bool:
             self.problem.preprocessing(indiv.output.simu)
 
         if self.problem.eval_func == None:
-            indiv.output.simu.run()
+            indiv.output.simu.run(output=indiv.output)
         else:
             self.problem.eval_func(indiv.output)
 

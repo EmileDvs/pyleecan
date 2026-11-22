@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Simulation/VarOpti.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from pydantic import Field
 
@@ -14,11 +14,16 @@ from ...classes_common.errors import (
     VarOptiSolverError,
 )
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ..optimization.opti_constraint import OptiConstraint
 from ..optimization.opti_objective import OptiObjective
 from ..optimization.opti_problem import OptiProblem
 from ..optimization.opti_solver import OptiSolver
 from .var_param import VarParam
+
+if TYPE_CHECKING:
+    from ..output.xoutput import XOutput
+    from .simulation import Simulation
 
 
 class VarOpti(VarParam):
@@ -50,8 +55,17 @@ class VarOpti(VarParam):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarOpti.check
-    def check(self) -> None:
-        """Check VarOpti parameters validity"""
+    def check(self, simu: Simulation | None = None) -> None:
+        """Check VarOpti parameters validity
+
+        Parameters
+        ----------
+        self : VarOpti
+            A VarOpti object
+        simu : Simulation, optional
+            Simulation holding the object (default: the parent)
+        """
+        simu = container_or_parent(self, simu, "simu")
 
         # Local import: avoids circular imports
         from ..optimization.opti_bayes_alg_smoot import OptiBayesAlgSmoot
@@ -61,7 +75,7 @@ class VarOpti(VarParam):
         from .simu_1 import Simu1
 
         # Check that VarOpti is always in the first layer of var_simu
-        if not isinstance(self.parent, Simu1):
+        if not isinstance(simu, Simu1):
             raise VarOptiError(
                 "VarOpti object must be the very first layer in var_simu"
             )
@@ -153,18 +167,27 @@ class VarOpti(VarParam):
                 "VarOpti object must have only a solver of type OptiGenAlgNsga2Deap or OptiBayesAlgSmoot"
             )
 
-        solver = self.get_full_solver()
+        solver = self.get_full_solver(simu=simu)
         solver.check_optimization_input()
 
     # Inlined from Methods.Simulation.VarOpti.get_full_solver
-    def get_full_solver(self):
-        """Method to return a fully setted solver"""
+    def get_full_solver(self, simu: Simulation | None = None):
+        """Method to return a fully setted solver
+
+        Parameters
+        ----------
+        self : VarOpti
+            A VarOpti object
+        simu : Simulation, optional
+            Simulation holding the object (default: the parent)
+        """
+        simu = container_or_parent(self, simu, "simu")
 
         # Create reference simulation
-        ref_simu = self.parent.copy()
+        ref_simu = simu.copy()
         ref_simu.var_simu = self.var_simu  # var_simu default is None
         ref_simu.index = None
-        ref_simu.layer = self.parent.layer + 1
+        ref_simu.layer = simu.layer + 1
 
         # Creation of the problem
         problem = OptiProblem(
@@ -182,12 +205,23 @@ class VarOpti(VarParam):
         return solver
 
     # Inlined from Methods.Simulation.VarOpti.run
-    def run(self):
-        """Run method for VarOpti to solve the problem"""
+    def run(self, simu: Simulation | None = None, xoutput: XOutput | None = None):
+        """Run method for VarOpti to solve the problem
 
-        solver = self.get_full_solver()
+        Parameters
+        ----------
+        self : VarOpti
+            A VarOpti object
+        simu : Simulation, optional
+            Simulation holding the object (default: the parent)
+        xoutput : XOutput, optional
+            Output of the multi-simulation (default: the parent of the simulation)
+        """
+        xoutput = container_or_parent(self, xoutput, "xoutput", depth=2)
+
+        solver = self.get_full_solver(simu=simu)
 
         # Launch simulations
-        xoutput = solver.solve(xoutput=self.parent.parent)
+        xoutput = solver.solve(xoutput=xoutput)
 
         return xoutput

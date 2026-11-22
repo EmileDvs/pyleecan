@@ -1,12 +1,21 @@
 from ....classes_common.logger_context import get_logger
+from ....classes_common.parents import container_or_parent
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.output.output import Output
+    from ....Classes_new.output.xoutput import XOutput
 
 
-def run(self) -> Output:
+def run(self, output: Output | XOutput | None = None) -> Output:
     """Run the simulation and optionnaly its multisimulation
+
+    Parameters
+    ----------
+    self : Simulation
+        A Simulation object
+    output : Output or XOutput, optional
+        Output to fill (default: the parent, else a new one)
 
     Returns
     -------
@@ -14,6 +23,8 @@ def run(self) -> Output:
         Contains simulation results
     """
     from ....classes_common.logger_context import logger_context
+
+    output = container_or_parent(self, output, "output")
 
     # The objects without logger_name use the logger of the simulation
     with logger_context(self):
@@ -27,34 +38,34 @@ def run(self) -> Output:
         # Multi-simulation
         if self.var_simu is not None:
             # make sure simulation output is of class XOutput
-            if self.parent is None:
+            if output is None:
                 results = XOutput(simu=self)
             else:
-                if not isinstance(self.parent, XOutput):
+                if not isinstance(output, XOutput):
                     msg = (
                         "Simulation.run: A multisimulation has been defined, "
                         + "type XOutput expected for simu.parent, "
-                        + f"got {type(self.parent).__name__}. "
+                        + f"got {type(output).__name__}. "
                         + "Setting new parent XOutput for simu."
                     )
                     get_logger(self).warning(msg)
                     results = XOutput(simu=self)
                 else:
-                    results = self.parent
+                    results = output
 
             # Logger setup
             self.init_logger(results)
 
             # Compute the multisimulation
-            self.var_simu.run()
+            self.var_simu.run(simu=self, xoutput=results)
 
         # 'normal' simulation
         else:
             # Output initialization
-            if self.parent is None:
+            if output is None:
                 results = Output(simu=self)
             else:
-                results = self.parent
+                results = output
 
             # Logger setup
             self.init_logger(results)

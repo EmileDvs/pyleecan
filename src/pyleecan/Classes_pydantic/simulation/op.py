@@ -7,6 +7,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import OPMatrixException
+from ...classes_common.parents import ancestor_with
 from .._legacy_model import LegacyModel
 
 if TYPE_CHECKING:
@@ -69,21 +70,15 @@ class OP(LegacyModel):
             Machine from the parent (or None)
         """
 
-        parent = self.parent
-        while parent is not None and not hasattr(parent, "machine"):
-            parent = parent.parent
-
-        if parent is not None:
-            return parent.machine
-        else:
-            # Try to import machine from simu object
-            parent = self.parent
-            while parent is not None and not hasattr(parent, "simu"):
-                parent = parent.parent
-            if parent is not None:
-                return parent.simu.machine
-            else:
-                return None
+        # The closest container having the machine (a simulation), else the
+        # closest one having a simulation (an output)
+        holder = ancestor_with(self, "machine")
+        if holder is not None:
+            return holder.machine
+        holder = ancestor_with(self, "simu")
+        if holder is not None:
+            return holder.simu.machine
+        return None
 
     # Inlined from Methods.Simulation.OP.get_OP_array
     def get_OP_array(self, *arg_list) -> np.ndarray:

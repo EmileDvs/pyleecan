@@ -95,3 +95,37 @@ def container_or_parent(obj, container, name, depth=1):
         if container is None:
             return None
     return container
+
+
+def ancestor_with(obj, attribute, container=None, name=None):
+    """Container of obj having an attribute: the given one, else the first
+    legacy ancestor having it (PLAN.md Step 16)
+
+    For the objects found at different depths (an operating point in an
+    input or in a LUT, an equivalent circuit in a model or in an output):
+    the parent walk of ``container_or_parent`` with an unknown depth. Phase 2
+    adds the same DeprecationWarning here.
+
+    Parameters
+    ----------
+    obj : object
+        Object whose method reads its container
+    attribute : str
+        Attribute of the container looked for (``"machine"``, ``"simu"``)
+    container : object or None
+        Container given by the caller (None: the fallback)
+    name : str
+        Name of the argument (for the Phase 2 warning)
+
+    Returns
+    -------
+    container : object or None
+        The given container, else the closest ancestor of obj having the
+        attribute (None if there is none)
+    """
+    if container is not None:
+        return container
+    ancestor = getattr(obj, "parent", None)
+    while ancestor is not None and not hasattr(ancestor, attribute):
+        ancestor = getattr(ancestor, "parent", None)
+    return ancestor

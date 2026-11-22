@@ -152,7 +152,7 @@ class WMachineTable(Ui_WMachineTable, QWidget):
             )
 
             # Generate time and phase vectors in OutElec
-            output.simu.input.gen_input()
+            output.simu.input.gen_input(simu=output.simu, output=output)
 
             # Get current values for given OP
             Is = output.elec.get_Is().values

@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.errors import AbstractClassError, FieldMissingError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import ancestor_with
 from .._legacy_class import LegacyClass
 from ..magnetics.magnetics import Magnetics
 from ..simulation.op import OP
@@ -284,22 +285,15 @@ class EEC(LegacyClass):
             a Machine object
         """
 
-        parent = self.parent
-        # Try to find simulation parent (output.simu.elec.eec)
-        while parent is not None and not hasattr(parent, "machine"):
-            parent = parent.parent
-
-        if parent is not None and hasattr(parent, "machine"):
-            return parent.machine
-        else:
-            # Try to find output parent (output.elec.eec)
-            parent = self.parent
-            while parent is not None and not hasattr(parent, "simu"):
-                parent = parent.parent
-            if parent is not None:
-                return parent.simu.machine
-            else:
-                return None
+        # The closest container having the machine (a simulation), else the
+        # closest one having a simulation (an output)
+        holder = ancestor_with(self, "machine")
+        if holder is not None:
+            return holder.machine
+        holder = ancestor_with(self, "simu")
+        if holder is not None:
+            return holder.simu.machine
+        return None
 
     # Inlined from Methods.Simulation.EEC.solve
     def solve(self) -> dict:

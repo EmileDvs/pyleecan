@@ -2,16 +2,21 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from ...classes_common.errors import InputError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ..import_data.import_gen_pwm import ImportGenPWM
 from ..output.out_elec import OutElec
 from .input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF, Input
 from .simulation import Simulation
+
+if TYPE_CHECKING:
+    from ..output.output import Output
+    from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -69,27 +74,31 @@ class InputVoltage(Input):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.InputVoltage.gen_input
-    def gen_input(self) -> None:
+    def gen_input(
+        self, simu: Simulation | None = None, output: Output | None = None
+    ) -> None:
         """Generate the input for the electrical module (electrical output filled with voltage)
 
         Parameters
         ----------
         self : InputVoltage
             An InputVoltage object
+        simu : Simulation, optional
+            Simulation holding the input (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
         """
+        simu = container_or_parent(self, simu, "simu")
+        output = container_or_parent(self, output, "output", depth=2)
 
         # Get the simulation
-        if isinstance(self.parent, Simulation):
-            simu = self.parent
-        else:
+        if not isinstance(simu, Simulation):
             raise InputError(
                 self.__class__.__name__ + " object should be inside a Simulation object"
             )
 
         # Get output
-        if simu.parent is not None:
-            output = simu.parent
-        else:
+        if output is None:
             raise InputError("Simulation object should be inside an Output object")
 
         logger = get_logger(self)

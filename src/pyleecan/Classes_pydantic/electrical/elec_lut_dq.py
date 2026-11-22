@@ -147,12 +147,12 @@ class ElecLUTdq(Electrical):
 
         simu.machine = self.parent.machine
         simu.var_simu.set_OP_array(
-            OP_matrix, "N0", "Id", "Iq", is_update_input=True, input_index=0
+            OP_matrix, "N0", "Id", "Iq", is_update_input=True, input_index=0, simu=simu
         )
 
         LUT = LUTdq(simu=simu)
 
-        LUT.simu.run()
+        LUT.simu.run(output=LUT)
 
         return LUT
 

@@ -192,6 +192,8 @@ class Force(LegacyModel):
             axes_dict_in=axes_dict_mag,
             is_periodicity_a=self.is_periodicity_a,
             is_periodicity_t=self.is_periodicity_t,
+            simu=output.simu,
+            output=output,
         )
 
         # Remove time anti-periodicity if any

@@ -1,3 +1,5 @@
+from ....classes_common.parents import container_or_parent
+from typing import TYPE_CHECKING
 from ....classes_common.logger_context import get_logger
 import numpy as np
 
@@ -6,29 +8,36 @@ from ....Classes_new.output.out_elec import OutElec
 from ..Input import CURRENT_DIR_REF, ROT_DIR_REF, InputError, PHASE_DIR_REF
 
 
-def gen_input(self) -> None:
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
+    from ....Classes_new.simulation.simulation import Simulation
+
+
+def gen_input(self, simu: Simulation | None = None, output: Output | None = None) -> None:
     """Generate the input for the electrical module (electrical output filled with voltage)
 
     Parameters
     ----------
     self : InputVoltage
         An InputVoltage object
+    simu : Simulation, optional
+        Simulation holding the input (default: the parent)
+    output : Output, optional
+        Output of the simulation (default: the parent of the simulation)
     """
+    simu = container_or_parent(self, simu, "simu")
+    output = container_or_parent(self, output, "output", depth=2)
 
     from ....Classes_new.simulation.simulation import Simulation
 
     # Get the simulation
-    if isinstance(self.parent, Simulation):
-        simu = self.parent
-    else:
+    if not isinstance(simu, Simulation):
         raise InputError(
             self.__class__.__name__ + " object should be inside a Simulation object"
         )
 
     # Get output
-    if simu.parent is not None:
-        output = simu.parent
-    else:
+    if output is None:
         raise InputError("Simulation object should be inside an Output object")
 
     logger = get_logger(self)

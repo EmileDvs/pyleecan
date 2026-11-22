@@ -1494,6 +1494,33 @@ Same signature rule as Step 11 (optional container argument, fallback through
         `OPdq` rejected by an `OP` field, `test_WindingUD_layer`), GUI tests
         of the winding, skew, bore, bar, conductor, notch and preview pages
         49 passed with each backend.
+  - [x] (2026-11-22) Simulation package: 58 -> 0, by hand (the shapes are
+        not the pass pattern: `isinstance` guards, walks, base calls):
+        - the inputs' `gen_input` (`InputVoltage`, `InputCurrent`,
+          `InputFlux`, `InputForce`) and `Input.comp_axes` take `simu` and
+          `output` (depth 2); the base calls (`InputVoltage.gen_input(self,
+          ...)`, `super(type(self), self).gen_input(...)`) pass them on;
+          `Simu1.run_single`, `Force` / `Magnetics.comp_axes` and the GUI
+          preview table pass them;
+        - `Simulation.run(output=None)`: the given output or the parent,
+          else a new `Output` / `XOutput`; it passes its simulation and
+          results to `var_simu.run`; `comp_LUTdq` and the NSGA2 evaluation
+          pass the output they hold;
+        - the multi-simulations take `simu` (`VarSimu.run` /
+          `check_param`, `VarParamSweep.check_param`, `VarOpti.run` /
+          `check` / `get_full_solver`, `VarLoadCurrent` / `VarLoadVoltage`
+          `get_input_list`), the `run` methods also `xoutput` (depth 2);
+        - new helper `ancestor_with(obj, attribute, container, name)`
+          (`classes_common/parents.py`, with `container_or_parent`; tests in
+          `Tests/New/test_container_or_parent.py`): the parent walk of an
+          unknown depth, for `OP` / `EEC.get_machine_from_parent`,
+          `VarLoad.set_OP_array` (`simu`, the simulation holding the input:
+          the parent or its parent) and the `get_elec_datakeeper` of the
+          VarLoad family (`simu`, given by `gen_datakeeper_list`). Phase 2
+          adds its DeprecationWarning with the one of `container_or_parent`.
+        Checks: class tests, Simulation method tests (43 passed, 4 skipped)
+        and simulation / preview GUI tests pass with each backend; `ty`
+        unchanged.
 - [ ] Function helpers with explicit arguments: `check_parent`,
       `assign_femm_surface`.
 - [ ] Tests of a refactored package hand-maintained; numerical parity against
@@ -1572,6 +1599,11 @@ the fallback, the parent links, and makes the argument required.
 | `Skew.comp_angle`, `Skew.plot` | `lam`, `machine` | Step 16 |
 | `plot_schematics`, `get_bore_line`, `get_pole_shape`, `is_yoke` of the Bore family; `get_Rbo`, `get_Ryoke`, `get_label`, `is_outwards` of the Notch family | `lam` | Step 16 |
 | `comp_height_gap`, `build_geometry_bar` of the Frame family; `get_label`, `plot`, `plot_winding`, `plot_mmf_unit`, `comp_mmf_unit` of the Lamination family | `machine` | Step 16 |
+| `gen_input` of the Input family, `Input.comp_axes` | `simu`, `output` | Step 16 |
+| `Simulation.run` | `output` | Step 16 |
+| `VarSimu.run`, `VarOpti.run` | `simu`, `xoutput` | Step 16 |
+| `check_param`, `get_input_list`, `get_elec_datakeeper`, `VarLoad.set_OP_array` of the VarSimu family; `VarOpti.check`, `VarOpti.get_full_solver` | `simu` | Step 16 |
+| `OP.get_machine_from_parent`, `EEC.get_machine_from_parent` (no argument: the lookup itself) | `ancestor_with` walk | Step 16 |
 
 Full list: `container_arguments.fallback_methods(gen_dict, Methods_new)`.
 

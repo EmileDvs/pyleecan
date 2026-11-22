@@ -4,6 +4,7 @@
 from typing import TYPE_CHECKING, ClassVar
 
 from ...classes_common.functions import SourceFunction
+from ...classes_common.parents import ancestor_with, container_or_parent
 from .input_voltage import InputVoltage
 from .param_explorer_set import ParamExplorerSet
 from .simulation import Simulation
@@ -77,7 +78,9 @@ class VarLoadVoltage(VarLoad):
         return multisim_dict
 
     # Inlined from Methods.Simulation.VarLoadVoltage.get_elec_datakeeper
-    def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
+    def get_elec_datakeeper(
+        self, symbol_list: list, is_multi: bool = False, simu: Simulation | None = None
+    ) -> list:
         """Generate DataKeepers to store by default results from electric module
         Parameters
         ----------
@@ -87,30 +90,24 @@ class VarLoadVoltage(VarLoad):
             List of the existing datakeeper (to avoid duplicate)
         is_multi : bool
             True for multi-simulation of multi-simulation
+        simu : Simulation, optional
+            Simulation of the object (default: the parent, or its parent for a
+            multi-simulation of multi-simulation)
         Returns
         -------
         dk_list: list
             list of DataKeeper
         """
 
+        # The simulation: the parent, or the grandparent (VarSimu in a VarSimu)
+        simu = ancestor_with(self, "machine", simu, "simu")
         dk_dict = self.get_elec_datakeeper_dict()
         dk_list = []
 
         if not is_multi:
             quantity_list = ["Ud", "Uq"]
             # Add "U0", "UPhi0" for Async machine
-            if (
-                self.parent is not None
-                and isinstance(self.parent, Simulation)
-                and not self.parent.machine.is_synchronous()
-            ):
-                quantity_list.extend(["U0", "UPhi0"])
-            elif (
-                self.parent is not None
-                and self.parent.parent is not None
-                and isinstance(self.parent.parent, Simulation)
-                and not self.parent.parent.machine.is_synchronous()
-            ):
+            if isinstance(simu, Simulation) and not simu.machine.is_synchronous():
                 quantity_list.extend(["U0", "UPhi0"])
             # Add slip if provided in the OP_matrix
             if self.OP_matrix is not None and self.OP_matrix.has_slip():
@@ -128,12 +125,21 @@ class VarLoadVoltage(VarLoad):
         return dk_list
 
     # Inlined from Methods.Simulation.VarLoadVoltage.get_input_list
-    def get_input_list(self):
-        """Return a list of InputVoltage to set the Operating point"""
+    def get_input_list(self, simu: Simulation | None = None):
+        """Return a list of InputVoltage to set the Operating point
+
+        Parameters
+        ----------
+        self : VarLoadVoltage
+            A VarLoadVoltage object
+        simu : Simulation, optional
+            Simulation holding the object (default: the parent)
+        """
+        simu = container_or_parent(self, simu, "simu")
 
         # Check that the object has the correct type
-        assert isinstance(self.parent, Simulation)
-        ref_simu = self.parent
+        assert isinstance(simu, Simulation)
+        ref_simu = simu
         assert isinstance(ref_simu.input, InputVoltage)
 
         OP_list = self.OP_matrix.get_OP_list()

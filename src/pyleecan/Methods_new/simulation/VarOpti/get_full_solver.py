@@ -1,14 +1,29 @@
+from typing import TYPE_CHECKING
+from ....classes_common.parents import container_or_parent
 from ....Classes_new.optimization.opti_problem import OptiProblem
 
 
-def get_full_solver(self):
-    """Method to return a fully setted solver"""
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
+
+
+def get_full_solver(self, simu: Simulation | None = None):
+    """Method to return a fully setted solver
+
+    Parameters
+    ----------
+    self : VarOpti
+        A VarOpti object
+    simu : Simulation, optional
+        Simulation holding the object (default: the parent)
+    """
+    simu = container_or_parent(self, simu, "simu")
 
     # Create reference simulation
-    ref_simu = self.parent.copy()
+    ref_simu = simu.copy()
     ref_simu.var_simu = self.var_simu  # var_simu default is None
     ref_simu.index = None
-    ref_simu.layer = self.parent.layer + 1
+    ref_simu.layer = simu.layer + 1
 
     # Creation of the problem
     problem = OptiProblem(

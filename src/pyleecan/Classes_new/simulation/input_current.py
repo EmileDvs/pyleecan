@@ -2,12 +2,13 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from ...classes_common.errors import InputError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ...Functions_new.SciDataTool.dqh_transformation import get_phase_dir
 from ..electrical.elec_lut_dq import ElecLUTdq
 from ..import_data.import_data import ImportData
@@ -16,6 +17,10 @@ from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_time import DataTime
 from .input_voltage import InputVoltage
+
+if TYPE_CHECKING:
+    from ..output.output import Output
+    from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -52,21 +57,26 @@ class InputCurrent(InputVoltage):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.InputCurrent.gen_input
-    def gen_input(self) -> None:
+    def gen_input(
+        self, simu: Simulation | None = None, output: Output | None = None
+    ) -> None:
         """Generate the input for the magnetic module (electrical output)
 
         Parameters
         ----------
         self : InputCurrent
             An InputCurrent object
+        simu : Simulation, optional
+            Simulation holding the input (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
         """
+        simu = container_or_parent(self, simu, "simu")
+        output = container_or_parent(self, output, "output", depth=2)
 
         # Call InputVoltage.gen_input()
-        InputVoltage.gen_input(self)
+        InputVoltage.gen_input(self, simu=simu, output=output)
 
-        # Get simulation and outputs
-        simu = self.parent
-        output = simu.parent
         outelec = output.elec
 
         # Number of winding phases for stator/rotor

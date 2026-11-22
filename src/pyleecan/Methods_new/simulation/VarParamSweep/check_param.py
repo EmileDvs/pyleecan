@@ -1,3 +1,4 @@
+from typing import TYPE_CHECKING
 from ....classes_common.logger_context import get_logger
 from ....Classes_new.simulation.param_explorer_set import ParamExplorerSet
 
@@ -14,8 +15,19 @@ class DataKeeperError(Exception):
     pass
 
 
-def check_param(self) -> None:
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
+
+
+def check_param(self, simu: Simulation | None = None) -> None:
     """Check VarParamSweep parameters validity
+
+    Parameters
+    ----------
+    self : VarParamSweep
+        A VarParamSweep object
+    simu : Simulation, optional
+        Simulation holding the object (default: the parent)
 
     Raises
     ------
@@ -24,7 +36,7 @@ def check_param(self) -> None:
     DataKeeperError: Error in DataKeeper setting
     """
     # run the base class check first
-    super(type(self), self).check_param()
+    super(type(self), self).check_param(simu=simu)
 
     # Check ParamExplorers
     for paramexplorer in self.paramexplorer_list:

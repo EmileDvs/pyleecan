@@ -1,8 +1,11 @@
+from ....classes_common.parents import ancestor_with
 import numpy as np
 from ....Classes_new.simulation.simulation import Simulation
 
 
-def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
+def get_elec_datakeeper(
+    self, symbol_list: list, is_multi: bool = False, simu: Simulation | None = None
+) -> list:
     """Generate DataKeepers to store by default results from electric module
     Parameters
     ----------
@@ -12,30 +15,24 @@ def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list
         List of the existing datakeeper (to avoid duplicate)
     is_multi : bool
         True for multi-simulation of multi-simulation
+    simu : Simulation, optional
+        Simulation of the object (default: the parent, or its parent for a
+        multi-simulation of multi-simulation)
     Returns
     -------
     dk_list: list
         list of DataKeeper
     """
 
+    # The simulation: the parent, or the grandparent (VarSimu in a VarSimu)
+    simu = ancestor_with(self, "machine", simu, "simu")
     dk_dict = self.get_elec_datakeeper_dict()
     dk_list = []
 
     if not is_multi:
         quantity_list = ["Ud", "Uq"]
         # Add "U0", "UPhi0" for Async machine
-        if (
-            self.parent is not None
-            and isinstance(self.parent, Simulation)
-            and not self.parent.machine.is_synchronous()
-        ):
-            quantity_list.extend(["U0", "UPhi0"])
-        elif (
-            self.parent is not None
-            and self.parent.parent is not None
-            and isinstance(self.parent.parent, Simulation)
-            and not self.parent.parent.machine.is_synchronous()
-        ):
+        if isinstance(simu, Simulation) and not simu.machine.is_synchronous():
             quantity_list.extend(["U0", "UPhi0"])
         # Add slip if provided in the OP_matrix
         if self.OP_matrix is not None and self.OP_matrix.has_slip():

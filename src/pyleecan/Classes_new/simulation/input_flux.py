@@ -2,11 +2,12 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ..import_data.import_matrix_val import ImportMatrixVal
 from ..import_data.import_matrix_xls import ImportMatrixXls
 from ..output.out_mag import OutMag
@@ -14,6 +15,10 @@ from ..scidatatool.data_pattern import DataPattern
 from ..scidatatool.vector_field import VectorField
 from .input import Input
 from .input_current import InputCurrent
+
+if TYPE_CHECKING:
+    from ..output.output import Output
+    from .simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -73,6 +78,8 @@ class InputFlux(InputCurrent):
     # Inlined from Methods.Simulation.InputFlux.gen_input
     def gen_input(
         self,
+        simu: Simulation | None = None,
+        output: Output | None = None,
         *,
         VERBOSE_KEY={"B_{rad}": "Radial", "B_{circ}": "Tangential", "B_{ax}": "Axial"},
     ) -> None:
@@ -82,14 +89,16 @@ class InputFlux(InputCurrent):
         ----------
         self : InputFlux
             An InputFlux object
+        simu : Simulation, optional
+            Simulation holding the input (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
         """
+        simu = container_or_parent(self, simu, "simu")
+        output = container_or_parent(self, output, "output", depth=2)
 
         # Call InputCurrent.gen_input()
-        InputCurrent.gen_input(self)
-
-        # Get simulation and outputs
-        simu = self.parent
-        output = simu.parent
+        InputCurrent.gen_input(self, simu=simu, output=output)
 
         if simu.machine is not None:
             machine = simu.machine

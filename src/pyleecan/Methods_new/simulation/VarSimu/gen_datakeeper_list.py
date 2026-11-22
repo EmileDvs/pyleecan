@@ -28,7 +28,7 @@ def gen_datakeeper_list(self, ref_simu) -> None:
 
     # Get default datakeeper
     if ref_simu.elec or isinstance(ref_simu.input, InputCurrent):
-        datakeeper_list.extend(self.get_elec_datakeeper(symbol_list, is_multi=is_multi))
+        datakeeper_list.extend(self.get_elec_datakeeper(symbol_list, is_multi=is_multi, simu=ref_simu))
     if ref_simu.mag:
         datakeeper_list.extend(self.get_mag_datakeeper(symbol_list, is_multi=is_multi))
     if ref_simu.force:

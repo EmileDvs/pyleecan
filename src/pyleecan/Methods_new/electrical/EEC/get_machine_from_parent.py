@@ -1,3 +1,4 @@
+from ....classes_common.parents import ancestor_with
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -18,19 +19,12 @@ def get_machine_from_parent(self) -> Machine | None:
         a Machine object
     """
 
-    parent = self.parent
-    # Try to find simulation parent (output.simu.elec.eec)
-    while parent is not None and not hasattr(parent, "machine"):
-        parent = parent.parent
-
-    if parent is not None and hasattr(parent, "machine"):
-        return parent.machine
-    else:
-        # Try to find output parent (output.elec.eec)
-        parent = self.parent
-        while parent is not None and not hasattr(parent, "simu"):
-            parent = parent.parent
-        if parent is not None:
-            return parent.simu.machine
-        else:
-            return None
+    # The closest container having the machine (a simulation), else the
+    # closest one having a simulation (an output)
+    holder = ancestor_with(self, "machine")
+    if holder is not None:
+        return holder.machine
+    holder = ancestor_with(self, "simu")
+    if holder is not None:
+        return holder.simu.machine
+    return None

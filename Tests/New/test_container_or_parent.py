@@ -1,6 +1,6 @@
 """Container argument with the legacy parent fallback (PLAN.md Step 11)."""
 
-from pyleecan.classes_common.parents import container_or_parent
+from pyleecan.classes_common.parents import ancestor_with, container_or_parent
 
 
 class Obj:
@@ -22,3 +22,14 @@ def test_parent_fallback():
     assert container_or_parent(Obj(), None, "lam") is None
     assert container_or_parent(Obj(parent=Obj()), None, "simu", depth=3) is None
     assert container_or_parent(object(), None, "lam") is None  # No parent link
+
+
+def test_ancestor_with():
+    simu = Obj()
+    simu.machine = "machine"
+    op = Obj(parent=Obj(parent=simu))  # OP in an input in a simulation
+    assert ancestor_with(op, "machine") is simu
+    given = Obj()
+    assert ancestor_with(op, "machine", given, "simu") is given
+    assert ancestor_with(op, "simu") is None
+    assert ancestor_with(object(), "machine") is None  # No parent link

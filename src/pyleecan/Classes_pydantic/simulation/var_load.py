@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import ancestor_with
 from ...Functions_pydantic.load import load_init_dict
 from .._import import import_class
 from .op_matrix import OPMatrix
@@ -133,6 +134,7 @@ class VarLoad(VarSimu):
         *arg_list,
         is_update_input: bool = True,
         input_index: int = 0,
+        simu: Simulation | None = None,
     ) -> None:
         """Set the OP_matrix and update the input if needed
         (To make sure that ref simu is in the OP_matrix)
@@ -150,6 +152,8 @@ class VarLoad(VarSimu):
             True to update the input
         input_index : int
             Index of the OP from the OP_matrix to set in the input (if is_update_input)
+        simu : Simulation, optional
+            Simulation holding the input (default: the parent, or its parent)
         """
 
         if isinstance(OP_matrix, np.ndarray):
@@ -161,16 +165,9 @@ class VarLoad(VarSimu):
         if not is_update_input or OP_matrix is None:
             return
 
-        # Scan parent to find the input
-        Sinput = None
-        if self.parent is not None and hasattr(self.parent, "input"):
-            Sinput = self.parent.input
-        elif (
-            self.parent is not None
-            and self.parent.parent is not None
-            and hasattr(self.parent.parent, "input")
-        ):
-            Sinput = self.parent.parent.input
+        # The simulation holding the input: the parent, or its parent
+        simu = ancestor_with(self, "input", simu, "simu")
+        Sinput = simu.input if simu is not None else None
         if Sinput is None:
             get_logger(self).warning("Can't find input when setting OP_matrix")
             return

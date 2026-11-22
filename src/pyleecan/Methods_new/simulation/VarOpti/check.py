@@ -1,3 +1,5 @@
+from typing import TYPE_CHECKING
+from ....classes_common.parents import container_or_parent
 from ....classes_common.logger_context import get_logger
 
 
@@ -25,8 +27,21 @@ class VarOptiDataKeeperError(Exception):
     pass
 
 
-def check(self) -> None:
-    """Check VarOpti parameters validity"""
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
+
+
+def check(self, simu: Simulation | None = None) -> None:
+    """Check VarOpti parameters validity
+
+    Parameters
+    ----------
+    self : VarOpti
+        A VarOpti object
+    simu : Simulation, optional
+        Simulation holding the object (default: the parent)
+    """
+    simu = container_or_parent(self, simu, "simu")
 
     # Local import: avoids circular imports
     from ....Classes_new.simulation.simu_1 import Simu1
@@ -39,7 +54,7 @@ def check(self) -> None:
 
 
     # Check that VarOpti is always in the first layer of var_simu
-    if not isinstance(self.parent, Simu1):
+    if not isinstance(simu, Simu1):
         raise VarOptiError("VarOpti object must be the very first layer in var_simu")
 
     # Check objectives
@@ -123,5 +138,5 @@ def check(self) -> None:
             "VarOpti object must have only a solver of type OptiGenAlgNsga2Deap or OptiBayesAlgSmoot"
         )
 
-    solver = self.get_full_solver()
+    solver = self.get_full_solver(simu=simu)
     solver.check_optimization_input()

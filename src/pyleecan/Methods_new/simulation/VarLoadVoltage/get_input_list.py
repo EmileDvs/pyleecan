@@ -1,13 +1,23 @@
+from ....classes_common.parents import container_or_parent
 from ....Classes_new.simulation.input_voltage import InputVoltage
 from ....Classes_new.simulation.simulation import Simulation
 
 
-def get_input_list(self):
-    """Return a list of InputVoltage to set the Operating point"""
+def get_input_list(self, simu: Simulation | None = None):
+    """Return a list of InputVoltage to set the Operating point
+
+    Parameters
+    ----------
+    self : VarLoadVoltage
+        A VarLoadVoltage object
+    simu : Simulation, optional
+        Simulation holding the object (default: the parent)
+    """
+    simu = container_or_parent(self, simu, "simu")
 
     # Check that the object has the correct type
-    assert isinstance(self.parent, Simulation)
-    ref_simu = self.parent
+    assert isinstance(simu, Simulation)
+    ref_simu = simu
     assert isinstance(ref_simu.input, InputVoltage)
 
     OP_list = self.OP_matrix.get_OP_list()

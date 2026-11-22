@@ -12,6 +12,7 @@ from pydantic import Field
 from ...classes_common.errors import FieldMissingError, VarSimuError
 from ...classes_common.functions import SourceFunction
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ...loggers import CONSOLE_LEVEL
 from .._legacy_model import LegacyModel
 from ..magnetics.mag_femm import MagFEMM
@@ -24,6 +25,7 @@ if TYPE_CHECKING:
     from logging import Logger
 
     from ..output.output import Output
+    from ..output.xoutput import XOutput
     from .simulation import Simulation
 
 
@@ -99,8 +101,17 @@ class VarSimu(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.VarSimu.check_param
-    def check_param(self) -> None:
-        """Check VarParamSweep parameters validity"""
+    def check_param(self, simu: Simulation | None = None) -> None:
+        """Check VarParamSweep parameters validity
+
+        Parameters
+        ----------
+        self : VarSimu
+            A VarSimu object
+        simu : Simulation, optional
+            Simulation holding the object (default: the parent)
+        """
+        simu = container_or_parent(self, simu, "simu")
         # Local import: avoids circular imports
         from .simulation import Simulation
 
@@ -110,7 +121,7 @@ class VarSimu(LegacyModel):
             )
 
         # Check for simulation or VarSimu
-        if self.parent is None or not isinstance(self.parent, Simulation):
+        if simu is None or not isinstance(simu, Simulation):
             raise VarSimuError("VarSimu object must be inside a Simulation object")
 
     # Inlined from Methods.Simulation.VarSimu.gen_datakeeper_list
@@ -141,7 +152,7 @@ class VarSimu(LegacyModel):
         # Get default datakeeper
         if ref_simu.elec or isinstance(ref_simu.input, InputCurrent):
             datakeeper_list.extend(
-                self.get_elec_datakeeper(symbol_list, is_multi=is_multi)
+                self.get_elec_datakeeper(symbol_list, is_multi=is_multi, simu=ref_simu)
             )
         if ref_simu.mag:
             datakeeper_list.extend(
@@ -179,7 +190,9 @@ class VarSimu(LegacyModel):
         )
 
     # Inlined from Methods.Simulation.VarSimu.get_elec_datakeeper
-    def get_elec_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
+    def get_elec_datakeeper(
+        self, symbol_list: list, is_multi: bool = False, simu: Simulation | None = None
+    ) -> list:
         """Generate DataKeepers to store by default results from electric module
         Parameters
         ----------
@@ -189,6 +202,8 @@ class VarSimu(LegacyModel):
             List of the existing datakeeper (to avoid duplicate)
         is_multi : bool
             True for multi-simulation of multi-simulation
+        simu : Simulation, optional
+            Simulation of the object (not used here, see VarLoadCurrent)
         Returns
         -------
         dk_list: list
@@ -450,7 +465,9 @@ class VarSimu(LegacyModel):
         return ref_simu_index
 
     # Inlined from Methods.Simulation.VarSimu.run
-    def run(self) -> None:
+    def run(
+        self, simu: Simulation | None = None, xoutput: XOutput | None = None
+    ) -> None:
         """Run the multi-simulation
         The VarSimu object must be in a Simulation object (and not a VarSimu one)
 
@@ -458,7 +475,13 @@ class VarSimu(LegacyModel):
         ----------
         self : VarSimu
             A VarSimu object
+        simu : Simulation, optional
+            Simulation holding the object (default: the parent)
+        xoutput : XOutput, optional
+            Output of the multi-simulation (default: the parent of the simulation)
         """
+        simu = container_or_parent(self, simu, "simu")
+        xoutput = container_or_parent(self, xoutput, "xoutput", depth=2)
 
         # Local import: avoids circular imports
         from ..output.output import Output
@@ -466,16 +489,13 @@ class VarSimu(LegacyModel):
         logger = get_logger(self)
 
         # Check var_simu parameters
-        self.check_param()  # Check isinstance(self.parent, Simulation)
-
-        # Get xoutput to store results (created in Simulation.run)
-        xoutput = self.parent.parent
+        self.check_param(simu=simu)  # Check isinstance(simu, Simulation)
 
         # Create reference simulation
-        ref_simu = self.parent.copy()
+        ref_simu = simu.copy()
         ref_simu.var_simu = self.var_simu  # var_simu default is None
         ref_simu.index = None
-        ref_simu.layer = self.parent.layer + 1
+        ref_simu.layer = simu.layer + 1
         # None clean-up
         if xoutput.xoutput_dict is None:
             xoutput.xoutput_dict = {}

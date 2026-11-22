@@ -1,13 +1,16 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.logger_context import get_logger
 import numpy as np
 import itertools
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
+    from ....Classes_new.output.xoutput import XOutput
     from logging import Logger
 
 
-def run(self) -> None:
+def run(self, simu: Simulation | None = None, xoutput: XOutput | None = None) -> None:
     """Run the multi-simulation
     The VarSimu object must be in a Simulation object (and not a VarSimu one)
 
@@ -15,7 +18,13 @@ def run(self) -> None:
     ----------
     self : VarSimu
         A VarSimu object
+    simu : Simulation, optional
+        Simulation holding the object (default: the parent)
+    xoutput : XOutput, optional
+        Output of the multi-simulation (default: the parent of the simulation)
     """
+    simu = container_or_parent(self, simu, "simu")
+    xoutput = container_or_parent(self, xoutput, "xoutput", depth=2)
 
     # Local import: avoids circular imports
     from ....Classes_new.output.output import Output
@@ -23,16 +32,13 @@ def run(self) -> None:
     logger = get_logger(self)
 
     # Check var_simu parameters
-    self.check_param()  # Check isinstance(self.parent, Simulation)
-
-    # Get xoutput to store results (created in Simulation.run)
-    xoutput = self.parent.parent
+    self.check_param(simu=simu)  # Check isinstance(simu, Simulation)
 
     # Create reference simulation
-    ref_simu = self.parent.copy()
+    ref_simu = simu.copy()
     ref_simu.var_simu = self.var_simu  # var_simu default is None
     ref_simu.index = None
-    ref_simu.layer = self.parent.layer + 1
+    ref_simu.layer = simu.layer + 1
     # None clean-up
     if xoutput.xoutput_dict is None:
         xoutput.xoutput_dict = dict()

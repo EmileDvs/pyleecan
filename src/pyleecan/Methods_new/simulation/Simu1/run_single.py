@@ -28,7 +28,7 @@ def run_single(self, output: Output | None = None) -> None:
     output.geo = self.machine.comp_output_geo()
 
     # Init the input of the first module
-    self.input.gen_input()
+    self.input.gen_input(simu=self, output=output)
 
     # Run the modules
     if self.elec is not None:

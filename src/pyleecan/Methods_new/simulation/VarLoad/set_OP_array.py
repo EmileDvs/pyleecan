@@ -1,9 +1,22 @@
+from typing import TYPE_CHECKING
+from ....classes_common.parents import ancestor_with
 from ....classes_common.logger_context import get_logger
 import numpy as np
 from ....Classes_new.simulation.op_matrix import OPMatrix
 
 
-def set_OP_array(self, OP_matrix: np.ndarray, *arg_list, is_update_input: bool = True, input_index: int = 0) -> None:
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
+
+
+def set_OP_array(
+    self,
+    OP_matrix: np.ndarray,
+    *arg_list,
+    is_update_input: bool = True,
+    input_index: int = 0,
+    simu: Simulation | None = None,
+) -> None:
     """Set the OP_matrix and update the input if needed
     (To make sure that ref simu is in the OP_matrix)
     Ex: set_OP_array(OP_matrix, "N0", "Iq", "Iq", "Tem")
@@ -20,6 +33,8 @@ def set_OP_array(self, OP_matrix: np.ndarray, *arg_list, is_update_input: bool =
         True to update the input
     input_index : int
         Index of the OP from the OP_matrix to set in the input (if is_update_input)
+    simu : Simulation, optional
+        Simulation holding the input (default: the parent, or its parent)
     """
 
     if isinstance(OP_matrix, np.ndarray):
@@ -31,16 +46,9 @@ def set_OP_array(self, OP_matrix: np.ndarray, *arg_list, is_update_input: bool =
     if not is_update_input or OP_matrix is None:
         return
 
-    # Scan parent to find the input
-    Sinput = None
-    if self.parent is not None and hasattr(self.parent, "input"):
-        Sinput = self.parent.input
-    elif (
-        self.parent is not None
-        and self.parent.parent is not None
-        and hasattr(self.parent.parent, "input")
-    ):
-        Sinput = self.parent.parent.input
+    # The simulation holding the input: the parent, or its parent
+    simu = ancestor_with(self, "input", simu, "simu")
+    Sinput = simu.input if simu is not None else None
     if Sinput is None:
         get_logger(self).warning("Can't find input when setting OP_matrix")
         return

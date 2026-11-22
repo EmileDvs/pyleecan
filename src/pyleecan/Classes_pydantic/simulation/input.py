@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
+from ...classes_common.parents import container_or_parent
 from .._legacy_model import LegacyModel
 from ..import_data.import_matrix import ImportMatrix
 from ..scidatatool.data_1d import Data1D
@@ -18,8 +19,10 @@ from .op import OP as _field_type_OP
 if TYPE_CHECKING:
     from ..machine.lamination import Lamination
     from ..machine.machine import Machine
+    from ..output.output import Output
     from ..scidatatool.data import Data
     from ..scidatatool.normalization import Normalization
+    from .simulation import Simulation
 
 ROT_DIR_REF = -1
 CURRENT_DIR_REF = -1
@@ -85,6 +88,8 @@ class Input(LegacyModel):
         per_t: int | None = None,
         is_antiper_t: bool | None = None,
         is_periodicity_rotor: bool = False,
+        simu: Simulation | None = None,
+        output: Output | None = None,
     ) -> dict[str, Data]:
         """Compute simulation axes such as time / angle / phase axes, with or without periodicities
         and including normalizations
@@ -113,6 +118,10 @@ class Input(LegacyModel):
             if the time axis is antiperiodic
         is_periodicity_rotor: bool
             True to consider rotor periodicity over time instead of stator
+        simu : Simulation, optional
+            Simulation holding the input (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         -------
@@ -123,15 +132,8 @@ class Input(LegacyModel):
         if len(axes_list) == 0:
             raise Exception("axes_list should not be empty")
 
-        if self.parent is not None:
-            simu = self.parent
-        else:
-            simu = None
-
-        if hasattr(simu, "parent") and simu.parent is not None:
-            output = simu.parent
-        else:
-            output = None
+        simu = container_or_parent(self, simu, "simu")
+        output = container_or_parent(self, output, "output", depth=2)
 
         if (axes_list is None or len(axes_list) == 0) and (
             axes_dict_in is None or len(axes_dict_in) == 0
