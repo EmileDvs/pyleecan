@@ -416,7 +416,8 @@ can be automated is left to the frozen steps.
       selector, DXF dialogs).
 - [ ] Input validation on the target model: edit a working copy, validate it
       with the model and report the errors per field; no type or limit check
-      left in the widgets.
+      left in the widgets (design to agree on: the dialogs edit the machine
+      in place today and the widget limits come from `ClassInfo`).
 - [ ] GUI tests hand-maintained (done: `Tests/New` frozen); the machines
       built with the GUI give the same dump as with the legacy GUI.
 
@@ -427,9 +428,11 @@ on the same code paths, `Methods_new` / `Functions_new` / `GUI_new` against
 their pydantic counterparts.
 
 - [ ] Benchmark suite: creation, validation on assignment, dump and load
-      (machine files of `Data/Machine`), copy and equality, method results
-      and time, simulations, GUI scenarios (`GUI_new` / `GUI_pydantic`:
-      machine setup, field edits with validation errors).
+      (machine files of `Data/Machine`), copy and equality (done
+      2026-11-22: `Tests/New/Benchmark/benchmark_backends.py`, figures in
+      the backlog), method results and time, simulations, GUI scenarios
+      (`GUI_new` / `GUI_pydantic`: machine setup, field edits with
+      validation errors).
 - [ ] Report (time, memory, behaviour differences) and conclusion for
       Phase 2: confirm the reference backend, keep or drop the other one.
 
