@@ -12,7 +12,6 @@ from meshio import read
 from ... import __version__
 from ...classes_common.errors import FieldMissingError, NotImplementedYetError
 from ...classes_common.logger_context import get_logger
-from ...classes_common.parents import container_or_parent
 from ...Functions_new.utils.get_path_binary import get_path_binary
 from ...Functions_new.utils.labels import (
     AIRBOX_R_LAB,
@@ -717,7 +716,10 @@ class MagElmer(Magnetics):
                         magnetization_type = "parallel"
                         # calculate pole angle and angle of pole middle
                         T_id = label_dict["T_id"]
-                        hole = container_or_parent(mag_obj, None, "hole")
+                        # The hole of the magnet, from the label (as get_obj_from_label)
+                        hole = machine.get_lam_by_label(
+                            label_dict["lam_label"]
+                        ).get_hole_list()[label_dict["R_id"]]
                         Zh = hole.Zh
                         alpha_p = 360 / Zh
                         mag_0 = (
@@ -764,7 +766,7 @@ class MagElmer(Magnetics):
                         )  # South pole magnet
                         magnetization_type = "parallel"
                     elif mag_obj.type_magnetization == 2:
-                        Zs = container_or_parent(mag_obj, None, "lam").slot.Zs
+                        Zs = machine.get_lam_by_label(label_dict["lam_label"]).slot.Zs
                         mag = str(-(Zs / 2 - 1)) + " * theta + 90 "
                         magnetization_type = "hallback"
                     else:

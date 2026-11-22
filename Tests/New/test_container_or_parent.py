@@ -24,6 +24,17 @@ def test_parent_fallback():
     assert container_or_parent(object(), None, "lam") is None  # No parent link
 
 
+def test_check_parent_deprecated():
+    import pytest
+
+    from pyleecan.Functions_new.check_parent import check_parent
+
+    obj = Obj(parent=Obj(parent=Obj()))
+    with pytest.warns(DeprecationWarning, match="check_parent is deprecated"):
+        assert check_parent(obj, 0) and check_parent(obj, 2)
+        assert not check_parent(obj, 3)
+
+
 def test_ancestor_with():
     simu = Obj()
     simu.machine = "machine"

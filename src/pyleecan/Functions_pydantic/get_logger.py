@@ -1,6 +1,7 @@
 from logging import getLogger
 from warnings import warn
 
+from ..classes_common.parents import container_or_parent
 from ..loggers import DEFAULT_LOG_NAME
 
 
@@ -25,7 +26,7 @@ def get_logger(obj):
     )
     if hasattr(obj, "logger_name"):  # Object logger
         return getLogger(obj.logger_name)
-    elif hasattr(obj, "parent") and obj.parent != None:  # Parent logger
-        return obj.parent.get_logger()
+    elif (parent := container_or_parent(obj, None, "parent")) is not None:  # Parent logger
+        return parent.get_logger()
     else:  # Default logger
         return getLogger(DEFAULT_LOG_NAME)

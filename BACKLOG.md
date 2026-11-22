@@ -1557,12 +1557,22 @@ Same signature rule as Step 11 (optional container argument, fallback through
         `test_save_load` / `test_import_class` (`InitUnKnowClassError`).
         Found: `Loss.run` passes `meshsol=` to `comp_axes`, which
         `LossFEA.comp_axes` does not take (LossFEA overrides `run`).
-- [ ] Function helpers with explicit arguments: `check_parent`,
-      `assign_femm_surface`.
+- [x] (2026-11-22) Function helpers with explicit arguments: `check_parent`,
+      `assign_femm_surface`. `femm_pyleecan.assign_FEMM_surface` (and
+      `MagElmer.solve_FEA`) read the hole or lamination of a magnet from its
+      label (`machine.get_lam_by_label(...)`, `get_hole_list()[R_id]`, as
+      `get_obj_from_label`) instead of `mag_obj.parent` / `hole.parent`;
+      `check_parent` (no caller left, `DriveWave.get_wave` reads its output
+      with `container_or_parent`) is a deprecated alias on
+      `container_or_parent` (it warns; Phase 2 register); the deprecated
+      `Functions_new/get_logger.py` walks with `container_or_parent`.
 - [ ] Tests of a refactored package hand-maintained; numerical parity against
       legacy, from the Step 12 baseline.
-- [ ] No parent read left in `Methods_new` and `Functions_new` outside
-      `container_or_parent`; the parent links stay only in the legacy layer.
+- [x] (2026-11-22) No parent read left in `Methods_new` and `Functions_new`
+      outside `container_or_parent` (and `ancestor_with`, its walk of an
+      unknown depth); the parent links stay only in the legacy layer.
+      Direct `.parent` reads: `Methods_new` 486 -> 0, `Functions_new` 7 ->
+      0 (AST count of the `.parent` attributes).
 - [ ] The `GUI_new` calls of each refactored package updated in the same
       increment.
 - [ ] `Winding.find_wind_phase_color` as a regular method reading the
@@ -1672,6 +1682,7 @@ Deprecated function aliases (already warn in Phase 1, removed in Phase 2):
 | `Plot.set_plot_gui_icon` (module) | `Tools.set_plot_gui_icon` of the GUI package | Step 8 group 9 |
 | `Plot.get_color_legend_from_surface` | `Machine.get_color_legend_from_surface` | Step 8 group 9 |
 | `LUTdq.comp_MTPA` (and its alias `Electrical.comp_MTPA`) | none (older EEC API, does not run) | Step 15 |
+| `check_parent` | `classes_common.parents.container_or_parent` | Step 16 |
 
 - [ ] Decide which other legacy behaviours removed with the legacy layer need
       a deprecation period (`-1` default, `None` everywhere, `as_dict` /

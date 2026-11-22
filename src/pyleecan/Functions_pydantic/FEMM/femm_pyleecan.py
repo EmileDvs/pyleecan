@@ -182,9 +182,10 @@ class femm_pyleecan:
                 if mag_obj.type_magnetization in [1, 3, None]:
                     # calculate pole angle and angle of pole middle
                     T_id = label_dict["T_id"]
-                    hole = mag_obj.parent
+                    # The hole of the magnet, from the label (as get_obj_from_label)
+                    lam = machine.get_lam_by_label(label_dict["lam_label"])
+                    hole = lam.get_hole_list()[label_dict["R_id"]]
                     Zh = hole.Zh
-                    lam = hole.parent
                     alpha_p = 360 / Zh
                     mag_0 = (
                         np.floor_divide(np.angle(point_ref, deg=True), alpha_p) + 0.5
@@ -242,7 +243,7 @@ class femm_pyleecan:
                         np.angle(point_ref) * 180 / np.pi + 180
                     )  # Parallel South pole magnet
                 elif mag_obj.type_magnetization == 2:
-                    lam_obj = mag_obj.parent
+                    lam_obj = machine.get_lam_by_label(label_dict["lam_label"])
                     Zs = lam_obj.get_Zs()
                     mag = str(-(Zs / 2 - 1)) + " * theta + 90 "
                 elif mag_obj.type_magnetization == 3 and (label_dict["S_id"] % 2) == 0:
