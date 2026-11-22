@@ -1025,14 +1025,41 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
       `Methods_new` the normalization classes keep their legacy local names
       (`Norm_ref`), bound to the new classes.
 - [ ] Remove the compatibility shim of the class generator
-      (`_read_method_source`: `to_legacy_names`).
+      (`_read_method_source`: `to_legacy_names`). Tried 2026-11-22: without
+      it the generation fails (the normalization rename pass rejects the
+      renamed imports: "Cannot safely rename a non-normalization import";
+      the relocation of the class imports is not idempotent:
+      `material.material.material`). The passes of the class generator
+      assume the legacy names: removing the shim means reworking them. Not
+      blocking the freeze: the class generator reads the frozen
+      `Methods_new` through the shim, as long as the hand-written code keeps
+      the forms it translates (imports of `Classes_new` / `Functions_new`).
 - [x] (2026-11-22) No legacy object built in `Methods_new`:
       `SlotUD2._set_split_active_surf_dict` and `VarLoad._set_OP_matrix` use
       the class lookup of the backend (`Classes_new._import.import_class`) and
       `Functions_new.load.load_init_dict`.
-- [ ] Parity baseline: run `Tests/New/Methods` per package with each backend;
-      record the results here (passed / failed per package); compare the
-      method results between backends (Step 4 item).
+- [x] (2026-11-22) Parity baseline, `Tests/New/Methods` per package (and
+      the legacy `Tests/Methods` as reference), after the Step 12 passes:
+
+      | Package | legacy | dataclass | pydantic |
+      |---|---|---|---|
+      | Converter | 49 passed | 49 passed | 49 passed |
+      | Frame | 5 passed | 2 passed, 3 failed | 2 passed, 3 failed |
+      | Geometry | 282 passed | 282 passed | 282 passed |
+      | Import | 28 passed | 28 passed | 28 passed |
+      | Machine | 79 passed | 79 passed | 79 passed |
+      | Mesh | 42 passed, 6 skipped | same | same |
+      | Simulation | 43 passed, 4 skipped | 42 passed, 1 failed | 41 passed, 2 failed |
+      | Slot | 1052 passed | 1052 passed | 1052 passed |
+
+      Failures: `FrameBar.comp_surface_*` call the legacy custom getter
+      `self._get_Rint()`, absent from the new classes (Step 13);
+      `test_simu_get_OP_array` (both: a list given to `OP_matrix`, the
+      legacy setter converted it) and `test_VarParamSweep_fct_save_load`
+      (pydantic: `XOutput.output_list` with None), known since Step 11.
+- [ ] Compare the method results between backends (Step 4 item): the tests
+      above check each backend against the expected values; a direct
+      comparison of the outputs is left to Step 18.
 - [ ] Freeze mechanism (decided 2026-11-17: all at once, since Steps 13–17
       cover every package): `GUI_new` frozen with them; all sub-packages in `FROZEN_PACKAGES`
       (`generate_methods_new.py`); a list of the hand-written modules in the
