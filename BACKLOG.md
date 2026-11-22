@@ -969,12 +969,31 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
         (labels 79 -> 20, walks 113 -> 65, container reads 183 -> 156).
         Checks: as before; FEMM runs and GUI scenarios on both backends;
         `ty` on the slot package unchanged.
+  - [x] (2026-11-22) No pass left: review of the remaining candidates
+        (methods with a call site knowing the container,
+        `parent_reads.classify_methods_new`; 198 methods, 0 mechanical):
+        - Winding family (`Winding` 7, `WindingUD` 5): the lamination values
+          are already arguments (`comp_Ntsp(Zs)`, `comp_connection_mat(Zs,
+          p)`), the parent read only when they are omitted; the calls of
+          `LamSlotWind` pass them. A `lam` argument would add nothing.
+        - `Conductor`, `CondType22`, `EndWinding*`: read the winding and the
+          lamination (`self.parent.Ntcoil`, `self.parent.parent.slot`), no
+          call site in `Methods_new` with both: Step 16.
+        - The inputs' `gen_input` (pattern 2, `simu` and `output`, called by
+          `Simu1.run_single`): four different shapes (`isinstance` guard on
+          the parent, base calls through the class `InputVoltage.gen_input(
+          self)` / `super(type(self), self)`, the output read through a local
+          `simu.parent`), not the rewritten pattern: by hand, Step 16.
+        - GUI: the calls of the container-argument methods are on laminations
+          (`get_Rbo`, `build_geometry` of `Lamination`) or the simulation,
+          except `DXF_Slot` (`slot.get_surface_active()` with the lamination
+          in a local `lam`): one site, by hand in Step 17.
   - [ ] Left for Step 16 (not mechanical): the `plot_schematics` of the
         slots (51, user entry points, no caller with the container), the
-        machine package (winding, notch, bore, end winding: user entry
-        points and calls on unknown receivers), the `comp_coeff` of the loss
-        models, the sub-outputs reading the `Output`, the optimization and
-        multi-simulation walks.
+        machine package (winding, conductor, notch, bore, end winding: user
+        entry points and calls on unknown receivers), the inputs'
+        `gen_input`, the `comp_coeff` of the loss models, the sub-outputs
+        reading the `Output`, the optimization and multi-simulation walks.
 - [x] Report the reads left for Step 16: `parent_reads.py` (table above
       for the first run; after passes 1-6: 198 methods, see pass 6).
 
