@@ -1,3 +1,4 @@
+from ....classes_common.functions import SourceFunction
 from ....Classes_new.simulation.data_keeper import DataKeeper
 
 
@@ -20,7 +21,7 @@ def get_mag_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
         list of DataKeeper
     """
     dk_list = []
-    error_nan = "lambda simu: np.nan"
+    error_nan = SourceFunction("lambda simu: np.nan")
     if is_multi:
         # Max Average torque Datakeeper
         if "Max_Tem_av" not in symbol_list:
@@ -29,7 +30,7 @@ def get_mag_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
                     name="Max Average Torque",
                     symbol="Max_Tem_av",
                     unit="N.m",
-                    keeper="lambda output: max([val for val in output.xoutput_dict['Tem_av'].result if val is not None]) if output.xoutput_dict['Tem_av'].result[0] is not None else None",
+                    keeper=SourceFunction("lambda output: max([val for val in output.xoutput_dict['Tem_av'].result if val is not None]) if output.xoutput_dict['Tem_av'].result[0] is not None else None"),
                     error_keeper=error_nan,
                 )
             )
@@ -40,7 +41,7 @@ def get_mag_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
                     name="Max Peak to Peak Torque ripple",
                     symbol="Max_Tem_rip_pp",
                     unit="N.m",
-                    keeper="lambda output: max([val for val in output.xoutput_dict['Tem_rip_pp'].result if val is not None]) if output.xoutput_dict['Tem_rip_pp'].result[0] is not None else None",
+                    keeper=SourceFunction("lambda output: max([val for val in output.xoutput_dict['Tem_rip_pp'].result if val is not None]) if output.xoutput_dict['Tem_rip_pp'].result[0] is not None else None"),
                     error_keeper=error_nan,
                 )
             )
@@ -51,7 +52,7 @@ def get_mag_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
                     name="Max Peak to Peak Torque ripple normalized",
                     symbol="Max_Tem_rip_norm",
                     unit="-",
-                    keeper="lambda output: max([val for val in output.xoutput_dict['Tem_rip_norm'].result if val is not None]) if output.xoutput_dict['Tem_rip_norm'].result[0] is not None else None",
+                    keeper=SourceFunction("lambda output: max([val for val in output.xoutput_dict['Tem_rip_norm'].result if val is not None]) if output.xoutput_dict['Tem_rip_norm'].result[0] is not None else None"),
                     error_keeper=error_nan,
                 )
             )
@@ -63,7 +64,7 @@ def get_mag_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
                     name="Average Torque",
                     symbol="Tem_av",
                     unit="N.m",
-                    keeper="lambda out: out.mag.Tem_av",
+                    keeper=SourceFunction('lambda out: out.mag.Tem_av'),
                     error_keeper=error_nan,
                 )
             )
@@ -74,7 +75,7 @@ def get_mag_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
                     name="Peak to Peak Torque ripple",
                     symbol="Tem_rip_pp",
                     unit="N.m",
-                    keeper="lambda out: out.mag.Tem_rip_pp",
+                    keeper=SourceFunction('lambda out: out.mag.Tem_rip_pp'),
                     error_keeper=error_nan,
                 )
             )
@@ -85,7 +86,7 @@ def get_mag_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
                     name="Peak to Peak Torque ripple normalized",
                     symbol="Tem_rip_norm",
                     unit="-",
-                    keeper="lambda out: out.mag.Tem_rip_norm",
+                    keeper=SourceFunction('lambda out: out.mag.Tem_rip_norm'),
                     error_keeper=error_nan,
                 )
             )
@@ -96,7 +97,7 @@ def get_mag_datakeeper(self, symbol_list: list, is_multi: bool = False) -> list:
                     name="Output Power",
                     symbol="Pem_av",
                     unit="W",
-                    keeper="lambda out: out.mag.Pem_av",
+                    keeper=SourceFunction('lambda out: out.mag.Pem_av'),
                     error_keeper=error_nan,
                 )
             )

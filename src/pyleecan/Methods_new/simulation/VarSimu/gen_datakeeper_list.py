@@ -1,3 +1,4 @@
+from ....classes_common.functions import SourceFunction
 from ....Classes_new.simulation.data_keeper import DataKeeper
 
 
@@ -21,7 +22,7 @@ def gen_datakeeper_list(self, ref_simu) -> None:
                 name="Speed",
                 symbol="N0",
                 unit="rpm",
-                keeper="lambda output: output.elec.OP.get_N0()",
+                keeper=SourceFunction('lambda output: output.elec.OP.get_N0()'),
             )
         )
 

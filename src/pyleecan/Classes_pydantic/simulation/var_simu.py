@@ -10,6 +10,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import VarSimuError
+from ...classes_common.functions import SourceFunction
 from ...classes_common.logger_context import get_logger
 from ...loggers import CONSOLE_LEVEL
 from .._legacy_model import LegacyModel
@@ -133,7 +134,7 @@ class VarSimu(LegacyModel):
                     name="Speed",
                     symbol="N0",
                     unit="rpm",
-                    keeper="lambda output: output.elec.OP.get_N0()",
+                    keeper=SourceFunction("lambda output: output.elec.OP.get_N0()"),
                 )
             )
 
@@ -262,22 +263,22 @@ class VarSimu(LegacyModel):
                 name="Input power",
                 unit="W",
                 symbol="P_{in}",
-                keeper="lambda output: output.loss.P_in",
-                error_keeper="lambda simu: np.nan",
+                keeper=SourceFunction("lambda output: output.loss.P_in"),
+                error_keeper=SourceFunction("lambda simu: np.nan"),
             ),
             DataKeeper(
                 name="Output power",
                 unit="W",
                 symbol="P_{out}",
-                keeper="lambda output: output.loss.P_out",
-                error_keeper="lambda simu: np.nan",
+                keeper=SourceFunction("lambda output: output.loss.P_out"),
+                error_keeper=SourceFunction("lambda simu: np.nan"),
             ),
             DataKeeper(
                 name="Efficiency",
                 unit="%",
                 symbol="\\eta",
-                keeper="lambda output: 100*output.loss.efficiency",
-                error_keeper="lambda simu: np.nan",
+                keeper=SourceFunction("lambda output: 100*output.loss.efficiency"),
+                error_keeper=SourceFunction("lambda simu: np.nan"),
             ),
         ]
 
@@ -287,10 +288,12 @@ class VarSimu(LegacyModel):
                     name=group_name + " losses",
                     unit="W",
                     symbol=symb,
-                    keeper="lambda output: output.loss.loss_dict['"
-                    + str(group_name)
-                    + "'].get_loss_scalar(output.elec.OP.felec)",
-                    error_keeper="lambda simu: np.nan",
+                    keeper=SourceFunction(
+                        "lambda output: output.loss.loss_dict['"
+                        + str(group_name)
+                        + "'].get_loss_scalar(output.elec.OP.felec)"
+                    ),
+                    error_keeper=SourceFunction("lambda simu: np.nan"),
                 )
                 for symb, group_name in dict_loss.items()
             ]
@@ -301,8 +304,8 @@ class VarSimu(LegacyModel):
                 name="Mechanical torque",
                 unit="Nm",
                 symbol="Tmech_{av}",
-                keeper="lambda output: output.loss.Tmech_av",
-                error_keeper="lambda simu: np.nan",
+                keeper=SourceFunction("lambda output: output.loss.Tmech_av"),
+                error_keeper=SourceFunction("lambda simu: np.nan"),
             )
         )
 
@@ -328,7 +331,7 @@ class VarSimu(LegacyModel):
             list of DataKeeper
         """
         dk_list = []
-        error_nan = "lambda simu: np.nan"
+        error_nan = SourceFunction("lambda simu: np.nan")
         if is_multi:
             # Max Average torque Datakeeper
             if "Max_Tem_av" not in symbol_list:
@@ -337,7 +340,9 @@ class VarSimu(LegacyModel):
                         name="Max Average Torque",
                         symbol="Max_Tem_av",
                         unit="N.m",
-                        keeper="lambda output: max([val for val in output.xoutput_dict['Tem_av'].result if val is not None]) if output.xoutput_dict['Tem_av'].result[0] is not None else None",
+                        keeper=SourceFunction(
+                            "lambda output: max([val for val in output.xoutput_dict['Tem_av'].result if val is not None]) if output.xoutput_dict['Tem_av'].result[0] is not None else None"
+                        ),
                         error_keeper=error_nan,
                     )
                 )
@@ -348,7 +353,9 @@ class VarSimu(LegacyModel):
                         name="Max Peak to Peak Torque ripple",
                         symbol="Max_Tem_rip_pp",
                         unit="N.m",
-                        keeper="lambda output: max([val for val in output.xoutput_dict['Tem_rip_pp'].result if val is not None]) if output.xoutput_dict['Tem_rip_pp'].result[0] is not None else None",
+                        keeper=SourceFunction(
+                            "lambda output: max([val for val in output.xoutput_dict['Tem_rip_pp'].result if val is not None]) if output.xoutput_dict['Tem_rip_pp'].result[0] is not None else None"
+                        ),
                         error_keeper=error_nan,
                     )
                 )
@@ -359,7 +366,9 @@ class VarSimu(LegacyModel):
                         name="Max Peak to Peak Torque ripple normalized",
                         symbol="Max_Tem_rip_norm",
                         unit="-",
-                        keeper="lambda output: max([val for val in output.xoutput_dict['Tem_rip_norm'].result if val is not None]) if output.xoutput_dict['Tem_rip_norm'].result[0] is not None else None",
+                        keeper=SourceFunction(
+                            "lambda output: max([val for val in output.xoutput_dict['Tem_rip_norm'].result if val is not None]) if output.xoutput_dict['Tem_rip_norm'].result[0] is not None else None"
+                        ),
                         error_keeper=error_nan,
                     )
                 )
@@ -371,7 +380,7 @@ class VarSimu(LegacyModel):
                         name="Average Torque",
                         symbol="Tem_av",
                         unit="N.m",
-                        keeper="lambda out: out.mag.Tem_av",
+                        keeper=SourceFunction("lambda out: out.mag.Tem_av"),
                         error_keeper=error_nan,
                     )
                 )
@@ -382,7 +391,7 @@ class VarSimu(LegacyModel):
                         name="Peak to Peak Torque ripple",
                         symbol="Tem_rip_pp",
                         unit="N.m",
-                        keeper="lambda out: out.mag.Tem_rip_pp",
+                        keeper=SourceFunction("lambda out: out.mag.Tem_rip_pp"),
                         error_keeper=error_nan,
                     )
                 )
@@ -393,7 +402,7 @@ class VarSimu(LegacyModel):
                         name="Peak to Peak Torque ripple normalized",
                         symbol="Tem_rip_norm",
                         unit="-",
-                        keeper="lambda out: out.mag.Tem_rip_norm",
+                        keeper=SourceFunction("lambda out: out.mag.Tem_rip_norm"),
                         error_keeper=error_nan,
                     )
                 )
@@ -404,7 +413,7 @@ class VarSimu(LegacyModel):
                         name="Output Power",
                         symbol="Pem_av",
                         unit="W",
-                        keeper="lambda out: out.mag.Pem_av",
+                        keeper=SourceFunction("lambda out: out.mag.Pem_av"),
                         error_keeper=error_nan,
                     )
                 )
@@ -831,7 +840,7 @@ class VarSimu(LegacyModel):
             physic="elec",
             symbol="Id",
             unit="Arms",
-            keeper="lambda output: output.elec.OP.get_Id_Iq()['Id']",
+            keeper=SourceFunction("lambda output: output.elec.OP.get_Id_Iq()['Id']"),
         )
 
         dk_dict["Iq"] = DataKeeper(
@@ -839,70 +848,74 @@ class VarSimu(LegacyModel):
             physic="elec",
             symbol="Iq",
             unit="Arms",
-            keeper="lambda output: output.elec.OP.get_Id_Iq()['Iq']",
+            keeper=SourceFunction("lambda output: output.elec.OP.get_Id_Iq()['Iq']"),
         )
 
         dk_dict["Ud"] = DataKeeper(
             name="Stator voltage along d-axis",
             symbol="Ud",
             unit="Vrms",
-            keeper="lambda output: output.elec.OP.get_Ud_Uq()['Ud']",
+            keeper=SourceFunction("lambda output: output.elec.OP.get_Ud_Uq()['Ud']"),
         )
 
         dk_dict["Uq"] = DataKeeper(
             name="Stator voltage along q-axis",
             symbol="Uq",
             unit="Vrms",
-            keeper="lambda output: output.elec.OP.get_Ud_Uq()['Uq']",
+            keeper=SourceFunction("lambda output: output.elec.OP.get_Ud_Uq()['Uq']"),
         )
 
         dk_dict["I0"] = DataKeeper(
             name="Stator current rms amplitude",
             symbol="I0",
             unit="Arms",
-            keeper="lambda output: output.elec.OP.get_I0_Phi0()['I0']",
+            keeper=SourceFunction("lambda output: output.elec.OP.get_I0_Phi0()['I0']"),
         )
 
         dk_dict["Phi0"] = DataKeeper(
             name="Stator current phase",
             symbol="Phi0",
             unit="rad",
-            keeper="lambda output: output.elec.OP.get_I0_Phi0()['Phi0']",
+            keeper=SourceFunction(
+                "lambda output: output.elec.OP.get_I0_Phi0()['Phi0']"
+            ),
         )
 
         dk_dict["U0"] = DataKeeper(
             name="Stator voltage rms amplitude",
             symbol="U0",
             unit="Vrms",
-            keeper="lambda output: output.elec.OP.get_U0_UPhi0()['U0']",
+            keeper=SourceFunction("lambda output: output.elec.OP.get_U0_UPhi0()['U0']"),
         )
 
         dk_dict["UPhi0"] = DataKeeper(
             name="Stator voltage phase",
             symbol="UPhi0",
             unit="rad",
-            keeper="lambda output: output.elec.OP.get_U0_UPhi0()['UPhi0']",
+            keeper=SourceFunction(
+                "lambda output: output.elec.OP.get_U0_UPhi0()['UPhi0']"
+            ),
         )
 
         dk_dict["slip"] = DataKeeper(
             name="Rotor mechanical slip",
             symbol="slip",
             unit="-",
-            keeper="lambda output: output.elec.OP.get_slip()",
+            keeper=SourceFunction("lambda output: output.elec.OP.get_slip()"),
         )
 
         dk_dict["Tem_av_ref"] = DataKeeper(
             name="Reference Average Torque",
             symbol="Tem_av_ref",
             unit="N.m",
-            keeper="lambda output: output.elec.OP.Tem_av_ref",
+            keeper=SourceFunction("lambda output: output.elec.OP.Tem_av_ref"),
         )
 
         dk_dict["Tem_av_elec"] = DataKeeper(
             name="Average Torque from EEC",
             symbol="Tem_av_elec",
             unit="N.m",
-            keeper="lambda output: output.elec.Tem_av",
+            keeper=SourceFunction("lambda output: output.elec.Tem_av"),
         )
 
         return dk_dict

@@ -3,6 +3,7 @@
 
 from typing import TYPE_CHECKING, ClassVar
 
+from ...classes_common.functions import SourceFunction
 from .input_voltage import InputVoltage
 from .param_explorer_set import ParamExplorerSet
 from .simulation import Simulation
@@ -55,8 +56,10 @@ class VarLoadCurrent(VarLoad):
                 name="InputCurrent",
                 symbol="In",
                 unit="-",
-                setter="simu.input",
-                getter="simu.input",
+                setter=SourceFunction(
+                    "lambda simu, val: setattr(eval('simu'), 'input', val)"
+                ),
+                getter=SourceFunction("lambda simu: getattr(eval('simu'), 'input')"),
                 value=list_input,
             )
         )

@@ -1,3 +1,4 @@
+from ....classes_common.functions import SourceFunction
 from ....Classes_new.simulation.param_explorer_set import ParamExplorerSet
 from typing import TYPE_CHECKING
 
@@ -37,8 +38,8 @@ def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
             name="InputVoltage",
             symbol="In",
             unit="-",
-            setter="simu.input",
-            getter="simu.input",
+            setter=SourceFunction("lambda simu, val: setattr(eval('simu'), 'input', val)"),
+            getter=SourceFunction("lambda simu: getattr(eval('simu'), 'input')"),
             value=list_input,
         )
     )
