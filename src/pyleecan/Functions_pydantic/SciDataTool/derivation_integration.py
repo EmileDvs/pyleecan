@@ -151,7 +151,7 @@ def integrate_local(
 
 def integrate_local_pattern(
     values: np.ndarray, ax_val: np.ndarray, index: int
-) -> np.ndarray:
+) -> tuple[np.ndarray, np.ndarray]:
     """Returns the local integral of values along given axis (does not change the axis)
 
     Parameters

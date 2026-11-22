@@ -13,7 +13,7 @@ def filter_spectral_leakage(
     Wmatf: np.ndarray = np.array([]),
     If: np.ndarray = np.array([]),
     is_plot: bool = False,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """Filter spectral leakage from the input spectrum and theoretical frequencies accordingly to the method developed in
     Rainer et al., "Weak Coupling Between Electromagnetic and Structural Models for Electrical Machines",
     IEEE TRANSACTIONS ON MAGNETICS, VOL. 46, NO. 8, AUGUST 2010.

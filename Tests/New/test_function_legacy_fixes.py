@@ -62,6 +62,17 @@ def test_plot_4d_log_scale_x():
     assert ax.get_xscale() == "log"
 
 
+def test_n2dqh_without_phase_dir_raises_explicit_error():
+    # get_phase_dir was called without the current direction (TypeError)
+    from pyleecan.Functions_new.SciDataTool.dqh_transformation import n2dqh
+
+    angle = np.linspace(0, 2 * np.pi, 8, endpoint=False)
+    Z_n = np.cos(angle[:, None] - np.array([0, 2, 4])[None, :] * np.pi / 3)
+    with pytest.raises(ValueError, match="phase_dir"):
+        n2dqh(Z_n, angle)
+    assert n2dqh(Z_n, angle, phase_dir=-1).shape == (8, 3)
+
+
 def test_fixes_target_existing_legacy_modules():
     from pyleecan.definitions import MAIN_DIR
     from pathlib import Path

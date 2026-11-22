@@ -38,8 +38,10 @@ def n2dqh(
     """
 
     if phase_dir is None:
-        # Get phase_dir from Z_n
-        phase_dir = get_phase_dir(Z_n)
+        raise ValueError(
+            "n2dqh needs phase_dir: the current direction is not known from "
+            "the values (DataTime.n2dqh computes phase_dir)"
+        )
 
     Z_dqh = abc2dqh(n2abc(Z_n, phase_dir), angle_elec)
 

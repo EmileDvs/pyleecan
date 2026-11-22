@@ -303,6 +303,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   (`Axes.xscale` did not exist) and the stem plots (`matplotlib.cm.get_cmap`,
   removed in matplotlib 3.9) work; `is_logscale_z` of the 3D plots no
   longer calls a missing `zscale` (the values are already in dB).
+- **`n2dqh` without `phase_dir`** (SciDataTool dqh transformation): an
+  explicit `ValueError` instead of a `TypeError` (the phase direction
+  needs the current direction, which the values alone do not give).
 - **`SurfLine.get_patches` without lines** returns `[]` (it built an empty
   `Polygon`, which raises `ValueError`, and returned it outside a list).
   `Surface.draw_FEMM` without `FEMM_dict` (or without `BC_dict` for a line

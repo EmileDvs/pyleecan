@@ -1378,6 +1378,24 @@ generator; this step finishes by hand what the generator could not do.
         daughters (`TYPE_CHECKING_MEMBERS`). Left: the nested gmsh dicts
         (untyped values: `in` and `update` on unions). gmsh tests 18
         passed. `ty` on `Functions_new` 265 -> 237.
+  - [x] (2026-11-22) SciDataTool and Save utilities, 237 -> 206: overrides
+        (`type_hints.py`) for wrong documented types
+        (`change_referential_waveform(angle0: ndarray)`, `save_json`
+        `class_to_split: tuple`), missing returned values
+        (`integrate_local_pattern`, `filter_spectral_leakage`) and returns
+        depending on flags typed `Any` until overloads (`union1d_tol`,
+        `unique_tol`, recursive `split_obj_dict`). Legacy bug
+        (`FUNCTION_LEGACY_FIXES`, also applied to the modules read by a
+        merge): `n2dqh` without `phase_dir` called `get_phase_dir(Z_n)`
+        without the current direction (TypeError, also in legacy): explicit
+        `ValueError` (`DataTime.n2dqh` computes `phase_dir` first). The
+        overrides do not apply to the annotated legacy signatures (`omp`).
+  - Checked, not bugs: `distutils.spawn` (setuptools shim), the
+    `matplotlib.cm.get_cmap` import of `init_environment` (fallback of a
+    try), `np.trapz` (fallback to `np.trapezoid`).
+  - Found: `Tests/New/Functions/test_save_load.py` does not collect
+    (`InitUnKnowClassError` no longer in `classes_common.check`), before
+    this step too.
 - [ ] Mark the class-independent functions for `src/pyleecan/utils/` (Phase 2).
 
 ## Step 16: parent links, second pass

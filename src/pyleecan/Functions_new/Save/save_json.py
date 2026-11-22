@@ -24,7 +24,7 @@ def save_json(
     is_folder: bool = False,
     type_handle_old: int = 2,
     type_compression: int = 0,
-    class_to_split: list = (
+    class_to_split: tuple = (
         "Simulation",
         "Machine",
         "Material",
@@ -256,8 +256,8 @@ def build_data(obj, logger):
 
 
 def split_obj_dict(
-    cls_tupel, obj_dict: dict, folder, split_list, file_ext, logger
-) -> dict:
+    cls_tupel, obj_dict: Any, folder, split_list, file_ext, logger
+) -> Any:
     """
     Store classes_tuple objects contained in obj_dict in split_list and modify
     the obj_dict.

@@ -241,6 +241,26 @@ FUNCTION_LEGACY_FIXES = {
         _plot_figure_fix('shape="rectangle", is_3d=is_3d'),
         *_PLOT_LOG_XY,
     ),
+    # n2dqh without phase_dir called get_phase_dir(Z_n), which needs the
+    # current direction (TypeError); the values alone do not give it (it
+    # comes from the angle_elec normalization: DataTime.n2dqh computes
+    # phase_dir before calling n2dqh)
+    "Electrical/dqh_transformation.py": (
+        LegacyFix(
+            old=(
+                "    if phase_dir is None:\n"
+                "        # Get phase_dir from Z_n\n"
+                "        phase_dir = get_phase_dir(Z_n)\n"
+            ),
+            new=(
+                "    if phase_dir is None:\n"
+                "        raise ValueError(\n"
+                '            "n2dqh needs phase_dir: the current direction is not known from "\n'
+                '            "the values (DataTime.n2dqh computes phase_dir)"\n'
+                "        )\n"
+            ),
+        ),
+    ),
 }
 """Fixes of the legacy Functions modules, applied by the functions generator
 (Step 15): {module path in Functions (posix): fixes}. Only lines that raise

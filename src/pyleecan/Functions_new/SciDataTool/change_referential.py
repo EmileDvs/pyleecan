@@ -135,7 +135,7 @@ def change_referential_spectrum(
 def change_referential_waveform(
     val0: np.ndarray,
     time0: np.ndarray,
-    angle0: float,
+    angle0: np.ndarray,
     rotation_speed: float,
     is_aper_a: bool = False,
     is_aper_t: bool = False,

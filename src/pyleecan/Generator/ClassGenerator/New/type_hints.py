@@ -127,6 +127,19 @@ RETURN_OVERRIDES[("GMSH", "_add_agline_to_dict")] = (("None",),)
 RETURN_OVERRIDES[("GMSH", "_find_lines_from_point")] = (("list",),)
 RETURN_OVERRIDES[("GMSH", "_find_point_tag")] = (("int or None", "float", "float"),)
 RETURN_OVERRIDES[("GMSH", "_find_points_from_line")] = (("list",),)
+# Step 15: utilities whose number of returned values depends on their flags
+# (return_indices, return_inverse...): Any until they get overloads
+for _key in (
+    ("SciDataTool", "union1d_tol"),
+    ("SciDataTool", "unique_tol"),
+    ("Save", "split_obj_dict"),  # recursive on any value
+):
+    RETURN_OVERRIDES[_key] = (("any",),)
+# Step 15: documented returns missing values
+RETURN_OVERRIDES[("SciDataTool", "integrate_local_pattern")] = (("ndarray", "ndarray"),)
+RETURN_OVERRIDES[("SciDataTool", "filter_spectral_leakage")] = (
+    ("ndarray", "ndarray", "ndarray", "ndarray"),
+)
 # find_wind_phase_color documents the color only: it returns (color, sign), the
 # color being "w" or an RGBA list of PHASE_COLORS
 RETURN_OVERRIDES[("machine", "find_wind_phase_color")] = (
@@ -236,8 +249,11 @@ PARAMETER_OVERRIDES = {
         for name in ("_find_lines_from_point", "_find_point_tag", "_find_points_from_line")
     },
     ("GMSH", "get_boundary_condition"): {"line": ("Line",), "boundary_prop": ("dict",)},
-    # Step 15: documented "float"
-    ("GMSH", "get_air_box"): {"machine": ("Machine",)},
+    # Step 15: wrong documented types
+    ("GMSH", "get_air_box"): {"machine": ("Machine",)},  # "float"
+    ("SciDataTool", "change_referential_waveform"): {"angle0": ("ndarray",)},  # "float"
+    ("Save", "save_json"): {"class_to_split": ("tuple",)},  # "list", tuple default
+    ("Save", "split_obj_dict"): {"obj_dict": ("any",)},  # recursive on any value
     ("Plot", "plot_glyph_pv"): {"pv_plotter": ("any",)},
     ("Plot", "plot_mesh_field"): {
         "pv_plotter": ("any",),

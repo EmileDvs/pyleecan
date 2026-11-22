@@ -1,4 +1,9 @@
+from typing import TYPE_CHECKING
+
 import numpy as np
+
+if TYPE_CHECKING:
+    from typing import Any
 
 
 def union1d_tol(
@@ -7,7 +12,7 @@ def union1d_tol(
     tol: float = 1e-6,
     is_abs_tol: bool = False,
     return_indices: bool = False,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+) -> Any:
     """Return the intersect1d values of the input array a given tolerance tol
 
     Parameters
@@ -63,7 +68,7 @@ def unique_tol(
     return_counts: bool = False,
     is_stable: bool = False,
     axis: int = 0,
-) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+) -> Any:
     """Return the unique values of the input array a given tolerance tol
 
     Parameters

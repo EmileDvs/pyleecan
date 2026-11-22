@@ -887,7 +887,11 @@ def generate_functions(
     # Merged modules (MERGED_MODULES): written from their legacy modules
     def read_legacy(module):
         with tokenize.open(source_dir.joinpath(*module.split(".")).with_suffix(".py")) as file:
-            return file.read()
+            source = file.read()
+        key = module.replace(".", "/") + ".py"
+        if key in FUNCTION_LEGACY_FIXES:  # Fixes of the legacy bugs (Step 15)
+            source = apply_fixes(source.replace("\r\n", "\n"), FUNCTION_LEGACY_FIXES[key], key)
+        return source
 
     entries += [
         (
