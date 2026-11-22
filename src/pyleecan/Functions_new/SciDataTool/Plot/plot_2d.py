@@ -124,8 +124,10 @@ def plot_2D(
         is_show_fig = True if fig is None else False
 
     # Set figure if needed
-    if fig is None and ax is None:
-        (fig, ax, _, _) = init_fig(fig=None, shape="rectangle")
+    if ax is None:
+        (fig, ax, _, _) = init_fig(fig=fig, shape="rectangle")
+    elif fig is None:
+        fig = ax.get_figure(root=True)
 
     # Number of curves on a axe
     ndatas = len(Ydatas)

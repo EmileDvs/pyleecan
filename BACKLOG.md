@@ -1332,7 +1332,30 @@ are imported by no class, function or GUI module. Step 8 sorts them by
 generator; this step finishes by hand what the generator could not do.
 
 - [ ] Finish the module targets of Step 8 that need hand changes.
+  - [x] (2026-11-22) rule functions: `self` -> `rule` (Step 8 item).
+  - [ ] `LUTdq.comp_MTPA` (Step 8 item): written for an old vectorized EEC
+        API (`comp_parameters(machine, OP, Tsta, Trot, Id_array, Iq_array)`
+        returning the parameters, `solve(eec_param)`); the current
+        `EEC_PMSM.comp_parameters()` / `solve()` take one operating point
+        from the EEC fields. A rewrite of the algorithm (no caller, no
+        parity): decision of the maintainer (rewrite or deprecate).
+  - [ ] `path_tools.rel_file_path` (Step 8 item): decision of the maintainer.
 - [ ] Complete the type hints of the utility functions (from the Step 8 draft).
+      `ty` on `Functions_new`: 510 (2026-11-22) -> 357 (SciDataTool plot
+      fixes).
+  - [x] (2026-11-22) legacy bugs of the Functions modules fixed by the
+        functions generator: `FUNCTION_LEGACY_FIXES` (`legacy_fixes.py`,
+        {module path in Functions: fixes}, applied when the module is
+        read). SciDataTool `plot_2D` / `plot_3D` / `plot_4D`: figure built
+        when no axes are given (a figure without axes left `ax` None),
+        taken from the axes when only the axes are given (`fig.savefig` /
+        `show` / `colorbar` on None); `plot_3D` stem: `matplotlib.cm.get_cmap`
+        (removed in matplotlib 3.9) -> `matplotlib.colormaps.get_cmap`;
+        `ax.xscale` / `yscale` (AttributeError) -> `set_xscale` /
+        `set_yscale`; `ax.zscale("log")` removed (no such method, and Zdata
+        is already in dB). Test: `Tests/New/test_function_legacy_fixes.py`.
+  - Left in the plots (matplotlib typing): `Axes3D` members on `ax: Axes`
+    (3D plots), `Axes.get_figure()` typed optional, `set_xlim` with lists.
 - [ ] Mark the class-independent functions for `src/pyleecan/utils/` (Phase 2).
 
 ## Step 16: parent links, second pass

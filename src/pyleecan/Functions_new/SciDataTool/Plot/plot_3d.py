@@ -135,8 +135,10 @@ def plot_3D(
         is_3d = False
 
     # Set figure if needed
-    if fig is None and ax is None:
-        (fig, ax, _, _) = init_fig(fig=None, shape="rectangle", is_3d=is_3d)
+    if ax is None:
+        (fig, ax, _, _) = init_fig(fig=fig, shape="rectangle", is_3d=is_3d)
+    elif fig is None:
+        fig = ax.get_figure(root=True)
 
     if color_list is None:
         color_list = COLORS
@@ -171,7 +173,7 @@ def plot_3D(
 
     # Plot
     if type_plot == "stem":
-        cmap = matplotlib.cm.get_cmap(colormap)
+        cmap = matplotlib.colormaps.get_cmap(colormap)
         for xi, yi, zi in zip(Xdata, Ydata, Zdata):
             line = art3d.Line3D(
                 *zip((xi, yi, 0), (xi, yi, zi)),
@@ -208,8 +210,6 @@ def plot_3D(
         ax.xaxis.pane.set_edgecolor("w")
         ax.yaxis.pane.set_edgecolor("w")
         ax.zaxis.pane.set_edgecolor("w")
-        if is_logscale_z:
-            ax.zscale("log")
     elif type_plot == "surf":
         ax.plot_surface(Xdata, Ydata, Zdata, cmap=colormap)
         ax.set_xlim3d(x_max, x_min)
@@ -236,8 +236,6 @@ def plot_3D(
         ax.xaxis.pane.set_edgecolor("w")
         ax.yaxis.pane.set_edgecolor("w")
         ax.zaxis.pane.set_edgecolor("w")
-        if is_logscale_z:
-            ax.zscale("log")
     elif type_plot == "pcolor":
         if is_shading_flat:
             interpolation = None
@@ -379,10 +377,10 @@ def plot_3D(
     ax.set_ylabel(ylabel)
 
     if is_logscale_x:
-        ax.xscale("log")
+        ax.set_xscale("log")
 
     if is_logscale_y:
-        ax.yscale("log")
+        ax.set_yscale("log")
 
     if is_disp_title:
         ax.set_title(title)

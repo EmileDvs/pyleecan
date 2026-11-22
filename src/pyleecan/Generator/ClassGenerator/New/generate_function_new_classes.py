@@ -25,6 +25,10 @@ from pyleecan.definitions import DOC_DIR, MAIN_DIR
 from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import VENDORED_CLASS_PACKAGES, _format_source_with_ruff, _static_local_class_imports, class_module_name, common_dir, generated_module_paths, relocate_class_imports
 from pyleecan.Generator.ClassGenerator.New.modernize import _keyword_geometry_calls, _replace_empty_containers
+from pyleecan.Generator.ClassGenerator.New.legacy_fixes import (
+    FUNCTION_LEGACY_FIXES,
+    apply_fixes,
+)
 from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     RULE_FUNCTIONS_FOLDER,
     function_module_mapping,
@@ -936,6 +940,13 @@ def generate_functions(
                 encoding = source_file.encoding
         if path.suffix == ".py":
             legacy_module = ".".join(relative.with_suffix("").parts)
+            if removed_alias is None and relative.as_posix() in FUNCTION_LEGACY_FIXES:
+                # Fixes of the legacy bugs (legacy_fixes.py, Step 15)
+                source = apply_fixes(
+                    source.replace("\r\n", "\n"),
+                    FUNCTION_LEGACY_FIXES[relative.as_posix()],
+                    relative.as_posix(),
+                )
             if removed_alias is None and legacy_module.startswith(RULE_FUNCTIONS_FOLDER + "."):
                 # Complex rule functions: `self` is the RuleComplex (Step 15)
                 source = rename_rule_self(source)

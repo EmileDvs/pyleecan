@@ -141,8 +141,10 @@ def plot_4D(
         is_3d = False
 
     # Set figure if needed
-    if fig is None and ax is None:
-        (fig, ax, _, _) = init_fig(fig=None, shape="rectangle", is_3d=is_3d)
+    if ax is None:
+        (fig, ax, _, _) = init_fig(fig=fig, shape="rectangle", is_3d=is_3d)
+    elif fig is None:
+        fig = ax.get_figure(root=True)
 
     # Check logscale on z axis
     if is_logscale_z:
@@ -249,10 +251,10 @@ def plot_4D(
     ax.set_ylim([y_min, y_max])
 
     if is_logscale_x:
-        ax.xscale("log")
+        ax.set_xscale("log")
 
     if is_logscale_y:
-        ax.yscale("log")
+        ax.set_yscale("log")
 
     if is_disp_title:
         ax.set_title(title)

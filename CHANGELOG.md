@@ -297,6 +297,12 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   and 1 raise `NotImplementedError`, `SlotW15.comp_surface_opening` on an
   inward slot raises `S15InnerError`, `HoleUD.comp_surface_magnet_id` on an
   index without magnet raises `ValueError` (all returned None).
+- **SciDataTool plots** (`plot_2D`, `plot_3D`, `plot_4D`, fixed by the
+  functions generator, `FUNCTION_LEGACY_FIXES`): a figure given without
+  axes, or axes without figure, no longer fail; log scales on x / y
+  (`Axes.xscale` did not exist) and the stem plots (`matplotlib.cm.get_cmap`,
+  removed in matplotlib 3.9) work; `is_logscale_z` of the 3D plots no
+  longer calls a missing `zscale` (the values are already in dB).
 - **`SurfLine.get_patches` without lines** returns `[]` (it built an empty
   `Polygon`, which raises `ValueError`, and returned it outside a list).
   `Surface.draw_FEMM` without `FEMM_dict` (or without `BC_dict` for a line

@@ -195,6 +195,57 @@ GUI_LEGACY_FIXES = {
 """Fixes of the legacy GUI modules, applied by the GUI generator:
 {module path in GUI (posix): fixes}"""
 
+
+def _plot_figure_fix(init_call):
+    """Figure of the SciDataTool plots: built when no axes are given (with
+    the given figure, init_fig takes its first axes), taken from the axes
+    when only the axes are given (the save, show and colorbar calls failed
+    on a None figure; a figure without axes left the axes None)."""
+    return LegacyFix(
+        old=f"    if fig is None and ax is None:\n        (fig, ax, _, _) = init_fig(fig=None, {init_call})\n",
+        new=(
+            "    if ax is None:\n"
+            f"        (fig, ax, _, _) = init_fig(fig=fig, {init_call})\n"
+            "    elif fig is None:\n"
+            "        fig = ax.get_figure(root=True)\n"
+        ),
+    )
+
+
+# The log scales called Axes.xscale / yscale (AttributeError: set_xscale /
+# set_yscale)
+_PLOT_LOG_XY = (
+    LegacyFix(old='        ax.xscale("log")\n', new='        ax.set_xscale("log")\n'),
+    LegacyFix(old='        ax.yscale("log")\n', new='        ax.set_yscale("log")\n'),
+)
+
+FUNCTION_LEGACY_FIXES = {
+    "SciDataTool/Plot/plot_2D.py": (_plot_figure_fix('shape="rectangle"'),),
+    "SciDataTool/Plot/plot_3D.py": (
+        _plot_figure_fix('shape="rectangle", is_3d=is_3d'),
+        # matplotlib.cm.get_cmap removed in matplotlib 3.9 (stem plots)
+        LegacyFix(
+            old="        cmap = matplotlib.cm.get_cmap(colormap)\n",
+            new="        cmap = matplotlib.colormaps.get_cmap(colormap)\n",
+        ),
+        # Axes3D.zscale does not exist (AttributeError), and Zdata is already
+        # in dB (10 log10) when is_logscale_z: no log axis on top of it
+        LegacyFix(
+            old='        if is_logscale_z:\n            ax.zscale("log")\n',
+            new="",
+            count=2,
+        ),
+        *_PLOT_LOG_XY,
+    ),
+    "SciDataTool/Plot/plot_4D.py": (
+        _plot_figure_fix('shape="rectangle", is_3d=is_3d'),
+        *_PLOT_LOG_XY,
+    ),
+}
+"""Fixes of the legacy Functions modules, applied by the functions generator
+(Step 15): {module path in Functions (posix): fixes}. Only lines that raise
+when they run change."""
+
 LEGACY_FIXES = {
     # The loss density of a model on the whole mesh: the "indice" axis no
     # longer exists (KeyError when plotting the losses of a model)
