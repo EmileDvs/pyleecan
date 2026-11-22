@@ -1796,7 +1796,10 @@ First figures: creation time in Step 2 of the plan (`Segment`, `LamSlotWind`).
       (`Material.mag` None: the wrap serializer got None back): fixed in
       `PyleecanModel._dump_class`, test in `Tests/New/Cross`; the
       dataclass `model_validate` of a machine is 30 times slower than the
-      legacy `init_dict` (to profile: dacite); pydantic pays its validation
+      legacy `init_dict`: half of it was `typing.get_type_hints` recomputed
+      for every object, now cached per class (`class_hints`,
+      `_pyleecan_class.py`): 7.7 -> 3.7 ms, the rest spread over the field
+      deserialization (dacite, `_walk_types`); pydantic pays its validation
       on creation and assignment (20 to 25 times the dataclass time); the
       parent fallback costs about 5.5 us per call on the new backends (the
       `ContainerFallbackWarning`: `warnings.warn` walks the stack; with

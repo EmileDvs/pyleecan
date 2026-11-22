@@ -35,7 +35,7 @@ from ..classes_common.equality import compare_values
 from ..classes_common.legacy_dump import is_complex_annotation, legacy_field
 from ..classes_common.parent_containers import with_parent
 from ..classes_common.parents import assert_parent_type
-from ._pyleecan_class import PyleecanClass
+from ._pyleecan_class import PyleecanClass, class_hints
 
 
 @cache
@@ -187,7 +187,7 @@ class LegacyClass(PyleecanClass, metaclass=_LegacyConstructor):
         ignored). Legacy serialized None values are retained even for
         non-optional fields.
         """
-        hints = get_type_hints(cls)
+        hints = class_hints(cls)
         values = cls._loaded_values(data)
         for field_info in fields(cls):
             value = values.get(field_info.name)

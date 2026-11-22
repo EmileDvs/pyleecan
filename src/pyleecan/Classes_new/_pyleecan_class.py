@@ -23,12 +23,20 @@ the pydantic models (``_validation.py``).
 from copy import copy as shallow_copy
 from copy import deepcopy
 from dataclasses import dataclass, fields
+from functools import cache
 from pathlib import Path
 from sys import getsizeof
 from typing import Any, ClassVar, get_args, get_origin, get_type_hints
 
 import numpy as np
 from dacite import Config, from_dict
+
+
+@cache
+def class_hints(cls):
+    """get_type_hints of a class, computed once (the classes are not changed
+    at runtime): it took about half of the model_validate time (Step 18)"""
+    return get_type_hints(cls)
 
 from ..classes_common.base import PyleecanBase
 from ..classes_common.equality import values_equal
@@ -143,7 +151,7 @@ class PyleecanClass(PyleecanBase):
     @classmethod
     def _build(cls, values, base_path, strict):
         """Build cls from values (dacite), building the nested objects."""
-        hints = get_type_hints(cls)
+        hints = class_hints(cls)
         values = dict(values)
         for field_info in fields(cls):
             if field_info.name in values:
