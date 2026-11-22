@@ -252,7 +252,7 @@ class Test_SlotCirc_meth(object):
     def test_comp_surface_opening(self, test_dict):
         """Check that the computation of the opening surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_opening()
+        result = test_obj.slot.comp_surface_opening(lam=test_obj)
         assert result == 0
 
         # Check that the analytical method returns the same result as the numerical one
@@ -311,7 +311,7 @@ class Test_SlotCirc_meth(object):
         assert len(result.get_lines()) == 3
         assert result.is_inside(result.point_ref)
 
-        result = lam.slot.get_surface_opening()
+        result = lam.slot.get_surface_opening(lam=lam)
         assert len(result) == 0
 
         result = lam.slot.get_surface(lam=lam)

@@ -63,9 +63,9 @@ def test_mmf_dir(param_dict, nb_worker=int(cpu_count() / 2)):
     assert_almost_equal(q_axis, param_dict["stator_d_axis"] + pi / 2 / p, decimal=4)
 
     # Check that the DQ axis are correct for the rotor
-    d_axis = machine.rotor.comp_angle_d_axis()
+    d_axis = machine.rotor.comp_angle_d_axis(machine=machine)
     assert_almost_equal(d_axis, param_dict["rotor_d_axis"], decimal=4)
-    q_axis = machine.rotor.comp_angle_q_axis()
+    q_axis = machine.rotor.comp_angle_q_axis(machine=machine)
     assert_almost_equal(q_axis, param_dict["rotor_d_axis"] + pi / 2 / p, decimal=4)
 
     # Check mmf rotating direction with current rotating in default
@@ -131,7 +131,7 @@ def test_mmf_dir(param_dict, nb_worker=int(cpu_count() / 2)):
 
             out.mag.B.components["radial"].plot_3D_Data("freqs", "wavenumber")
 
-            out.elec.get_Is().plot_2D_Data("time", "phase[]")
+            out.elec.get_Is(output=out).plot_2D_Data("time", "phase[]")
 
 
 if __name__ == "__main__":

@@ -87,7 +87,7 @@ class Test_SlotW21_meth:
             test_obj.slot.H0
         )
         assert abs(point_dict["Z2"].real - point_dict["Z3"].real) == pytest.approx(
-            test_obj.slot.get_H1()
+            test_obj.slot.get_H1(lam=test_obj)
         )
         assert abs(point_dict["Z3"].real - point_dict["Z4"].real) == pytest.approx(
             test_obj.slot.H2
@@ -97,7 +97,7 @@ class Test_SlotW21_meth:
             test_obj.slot.H0
         )
         assert abs(point_dict["Z7"].real - point_dict["Z6"].real) == pytest.approx(
-            test_obj.slot.get_H1()
+            test_obj.slot.get_H1(lam=test_obj)
         )
         assert abs(point_dict["Z6"].real - point_dict["Z5"].real) == pytest.approx(
             test_obj.slot.H2
@@ -159,7 +159,7 @@ class Test_SlotW21_meth:
     def test_comp_surface_active(self, test_dict):
         """Check that the computation of the winding surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         a = result
         b = test_dict["SW_exp"]
@@ -231,7 +231,7 @@ class Test_SlotW21_meth:
         lam.slot = SlotW21(Zs=69, H2=0.0015, H1_is_rad=True, H1=3.14)
 
         with pytest.raises(S21_H1rCheckError) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
     def test_get_surface_X(self):
         """Check that the get_surface_X works when stator = false"""

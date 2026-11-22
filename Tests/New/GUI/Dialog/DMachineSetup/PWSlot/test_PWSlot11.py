@@ -284,41 +284,44 @@ class TestPWSlot11:
             R1=0.5,
         )
         # self.widget = PWSlot11(self.test_obj)
-        assert self.test_obj.slot.check() == "You must set H0 !"
+        assert self.test_obj.slot.check(lam=self.test_obj) == "You must set H0 !"
 
         self.test_obj.slot = SlotW11(
             H0=0.10, H1=None, H2=0.12, W0=0.11, W1=0.14, W2=0.15, R1=0.5
         )
-        assert self.test_obj.slot.check() == "You must set H1 !"
+        assert self.test_obj.slot.check(lam=self.test_obj) == "You must set H1 !"
 
         self.test_obj.slot = SlotW11(
             H0=0.10, H1=0.11, H2=None, W0=0.11, W1=0.14, W2=0.15, R1=0.5
         )
-        assert self.test_obj.slot.check() == "You must set H2 !"
+        assert self.test_obj.slot.check(lam=self.test_obj) == "You must set H2 !"
 
         self.test_obj.slot = SlotW11(
             H0=0.10, H1=0.11, H2=0.12, W0=None, W1=0.14, W2=0.15, R1=0.5
         )
-        assert self.test_obj.slot.check() == "You must set W0 !"
+        assert self.test_obj.slot.check(lam=self.test_obj) == "You must set W0 !"
 
         self.test_obj.slot = SlotW11(
             H0=0.10, H1=0.11, H2=0.12, W0=0.11, W1=None, W2=0.15, R1=0.5
         )
-        assert self.test_obj.slot.check() == "You must set W1 !"
+        assert self.test_obj.slot.check(lam=self.test_obj) == "You must set W1 !"
         self.test_obj.slot = SlotW11(
             H0=0.10, H1=0.11, H2=0.12, W0=0.11, W1=0.14, W2=None, R1=0.5
         )
-        assert self.test_obj.slot.check() == "You must set W2 !"
+        assert self.test_obj.slot.check(lam=self.test_obj) == "You must set W2 !"
 
         self.test_obj.slot = SlotW11(
             H0=0.10, H1=5.3, H2=0.12, W0=0.11, W1=0.14, W2=0.15, R1=None
         )
-        assert self.test_obj.slot.check() == "You must set R1 !"
+        assert self.test_obj.slot.check(lam=self.test_obj) == "You must set R1 !"
 
         self.test_obj.slot = SlotW11(
             H0=0.10, H1=5.3, H2=0.12, W0=0.11, W3=None, R1=0.5, is_cstt_tooth=True
         )
-        assert self.test_obj.slot.check() == "In constant tooth mode, you must set W3 !"
+        assert (
+            self.test_obj.slot.check(lam=self.test_obj)
+            == "In constant tooth mode, you must set W3 !"
+        )
 
 
 if __name__ == "__main__":

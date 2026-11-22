@@ -313,7 +313,7 @@ class Test_SlotW23_meth(object):
         )
 
         with pytest.raises(S23_H1rCheckError) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
     def test_get_surface_X(self):
         """Check that the get_surface_X works when stator = false"""

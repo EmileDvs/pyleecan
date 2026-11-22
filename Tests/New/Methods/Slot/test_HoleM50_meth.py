@@ -57,7 +57,7 @@ class Test_HoleM50_meth(object):
                 H3=6.8e-3,
             )
         )
-        result = test_obj.hole[0].comp_surface_magnets()
+        result = test_obj.hole[0].comp_surface_magnets(lam=test_obj)
 
         a = result
         b = 1.4008e-4 * 2

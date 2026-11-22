@@ -74,7 +74,7 @@ class Test_StructElmer(object):
 
         # set rotor speed and run simulation
         simu.input = InputVoltage(OP=OPdq(N0=10000))  # rpm
-        simu.run()
+        simu.run(output=output)
 
         return output
 
@@ -103,7 +103,7 @@ class Test_StructElmer(object):
 
         # set rotor speed and run simulation
         simu.input = InputVoltage(OP=OPdq(N0=10000))  # rpm
-        simu.run()
+        simu.run(output=output)
 
         return output
 
@@ -138,7 +138,7 @@ class Test_StructElmer(object):
 
         # set rotor speed and run simulation
         simu.input = InputVoltage(OP=OPdq(N0=10000))  # rpm
-        simu.run()
+        simu.run(output=output)
 
         return output
 

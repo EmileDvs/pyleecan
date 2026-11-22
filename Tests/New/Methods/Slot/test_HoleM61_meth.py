@@ -356,7 +356,7 @@ class Test_HoleM61_meth(object):
     def test_comp_surface_mag(self, test_dict):
         """Check that the computation of the magnet surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_surface_magnets()
+        result = test_obj.hole[0].comp_surface_magnets(lam=test_obj)
 
         a = result
         b = test_dict["SM_exp"]
@@ -407,13 +407,13 @@ class Test_HoleM61_meth(object):
                 H2=10e-3,
             )
         )
-        result = test_obj.hole[0].comp_surface_magnet_id(0)
+        result = test_obj.hole[0].comp_surface_magnet_id(0, lam=test_obj)
         assert result == 0.0004
-        result = test_obj.hole[0].comp_surface_magnet_id(1)
+        result = test_obj.hole[0].comp_surface_magnet_id(1, lam=test_obj)
         assert result == 0.0002
-        result = test_obj.hole[0].comp_surface_magnet_id(2)
+        result = test_obj.hole[0].comp_surface_magnet_id(2, lam=test_obj)
         assert result == 0.0002
-        result = test_obj.hole[0].comp_surface_magnet_id(3)
+        result = test_obj.hole[0].comp_surface_magnet_id(3, lam=test_obj)
         assert result == 0.0004
 
     @pytest.mark.parametrize("test_dict", HoleM61_test)

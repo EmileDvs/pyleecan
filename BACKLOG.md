@@ -162,13 +162,13 @@ the merge (`test_simu_get_OP_array`, `test_plot_contour_1group`, pydantic
 
 Open points:
 
-- [ ] `test_LossFEMM_Prius` (`Tests/New`, dataclass): `KeyError: 'overall'`
+- [x] `test_LossFEMM_Prius` (`Tests/New`, dataclass): `KeyError: 'overall'`
       in `LossFEA.run`. The legacy code assigns `output.loss.loss_dict =
       loss_dict`, then adds `"overall"` to `output.loss.loss_dict` and reads
       it from the local `loss_dict`: it relies on the setter keeping the same
-      dict, the new classes validate and store a copy. To change on
-      `loss_fea` (read `output.loss.loss_dict` after the assignment), not a
-      legacy fix (legacy does not raise).
+      dict, the new classes validate and store a copy. Fixed in `Methods_new`
+      (`LossFEA.run` reads the stored dict back); checked 2026-11-22:
+      passes with each backend.
 - [ ] Loss names: `LossFEA.run` and `VarSimu.get_loss_datakeeper` use
       `"stator joule"`, `"rotor magnets"`, `"stator proximity"`;
       `LUTdq.interp_Ploss_dqh` and the `ElecLUTdq.run` fix use `"joule"`,
@@ -1660,6 +1660,14 @@ Same signature rule as Step 11 (optional container argument, fallback through
         None local): 509 more test calls given their container by the tool
         (`Slot.comp_height(test_obj.slot, lam=test_obj)` included), 11 by
         hand (`test_SlotUD` no longer sets `slot_2.parent`).
+  - [x] (2026-11-22) Static pass over `Tests/New` (the `Validation` and
+        `Tutorials` trees are not run in the usual scope): `X.slot/hole/
+        winding/bore.m()` -> `lam=X`, `X.stator/rotor.m()` -> `machine=X`,
+        `X.loss/elec/mag.m()` -> `output=X` (151 calls), `X.simu.<model>.
+        run()` -> `output=X`, `simu.run()` after `out = Output(simu=simu)`
+        -> `output=out` (6 modules). The `Validation` / `Tutorials` tests
+        not run since may still hold a fallback, now an error: fix them
+        when they run.
   - [ ] **To decide**: the machine down to the slot geometry. The slot and
         hole labels read `lam.get_label()`, which needs the machine (the
         index of the lamination: `Stator-0`); the slot geometry methods

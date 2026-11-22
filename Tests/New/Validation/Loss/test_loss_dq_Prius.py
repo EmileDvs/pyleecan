@@ -88,7 +88,7 @@ def test_FEMM_Loss_Prius():
         power_dict = {
             "total_power": out.mag.Pem_av,
             "torque": out.mag.Tem_av,
-            "current_density": out.elec.get_Jrms() / 1e6,
+            "current_density": out.elec.get_Jrms(output=out) / 1e6,
             **dict(
                 [
                     (o.name, o.get_loss_scalar(out.elec.OP.felec))

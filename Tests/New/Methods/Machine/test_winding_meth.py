@@ -152,13 +152,13 @@ def test_import_periodicity():
         join(TEST_DATA_DIR, "Load_GUI", "Winding", "Wind_2_1_Head_Empty_per.csv"),
         lam=lam,
     )
-    assert array_equal(wind_per, lam.winding.get_connection_mat())
+    assert array_equal(wind_per, lam.winding.get_connection_mat(lam=lam))
     # Without Header
     lam.winding.import_from_csv(
         join(TEST_DATA_DIR, "Load_GUI", "Winding", "Wind_2_1_Data_Empty_per.csv"),
         lam=lam,
     )
-    assert array_equal(wind_per, lam.winding.get_connection_mat())
+    assert array_equal(wind_per, lam.winding.get_connection_mat(lam=lam))
 
 
 if __name__ == "__main__":

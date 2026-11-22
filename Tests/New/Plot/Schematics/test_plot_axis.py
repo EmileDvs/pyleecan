@@ -43,14 +43,14 @@ def test_axis_LamSlotMag():
     # axes.text(Zly.real, Zly.imag, "Y axis")
 
     # D axis
-    D_axis = SIPMSM_001.rotor.comp_angle_d_axis()
+    D_axis = SIPMSM_001.rotor.comp_angle_d_axis(machine=SIPMSM_001)
     Zd = R1 * exp(1j * D_axis)
     plt.arrow(0, 0, Zd.real, Zd.imag, color=CURVE_COLORS[1])
     Zld = R2 * exp(1j * D_axis)
     axes.text(Zld.real, Zld.imag, "D axis")
 
     # Q axis
-    Q_axis = SIPMSM_001.rotor.comp_angle_q_axis()
+    Q_axis = SIPMSM_001.rotor.comp_angle_q_axis(machine=SIPMSM_001)
     Zq = R1 * exp(1j * Q_axis)
     plt.arrow(0, 0, Zq.real, Zq.imag, color=CURVE_COLORS[1])
     Zlq = R2 * exp(1j * Q_axis)
@@ -90,14 +90,14 @@ def test_axis_LamHoleMag():
     axes.text(Zly.real, Zly.imag, "Y axis")
 
     # D axis
-    D_axis = Toyota_Prius.rotor.comp_angle_d_axis()
+    D_axis = Toyota_Prius.rotor.comp_angle_d_axis(machine=Toyota_Prius)
     Zd = R1 * exp(1j * D_axis)
     plt.arrow(0, 0, Zd.real, Zd.imag, color=CURVE_COLORS[1])
     Zld = R2 * exp(1j * D_axis)
     axes.text(Zld.real, Zld.imag, "D axis")
 
     # Q axis
-    Q_axis = Toyota_Prius.rotor.comp_angle_q_axis()
+    Q_axis = Toyota_Prius.rotor.comp_angle_q_axis(machine=Toyota_Prius)
     Zq = R1 * exp(1j * Q_axis)
     plt.arrow(0, 0, Zq.real, Zq.imag, color=CURVE_COLORS[1])
     Zlq = R2 * exp(1j * Q_axis)
@@ -137,14 +137,14 @@ def test_axis_LamHole():
     axes.text(Zly.real, Zly.imag, "Y axis")
 
     # D axis
-    D_axis = SynRM_001.rotor.comp_angle_d_axis()
+    D_axis = SynRM_001.rotor.comp_angle_d_axis(machine=SynRM_001)
     Zd = R1 * exp(1j * D_axis)
     plt.arrow(0, 0, Zd.real, Zd.imag, color=CURVE_COLORS[1])
     Zld = R2 * exp(1j * D_axis)
     axes.text(Zld.real, Zld.imag, "D & X axis")
 
     # Q axis
-    Q_axis = SynRM_001.rotor.comp_angle_q_axis()
+    Q_axis = SynRM_001.rotor.comp_angle_q_axis(machine=SynRM_001)
     Zq = R1 * exp(1j * Q_axis)
     plt.arrow(0, 0, Zq.real, Zq.imag, color=CURVE_COLORS[1])
     Zlq = R2 * exp(1j * Q_axis)

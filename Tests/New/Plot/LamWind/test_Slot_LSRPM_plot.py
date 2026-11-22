@@ -135,4 +135,4 @@ def test_stator_slot_height_wind(machine):
 
 def test_stator_slot_height(machine):
     """Test calculate the total height"""
-    machine.slot.comp_height()
+    machine.slot.comp_height(lam=machine)

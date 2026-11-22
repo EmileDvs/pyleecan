@@ -189,7 +189,7 @@ class Test_Slot_10_plot(object):
 
         # Testing comp_angle_d_axis
         test_obj.stator.winding = None
-        assert test_obj.stator.comp_angle_d_axis() == 0
+        assert test_obj.stator.comp_angle_d_axis(machine=test_obj) == 0
 
     def test_plot_stator_true(self):
         """Test if the plot is right with a stator LamSlotWind"""

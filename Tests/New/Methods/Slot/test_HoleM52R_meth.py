@@ -112,7 +112,7 @@ class Test_Hole52_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_surface()
+        result = test_obj.hole[0].comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -123,7 +123,7 @@ class Test_Hole52_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_surface()
+        result = test_obj.hole[0].comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -134,7 +134,7 @@ class Test_Hole52_meth(object):
     def test_comp_surface_mag(self, test_dict):
         """Check that the computation of the magnet surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_surface_magnets()
+        result = test_obj.hole[0].comp_surface_magnets(lam=test_obj)
 
         a = result
         b = test_dict["SM_exp"]
@@ -220,24 +220,24 @@ class Test_Hole52_meth(object):
         test_obj = LamHole(is_internal=True, is_stator=False, hole=list(), Rext=0.1)
         test_obj.hole = [HoleM52R(Zh=8, W0=None, W1=1e-3, H0=12e-3, H1=18e-3, H2=2e-3)]
         with pytest.raises(S52R_NoneError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         test_obj.hole = [HoleM52R(Zh=8, W0=30e-3, W1=None, H0=12e-3, H1=18e-3, H2=2e-3)]
         with pytest.raises(S52R_NoneError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         test_obj.hole = [HoleM52R(Zh=8, W0=30e-3, W1=1e-3, H0=None, H1=18e-3, H2=2e-3)]
         with pytest.raises(S52R_NoneError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         test_obj.hole = [HoleM52R(Zh=8, W0=30e-3, W1=1e-3, H0=12e-3, H1=None, H2=2e-3)]
         with pytest.raises(S52R_NoneError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         test_obj.hole = [HoleM52R(Zh=8, W0=30e-3, W1=1e-3, H0=12e-3, H1=18e-3, H2=None)]
         with pytest.raises(S52R_NoneError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         test_obj.hole = [
             HoleM52R(Zh=8, W0=30e-3, W1=1e-3, H0=12e-3, H1=18e-3, H2=2e-3, R0=2)
         ]
         with pytest.raises(S52R_R0CheckError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         test_obj.hole = [HoleM52R(Zh=8, W0=99e-3, W1=1e-3, H0=12e-3, H1=18e-3, H2=2e-3)]
         with pytest.raises(S52R_widthCheckError) as context:
             test_obj.hole[0].check(lam=test_obj)

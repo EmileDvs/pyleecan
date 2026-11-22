@@ -185,7 +185,7 @@ class Test_SlotW62_meth(object):
     def test_comp_surface_active(self, test_dict):
         """Check that the computation of the winding surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         if result != 0:
             a = result
@@ -412,7 +412,7 @@ class Test_SlotW62_meth(object):
 
 if __name__ == "__main__":
     a = Test_SlotW62_meth()
-    lam.slot.plot()
+    lam.slot.plot(lam=lam)
     for test_dict in slotW62_test:
         a.test_comp_height(test_dict)
         a.test_comp_angle_opening(test_dict)

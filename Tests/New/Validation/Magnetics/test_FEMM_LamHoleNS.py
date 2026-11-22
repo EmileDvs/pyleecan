@@ -66,7 +66,7 @@ def test_FEMM_LamHoleNS():
     fig.savefig(join(res_path, "machine_full.png"))
     fig.savefig(join(res_path, "machine_full.svg"), format="svg")
 
-    fig, ax = TPNS.rotor.plot(is_add_arrow=True, is_clean_plot=True, is_show_fig=False)
+    fig, ax = TPNS.rotor.plot(is_add_arrow=True, is_clean_plot=True, is_show_fig=False, machine=TPNS)
     fig.savefig(join(res_path, "rotor.png"))
     fig.savefig(join(res_path, "rotor.svg"), format="svg")
 

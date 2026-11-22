@@ -69,7 +69,7 @@ def test_FEMM_loss_SCIM():
 
     out = simu.run()
 
-    print(out.loss.get_power_dict())
+    print(out.loss.get_power_dict(output=out))
 
     # def calc_loss(coeff, B):
     #     f=80
@@ -113,14 +113,14 @@ def test_FEMM_loss_SCIM():
         #             group_names = group_names
         #         )
 
-        out.loss.plot_losses()
+        out.loss.plot_losses(output=out)
 
         # Plot the flux
         out.mag.B.plot_2D_Data("angle", **dict_2D)
         # Plot the torque
         out.mag.Tem.plot_2D_Data("time", **dict_2D)
         # Plot the current
-        out.elec.get_Is().plot_2D_Data("time", "phase[]", **dict_2D)
+        out.elec.get_Is(output=out).plot_2D_Data("time", "phase[]", **dict_2D)
 
     # out.loss.meshsol_list[0].plot_contour(
     #     "freqs=sum",
@@ -302,7 +302,7 @@ def test_FEMM_loss_SCIM_with_param():
 
     out = simu.run()
 
-    print(out.loss.get_power_dict())
+    print(out.loss.get_power_dict(output=out))
 
     # def calc_loss(coeff, B):
     #     f=80
@@ -346,14 +346,14 @@ def test_FEMM_loss_SCIM_with_param():
         #             group_names = group_names
         #         )
 
-        out.loss.plot_losses()
+        out.loss.plot_losses(output=out)
 
         # Plot the flux
         out.mag.B.plot_2D_Data("angle", **dict_2D)
         # Plot the torque
         out.mag.Tem.plot_2D_Data("time", **dict_2D)
         # Plot the current
-        out.elec.get_Is().plot_2D_Data("time", "phase[]", **dict_2D)
+        out.elec.get_Is(output=out).plot_2D_Data("time", "phase[]", **dict_2D)
 
     # out.loss.meshsol_list[0].plot_contour(
     #     "freqs=sum",

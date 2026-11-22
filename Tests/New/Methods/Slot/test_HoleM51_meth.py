@@ -67,7 +67,7 @@ class Test_HoleM51_meth(object):
     def test_comp_surface_mag(self, test_dict):
         """Check that the computation of the magnet surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_surface_magnets()
+        result = test_obj.hole[0].comp_surface_magnets(lam=test_obj)
 
         a = result
         b = test_dict["SM_exp"]
@@ -253,5 +253,5 @@ class Test_HoleM51_meth(object):
                 H2=0.0055,
             )
         )
-        result = test_obj.hole[0].comp_surface_magnet_id(5)
+        result = test_obj.hole[0].comp_surface_magnet_id(5, lam=test_obj)
         assert result == 0

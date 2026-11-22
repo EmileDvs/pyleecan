@@ -80,7 +80,7 @@ def test_efficiency_map():
             name="current density",
             unit="A/mm^2",
             symbol="J",
-            keeper=lambda output: output.elec.get_Jrms() * 1e-6,
+            keeper=lambda output: output.elec.get_Jrms(output=output) * 1e-6,
             error_keeper=lambda simu: np.nan,
         ),
         DataKeeper(

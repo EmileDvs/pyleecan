@@ -142,7 +142,7 @@ def test_FEMM_Loss_Jaguar():
 
     out.loss.loss_dict["overall"] = sum(out.loss.loss_dict.values())
 
-    print(out.loss.get_power_dict())
+    print(out.loss.get_power_dict(output=out))
 
     # def calc_loss(coeff, B):
     #     f=80
@@ -172,7 +172,7 @@ def test_FEMM_Loss_Jaguar():
             else:
                 loss.get_group(group_names).plot_mesh()
 
-        out.loss.plot_losses()
+        out.loss.plot_losses(output=out)
 
     # out.loss.meshsol_list[0].plot_contour(
     #     "freqs=sum",
@@ -254,7 +254,7 @@ def test_FEMM_Loss_Jaguar_no_skew():
 
     out.loss.loss_dict["overall"] = sum(out.loss.loss_dict.values())
 
-    print(out.loss.get_power_dict())
+    print(out.loss.get_power_dict(output=out))
 
     # def calc_loss(coeff, B):
     #     f=80
@@ -283,7 +283,7 @@ def test_FEMM_Loss_Jaguar_no_skew():
                 loss.get_group(group_names + ["stator winding"]).plot_mesh()
             else:
                 loss.get_group(group_names).plot_mesh()
-        out.loss.plot_losses()
+        out.loss.plot_losses(output=out)
 
     # out.loss.meshsol_list[0].plot_contour(
     #     "freqs=sum",

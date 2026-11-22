@@ -59,7 +59,7 @@ def test_EEC_PMSM(nb_worker=int(0.5 * cpu_count())):
 
     # Plot 3-phase current function of time
     if is_show_fig:
-        out.elec.get_Is().plot_2D_Data(
+        out.elec.get_Is(output=out).plot_2D_Data(
             "time",
             "phase[]",
             # save_path=join(save_path, "EEC_FEMM_IPMSM_currents.png"),

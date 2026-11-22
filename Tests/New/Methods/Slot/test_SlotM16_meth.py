@@ -78,7 +78,7 @@ class Test_Magnet_Type_16_meth(object):
     def test_comp_surface_active(self, test_dict):
         """Check that the computation of the active surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         a = result
         b = test_dict["SA_exp"]

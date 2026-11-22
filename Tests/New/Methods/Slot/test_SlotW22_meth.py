@@ -162,7 +162,7 @@ class Test_SlotW22_meth(object):
     def test_comp_height(self, test_dict):
         """Check that the computation of the height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]
@@ -178,7 +178,7 @@ class Test_SlotW22_meth(object):
     def test_comp_angle_opening(self, test_dict):
         """Check that the computation of the average opening angle iscorrect"""
         test_obj = test_dict["test_obj"]
-        a = test_obj.slot.comp_angle_opening()
+        a = test_obj.slot.comp_angle_opening(lam=test_obj)
         assert a == test_obj.slot.W0
         # Check that the analytical method returns the same result as the numerical one
         b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)

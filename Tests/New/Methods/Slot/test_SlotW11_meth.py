@@ -360,11 +360,11 @@ class Test_SlotW11_meth(object):
         )
 
         with pytest.raises(S11_H1rCheckError) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
         lam.slot.R1 = 0
         with pytest.raises(S11_R1CheckError) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
     def test_comp_W(self):
         """Check that the computations of the Ws are right"""

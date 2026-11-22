@@ -53,7 +53,7 @@ def test_EEC_LSRPM(nb_worker=int(0.5 * cpu_count())):
     simu.struct = None
 
     out = Output(simu=simu)
-    simu.run()
+    simu.run(output=out)
 
     # Definition of the magnetic simulation (FEMM)
     simu2.mag = MagFEMM(
@@ -64,10 +64,10 @@ def test_EEC_LSRPM(nb_worker=int(0.5 * cpu_count())):
     )
 
     out2 = Output(simu=simu2)
-    simu2.run()
+    simu2.run(output=out2)
 
     # Plot 3-phase current function of time
-    out.elec.get_Is().plot_2D_Data(
+    out.elec.get_Is(output=out).plot_2D_Data(
         "time",
         "phase[]",
         save_path=join(save_path, "EEC_FEMM_IPMSM_currents.png"),

@@ -219,7 +219,7 @@ class Test_SlotW29_meth(object):
     def test_comp_surface_active(self, test_dict):
         """Check that the computation of the winding surface is correct"""
         test_obj = test_dict["test_obj"].copy()
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         a = result
         b = test_dict["SW_exp"]
@@ -256,7 +256,7 @@ class Test_SlotW29_meth(object):
         if test_obj.slot.wedge_type == 1:
             M400 = load(join(DATA_DIR, "Material", "M400-50A.json"))
             slot.wedge_mat = M400
-            result = test_obj.slot.comp_surface_wedge()
+            result = test_obj.slot.comp_surface_wedge(lam=test_obj)
 
             a = result
             b = test_dict["SWedge_exp"]

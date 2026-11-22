@@ -77,7 +77,7 @@ def test_FEMM_Loss_Prius():
 
     out.loss.loss_dict["overall"] = sum(out.loss.loss_dict.values())
 
-    print(out.loss.get_power_dict())
+    print(out.loss.get_power_dict(output=out))
 
     # def calc_loss(coeff, B):
     #     f=80
@@ -108,7 +108,7 @@ def test_FEMM_Loss_Prius():
                 loss.plot_mesh(group_names=group_names + ["stator winding"])
             else:
                 loss.plot_mesh(group_names=group_names)
-        out.loss.plot_losses()
+        out.loss.plot_losses(output=out)
 
     # out.loss.meshsol_list[0].plot_contour(
     #     "freqs=sum",
@@ -190,7 +190,7 @@ def test_FEMM_Loss_diff():
         out.loss.loss_dict.values()[0] - out.loss.loss_dict.values()[1]
     )
 
-    print(out.loss.get_power_dict())
+    print(out.loss.get_power_dict(output=out))
 
     if is_show_fig:
         group_names = ["stator core", "rotor core", "rotor magnets"]
@@ -199,7 +199,7 @@ def test_FEMM_Loss_diff():
                 loss.plot_mesh(group_names=group_names + ["stator winding"])
             else:
                 loss.plot_mesh(group_names=group_names)
-        out.loss.plot_losses()
+        out.loss.plot_losses(output=out)
 
     # out.loss.meshsol_list[0].plot_contour(
     #     "freqs=sum",
@@ -281,7 +281,7 @@ def test_LossFEMM_Prius():
     out = simu.run()
 
     # Check Power Dict
-    power_dict = out.loss.get_power_dict()
+    power_dict = out.loss.get_power_dict(output=out)
     exp_power_dict = {
         "stator core": np.float64(292.6424838992634),
         "stator joule": np.float64(7579.031160511535),
@@ -312,10 +312,10 @@ def test_LossFEMM_Prius():
     )
 
     out_time.loss = OutLoss()
-    out_time.simu.loss.run()
+    out_time.simu.loss.run(output=out_time)
 
     # Check Power Dict
-    power_dict_t = out_time.loss.get_power_dict()
+    power_dict_t = out_time.loss.get_power_dict(output=out_time)
     exp_power_dict_t = {
         "stator core": np.float64(2140.899349547698),
         "stator joule": np.float64(7579.031160511535),
@@ -346,10 +346,10 @@ def test_LossFEMM_Prius():
     )
 
     out1.loss = OutLoss()
-    out1.simu.loss.run()
+    out1.simu.loss.run(output=out1)
 
     # Check Power Dict
-    power_dict1 = out1.loss.get_power_dict()
+    power_dict1 = out1.loss.get_power_dict(output=out1)
     exp_power_dict1 = {
         "stator core": np.float64(2140.899349547698),
         "stator joule": np.float64(7579.031160511535),
@@ -377,7 +377,7 @@ def test_LossFEMM_Prius():
 
     out_skew = simu_skew.run()
     # Check Power Dict
-    power_dict_skew = out_skew.loss.get_power_dict()
+    power_dict_skew = out_skew.loss.get_power_dict(output=out_skew)
     exp_power_dict_skew = {
         "stator core": np.float64(262.142979262978),
         "stator joule": np.float64(7579.031160511535),
@@ -406,9 +406,9 @@ def test_LossFEMM_Prius():
     )
 
     out_skew1.loss = OutLoss()
-    out_skew1.simu.loss.run()
+    out_skew1.simu.loss.run(output=out_skew1)
     # Check Power Dict
-    power_dict_skew1 = out_skew1.loss.get_power_dict()
+    power_dict_skew1 = out_skew1.loss.get_power_dict(output=out_skew1)
     exp_power_dict_skew1 = {
         "stator core": np.float64(1931.819672394848),
         "stator joule": np.float64(7579.031160511535),
@@ -429,8 +429,8 @@ def test_LossFEMM_Prius():
 
     # Check Plot
     if is_show_fig:
-        out.loss.plot_losses()
-        out_skew.loss.plot_losses()
+        out.loss.plot_losses(output=out)
+        out_skew.loss.plot_losses(output=out_skew)
         group_names = ["stator core", "rotor core", "rotor magnets"]
         for loss in out.loss.loss_dict.values():
             if "joule" in loss.name or "proximity" in loss.name:
@@ -498,7 +498,7 @@ def test_FEMM_Id_Iq():
 
     out.loss.loss_dict["overall"] = sum(out.loss.loss_dict.values())
 
-    print(out.loss.get_power_dict())
+    print(out.loss.get_power_dict(output=out))
     # def calc_loss(coeff, B):
     #     f=80
     #     if len(coeff)==4:

@@ -215,10 +215,10 @@ def test_save_load_wind_retro(file_dict):
     assert ref.stator.winding.Ntcoil == old.stator.winding.Ntcoil, msg
     assert array_equal(
         ref.stator.winding.get_connection_mat(lam=ref.stator),
-        -1 * old.stator.winding.get_connection_mat(),
+        -1 * old.stator.winding.get_connection_mat(lam=old.stator),
     ) or array_equal(
-        ref.stator.winding.get_connection_mat(),
-        old.stator.winding.get_connection_mat(),
+        ref.stator.winding.get_connection_mat(lam=ref.stator),
+        old.stator.winding.get_connection_mat(lam=old.stator),
     ), msg
 
 

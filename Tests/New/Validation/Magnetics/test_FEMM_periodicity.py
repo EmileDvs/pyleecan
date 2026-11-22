@@ -587,7 +587,7 @@ def test_Bore_sym():
     # fig.savefig(join(save_path, "2_notch_full.png"))
     # fig.savefig(join(save_path, "2_notch_full.svg"), format="svg")
     fig, ax = TP2.rotor.plot(
-        sym=4, is_show_fig=False, is_clean_plot=True, edgecolor="k"
+        sym=4, is_show_fig=False, is_clean_plot=True, edgecolor="k", machine=TP2
     )
     # fig.savefig(join(save_path, "2_notch_full_rotor.png"))
     # fig.savefig(join(save_path, "2_notch_full_rotor.svg"), format="svg")

@@ -93,10 +93,10 @@ class Test_SlotW10_meth(object):
             test_obj.slot.H0
         )
         assert abs(point_dict["Z2"] - point_dict["Z4"]) == pytest.approx(
-            test_obj.slot.get_H1()
+            test_obj.slot.get_H1(lam=test_obj)
         )
         assert abs(point_dict["Z2"].real - point_dict["Z3"].real) == pytest.approx(
-            test_obj.slot.get_H1()
+            test_obj.slot.get_H1(lam=test_obj)
         )
         assert abs(point_dict["Z4"].real - point_dict["Z5"].real) == pytest.approx(
             test_obj.slot.H2
@@ -105,10 +105,10 @@ class Test_SlotW10_meth(object):
             test_obj.slot.H0
         )
         assert abs(point_dict["Z9"] - point_dict["Z7"]) == pytest.approx(
-            test_obj.slot.get_H1()
+            test_obj.slot.get_H1(lam=test_obj)
         )
         assert abs(point_dict["Z9"].real - point_dict["Z8"].real) == pytest.approx(
-            test_obj.slot.get_H1()
+            test_obj.slot.get_H1(lam=test_obj)
         )
         assert abs(point_dict["Z6"].real - point_dict["Z7"].real) == pytest.approx(
             test_obj.slot.H2
@@ -134,7 +134,7 @@ class Test_SlotW10_meth(object):
     def test_comp_surface_active(self, test_dict):
         """Check that the computation of the winding surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         a = result
         b = test_dict["SW_exp"]

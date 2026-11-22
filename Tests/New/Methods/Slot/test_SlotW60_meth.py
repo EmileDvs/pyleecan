@@ -93,7 +93,7 @@ class Test_SlotW60_meth(object):
 
         """
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_surface_active()
+        result = test_obj.slot.comp_surface_active(lam=test_obj)
 
         a = result
         b = test_dict["SW_exp"]
@@ -139,7 +139,7 @@ class Test_SlotW60_meth(object):
 
         """
         test_obj = test_dict["test_obj"]
-        a = test_obj.slot.comp_angle_opening()
+        a = test_obj.slot.comp_angle_opening(lam=test_obj)
         assert a == 2 * pi / test_obj.slot.Zs
 
         b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)

@@ -82,7 +82,7 @@ def test_ipm_Elmer():
     simu.input.angle = linspace(0, 2 * pi, num=2048, endpoint=False)
     I0 = 250
     felec = p * simu.input.OP.N0 / 60
-    rot_dir = simu.machine.stator.comp_mmf_dir()
+    rot_dir = simu.machine.stator.comp_mmf_dir(machine=simu.machine)
     Phi0 = 140 * pi / 180
     Ia = I0 * cos(2 * pi * felec * time + 0 * rot_dir * 2 * pi / 3 + Phi0)
     Ib = I0 * cos(2 * pi * felec * time + 1 * rot_dir * 2 * pi / 3 + Phi0)
@@ -106,7 +106,7 @@ def test_ipm_Elmer():
     simu.struct = None
     # Run simulation
     outp = Output(simu=simu)
-    simu.run()
+    simu.run(output=outp)
     # outp.mag.Tem.plot_2D_Data("time", **dict_2D)
     # outp.elec.get_Is().plot_2D_Data("time", "phase", **dict_2D)
     # outp.mag.Tem.plot_2D_Data("time[smallestperiod]", **dict_2D)
@@ -146,7 +146,7 @@ def test_spm_Elmer():
     simu.input.angle = linspace(0, 2 * pi, num=2048, endpoint=False)
     I0 = 150
     felec = p * simu.input.OP.N0 / 60
-    rot_dir = simu.machine.stator.comp_mmf_dir()
+    rot_dir = simu.machine.stator.comp_mmf_dir(machine=simu.machine)
     Phi0 = 140 * pi / 180
     Ia = I0 * cos(2 * pi * felec * time + 0 * rot_dir * 2 * pi / 3 + Phi0)
     Ib = I0 * cos(2 * pi * felec * time + 1 * rot_dir * 2 * pi / 3 + Phi0)
@@ -170,7 +170,7 @@ def test_spm_Elmer():
     simu.struct = None
     # Run simulation
     outp = Output(simu=simu)
-    simu.run()
+    simu.run(output=outp)
     outp.mag.Tem.plot_2D_Data("time", **dict_2D)
     # outp.elec.get_Is().plot_2D_Data("time", "phase", **dict_2D)
     # outp.mag.Tem.plot_2D_Data("time[smallestperiod]", **dict_2D)

@@ -89,7 +89,7 @@ def test_FEMM_NotchKey_Airgap():
     fig.savefig(join(res_path, "machine_full.png"))
     fig.savefig(join(res_path, "machine_full.svg"), format="svg")
 
-    fig, ax = B.rotor.plot(is_add_arrow=True, is_show_fig=False)
+    fig, ax = B.rotor.plot(is_add_arrow=True, is_show_fig=False, machine=B)
     fig.savefig(join(res_path, "rotor.png"))
     fig.savefig(join(res_path, "rotor.svg"), format="svg")
 
@@ -217,7 +217,7 @@ def test_FEMM_NotchKey_inner():
     fig.savefig(join(res_path, "machine_full.png"))
     fig.savefig(join(res_path, "machine_full.svg"), format="svg")
 
-    fig, ax = B.rotor.plot(is_add_arrow=True, is_show_fig=False)
+    fig, ax = B.rotor.plot(is_add_arrow=True, is_show_fig=False, machine=B)
     fig.savefig(join(res_path, "rotor.png"))
     fig.savefig(join(res_path, "rotor.svg"), format="svg")
 
@@ -337,7 +337,7 @@ def test_FEMM_NotchKey_2():
     fig.savefig(join(res_path, "machine_full.png"))
     fig.savefig(join(res_path, "machine_full.svg"), format="svg")
 
-    fig, ax = B.rotor.plot(is_add_arrow=True, is_show_fig=False)
+    fig, ax = B.rotor.plot(is_add_arrow=True, is_show_fig=False, machine=B)
     fig.savefig(join(res_path, "rotor.png"))
     fig.savefig(join(res_path, "rotor.svg"), format="svg")
 
@@ -440,7 +440,7 @@ def test_FEMM_NotchKey_NoCut():
     fig.savefig(join(res_path, "machine_full.png"))
     fig.savefig(join(res_path, "machine_full.svg"), format="svg")
 
-    fig, ax = B.rotor.plot(is_add_arrow=True, is_show_fig=False)
+    fig, ax = B.rotor.plot(is_add_arrow=True, is_show_fig=False, machine=B)
     fig.savefig(join(res_path, "rotor.png"))
     fig.savefig(join(res_path, "rotor.svg"), format="svg")
 

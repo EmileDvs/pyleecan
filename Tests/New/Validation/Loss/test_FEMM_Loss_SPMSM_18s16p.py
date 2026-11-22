@@ -76,7 +76,7 @@ def test_LossFEA_SPMSM():
     p = machine.get_pole_pair_number()
 
     # Check Power Dict
-    power_dict = out.loss.get_power_dict()
+    power_dict = out.loss.get_power_dict(output=out)
     exp_power_dict = {
         "stator core": np.float64(3.3278595306143064),
         "stator joule": np.float64(4.385847766901312),
@@ -105,10 +105,10 @@ def test_LossFEA_SPMSM():
     )
 
     out_time.loss = OutLoss()
-    out_time.simu.loss.run()
+    out_time.simu.loss.run(output=out_time)
 
     # Check Power Dict
-    power_dict_t = out_time.loss.get_power_dict()
+    power_dict_t = out_time.loss.get_power_dict(output=out_time)
 
     power_dict_ref = {
         "mechanical power": 62.30,
@@ -139,7 +139,7 @@ def test_LossFEA_SPMSM():
                 loss.get_group(group_names + ["stator winding"]).plot_mesh()
             else:
                 loss.get_group(group_names).plot_mesh()
-        out.loss.plot_losses()
+        out.loss.plot_losses(output=out)
 
         # plot_2D(
         #     [speed_array],

@@ -203,7 +203,7 @@ class Test_SlotW15_meth(object):
     def test_comp_height(self, test_dict):
         """Check that the computation of the height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]

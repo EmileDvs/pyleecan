@@ -237,7 +237,7 @@ class Test_SlotW63_meth(object):
         )
 
         with pytest.raises(S63_W0CheckError) as context:
-            lam.slot.check()
+            lam.slot.check(lam=lam)
 
     def test_SlotW63_check_S63_H0CheckError(self):
         """Check if the error S63_H0CheckError is correctly raised in the check method"""

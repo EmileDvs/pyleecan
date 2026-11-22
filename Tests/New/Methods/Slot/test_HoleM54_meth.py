@@ -33,7 +33,7 @@ class Test_HoleM54_meth(object):
     def test_comp_surface(self, test_dict):
         """Check that the computation of the surface is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].comp_surface()
+        result = test_obj.hole[0].comp_surface(lam=test_obj)
 
         a = result
         b = test_dict["S_exp"]
@@ -88,13 +88,13 @@ class Test_HoleM54_meth(object):
         test_obj = LamHole(is_internal=True, is_stator=False, hole=list(), Rext=0.1)
         test_obj.hole = [HoleM54(Zh=8, W0=0.3, H0=30e-3, H1=10e-3, R1=None)]
         with pytest.raises(S54_NoneError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         test_obj.hole = [HoleM54(Zh=8, W0=0.3, H0=30e-3, H1=None, R1=60e-3)]
         with pytest.raises(S54_NoneError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         test_obj.hole = [HoleM54(Zh=8, W0=0.3, H0=None, H1=10e-3, R1=60e-3)]
         with pytest.raises(S54_NoneError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)
         test_obj.hole = [HoleM54(Zh=8, W0=None, H0=30e-3, H1=10e-3, R1=60e-3)]
         with pytest.raises(S54_NoneError) as context:
-            test_obj.hole[0].check()
+            test_obj.hole[0].check(lam=test_obj)

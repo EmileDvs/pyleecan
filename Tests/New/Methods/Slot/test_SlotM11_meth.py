@@ -98,7 +98,7 @@ class Test_Magnet_Type_11_meth(object):
     def test_comp_height(self, test_dict):
         """Check that the computation of the height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height()
+        result = test_obj.slot.comp_height(lam=test_obj)
 
         a = result
         b = test_dict["H_exp"]
@@ -114,7 +114,7 @@ class Test_Magnet_Type_11_meth(object):
     def test_comp_height_active(self, test_dict):
         """Check that the computation of the active height is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.comp_height_active()
+        result = test_obj.slot.comp_height_active(lam=test_obj)
 
         a = result
         b = test_dict["HA_exp"]
@@ -130,7 +130,7 @@ class Test_Magnet_Type_11_meth(object):
     def test_comp_angle_opening(self, test_dict):
         """Check that the computation of the average opening angle is correct"""
         test_obj = test_dict["test_obj"]
-        a = test_obj.slot.comp_angle_opening()
+        a = test_obj.slot.comp_angle_opening(lam=test_obj)
         assert a == pytest.approx(test_obj.slot.W0, rel=DELTA)
         # Check that the analytical method returns the same result as the numerical one
         b = Slot.comp_angle_opening(test_obj.slot, lam=test_obj)

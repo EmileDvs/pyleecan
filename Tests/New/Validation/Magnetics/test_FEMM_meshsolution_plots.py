@@ -76,7 +76,7 @@ def test_FEMM_meshsolution_plots_SPMSM():
     simu_sym.mag.is_periodicity_a = True
 
     out = Output(simu=simu_sym)
-    simu_sym.run()
+    simu_sym.run(output=out)
 
     out.mag.get_meshsolution().plot_mesh(
         save_path=join(save_plot_path, simu.name + "_mesh.png"), is_show_fig=False
