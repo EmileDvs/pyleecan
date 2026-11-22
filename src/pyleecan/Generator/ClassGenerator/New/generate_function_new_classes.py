@@ -57,6 +57,7 @@ from pyleecan.Generator.read_fct import read_all
 from pyleecan.Generator.ClassGenerator.New.modernize import (
     _function_import_style,
     _redirect_shared_error_imports,
+    shared_error_names,
 )
 
 SKIPPED_FUNCTION_MODULES = {
@@ -441,6 +442,11 @@ LEGACY_CLASS_REPLACEMENTS = {
     ("pyleecan.Classes._frozen", "FrozenClass"): (
         "pyleecan.classes_common.base",
         "PyleecanBase",
+    ),
+    # The loader error (Load/import_class.py): the shared one
+    ("pyleecan.Classes._check", "InitUnKnowClassError"): (
+        "pyleecan.classes_common.errors",
+        "InitUnKnowClassError",
     ),
 }
 """Legacy class support imports replaced by their equivalent, independent of the
@@ -949,7 +955,11 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 from .modernize import redirect_get_logger
 
                 source = redirect_get_logger(source, package)
-            source = _redirect_shared_error_imports(source, package)
+            # The errors of the methods too (NotImplementedYetError of the
+            # Methods package): the shared ones
+            source = _redirect_shared_error_imports(
+                source, package, method_error_names=shared_error_names()
+            )
             rewritten, found = _rewrite_source(source, path, relative, class_dir)
             if relative in (
                 Path("Converter") / "Utils" / "ConvertionError.py",

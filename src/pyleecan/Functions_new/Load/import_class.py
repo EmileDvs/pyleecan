@@ -1,6 +1,6 @@
 from importlib import import_module
 
-from ...Classes._check import InitUnKnowClassError
+from ...classes_common.errors import InitUnKnowClassError
 
 
 def import_class(mod_name, class_name, prop_name="", *, module_name=None):

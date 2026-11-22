@@ -101,7 +101,8 @@ class WNotch(Ui_WNotch, QWidget):
         self.si_Zn.setValue(self.lam_notch.slot.Zs)
 
         # Regenerate the pages with the new values
-        self.w_notch.setParent(None)
+        self.w_notch.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_notch.deleteLater()
         self.w_notch = self.wid_list[self.c_notch_type.currentIndex()](
             lamination=self.lam_notch,
             notch_obj=self.obj.notch[index],
@@ -191,7 +192,8 @@ class WNotch(Ui_WNotch, QWidget):
         self.obj.notch[self.index].notch_shape = self.lam_notch.slot
 
         # Update the GUI
-        self.w_notch.setParent(None)
+        self.w_notch.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_notch.deleteLater()
         self.w_notch = self.wid_list[c_index](
             lamination=self.lam_notch,
             notch_obj=self.obj.notch[self.index],

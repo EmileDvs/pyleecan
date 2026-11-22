@@ -76,7 +76,8 @@ class WSlotMag(Ui_WSlotMag, QWidget):
         self.c_slot_type.setCurrentIndex(index)
 
         # Regenerate the pages with the new values
-        self.w_slot.setParent(None)
+        self.w_slot.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_slot.deleteLater()
         self.w_slot = self.wid_list[self.c_slot_type.currentIndex()](
             lamination=self.lam, material_dict=self.material_dict
         )
@@ -131,7 +132,8 @@ class WSlotMag(Ui_WSlotMag, QWidget):
         """
 
         # Regenerate the pages with the new values
-        self.w_slot.setParent(None)
+        self.w_slot.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_slot.deleteLater()
         self.w_slot = WIDGET_LIST[self.c_slot_type.currentIndex()](
             self.lam, material_dict=self.material_dict
         )

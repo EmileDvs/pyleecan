@@ -52,7 +52,8 @@ class WVent(Gen_WVent, QWidget):
 
         self.c_vent_type.setCurrentIndex(INIT_INDEX.index(type(lam.axial_vent[index])))
         # Regenerate the pages with the new values
-        self.w_vent.setParent(None)
+        self.w_vent.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_vent.deleteLater()
         self.w_vent = PAGE_INDEX[self.c_vent_type.currentIndex()](
             lam=lam, vent=lam.axial_vent[index]
         )
@@ -96,7 +97,8 @@ class WVent(Gen_WVent, QWidget):
 
             self.set_Alpha0()  # Take unit into account
             # Update the GUI
-            self.w_vent.setParent(None)
+            self.w_vent.hide()  # Deleted by Qt (no garbage collection crash)
+            self.w_vent.deleteLater()
             self.w_vent = PAGE_INDEX[c_index](
                 lam=self.obj, vent=self.obj.axial_vent[self.index]
             )

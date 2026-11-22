@@ -28,7 +28,7 @@ def valid_float_string(string):
 class FloatEdit(QLineEdit):
     """A Line Edit Widget optimized to input float"""
 
-    def __init__(self, unit="", *args, **kwargs):
+    def __init__(self, *args, unit="", **kwargs):
         """Same constructor as QLineEdit + config validator"""
         self.unit = unit
         self.u = gui_option.unit

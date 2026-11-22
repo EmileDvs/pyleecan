@@ -153,7 +153,8 @@ class DBore(Ui_DBore, QDialog):
         """
 
         # Regenerate the pages with the new values
-        self.w_bore.setParent(None)
+        self.w_bore.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_bore.deleteLater()
         self.w_bore = WIDGET_LIST[self.c_bore_type.currentIndex()](self.lam)
         self.w_bore.saveNeeded.connect(self.emit_save)
         # Refresh the GUI

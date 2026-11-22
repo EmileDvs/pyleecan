@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QFileDialog, QMessageBox, QMenu, QInputDialog
 
-from ....Functions_new.Load.import_class import import_class
+from ....Classes_new._import import import_class
 from ....Functions_new.load import load
 
 from ..ClassTreeWidget import ClassTreeWidget
@@ -102,7 +102,7 @@ class TreeEditContextMenu(QMenu):
         dialog = ClassTreeWidget(keys)
         if dialog.exec():
             cls_name = dialog.getSelectedClass()
-            new_obj = import_class("pyleecan.Classes", cls_name, "")()
+            new_obj = import_class(cls_name, "")()
             return new_obj
 
     def newObject(self):

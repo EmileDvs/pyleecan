@@ -145,6 +145,24 @@ _LEGEND_COLORS_AT_CALL = '''        Legend to display for the surface
     BAR_COLOR = color_dict["BAR_COLOR"]
 '''
 
+GUI_LEGACY_FIXES = {
+    # The Qt Designer modules build the line edits with their parent as only
+    # positional argument (FloatEdit(self.g_x)): it was taken as the unit,
+    # the line edit created without parent but kept by its layout. Owned by
+    # both Python and Qt (and holding its parent through self.unit), it is
+    # deleted twice when the garbage collector frees the dialog: access
+    # violation (DBore, DMatSetup...). The unit is always set afterwards
+    # (lf_x.unit = "m"), never given positionally.
+    "Tools/FloatEdit.py": (
+        LegacyFix(
+            old='    def __init__(self, unit="", *args, **kwargs):\n',
+            new='    def __init__(self, *args, unit="", **kwargs):\n',
+        ),
+    ),
+}
+"""Fixes of the legacy GUI modules, applied by the GUI generator:
+{module path in GUI (posix): fixes}"""
+
 LEGACY_FIXES = {
     # Step 8 group 9 (decision 2026-11-21): Machine.get_color_legend_from_surface
     # reads the plot colors when called, not when the module is imported (the

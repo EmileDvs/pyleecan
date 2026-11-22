@@ -72,7 +72,8 @@ class PHoleMUD(Ui_PHoleMUD, QWidget):
         # Remove previous widget:
         for wid in self.w_mat_dict.values():
             self.g_mat_layout.removeWidget(wid)
-            wid.setParent(None)
+            wid.hide()  # Deleted by Qt (no garbage collection crash)
+            wid.deleteLater()
         self.w_mat_dict = dict()
         # Update Magnet materials
         magnet_dict = self.hole.magnet_dict

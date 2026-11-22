@@ -89,3 +89,89 @@ def test_redirect_dynamic_imports():
         'o = __import__(PACKAGE_NAME + ".GUI_other")\n'
     )
     assert redirect_dynamic_imports(result, "GUI_new", "GUI_pydantic").count("GUI_pydantic") == 2
+
+
+def test_retire_replaced_widgets():
+    from pyleecan.Generator.ClassGenerator.New.generate_gui_new import (
+        retire_replaced_widgets,
+    )
+
+    source = (
+        "def s_update(self):\n"
+        "    self.w_bore.setParent(None)\n"
+        "    self.w_bore = Page(self.lam)\n"
+        "    for wid in self.w_list:\n"
+        "        wid.setParent(None)\n"
+        "    self.w_other.setParent(self)\n"
+    )
+    result = retire_replaced_widgets(source)
+    assert (
+        "    self.w_bore.hide()  # Deleted by Qt (no garbage collection crash)\n"
+        "    self.w_bore.deleteLater()\n"
+        "    self.w_bore = Page(self.lam)\n"
+    ) in result
+    assert "        wid.hide()" in result and "        wid.deleteLater()\n" in result
+    assert "    self.w_other.setParent(self)\n" in result
+    assert retire_replaced_widgets(result) == result
+
+
+def test_redirect_class_loader():
+    from pyleecan.Generator.ClassGenerator.New.generate_gui_new import (
+        redirect_class_loader,
+    )
+
+    package = "pyleecan.GUI_new.Tools.WTreeEdit"
+    source = (
+        "from ....Functions.Load.import_class import import_class\n"
+        "\n"
+        "def f(name):\n"
+        '    a = import_class("pyleecan.Classes", name, "")()\n'
+        '    return import_class(PACKAGE_NAME + ".Classes", "Arc1")\n'
+    )
+    result = redirect_class_loader(source, package)
+    assert result == (
+        "from ....Classes_new._import import import_class\n"
+        "\n"
+        "def f(name):\n"
+        '    a = import_class(name, "")()\n'
+        '    return import_class("Arc1")\n'
+    )
+    assert redirect_class_loader(result, package) == result
+    # Unused import: redirected too
+    unused = "from ....Functions.Load.import_class import import_class\n"
+    assert "Classes_new._import" in redirect_class_loader(unused, package)
+    # Another package named: unchanged
+    other = unused + 'X = import_class("other.Classes", "X")\n'
+    assert redirect_class_loader(other, package) == other
+
+
+def test_gui_legacy_fixes_apply_to_legacy_gui():
+    import tokenize
+    from pathlib import Path
+
+    from pyleecan.definitions import MAIN_DIR
+    from pyleecan.Generator.ClassGenerator.New.legacy_fixes import (
+        GUI_LEGACY_FIXES,
+        apply_fixes,
+    )
+
+    for name, fixes in GUI_LEGACY_FIXES.items():
+        with tokenize.open(Path(MAIN_DIR, "GUI", name)) as file:
+            apply_fixes(file.read(), fixes, name)  # Raises if legacy changed
+
+
+def test_write_tree_applies_fixes(tmp_path):
+    import pytest
+
+    from pyleecan.Generator.ClassGenerator.New.generate_gui_new import _write_tree
+    from pyleecan.Generator.ClassGenerator.New.legacy_fixes import LegacyFix
+
+    source_dir = tmp_path / "GUI"
+    (source_dir / "Tools").mkdir(parents=True)
+    (source_dir / "Tools" / "Edit.py").write_text("def f(unit='', *args):\n    pass\n")
+    target_dir = tmp_path / "GUI_new"
+    fixes = {"Tools/Edit.py": (LegacyFix(old="unit='', *args", new="*args, unit=''"),)}
+    _write_tree(source_dir, target_dir, lambda source, package: source, fixes=fixes)
+    assert "def f(*args, unit='')" in (target_dir / "Tools" / "Edit.py").read_text()
+    with pytest.raises(FileNotFoundError):
+        _write_tree(source_dir, target_dir, lambda s, p: s, fixes={"Tools/No.py": ()})

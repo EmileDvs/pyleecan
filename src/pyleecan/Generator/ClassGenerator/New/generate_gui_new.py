@@ -137,6 +137,85 @@ def redirect_dynamic_imports(source, old, new, soft_name="pyleecan"):
     return source
 
 
+LEGACY_CLASS_LOADER = "pyleecan.Functions.Load.import_class"
+"""Module of the legacy class loader ``import_class(package, name, prop_name)``"""
+
+BACKEND_CLASS_LOADER = "pyleecan.Classes_new._import"
+"""Module of the class lookup of the backend ``import_class(name, prop_name)``
+(``Classes_pydantic._import`` in GUI_pydantic, by the import rewriting)"""
+
+
+def redirect_class_loader(source, package, soft_name="pyleecan"):
+    """Legacy class loader -> class lookup of the backend.
+
+    ``import_class("pyleecan.Classes", name, prop_name)`` (or ``PACKAGE_NAME +
+    ".Classes"``) becomes ``import_class(name, prop_name)`` imported from
+    ``Classes_new._import``: the class of the backend, not the legacy one.
+    The module is left unchanged when a call names another package.
+    """
+    if "import_class" not in source:
+        return source
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line))
+    loader_imports = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        and (node.module or node.level)
+        and _absolute(node, package) == LEGACY_CLASS_LOADER
+        and [(alias.name, alias.asname) for alias in node.names]
+        == [("import_class", None)]
+    ]
+    if not loader_imports:
+        return source
+
+    def is_classes(argument):
+        return (
+            isinstance(argument, ast.Constant)
+            and argument.value == f"{soft_name}.Classes"
+            or isinstance(argument, ast.BinOp)
+            and isinstance(argument.op, ast.Add)
+            and isinstance(argument.left, ast.Name)
+            and argument.left.id == "PACKAGE_NAME"
+            and isinstance(argument.right, ast.Constant)
+            and argument.right.value == ".Classes"
+        )
+
+    replacements = []
+    for node in ast.walk(tree):
+        if not (
+            isinstance(node, ast.Name)
+            and node.id == "import_class"
+            and isinstance(node.ctx, ast.Load)
+        ):
+            continue
+        call = next(
+            (
+                parent
+                for parent in ast.walk(tree)
+                if isinstance(parent, ast.Call) and parent.func is node
+            ),
+            None,
+        )
+        if (
+            call is None
+            or not 2 <= len(call.args) <= 3
+            or call.keywords
+            or not is_classes(call.args[0])
+        ):
+            return source  # Another use of the legacy loader: kept
+        start = offsets[call.args[0].lineno - 1] + call.args[0].col_offset
+        end = offsets[call.args[1].lineno - 1] + call.args[1].col_offset
+        replacements.append((start, end, ""))
+    redirect = {LEGACY_CLASS_LOADER: BACKEND_CLASS_LOADER}.get
+    for start, end, text in sorted(replacements, reverse=True):
+        source = source[:start] + text + source[end:]
+    return redirect_imports(source, package, redirect)
+
+
 def _parenthesized(text, column):
     """Multi-line ``from x import (a, b)`` of an unparsed import."""
     head, _, names = text.partition(" import ")
@@ -222,10 +301,12 @@ def modernize_gui_source(source, package, root, gen_dict):
     from .moved_functions import redirect_moved_modules
 
     source = redirect_moved_modules(source, package)
+    source = redirect_class_loader(source, package)
     source = redirect_imports(source, package, legacy_module_redirect(root))
     source = redirect_dynamic_imports(
         source, LEGACY_GUI_PACKAGE, GUI_PACKAGES["dataclass"]
     )
+    source = retire_replaced_widgets(source)
     return redirect_imports(
         source, package, package_redirect(LEGACY_GUI_PACKAGE, GUI_PACKAGES["dataclass"])
     )
@@ -282,8 +363,18 @@ if _NAME not in sys.modules:
 '''
 
 
-def _write_tree(source_dir, target_dir, convert):
-    """Copy a tree, converting the Python modules: convert(source, package)."""
+def _write_tree(source_dir, target_dir, convert, fixes=None):
+    """Copy a tree, converting the Python modules: convert(source, package).
+
+    ``fixes`` ({module path (posix): LegacyFix tuple}) are applied to the
+    sources before the conversion; each module listed must exist.
+    """
+    from .legacy_fixes import apply_fixes
+
+    fixes = fixes or {}
+    missing = [name for name in fixes if not (source_dir / name).is_file()]
+    if missing:
+        raise FileNotFoundError(f"Fixed GUI modules not found: {missing}")
     if target_dir.exists():
         shutil.rmtree(target_dir)
     written = 0
@@ -309,6 +400,10 @@ def _write_tree(source_dir, target_dir, convert):
             continue
         with tokenize.open(path) as source_file:
             source = source_file.read()
+        if relative.as_posix() in fixes:
+            source = apply_fixes(
+                source, fixes[relative.as_posix()], f"GUI/{relative.as_posix()}"
+            )
         package = ".".join(["pyleecan", target_dir.name, *relative.parts[:-1]])
         target.write_text(convert(source, package), encoding="utf-8")
         written += 1
@@ -336,6 +431,7 @@ def generate_gui(root=None, gen_dict=None):
 
     root = Path(root) if root is not None else Path(MAIN_DIR)
     gen_dict = gen_dict if gen_dict is not None else name_maps().gen_dict
+    from .legacy_fixes import GUI_LEGACY_FIXES
     from .moved_functions import GUI_TARGET, MOVED_MODULES
 
     dataclass_dir = root / GUI_PACKAGES["dataclass"]
@@ -347,6 +443,7 @@ def generate_gui(root=None, gen_dict=None):
             lambda source, package: modernize_gui_source(
                 source, package, root, gen_dict
             ),
+            fixes=GUI_LEGACY_FIXES,
         )
     }
     # Functions moved to the GUI (moved_functions.MOVED_MODULES)
@@ -368,6 +465,55 @@ def generate_gui(root=None, gen_dict=None):
         dataclass_dir, pydantic_dir, pydantic_gui_source
     )
     return written
+
+
+def retire_replaced_widgets(source):
+    """Replace ``widget.setParent(None)`` by ``widget.hide(); widget.deleteLater()``.
+
+    The dialogs replace a page by a new one after ``setParent(None)``: the old
+    page, owned by Python without parent, is freed by the garbage collector at
+    any later time (inside another Qt call), which crashes PySide6 (access
+    violation during garbage collection, the legacy GUI as well; issue #750).
+    Hidden and kept with its parent, Qt deletes it in the event loop.
+    """
+    if "setParent(None)" not in source:
+        return source
+    tree = ast.parse(source)
+    lines = source.splitlines(keepends=True)
+    offsets = [0]
+    for line in lines:
+        offsets.append(offsets[-1] + len(line))
+    replacements = []
+    for node in ast.walk(tree):
+        if not (
+            isinstance(node, ast.Expr)
+            and isinstance(node.value, ast.Call)
+            and isinstance(node.value.func, ast.Attribute)
+            and node.value.func.attr == "setParent"
+            and len(node.value.args) == 1
+            and isinstance(node.value.args[0], ast.Constant)
+            and node.value.args[0].value is None
+            and not node.value.keywords
+        ):
+            continue
+        widget = node.value.func.value
+        start = offsets[widget.lineno - 1] + widget.col_offset
+        end = offsets[widget.end_lineno - 1] + widget.end_col_offset
+        name = source[start:end]
+        indent = " " * node.col_offset
+        statement_start = offsets[node.lineno - 1] + node.col_offset
+        statement_end = offsets[node.end_lineno - 1] + node.end_col_offset
+        replacements.append(
+            (
+                statement_start,
+                statement_end,
+                f"{name}.hide()  # Deleted by Qt (no garbage collection crash)\n"
+                f"{indent}{name}.deleteLater()",
+            )
+        )
+    for start, end, text in sorted(replacements, reverse=True):
+        source = source[:start] + text + source[end:]
+    return source
 
 
 if __name__ == "__main__":

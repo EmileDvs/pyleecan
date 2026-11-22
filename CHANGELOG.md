@@ -279,6 +279,18 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   produced an invalid attribute docstring (SyntaxError).
 - **Functions generator**: a legacy function module deleted upstream no
   longer stays in `Functions_new` and `Functions_pydantic`.
+- **GUI crashes on garbage collection** (access violation; the legacy GUI
+  as well) in `GUI_new` / `GUI_pydantic`: `FloatEdit(parent)` took the
+  parent as its unit, so the line edit was built without parent and deleted
+  twice when its dialog was collected (`unit` is now keyword-only,
+  `GUI_LEGACY_FIXES`); the replaced pages are hidden and deleted by Qt
+  instead of being orphaned with `setParent(None)`. The GUI tests run in
+  one process on both backends.
+- **GUI generator**: the class created from the tree editor
+  (`TreeEditContextMenu`) is a class of the backend, not a legacy class.
+- **Functions generator**: no legacy import left in `Load/import_class`
+  (`InitUnKnowClassError`) and `femm_pyleecan` (`NotImplementedYetError`):
+  the shared errors.
 - **User config file written only when it changes, atomically**
   (`Functions/init_environment.save_config_dict`). `import pyleecan.definitions`
   rewrote `main_config_dict.json` at each import: processes importing pyleecan

@@ -115,7 +115,8 @@ class SWindCond(Ui_SWindCond, QWidget):
             Index of the selected conductor type
         """
         # Regenerate the pages with the new values
-        self.w_cond.setParent(None)
+        self.w_cond.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_cond.deleteLater()
         self.w_cond = wid_list[index](self.obj, self.material_dict)
         self.w_cond.saveNeeded.connect(self.emit_save)
 

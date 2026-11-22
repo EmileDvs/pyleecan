@@ -100,7 +100,8 @@ class WHoleMag(Ui_WHoleMag, QWidget):
         )
 
         # Regenerate the pages with the new values
-        self.w_hole.setParent(None)
+        self.w_hole.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_hole.deleteLater()
         self.w_hole = self.wid_list[self.c_hole_type.currentIndex()](
             hole=self.obj.hole[index], material_dict=self.material_dict
         )
@@ -146,7 +147,8 @@ class WHoleMag(Ui_WHoleMag, QWidget):
             self.obj.hole[self.index] = self.previous_hole[self.type_list[c_index]]
 
         # Update the GUI
-        self.w_hole.setParent(None)
+        self.w_hole.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_hole.deleteLater()
         self.w_hole = self.wid_list[c_index](
             hole=self.obj.hole[self.index], material_dict=self.material_dict
         )

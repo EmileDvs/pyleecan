@@ -663,15 +663,20 @@ generated first so that the same passes rewrite its calls.
       `Functions_new/Load/import_class.py`: `InitUnKnowClassError`).
 - [ ] `-1` conventions and the GUI-specific legacy idioms (no pass yet):
       review on the generated code with the GUI tests.
-- [ ] `import_class("pyleecan.Classes", ...)` in
-      `Tools/WTreeEdit/TreeEditContextMenu.py` still names the legacy
-      package: the backend class lookup instead.
-- [ ] Legacy imports left in the new code (functions generator):
-      `Functions_new/Load/import_class.py` imports
-      `Classes._check.InitUnKnowClassError` (the Load modules are
-      deferred by the shared-error pass; `classes_common.errors` has it),
-      and 9 modules import `NotImplementedYetError` from the legacy
-      `Methods` package.
+- [x] (2026-11-22) `import_class("pyleecan.Classes", ...)` in
+      `Tools/WTreeEdit/TreeEditContextMenu.py` named the legacy package:
+      `redirect_class_loader` (GUI generator) calls the class lookup of the
+      backend (`Classes_new._import.import_class(name, prop_name)`,
+      `Classes_pydantic._import` in GUI_pydantic); the unused loader import
+      of `SWSlot` redirected as well.
+- [x] (2026-11-22) Legacy imports left in the new code (functions
+      generator): `Load/import_class.py` imports `InitUnKnowClassError` from
+      `classes_common.errors` (`LEGACY_CLASS_REPLACEMENTS`),
+      `femm_pyleecan` imports `NotImplementedYetError` from the shared
+      errors (the method errors redirected in the functions as in the GUI).
+      Left: `Functions_new/load_switch.py` (`from ..Classes.import_all import
+      *`), a legacy registry imported by no new module: to drop from the
+      functions generator (the class lookup replaces it).
 - [ ] `Gen_*` classes generated from `ClassInfo` (min, max, unit,
       description) instead of the CSV files (`Generator/gui_generator.py`),
       so that they survive the Phase 2 removal of the CSV files.
@@ -684,8 +689,9 @@ generated first so that the same passes rewrite its calls.
       alias `backend_gui` in `Tests/New/_backend.py`, the `pyleecan.GUI` and
       `pyleecan.GUI_new` imports and `mock.patch` strings rewritten by the
       test generator). Run per file (the folder in one process crashes Qt
-      on garbage collection, before and after), 6 files in parallel (noisy:
-      the files share `Tests/Results`): dataclass 321 -> 453 passed, 222 ->
+      on garbage collection, before and after; fixed 2026-11-22, see
+      below), 6 files in parallel (noisy: the files share
+      `Tests/Results`): dataclass 321 -> 453 passed, 222 ->
       122 errors, 25 -> 31 failed; pydantic 339 -> 440 passed, 244 -> 136
       errors, 24 -> 33 failed (legacy GUI -> backend GUI).
 - [x] (2026-11-21) `test_DMachineSetup`, `test_SMachineType`, `test_SPreview`:
@@ -717,14 +723,31 @@ generated first so that the same passes rewrite its calls.
       `Circle.get_patches`). Side effects: `Tests/New/Methods` + `Functions`
       + `Plot`: 42 failures fixed per backend (`test_notch`,
       `test_get_polar_eq_SCIM`, the lamination plots), no new failure.
+- [x] (2026-11-22) Qt crashes on garbage collection (access violation;
+      the legacy GUI as well): `Tests/New/GUI` now runs in one process on
+      both backends. Two causes, found with a `gc.collect()` after each
+      test: (1) `FloatEdit(parent)` in the Qt Designer modules took the
+      parent as its `unit` argument, so the line edit was built without
+      parent, owned by Python and by its layout, and deleted twice when the
+      dialog was collected (`GUI_LEGACY_FIXES` in `legacy_fixes.py`:
+      `unit` keyword-only, applied by the GUI generator); (2) the pages
+      replaced after `setParent(None)` were orphans freed by the collector
+      inside a later Qt call (`retire_replaced_widgets`: `hide()` +
+      `deleteLater()`). Result (whole folder, one process, clean
+      `Tests/New/Results/GUI`): dataclass 652 passed, 1 failed, 3 skipped;
+      pydantic 653 passed, 3 skipped. The regressions listed before
+      (`test_PHoleM53`, `test_PHoleM52R`, `test_SMHoleMag`, `test_PHoleMUD`,
+      `test_PMSlot17`, `NewMachine`) all pass.
+- [ ] `test_SMachineType.test_set_p_syrm` (and the other `test_set_p_*`)
+      is flaky, legacy as well: the random `p` (3 to 99) equal to the
+      default winding `p` (3) emits no `valueChanged`, `Zh` is not set.
+      Fix in the test generator (a value different from the current one).
+- [ ] The GUI tests that write in `Tests/New/Results/GUI` fail when a
+      previous run left its files (`assert not isfile(...)`,
+      `FileExistsError`: `SPreview`, `SSimu`, `SWinding`, `NewMachine`): a
+      clean result folder per run (fixture or runner).
 - [ ] Left: the stator winding flux plot of `SSimu` with one time step
-      (`plot_2D_Data` label None, as legacy); a GUI test runner without
-      shared result folders; a full per-file GUI run on both backends.
-- [ ] GUI test regressions to investigate (run alone):
-      `test_PHoleM53` / `test_PHoleM52R` (`S53_W5CheckError` / check errors
-      on the default hole), `test_SMHoleMag` (22 failed), `test_PHoleMUD`,
-      `test_PMSlot17`, the `NewMachine` scenarios (error instead of
-      failure); and a runner without shared result folders.
+      (`plot_2D_Data` label None, as legacy).
 - [ ] The GUI calls of the logger chain (Step 9) and of the moved functions
       (Step 6, Step 8) rewritten by the same passes.
 - [x] Decided (2026-11-21): both `GUI_new` (dataclass + dacite) and

@@ -69,7 +69,8 @@ class WImport(Ui_WImport, QWidget):
         """
         data = getattr(self.obj, self.param_name)
         # Regenerate the pages with the new values
-        self.w_import.setParent(None)
+        self.w_import.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_import.deleteLater()
         self.w_import = self.widget_list[self.c_type_import.currentIndex()](
             data=data,
             plot_title=self.plot_title if self.plot_title else self.verbose_name,

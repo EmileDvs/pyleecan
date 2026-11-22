@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
-from ...classes_common.errors import FEMMError
+from ...classes_common.errors import FEMMError, NotImplementedYetError
 from ...classes_common.logger_context import get_logger
 from ...Classes_new.geometry.arc_1 import Arc1
 from ...Classes_new.geometry.circle import Circle
@@ -19,7 +19,6 @@ from ...Classes_new.machine.lam_hole_ns import LamHoleNS
 from ...Classes_new.machine.lam_slot_m import LamSlotM
 from ...Classes_new.machine.lamination import Lamination
 from ...Classes_new.machine.machine_sipmsm import MachineSIPMSM
-from ...Methods import NotImplementedYetError
 from ..utils.labels import (
     AIRGAP_LAB,
     AS_BL_LAB,

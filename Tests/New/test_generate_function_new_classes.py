@@ -811,3 +811,35 @@ def test_copied_dqh_checker_accepts_experimental_data():
 
     data = DataTime(axes=[Data1D(name="time"), Data1D(name="phase")])
     assert _check_data(data) is None
+
+
+def test_rewrite_loader_error_to_shared_error(tmp_path):
+    class_dir = tmp_path / "Classes_new"
+    class_dir.mkdir()
+    source = (
+        "from ...Classes._check import InitUnKnowClassError\n"
+        "def f():\n"
+        "    raise InitUnKnowClassError('x')\n"
+    )
+    result, issues = _rewrite_source(
+        source, Path("import_class.py"), Path("Load") / "import_class.py", class_dir
+    )
+    assert "Classes._check" not in result
+    assert "classes_common.errors import InitUnKnowClassError" in result
+    assert issues == []
+    ast.parse(result)
+
+
+def test_redirect_method_errors_of_functions():
+    from pyleecan.Generator.ClassGenerator.New.modernize import (
+        _redirect_shared_error_imports,
+        shared_error_names,
+    )
+
+    source = "from ...Methods import NotImplementedYetError\n"
+    result = _redirect_shared_error_imports(
+        source, "pyleecan.Functions.FEMM", method_error_names=shared_error_names()
+    )
+    assert "Methods" not in result
+    # Placeholder module of the shared errors (classes_common.errors)
+    assert "Classes_new._error import NotImplementedYetError" in result

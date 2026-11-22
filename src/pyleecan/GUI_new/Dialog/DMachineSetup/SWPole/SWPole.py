@@ -164,7 +164,8 @@ class SWPole(Ui_SWPole, QWidget):
         """
 
         # Regenerate the pages with the new values
-        self.w_slot.setParent(None)
+        self.w_slot.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_slot.deleteLater()
         self.w_slot = WIDGET_LIST[self.c_slot_type.currentIndex()](self.obj)
         self.w_slot.saveNeeded.connect(self.emit_save)
         # Refresh the GUI

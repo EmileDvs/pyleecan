@@ -95,7 +95,8 @@ class SBar(Gen_SBar, QWidget):
         if type(conductor) in INIT_INDEX:
             index = INIT_INDEX.index(type(conductor))
             self.g_bar.layout().removeWidget(self.w_bar)
-            self.w_bar.setParent(None)
+            self.w_bar.hide()  # Deleted by Qt (no garbage collection crash)
+            self.w_bar.deleteLater()
             self.w_bar = WIDGET_LIST[index](self.machine, self.material_dict)
             self.g_bar.layout().addWidget(self.w_bar)
             self.c_bar_type.setCurrentIndex(index)
@@ -165,7 +166,8 @@ class SBar(Gen_SBar, QWidget):
         try:
             # Remove the old widget
             self.g_bar.layout().removeWidget(self.w_bar)
-            self.w_bar.setParent(None)
+            self.w_bar.hide()  # Deleted by Qt (no garbage collection crash)
+            self.w_bar.deleteLater()
 
             # Initialize the new widget and conductor
             self.machine.rotor.winding.conductor = INIT_INDEX[index]()

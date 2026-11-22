@@ -12,7 +12,7 @@ from .....Classes_new.slot.slot_ud import SlotUD
 from .....Classes_new.slot.slot_ud_2 import SlotUD2
 from .....Classes_new.slot.slot_w_11 import SlotW11
 from .....Classes_new.slot.slot_w_11_2 import SlotW11_2
-from .....Functions_new.Load.import_class import import_class
+from .....Classes_new._import import import_class
 from .....GUI_new.Tools.set_plot_gui_icon import set_plot_gui_icon
 from .....GUI_new.Dialog.DMachineSetup.SWSlot.Gen_SWSlot import Gen_SWSlot
 from .....GUI_new.Dialog.DMachineSetup.SWSlot.PWSlot10.PWSlot10 import PWSlot10
@@ -242,7 +242,8 @@ class SWSlot(Gen_SWSlot, QWidget):
         """
 
         # Regenerate the pages with the new values
-        self.w_slot.setParent(None)
+        self.w_slot.hide()  # Deleted by Qt (no garbage collection crash)
+        self.w_slot.deleteLater()
         self.w_slot = WIDGET_LIST[self.c_slot_type.currentIndex()](
             self.obj, material_dict=self.material_dict
         )
