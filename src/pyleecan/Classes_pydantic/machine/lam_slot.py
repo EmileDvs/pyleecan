@@ -287,7 +287,7 @@ class LamSlot(Lamination):
             return close_list
 
     # Inlined from Methods.Machine.LamSlot.get_Zs
-    def get_Zs(self) -> float:
+    def get_Zs(self) -> int:
         """Return the number of Slot of the Lamination
 
         Parameters
@@ -297,7 +297,7 @@ class LamSlot(Lamination):
 
         Returns
         -------
-        Zs : float
+        Zs : int
             Number of Slot
         """
 

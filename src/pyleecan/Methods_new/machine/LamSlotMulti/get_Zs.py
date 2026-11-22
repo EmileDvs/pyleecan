@@ -6,7 +6,7 @@ from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 
 
-def get_Zs(self) -> float:
+def get_Zs(self) -> int:
     """Return the number of Slot of the Lamination
 
     Parameters
@@ -16,7 +16,7 @@ def get_Zs(self) -> float:
 
     Returns
     -------
-    Zs : float
+    Zs : int
         Number of Slot
 
     """

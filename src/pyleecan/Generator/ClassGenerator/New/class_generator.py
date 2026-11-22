@@ -4777,7 +4777,20 @@ TYPE_CHECKING_MEMBERS = {
         "classes": ("Lamination",),
         "lines": ("stator: Lamination", "rotor: Lamination"),
     },
-    "Lamination": {"classes": ("Winding",), "lines": ("winding: Winding",)},
+    "Lamination": {
+        "classes": ("Hole", "Slot", "Winding"),
+        "lines": (
+            "winding: Winding",
+            # LamSlot and daughters (FEMM drawing, Step 15)
+            "slot: Slot",
+            f"def get_Zs({_ANY_ARGS}) -> int: ...",
+            # LamSlotM, LamH (LamHole...)
+            f"def get_magnet_number({_ANY_ARGS}) -> int: ...",
+            f"def get_hole_list({_ANY_ARGS}) -> list[Hole]: ...",
+        ),
+    },
+    "Conductor": {"lines": (f"def comp_surface_active({_ANY_ARGS}) -> float: ...",)},
+    "Notch": {"lines": (f"def get_key_Ox_radius({_ANY_ARGS}) -> float | None: ...",)},
     "Data": {
         "lines": (
             f"def get_values({_ANY_ARGS}) -> np.ndarray: ...",

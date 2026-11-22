@@ -153,12 +153,25 @@ class Lamination(LegacyClass):
     if TYPE_CHECKING:
         # Members of the daughter classes, for the type checkers
         # (not defined at runtime: no field, no method)
+        from ..slot.hole import Hole
+        from ..slot.slot import Slot
         from .winding import Winding
 
         @property
         def winding(self) -> Winding: ...
         @winding.setter
         def winding(self, value: Winding) -> None: ...
+
+        @property
+        def slot(self) -> Slot: ...
+        @slot.setter
+        def slot(self, value: Slot) -> None: ...
+
+        def get_Zs(self, *args: Any, **kwargs: Any) -> int: ...
+
+        def get_magnet_number(self, *args: Any, **kwargs: Any) -> int: ...
+
+        def get_hole_list(self, *args: Any, **kwargs: Any) -> list[Hole]: ...
 
     # Inlined from Methods.Machine.Lamination.build_geometry
     def build_geometry(

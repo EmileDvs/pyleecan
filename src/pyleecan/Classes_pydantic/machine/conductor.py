@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/Conductor.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 from pydantic import Field
@@ -34,6 +34,12 @@ class Conductor(LegacyModel):
 
     _package: ClassVar[str] = "Machine"
     """Name of the package of the legacy class module"""
+
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+
+        def comp_surface_active(self, *args: Any, **kwargs: Any) -> float: ...
 
     # Inlined from Methods.Machine.Conductor.check
     def check(self):

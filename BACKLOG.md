@@ -1356,6 +1356,20 @@ generator; this step finishes by hand what the generator could not do.
         is already in dB). Test: `Tests/New/test_function_legacy_fixes.py`.
   - Left in the plots (matplotlib typing): `Axes3D` members on `ax: Axes`
     (3D plots), `Axes.get_figure()` typed optional, `set_xlim` with lists.
+  - [x] (2026-11-22) `femm_pyleecan` (hand-written) 68 -> 7: `get_mesh_param`
+        `label_dict: dict` (it said `str`), `lam_mesh_dict = {}` without
+        lamination (was None); the drawing path takes the `OutElec`
+        currents as `DataND | None` (passed through, not used to draw; the
+        update functions keep `ndarray`), `lam_dxf: DXFImport | None`,
+        `comp_FEMM_Phi_wind -> np.ndarray`, `_get_radius_boundary` on
+        `Lamination`; wedge without material: `FieldMissingError`.
+        `TYPE_CHECKING_MEMBERS`: `Lamination` (`slot`, `get_Zs`,
+        `get_magnet_number`, `get_hole_list`), `Conductor`
+        (`comp_surface_active`), `Notch` (`get_key_Ox_radius`);
+        `LamSlot` / `LamSlotMulti.get_Zs -> int` (was `float`). Left: the
+        legacy `is_eddies = 0` given as bool, `Lamination(init_dict=...)`
+        (`init_dict` item of Step 14), `comp_periodicity_geo` typed
+        `int | None`. `ty` on `Functions_new` 357 -> 265.
 - [ ] Mark the class-independent functions for `src/pyleecan/utils/` (Phase 2).
 
 ## Step 16: parent links, second pass

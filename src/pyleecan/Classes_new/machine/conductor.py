@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
@@ -39,6 +39,12 @@ class Conductor(LegacyClass):
 
     _package: ClassVar[str] = "Machine"
     """Name of the package of the legacy class module"""
+
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+
+        def comp_surface_active(self, *args: Any, **kwargs: Any) -> float: ...
 
     # Inlined from Methods.Machine.Conductor.check
     def check(self):

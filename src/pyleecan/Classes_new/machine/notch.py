@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from ...classes_common.errors import ParentMissingError
 from .._legacy_class import LegacyClass
@@ -27,6 +27,12 @@ class Notch(LegacyClass):
 
     _package: ClassVar[str] = "Machine"
     """Name of the package of the legacy class module"""
+
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+
+        def get_key_Ox_radius(self, *args: Any, **kwargs: Any) -> float | None: ...
 
     # Inlined from Methods.Machine.Notch.get_label
     def get_label(self, is_add_id: bool = True) -> str:

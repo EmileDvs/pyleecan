@@ -79,6 +79,7 @@ if TYPE_CHECKING:
     from ...Classes_pydantic.machine.machine import Machine
     from ...Classes_pydantic.machine.magnet import Magnet
     from ...Classes_pydantic.output.output import Output
+    from ...Classes_pydantic.scidatatool.data_nd import DataND
     from ...Classes_pydantic.simulation.dxf_import import DXFImport
 
 
@@ -475,7 +476,7 @@ class femm_pyleecan:
         L2: float,
         sym: int,
         is_rescale_flux: bool = True,
-    ) -> float:
+    ) -> np.ndarray:
         """Compute the total flux linkage of the winding phases
 
         Parameters
@@ -672,7 +673,7 @@ class femm_pyleecan:
         label_dict: dict,
         is_eddies: bool,
         lam: LamSlotWind,
-        I: np.ndarray,
+        I: DataND | None,
         is_mmf: bool,
         j_t0: int,
         materials: list,
@@ -693,7 +694,7 @@ class femm_pyleecan:
             1 to calculate eddy currents
         lam : LamSlotWind
             Lamination to set the winding
-        I : ndarray
+        I : DataND
             Lamination currents waveforms
         is_mmf :
             1 to compute the lamination magnetomotive
@@ -819,8 +820,8 @@ class femm_pyleecan:
         machine: Machine,
         surf_list: list,
         FEMM_dict: dict,
-        Is: np.ndarray,
-        Ir: np.ndarray,
+        Is: DataND | None,
+        Ir: DataND | None,
         is_mmfs: bool,
         is_mmfr: bool,
         type_BH_stator: int,
@@ -840,9 +841,9 @@ class femm_pyleecan:
             List of surface of the machine
         FEMM_dict : dict
             dictionary containing the main parameters of FEMM
-        Is : ndarray
+        Is : DataND
             Stator current matrix [A]
-        Ir : ndarray
+        Ir : DataND
             Rotor current matrix [A]
         is_mmfs : bool
             1 to compute the stator magnetomotive force/stator magnetic field
@@ -1344,10 +1345,10 @@ class femm_pyleecan:
         sym: int,
         FEMM_dict: dict,
         transform_list: list,
-        lam_dxf: DXFImport,
+        lam_dxf: DXFImport | None,
         BC_dict: dict,
-        Is: np.ndarray,
-        Ir: np.ndarray,
+        Is: DataND | None,
+        Ir: DataND | None,
         is_mmfs: bool = True,
         is_mmfr: bool = True,
         type_BH_stator: int = 0,
@@ -1374,9 +1375,9 @@ class femm_pyleecan:
             To use a dxf version of the Lamination instead of build_geometry
         BC_dict : dict
             Boundary condition dict ([line label] = BC name)
-        Is : ndarray
+        Is : DataND
             Stator current matrix [A]
-        Ir : ndarray
+        Ir : DataND
             Rotor current matrix [A]
         is_mmfs : bool
             1 to compute the stator magnetomotive force/stator magnetic field
@@ -1501,8 +1502,8 @@ class femm_pyleecan:
         surf_list: list,
         FEMM_dict: dict,
         BC_dict: dict,
-        Is: np.ndarray,
-        Ir: np.ndarray,
+        Is: DataND | None,
+        Ir: DataND | None,
         is_mmfs: bool,
         is_mmfr: bool,
         type_BH_stator: int,
@@ -1525,9 +1526,9 @@ class femm_pyleecan:
             dictionary containing the main parameters of FEMM
         BC_dict : dict
             Boundary condition dict ([line label] = BC name)
-        Is : ndarray
+        Is : DataND
             Stator current matrix [A]
-        Ir : ndarray
+        Ir : DataND
             Rotor current matrix [A]
         is_mmfs : bool
             1 to compute the stator magnetomotive force/stator magnetic field
@@ -1679,12 +1680,12 @@ class femm_pyleecan:
         return BC_dict[line_label]
 
     @staticmethod
-    def get_mesh_param(label_dict: str, FEMM_dict: dict) -> dict:
+    def get_mesh_param(label_dict: dict, FEMM_dict: dict) -> dict:
         """Returns main mesh parameters corresponding to a surface label
         Parameters
         ----------
-        label_dict : str
-            Decoded label of the surface to assign
+        label_dict : dict
+            Decoded label of the surface to assign (decode_label)
         FEMM_dict : dict
             dictionary containing the main parameters of FEMM
         Returns
@@ -1701,7 +1702,8 @@ class femm_pyleecan:
         if label_dict["lam_label"] != "None":
             lam_mesh_dict = FEMM_dict["mesh"][label_dict["lam_label"]]
         else:
-            lam_mesh_dict = None
+            # No lamination: its mesh sizes are not available (KeyError)
+            lam_mesh_dict = {}
         maxelementsize = FEMM_dict["mesh"]["maxelementsize"]
         meshsize_air = FEMM_dict["mesh"]["meshsize_air"]
 
@@ -1938,7 +1940,7 @@ class femm_pyleecan:
 
     @staticmethod
     def _get_radius_boundary(
-        sym: int, lam_int: LamSlot, lam_ext: LamSlot
+        sym: int, lam_int: Lamination, lam_ext: Lamination
     ) -> tuple[float, float]:
         """Returns the radii of the laminations on the x axis
 
