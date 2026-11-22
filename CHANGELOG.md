@@ -259,6 +259,20 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   argument a `TypeError`, an unknown attribute an `AttributeError`. The
   target base `PyleecanModel` keeps the pydantic `ValidationError`.
 
+### Changed
+
+- **Containers passed explicitly** (Steps 16-17): the methods reading their
+  container take it as an optional argument through the class families
+  (`lam` for the slot, hole, winding, bore and notch helpers, `machine` for
+  the lamination ones, `output` / `simu` for the simulation parts); the
+  library, the GUI (hole pages, material selector, DXF dialogs) and the
+  tests pass it. `Tests/New` is hand-maintained (frozen) and treats a parent
+  fallback of its own calls as an error.
+- `Winding.export_to_csv` / `WindingUD.import_from_csv`: `file_path` is
+  required (its `None` default always failed).
+- The dataclass `model_validate` caches the type hints of each class (twice
+  as fast on a machine).
+
 ### Deprecated
 
 - Reading a container through the parent links: a method called without
@@ -273,6 +287,17 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 
 ### Fixed
 
+- **Legacy bugs found after the freeze (Steps 14 and 18)**, fixed in
+  `Methods_new` / `Functions_new` / `Classes_pydantic` (they raised when
+  run): `LamSlotMultiWind.plot_mmf_unit` and `SlotUD2.build_geometry_active`
+  passed arguments their base method does not take; `ForceTensor` used
+  `np.float`; `Output.print_memory` named an unimported class;
+  `LUT.set_default_simulation` called a missing method;
+  `EEC_SCIM._comp_Lm_FEA` used an older `InputCurrent` API; `draw_FEMM`
+  labelled the laminations of its edited machine copy with the original
+  machine; the pydantic `model_dump` of a machine with a `None` object field
+  failed; `None` periodicities of the input axes; the loss axes and mesh
+  solution checked (`FieldMissingError`).
 - **Legacy method bugs fixed in `Methods_new`** (`legacy_fixes.py`, applied
   by the method generator; the legacy `Methods` are unchanged). Only lines
   that always raised an exception change:
@@ -387,15 +412,15 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 7. Integrate the open legacy pull requests (#748, #749, #751, #752) | done |
 | 8. Refactor the remaining `Functions` modules (generator) | done |
 | 9. Logger chain (generator) | done |
-| 10. GUI, first pass (generator) | in progress |
-| 11. Parent links, first pass (generator) | in progress |
-| 12. Freeze | to do |
-| 13. Custom property setters and getters (frozen) | to do |
-| 14. Type hints, second pass (frozen) | to do |
+| 10. GUI, first pass (generator) | done |
+| 11. Parent links, first pass (generator) | done |
+| 12. Freeze | done |
+| 13. Custom property setters and getters (frozen) | done |
+| 14. Type hints, second pass (frozen) | in progress |
 | 15. Utility functions (frozen) | to do |
-| 16. Parent links, second pass (frozen) | to do |
-| 17. GUI, second pass (frozen) | to do |
-| 18. Backend comparison (benchmark) | to do |
+| 16. Parent links, second pass (frozen) | done (2 points to decide) |
+| 17. GUI, second pass (frozen) | in progress (parent reads done; validation design left) |
+| 18. Backend comparison (benchmark) | in progress (micro benchmarks, machine files) |
 
 Legacy class tests (`Tests/New/Classes`), with each backend: 2855 passed,
 1 failed (`test_copy_out`: custom property setter of `ParamExplorer`, planned
