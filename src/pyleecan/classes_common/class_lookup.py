@@ -42,6 +42,15 @@ NORMALIZATION_CLASS_NAMES = {
 """Legacy name -> name of the renamed classes (still accepted when loading)"""
 
 
+SUPPORT_CLASSES = {
+    # The FEMM handlers kept in OutMagFEMM.handler_list are saved with the
+    # legacy support class name
+    "_FEMMHandler": ("pyleecan.classes_common.femm_handler", "_FEMMHandler"),
+}
+"""Serialized support class names ("__class__") -> (module, class), shared
+by the class packages (not generated classes)"""
+
+
 def class_module_name(class_name):
     """Convert a class name to its module name, keeping acronyms together.
 
@@ -194,6 +203,9 @@ class ClassLookup:
         InitUnKnowClassError
             If there is no Pyleecan class with this name
         """
+        if class_name in SUPPORT_CLASSES:  # Shared by the class packages
+            module_name, name = SUPPORT_CLASSES[class_name]
+            return getattr(import_module(module_name), name)
         cls = self.find_class(class_name)
         if cls is None and class_name in NORMALIZATION_CLASS_NAMES:
             cls = self.find_class(NORMALIZATION_CLASS_NAMES[class_name])

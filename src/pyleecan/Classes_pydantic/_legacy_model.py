@@ -31,6 +31,7 @@ Legacy behaviours:
   ``from_dict``, ``copy``, ``compare`` and ``_set_None``.
 """
 
+from contextvars import ContextVar
 from copy import deepcopy
 from inspect import getattr_static
 from types import FunctionType, UnionType
@@ -44,9 +45,18 @@ from ..classes_common.equality import compare_values
 from ..classes_common.errors import CheckMaxError, CheckMinError, CheckTypeError
 from ..classes_common.functions import SourceFunction, is_function_annotation
 from ..classes_common.legacy_dump import is_complex_annotation, legacy_field
-from ..classes_common.legacy_values import annotation_classes, legacy_object_value
+from ..classes_common.legacy_values import (
+    annotation_classes,
+    holds_pyleecan_objects,
+    legacy_object_value,
+    load_serialized_items,
+)
 from ..classes_common.parent_containers import with_parent
 from ._pyleecan_model import PyleecanModel
+
+
+_DEFERRED_SETTERS = ContextVar("_DEFERRED_SETTERS", default=frozenset())
+"""Custom-setter fields of the object being built, set after its validation"""
 
 
 class LegacyModel(PyleecanModel):
@@ -83,19 +93,40 @@ class LegacyModel(PyleecanModel):
                     f"init_dict must be a dict, not {type(init_dict).__name__}"
                 )
             data.update(type(self)._loaded_values(init_dict))
+        # The values of the custom setters go through them after the
+        # validation of the other fields (e.g. setter="simu.input", converted
+        # by ParamExplorer._set_setter), as the legacy constructor
+        deferred = {
+            name: data.pop(name) for name in self._custom_setters if name in data
+        }
+        token = _DEFERRED_SETTERS.set(frozenset(deferred))
         try:
             super().__init__(**data)
+            for name, value in deferred.items():
+                setattr(self, name, value)  # Through the custom setter
         except ValidationError as error:
             raise legacy_check_error(type(self), error, constructor=True) from error
+        finally:
+            _DEFERRED_SETTERS.reset(token)
 
     def model_post_init(self, context):
         for name in type(self).model_fields:
             self._store_with_parent(name)
+        deferred = _DEFERRED_SETTERS.get()
         for name in self._custom_setters:  # Called by the legacy constructor
-            call_custom_setter(self, name, getattr(self, name))
+            if name not in deferred:  # Called by __init__ with the given value
+                call_custom_setter(self, name, getattr(self, name))
 
     def _store_with_parent(self, name):
-        """Lists and dicts of a field set the parent of the objects added later."""
+        """Lists and dicts of a field set the parent of the objects added later.
+
+        Not for a field holding no Pyleecan object (``list[Any]``): as the
+        legacy setters, its items keep their own parent.
+        """
+        from ..classes_common.legacy_values import holds_pyleecan_objects
+
+        if not holds_pyleecan_objects(type(self).model_fields[name].annotation):
+            return
         stored = with_parent(self.__dict__.get(name), self)
         if stored is not self.__dict__.get(name):
             self.__dict__[name] = stored  # Validated value, wrapped (ParentList...)
@@ -170,6 +201,25 @@ class LegacyModel(PyleecanModel):
                 value = SourceFunction(value)
             except ValueError:
                 pass  # Rejected by the pydantic validation
+        elif (
+            isinstance(value, list)
+            and any(item is None for item in value)
+            and holds_pyleecan_objects(field_info.annotation)
+        ):
+            # Legacy: a list of objects accepts None items (e.g.
+            # XOutput.output_list = [None] * nb_simu, filled by VarSimu.run);
+            # the other items are validated one by one
+            return [
+                None if item is None else handler([item])[0] for item in value
+            ]
+        elif isinstance(value, (list, tuple, dict)) and not holds_pyleecan_objects(
+            field_info.annotation
+        ):
+            from ._import import import_class
+
+            # Dumps of objects in a list of plain values: the objects (as
+            # the dataclass layer)
+            value = load_serialized_items(value, import_class)
         else:
             from ._import import import_class
 

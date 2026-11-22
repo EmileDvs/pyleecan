@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...classes_common.check import check_var
 from ...classes_common.logger_context import get_logger
 from ...Functions_pydantic.load import load_init_dict
 from .._import import import_class
@@ -31,6 +30,8 @@ class VarLoad(VarSimu):
     OP_matrix: OPMatrix | None = None
     """Operating point matrix object"""
 
+    _custom_setters: ClassVar[tuple[str, ...]] = ("OP_matrix",)
+    """Fields set by a legacy custom setter (_set_<field>)"""
     _package: ClassVar[str] = "Simulation"
     """Name of the package of the legacy class module"""
 
@@ -70,11 +71,8 @@ class VarLoad(VarSimu):
             from .op_matrix import OPMatrix as OP_matrix
 
             value = OP_matrix()
-        check_var("OP_matrix", value, "OPMatrix")
-        self._OP_matrix = value
-
-        if self._OP_matrix is not None:
-            self._OP_matrix.parent = self
+        # Validated and stored by the field (the legacy layer sets the parent)
+        self.OP_matrix = value
 
     # Inlined from Methods.Simulation.VarLoad.get_OP_array
     def get_OP_array(self, *arg_list) -> np.ndarray:

@@ -1,48 +1,20 @@
-from ....classes_common.errors import CheckTypeError
-from ntpath import basename
-from ....Functions_new.utils.path_tools import abs_file_path
-from ....definitions import PYTHON_DEFAULT_ENCODING
-
-# Import numpy to be usable in the fct/lambda
-import numpy as np
-from numpy import sqrt, pi
+from ....classes_common.functions import legacy_function_source
 
 
 def _set_keeper(self, value) -> None:
-    """setter of keeper"""
-    # Create the function if setter is defined as a string (e.g. simu.machine.rotor.slot.W0)
-    if isinstance(value, str) and value[:4] == "simu":
-        value_split = value.split(".")
-        value = (
-            "lambda simu, val: setattr(eval('"
-            + ".".join(value_split[:-1])
-            + "'), '"
-            + value_split[-1]
-            + "', val"
-            + ")"
-        )
-    if value is None:
-        self._keeper_str = None
-        self._keeper_func = None
-    elif isinstance(value, str) and "lambda" in value:
-        self._keeper_str = value
-        self._keeper_func = eval(value)
-    elif isinstance(value, str) and value[-3:] == ".py":
-        if "<" in value and ">" in value:
-            # path like "<PARAM_DIR>/keeper_rotor.py"
-            self._keeper_str = value
-            value = abs_file_path(value)
-        else:  # Direct path
-            self._keeper_str = value
-        f = open(value, "r", encoding=PYTHON_DEFAULT_ENCODING)
-        exec(f.read(), globals())
-        f.close()
-        self._keeper_func = eval(basename(value[:-3]))
-    elif callable(value):
-        self._keeper_str = None
-        self._keeper_func = value
-    else:
-        raise CheckTypeError(
-            "For property keeper Expected function or str (path to python file or lambda), got: "
-            + str(type(value))
-        )
+    """setter of keeper
+
+    A callable, the source of a lambda (numpy usable as np, sqrt and pi), the
+    path to a python file (with a wildcard: "<PARAM_DIR>/keeper.py") or a path
+    in the simulation ("simu.machine.rotor.slot.W0", as the legacy setter).
+    The field keeps the function with its source (SourceFunction, saved by
+    its source).
+
+    Parameters
+    ----------
+    self : DataKeeper
+        A DataKeeper object
+    value : callable or str or None
+        Function extracting the kept data from an output
+    """
+    self.keeper = legacy_function_source(value, "setter")

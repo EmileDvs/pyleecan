@@ -213,7 +213,7 @@ class FrameBar(Frame):
         # Sbar = n_bar * w_bar * h_gap
 
         # Calculation for circular shape
-        r_out = self._get_Rint()
+        r_out = self.Rint  # Legacy: the property getter _get_Rint()
         h_gap = self.comp_height_gap()
         r_in = r_out - h_gap
         rot_angle = 2 * np.arcsin(self.wbar / 2.0 / r_in)

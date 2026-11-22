@@ -1,44 +1,19 @@
-from ....classes_common.errors import CheckTypeError
-from ntpath import basename
-from ....Functions_new.utils.path_tools import abs_file_path
-from ....definitions import PYTHON_DEFAULT_ENCODING
+from ....classes_common.functions import legacy_function_source
 
 
 def _set_setter(self, value) -> None:
-    """setter of setter"""
-    # Create the function if setter is defined as a string (e.g. simu.machine.rotor.slot.W0)
-    if isinstance(value, str) and value[:4] == "simu":
-        value_split = value.split(".")
-        value = (
-            "lambda simu, val: setattr(eval('"
-            + ".".join(value_split[:-1])
-            + "'), '"
-            + value_split[-1]
-            + "', val"
-            + ")"
-        )
-    if value is None:
-        self._setter_str = None
-        self._setter_func = None
-    elif isinstance(value, str) and "lambda" in value:
-        self._setter_str = value
-        self._setter_func = eval(value)
-    elif isinstance(value, str) and value[-3:] == ".py":
-        if "<" in value and ">" in value:
-            # path like "<PARAM_DIR>/setter_rotor.py"
-            self._setter_str = value
-            value = abs_file_path(value)
-        else:  # Direct path
-            self._setter_str = value
-        f = open(value, "r", encoding=PYTHON_DEFAULT_ENCODING)
-        exec(f.read(), globals())
-        f.close()
-        self._setter_func = eval(basename(value[:-3]))
-    elif callable(value):
-        self._setter_str = None
-        self._setter_func = value
-    else:
-        raise CheckTypeError(
-            "For property setter Expected function or str (path to python file or lambda), got: "
-            + str(type(value))
-        )
+    """setter of setter
+
+    A callable, the source of a lambda, the path to a python file (with a
+    wildcard: "<PARAM_DIR>/setter_rotor.py") or a path in the simulation
+    ("simu.machine.rotor.slot.W0": the lambda setting it). The field keeps the
+    function with its source (SourceFunction, saved by its source).
+
+    Parameters
+    ----------
+    self : ParamExplorer
+        A ParamExplorer object
+    value : callable or str or None
+        Setter of the parameter
+    """
+    self.setter = legacy_function_source(value, "setter")

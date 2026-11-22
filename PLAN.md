@@ -189,7 +189,7 @@ Methods receive their context explicitly instead, for example
 | 10. GUI, first pass | generator | done (GUI tests pass on both backends; open points in the backlog) |
 | 11. Parent links, first pass | generator | done (passes 1-6; 198 methods left for Step 16) |
 | 12. Freeze | gate | done (2026-11-22; shim kept) |
-| 13. Custom property setters and getters | frozen | to do |
+| 13. Custom property setters and getters | frozen | done (2026-11-22) |
 | 14. Type hints, second pass | frozen | to do |
 | 15. Utility functions | frozen | to do |
 | 16. Parent links, second pass | frozen | to do |
@@ -373,11 +373,11 @@ can be automated is left to the frozen steps.
       `GUI_pydantic` import rewriting).
 - [x] Update CLAUDE.md (where code is now written by hand).
 
-### Step 13: custom property setters and getters (frozen)
+### Step 13: custom property setters and getters (frozen) — done
 
-- [ ] Explicit conversions for the unwired custom setters and getters
+- [x] Explicit conversions for the unwired custom setters and getters
       (`ParamExplorer`, `DataKeeper`, `VarLoad`, `DataND`, `Data`,
-      `RuleComplex`); `test_copy_out` passes.
+      `RuleComplex`); `test_copy_out` passes (2026-11-22, both backends).
 
 ### Step 14: type hints, second pass (frozen)
 

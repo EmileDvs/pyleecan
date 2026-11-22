@@ -244,6 +244,14 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 - **Unknown attributes rejected by the dataclass classes (legacy layer)**:
   as the legacy classes, `obj.unknown = 1` raises an `AttributeError` (it
   was accepted silently); an existing method can still be replaced.
+- **Custom property setters of the simulation classes** (legacy layers):
+  `ParamExplorer.setter` / `getter` and `DataKeeper.keeper` accept the
+  legacy forms (callable, lambda source, path to a python file with a
+  `<..._DIR>` wildcard, path in the simulation `"simu.machine..."`), saved
+  by their source; `VarLoad.OP_matrix` accepts a matrix, a file or a dump.
+- **Parent links only on the fields holding objects** (legacy layers), as
+  the legacy setters: the objects of a plain list field
+  (`ParamExplorerSet.value`) keep their own parent.
 - **Validation errors of the pydantic classes (legacy layer)**: a rejected
   value raises the legacy errors (`CheckMinError`, `CheckMaxError`,
   `CheckTypeError`, same message as the legacy and dataclass classes; the

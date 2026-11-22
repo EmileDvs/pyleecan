@@ -1090,14 +1090,40 @@ no property). The `slot` ones (`SlotW11`/`SlotW11_2`/`SlotW23._set_W3`,
 `SlotUD2._set_split_active_surf_dict`) are wired by the legacy layers
 (`WIRED_SETTER_SUBPACKAGES`, `classes_common/custom_setters.py`).
 
-- [ ] `ParamExplorer._set_getter` / `_set_setter` (e.g. `setter="simu.input"`;
-      `Tests/New/Classes/test_copy.py::test_copy_out` fails): two storages
-      (`_setter_str` / `_setter_func`) and custom getters.
-- [ ] `DataKeeper._set_keeper`: same pattern (str, lambda or path to a callable).
-- [ ] `VarLoad._set_OP_matrix`.
+- [x] (2026-11-22) `ParamExplorer._set_getter` / `_set_setter`,
+      `DataKeeper._set_keeper`, `VarLoad._set_OP_matrix`: wired by the legacy
+      layers (`WIRED_SETTER_SUBPACKAGES` += `simulation`) and rewritten by
+      hand in `Methods_new`: the function setters only expand the `"simu.x.y"`
+      path into the lambda source (`classes_common.functions.
+      legacy_function_source`) and assign the field, which keeps a
+      `SourceFunction` (lambda source, or a `.py` path, `"<PARAM_DIR>/..."`
+      wildcards resolved by `resolve_wildcard_path`; `np`, `sqrt`, `pi` usable
+      in the lambdas); `_set_OP_matrix` assigns the field (the layer validates
+      it and sets the parent). The pydantic constructor validates the other
+      fields first and then assigns the custom-setter fields through their
+      setter (as the legacy constructor).
+      Found on the way (`test_copy_out` and `test_VarParamSweep_fct_save_load`
+      now pass on both backends):
+      - The parent links are set only on the fields holding Pyleecan objects
+        (`holds_pyleecan_objects`): `ParamExplorerSet.value` (`list[Any]`)
+        set the parent of its `InputCurrent` items (TypeError of the parent
+        rules), the legacy setters did not.
+      - The dumps in a field of plain values (`list[Any]`, e.g.
+        `OutMagFEMM.handler_list`) are loaded on both backends
+        (`load_serialized_items` in `LegacyModel`); the class lookup loads the
+        support class `_FEMMHandler` (`class_lookup.SUPPORT_CLASSES`).
+      - `LegacyModel`: a list of objects accepts None items, as the legacy
+        setters (`XOutput.output_list = [None] * nb_simu`).
+      Tests: `Tests/New/Classes/test_custom_setters.py`.
 - [x] `DataND._set_values`, `Data._set_normalizations` (2026-11-21): wired by
       the legacy layers (`WIRED_SETTER_SUBPACKAGES`: `scidatatool`).
-- [ ] `DataND._get_field` / `_get_freqs` (custom getters).
+- [x] (2026-11-22, checked) `DataND._get_field` / `_get_freqs`,
+      `Winding._get_phase_id`: not property getters, private methods called
+      explicitly; nothing to do.
+- [x] (2026-11-22) `FrameBar.comp_surface_bar` called the legacy property
+      getter `self._get_Rint()` (AttributeError): `self.Rint` (hand edit).
+      `Tests/New/Methods` per package now passes on both backends as legacy
+      (1580 passed).
 - [x] `RuleComplex._set_fct_name` (2026-11-21): no longer needed, the
       conversions read the rule functions from the static registry when
       they run (`legacy_fixes`: `convert_to_P`, `convert_to_other`).

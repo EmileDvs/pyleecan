@@ -1,43 +1,19 @@
-from ....classes_common.errors import CheckTypeError
-from ntpath import basename
-from ....Functions_new.utils.path_tools import abs_file_path
-from ....definitions import PYTHON_DEFAULT_ENCODING
+from ....classes_common.functions import legacy_function_source
 
 
 def _set_getter(self, value) -> None:
-    """setter of getter"""
-    # Create the function if getter is defined as a string (e.g. simu.machine.rotor.slot.W0)
-    if isinstance(value, str) and value[:4] == "simu":
-        value_split = value.split(".")
-        value = (
-            "lambda simu: getattr(eval('"
-            + ".".join(value_split[:-1])
-            + "'), '"
-            + value_split[-1]
-            + "')"
-        )
-    if value is None:
-        self._getter_str = None
-        self._getter_func = None
-    elif isinstance(value, str) and "lambda" in value:
-        self._getter_str = value
-        self._getter_func = eval(value)
-    elif isinstance(value, str) and value[-3:] == ".py":
-        if "<" in value and ">" in value:
-            # path like "<PARAM_DIR>/setter_rotor.py"
-            self._getter_str = value
-            value = abs_file_path(value)
-        else:  # Direct path
-            self._getter_str = value
-        f = open(value, "r", encoding=PYTHON_DEFAULT_ENCODING)
-        exec(f.read(), globals())
-        f.close()
-        self._getter_func = eval(basename(value[:-3]))
-    elif callable(value):
-        self._getter_str = None
-        self._getter_func = value
-    else:
-        raise CheckTypeError(
-            "For property getter Expected function or str (path to python file or lambda), got: "
-            + str(type(value))
-        )
+    """setter of getter
+
+    A callable, the source of a lambda, the path to a python file (with a
+    wildcard: "<PARAM_DIR>/getter_rotor.py") or a path in the simulation
+    ("simu.machine.rotor.slot.W0": the lambda reading it). The field keeps the
+    function with its source (SourceFunction, saved by its source).
+
+    Parameters
+    ----------
+    self : ParamExplorer
+        A ParamExplorer object
+    value : callable or str or None
+        Getter of the parameter
+    """
+    self.getter = legacy_function_source(value, "getter")

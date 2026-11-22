@@ -47,6 +47,27 @@ def _lookup():
 
 
 @cache
+def _plain_value_fields(cls):
+    """Fields holding no Pyleecan object (e.g. ``list[Any]``): no parent link.
+
+    As the legacy setters, which set the parent of the objects of the fields
+    typed with a Pyleecan class only. A field whose annotation cannot be
+    resolved keeps the parent links.
+    """
+    from ..classes_common.legacy_values import holds_pyleecan_objects
+
+    try:
+        hints = get_type_hints(cls)
+    except Exception:  # e.g. an optional dependency not installed
+        return frozenset()
+    return frozenset(
+        name
+        for name, hint in hints.items()
+        if name in cls.__dataclass_fields__ and not holds_pyleecan_objects(hint)
+    )
+
+
+@cache
 def _complex_field_names(cls):
     """Names of the fields declared as complex (or complex | None)."""
     return frozenset(
@@ -122,7 +143,7 @@ class LegacyClass(PyleecanClass, metaclass=_LegacyConstructor):
             if class_name is not None:
                 value = self._construct_default_class(class_name)
         super().__setattr__(name, value)  # Validated by PyleecanClass
-        if is_field:
+        if is_field and name not in _plain_value_fields(type(self)):
             stored = with_parent(object.__getattribute__(self, name), self)
             object.__setattr__(self, name, stored)  # Lists, dicts: ParentList...
             self._set_parent_links(stored, self)
@@ -201,8 +222,9 @@ class LegacyClass(PyleecanClass, metaclass=_LegacyConstructor):
     # Parent links
     def _set_child_parents(self):
         """Set parent links on nested Pyleecan objects."""
+        plain = _plain_value_fields(type(self))
         for field_info in fields(self):
-            if field_info.name != "parent":
+            if field_info.name != "parent" and field_info.name not in plain:
                 self._set_parent_links(getattr(self, field_info.name), self)
 
     def _assert_parent_type(self, parent):

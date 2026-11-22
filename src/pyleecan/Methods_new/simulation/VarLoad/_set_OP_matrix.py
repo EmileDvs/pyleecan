@@ -1,7 +1,6 @@
 from ....classes_common.logger_context import get_logger
 from ....Functions_new.load import load_init_dict
 from ....Classes_new._import import import_class
-from ....classes_common.check import check_var
 import numpy as np
 
 
@@ -38,8 +37,5 @@ def _set_OP_matrix(self, value) -> None:
         # Local import: avoids circular imports
         from ....Classes_new.simulation.op_matrix import OPMatrix as OP_matrix
         value = OP_matrix()
-    check_var("OP_matrix", value, "OPMatrix")
-    self._OP_matrix = value
-
-    if self._OP_matrix is not None:
-        self._OP_matrix.parent = self
+    # Validated and stored by the field (the legacy layer sets the parent)
+    self.OP_matrix = value

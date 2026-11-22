@@ -267,7 +267,7 @@ def apply_import_styles(source):
     return _apply_os_import_style(source)
 
 
-WIRED_SETTER_SUBPACKAGES = frozenset({"slot", "scidatatool"})
+WIRED_SETTER_SUBPACKAGES = frozenset({"slot", "scidatatool", "simulation"})
 """Sub-packages whose legacy custom property setters (``_set_<field>`` method
 modules) are called by the legacy layers when the field is assigned, package by
 package (PLAN.md "Custom property setters and getters")"""

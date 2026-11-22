@@ -46,6 +46,13 @@ class _FEMMHandler(object):
     def copy(self):
         return _FEMMHandler(HandleToFEMM=None)
 
+    @classmethod
+    def from_dict(cls, data, **kwargs):
+        """Handler of a dump (as_dict): not connected to FEMM"""
+        return cls(init_dict={key: value for key, value in data.items() if key != "__class__"})
+
+    model_validate = from_dict
+
     def compare(self, other, ignore_list=list(), name="self", is_add_value=False):
         """Compare two objects and return list of differences"""
         return list()
