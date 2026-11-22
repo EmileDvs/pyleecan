@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 import matplotlib.pyplot as plt
 from ....Classes_new.optimization.opti_objective import OptiObjective
@@ -5,6 +6,7 @@ from . import _get_symbol_data_
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_new.optimization.opti_solver import OptiSolver
     from matplotlib.axes import Axes
 
 
@@ -19,6 +21,7 @@ def plot_pareto(
     grid: bool = False,
     is_show_fig: bool = True,
     save_path: str | None = None,
+    solver: OptiSolver | None = None,
 ):
     """Plot the pareto front for 2 objective functions
 
@@ -37,9 +40,12 @@ def plot_pareto(
         True to show figure after plot
     save_path : str
         full path of the png file where the figure is saved if save_path is not None
+    solver : OptiSolver, optional
+        Solver holding the XOutput (default: the parent)
     """
 
-    return self.parent.plot_pareto(
+    solver = container_or_parent(self, solver, "solver")
+    return solver.plot_pareto(
         x_symbol,
         y_symbol,
         c_symbol,

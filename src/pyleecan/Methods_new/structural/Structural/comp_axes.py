@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.errors import FieldMissingError
 from ...simulation.Input import InputError
 from ....Classes_new.output.out_struct import OutStruct
@@ -7,24 +8,25 @@ if TYPE_CHECKING:
     from ....Classes_new.output.output import Output
 
 
-def comp_axes(self, output: Output) -> None:
+def comp_axes(self, output: Output | None = None) -> None:
     """Compute axes used for the Structural module
 
     Parameters
     ----------
     self : Structural
         a Structural object
-    output : Output
-        an Output object (to update)
+    output : Output, optional
+        an Output object to update (default: the parent of the simulation)
     """
-    if self.parent is None:
+    output = container_or_parent(self, output, "output", depth=2)
+    if output is None and container_or_parent(self, None, "simu") is None:
         raise InputError("The Structural object must be in a Simulation object to run")
-    if self.parent.parent is None:
+    if output is None:
         raise InputError("The Simulation object must be in an Output object to run")
 
     # setup OutStruct if None
-    if self.parent.parent.struct is None:
-        self.parent.parent.struct = OutStruct()
+    if output.struct is None:
+        output.struct = OutStruct()
 
     output.struct.axes_dict = dict()
 

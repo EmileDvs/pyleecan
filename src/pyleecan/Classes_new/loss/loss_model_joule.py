@@ -35,7 +35,9 @@ class LossModelJoule(LossModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelJoule.comp_coeff
-    def comp_coeff(self, T_op: float = 20, T_ref: float = 20) -> float:
+    def comp_coeff(
+        self, T_op: float = 20, T_ref: float = 20, output: Output | None = None
+    ) -> float:
         """Compute the skin effect factor on resistance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
         All parameters are defined p.270 / 271
         In this method, the returned value is the one from the reference divided by the frequency, as the effect of
@@ -49,6 +51,8 @@ class LossModelJoule(LossModel):
             Conductor operational temperature [degC]
         T_ref: float
             Conductor reference temperature [degC]
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         ----------
@@ -56,21 +60,20 @@ class LossModelJoule(LossModel):
             skin effect coeff for resistance at given frequency and temperature
         """
 
-        if self.parent.parent.parent is None:
+        output = container_or_parent(self, output, "output", depth=3)
+        if output is None:
             raise Exception("Cannot calculate core losses if simu is not in an Output")
-        else:
-            output = self.parent.parent.parent
 
         machine = output.simu.machine
         lamination = machine.stator if "stator" in self.group else machine.rotor
         conductor = lamination.winding.conductor
 
         # Compute slot average width
-        slot = conductor.parent.parent.slot
+        slot = lamination.slot
         b = slot.comp_width()
 
         # Get number of turns in series per coil
-        zt = conductor.parent.Ntcoil
+        zt = lamination.winding.Ntcoil
 
         # check if wires are round or rectangular
         is_round_wire = conductor.is_round_wire()
@@ -145,12 +148,10 @@ class LossModelJoule(LossModel):
         loss = container_or_parent(self, loss, "loss")
         output = container_or_parent(self, output, "output", depth=3)
 
-        if output is None and self.parent.parent is None:
+        if output is None:
             raise ValueError(
                 "Cannot calculate joule losses if simu is not in an Output"
             )
-        else:
-            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate joule losses if OutElec is None")
@@ -171,6 +172,7 @@ class LossModelJoule(LossModel):
         if self.type_skin_effect > 0:
             # Account for skin effect
             k = self.comp_coeff(
+                output=output,
                 T_op=T_op,
             )
         else:
@@ -236,12 +238,10 @@ class LossModelJoule(LossModel):
         loss = container_or_parent(self, loss, "loss")
         output = container_or_parent(self, output, "output", depth=3)
 
-        if output is None and self.parent.parent is None:
+        if output is None:
             raise ValueError(
                 "Cannot calculate joule losses if simu is not in an Output"
             )
-        else:
-            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate joule losses if OutElec is None")
@@ -266,6 +266,7 @@ class LossModelJoule(LossModel):
         if self.type_skin_effect > 0:
             # Account for skin effect
             k = self.comp_coeff(
+                output=output,
                 T_op=T_op,
             )
         else:
@@ -275,7 +276,7 @@ class LossModelJoule(LossModel):
         per_a = meshsol.mesh.sym
 
         # Get stator currents over frequency and phases
-        Is = output.elec.get_Is()
+        Is = output.elec.get_Is(output=output)
         result = Is.get_along("freqs", "phase[]")
         Is_val = result[Is.symbol]
         freqs = result["freqs"]
@@ -342,12 +343,10 @@ class LossModelJoule(LossModel):
         loss = container_or_parent(self, loss, "loss")
         output = container_or_parent(self, output, "output", depth=3)
 
-        if output is None and self.parent.parent is None:
+        if output is None:
             raise ValueError(
                 "Cannot calculate Joule losses if simu is not in an Output"
             )
-        else:
-            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate Joule losses if OutElec is None")
@@ -367,6 +366,7 @@ class LossModelJoule(LossModel):
         if self.type_skin_effect > 0:
             # Account for skin effect
             k = self.comp_coeff(
+                output=output,
                 T_op=T_op,
             )
         else:
@@ -376,7 +376,7 @@ class LossModelJoule(LossModel):
         per_a = meshsol.mesh.sym
 
         # Get stator currents over time and phases
-        Is = output.elec.get_Is()
+        Is = output.elec.get_Is(output=output)
         if is_mirror:
             # Rebuild mesh quantities on time steps given by axes_dict
             time_val = axes_dict["time"].get_values(is_smallestperiod=True)

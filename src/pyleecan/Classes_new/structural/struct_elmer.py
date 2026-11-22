@@ -52,6 +52,7 @@ from .structural import Structural
 
 if TYPE_CHECKING:
     from ..output.output import Output
+    from ..simulation.simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -102,8 +103,17 @@ class StructElmer(Structural):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.StructElmer.gen_case
-    def gen_case(self, output, mesh_names, *, ID_LAM=1, ID_MAG=2) -> None:
-        """Setup the Elmer Case file (.sif file)"""
+    def gen_case(
+        self, output, mesh_names, simu: Simulation | None = None, *, ID_LAM=1, ID_MAG=2
+    ) -> None:
+        """Setup the Elmer Case file (.sif file)
+
+        Parameters
+        ----------
+        simu : Simulation, optional
+            Simulation holding the model (default: the parent)
+        """
+        simu = container_or_parent(self, simu, "simu")
 
         # get the save path
         save_dir = self.get_path_save_fea(output)
@@ -363,7 +373,7 @@ class StructElmer(Structural):
         boundaries.append(bnd)
 
         # --- body force ----------------------------------------------------------------- #
-        omega = 2 * np.pi * self.parent.input.OP.N0 / 60
+        omega = 2 * np.pi * simu.input.OP.N0 / 60
         bfs = []
 
         ID_list = [
@@ -991,7 +1001,7 @@ class StructElmer(Structural):
             Output of the simulation (default: the parent of the simulation)
         """
         output = container_or_parent(self, output, "output", depth=2)
-        if output is None and self.parent is None:
+        if output is None and container_or_parent(self, None, "simu") is None:
             raise InputError(
                 "ERROR: The Structural object must be in a Simulation object to run"
             )

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
+from ...classes_common.parents import container_or_parent
 from ...Functions_pydantic.SciDataTool.derivation_integration import integrate
 from ...Functions_pydantic.utils.labels import STATOR_LAB
 from .._legacy_model import LegacyModel
@@ -24,6 +25,7 @@ if TYPE_CHECKING:
     from ..mesh.solution import Solution
     from ..scidatatool.data import Data
     from ..scidatatool.data_1d import Data1D
+    from .output import Output
 
 
 class OutMag(LegacyModel):
@@ -187,18 +189,21 @@ class OutMag(LegacyModel):
             self.internal.clean(clean_level)
 
     # Inlined from Methods.Output.OutMag.comp_emf
-    def comp_emf(self) -> None:
+    def comp_emf(self, output: Output | None = None) -> None:
         """Compute the Electromotive force [V]
 
         Parameters
         ----------
         self : OutMag
             an OutMag object
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         """
+        output = container_or_parent(self, output, "output")
 
         # Get stator winding flux
-        Phi_wind = self.Phi_wind[self.parent.simu.machine.stator.get_label()]
+        Phi_wind = self.Phi_wind[output.simu.machine.stator.get_label()]
 
         EMF = Phi_wind.get_data_along("time=derivate", "phase")
 
@@ -209,33 +214,38 @@ class OutMag(LegacyModel):
         self.emf = EMF
 
     # Inlined from Methods.Output.OutMag.comp_power
-    def comp_power(self) -> None:
+    def comp_power(self, output: Output | None = None) -> None:
         """Compute the Ouput power
 
         Parameters
         ----------
         self : OutMag
             An OutMag object
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
         """
+        output = container_or_parent(self, output, "output")
 
         if (
-            self.parent is not None
-            and self.parent.elec is not None
-            and self.parent.elec.OP.get_N0() is not None
+            output is not None
+            and output.elec is not None
+            and output.elec.OP.get_N0() is not None
             and self.Tem_av is not None
         ):
-            self.Pem_av = 2 * np.pi * self.parent.elec.OP.get_N0() / 60 * self.Tem_av
+            self.Pem_av = 2 * np.pi * output.elec.OP.get_N0() / 60 * self.Tem_av
         else:
             self.Pem_av = None
 
     # Inlined from Methods.Output.OutMag.comp_torque_MT
-    def comp_torque_MT(self) -> np.ndarray:
+    def comp_torque_MT(self, output: Output | None = None) -> np.ndarray:
         """Compute the rotor electromagnetic torque from Maxwell Stress Tensor.
 
         Parameters
         ----------
         self : OutMag
             an OutMag object
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         Returns
         -------
@@ -243,6 +253,7 @@ class OutMag(LegacyModel):
             Rotor electromagnetic torque per slice [N]
 
         """
+        output = container_or_parent(self, output, "output")
         Tem_slice = None
         B = self.B
 
@@ -251,7 +262,7 @@ class OutMag(LegacyModel):
             and "radial" in B.components.keys()
             and "tangential" in B.components.keys()
         ):
-            machine = self.parent.simu.machine
+            machine = output.simu.machine
 
             # Load airgap Maxwell Stress Tensor
             Brphiz = B.get_rphiz_along(
@@ -489,7 +500,9 @@ class OutMag(LegacyModel):
         )
 
     # Inlined from Methods.Output.OutMag.store
-    def store(self, out_dict: dict, axes_dict: dict[str, Data]) -> None:
+    def store(
+        self, out_dict: dict, axes_dict: dict[str, Data], output: Output | None = None
+    ) -> None:
         """Store the standard outputs of Magnetics that are temporarily in out_dict as arrays into OutMag as Data object
 
         Parameters
@@ -500,8 +513,11 @@ class OutMag(LegacyModel):
             Dict containing all magnetic quantities that have been calculated in comp_flux_airgap
         axes_dict: {Data}
             Dict of axes used for magnetic calculation
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         """
+        output = container_or_parent(self, output, "output")
 
         # Store axes dict
         self.axes_dict = axes_dict
@@ -569,9 +585,9 @@ class OutMag(LegacyModel):
         if (
             "Tem" in out_dict
             or (
-                self.parent is not None
-                and self.parent.simu is not None
-                and self.parent.simu.machine is not None
+                output is not None
+                and output.simu is not None
+                and output.simu.machine is not None
                 and self.B is not None
                 and "radial" in self.B.components.keys()
                 and "tangential" in self.B.components.keys()
@@ -581,7 +597,7 @@ class OutMag(LegacyModel):
             if "Tem" in out_dict:
                 Tem_slice = out_dict.pop("Tem")
             else:
-                Tem_slice = self.comp_torque_MT()
+                Tem_slice = self.comp_torque_MT(output=output)
 
             # Store electromagnetic torque per slice (in Newton)
             self.Tem_slice = DataTime(
@@ -615,14 +631,14 @@ class OutMag(LegacyModel):
         # Store list of winding flux linkage, stator winding fluxlinkage
         # and calculate electromotive force
         if "Phi_wind" in out_dict:
-            machine = self.parent.simu.machine
+            machine = output.simu.machine
             self.Phi_wind_slice = {}
             self.Phi_wind = {}
             for key, phi_wind in out_dict["Phi_wind"].items():
                 # Store stator winding flux
                 lam = machine.get_lam_by_label(key)
 
-                Phase = self.parent.elec.axes_dict["phase_" + key]
+                Phase = output.elec.axes_dict["phase_" + key]
                 prefix = "Stator" if lam.is_stator else "Rotor"
 
                 # Store winding flux linkage per phase and per slice (in Weber per meter)

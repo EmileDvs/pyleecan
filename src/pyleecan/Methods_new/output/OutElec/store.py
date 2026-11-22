@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
@@ -6,9 +7,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.normalization import Normalization
+    from ....Classes_new.output.output import Output
 
 
-def store(self, out_dict: dict) -> None:
+def store(self, out_dict: dict, output: Output | None = None) -> None:
     """Store the standard outputs of Electrical that are temporarily in out_dict as arrays into OutElec as Data object
 
     Parameters
@@ -17,10 +19,12 @@ def store(self, out_dict: dict) -> None:
         the OutElec object to update
     out_dict : dict
         Dict containing all electrical quantities that have been calculated in EEC
+    output : Output, optional
+        Output of the simulation holding the object (default: the parent)
 
     """
+    output = container_or_parent(self, output, "output")
 
-    output = self.parent
     machine = output.simu.machine
 
     # Store Id, Iq, Ud, Uq in OP
@@ -30,7 +34,7 @@ def store(self, out_dict: dict) -> None:
     self.Pj_losses = out_dict["Pj_losses"]
     self.Tem_av = out_dict["Tem_av"]
     self.Pem_av = out_dict["Pem_av"]
-    self.get_Jrms()
+    self.get_Jrms(output=output)
 
     if "Ir" in out_dict and self.OP.get_slip() != 0:
         # Calculate rotor currents for each bar
@@ -97,7 +101,7 @@ def store(self, out_dict: dict) -> None:
 
         # Merge Spectrums
         # Get fundamental current spectrum
-        Is = self.get_Is(is_freq=True)
+        Is = self.get_Is(is_freq=True, output=output)
         Is_fund = Is.get_along("freqs=" + str(self.OP.felec), "phase")[Is.symbol]
         # Get PWM frequency vector
         freqs = Is_PWM.axes[0].get_values()

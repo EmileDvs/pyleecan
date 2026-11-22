@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.logger_context import get_logger
 import numpy as np
 
@@ -6,15 +7,18 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data_pattern import DataPattern
+    from ....Classes_new.simulation.simulation import Simulation
 
 
-def get_slice_model(self) -> DataPattern:
+def get_slice_model(self, simu: Simulation | None = None) -> DataPattern:
     """Compute the slice axis required in any Magnetics module
 
     Parameters
     ----------
     self : SliceModel
         a SliceModel object
+    simu : Simulation, optional
+        Simulation holding the model (default: the parent)
 
     Returns
     -------
@@ -22,9 +26,10 @@ def get_slice_model(self) -> DataPattern:
         Slice axis
 
     """
+    simu = container_or_parent(self, simu, "simu")
 
     if self.Slice_enforced is None:
-        machine = self.parent.machine
+        machine = simu.machine
 
         # Rotor length
         L = machine.rotor.L1

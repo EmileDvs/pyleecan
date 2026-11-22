@@ -42,8 +42,6 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool, loss: Loss
 
     if output is None:
         raise ValueError("Cannot calculate core losses if simu is not in an Output")
-    else:
-        pass
 
     machine = output.simu.machine
 

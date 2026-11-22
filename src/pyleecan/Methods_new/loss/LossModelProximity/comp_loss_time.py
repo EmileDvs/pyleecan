@@ -50,7 +50,7 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool, loss: Loss
 
     # Compute the Proximity loss coefficient (if not enforced)
     if self.k_p is None:
-        self.comp_coeff()
+        self.comp_coeff(loss=loss, simu=output.simu)
     k_p = self.k_p
 
     # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated

@@ -22,7 +22,7 @@ def run(self, output: Output | None = None) -> None:
         Output of the simulation (default: the parent of the simulation)
     """
     output = container_or_parent(self, output, "output", depth=2)
-    if output is None and self.parent is None:
+    if output is None and container_or_parent(self, None, "simu") is None:
         raise InputError("The Electrical object must be in a Simulation object to run")
     if output is None:
         raise InputError("The Simulation object must be in an Output object to run")
@@ -160,7 +160,7 @@ def run(self, output: Output | None = None) -> None:
         )
 
     # Calculate slot current density
-    output.elec.get_Jrms()
+    output.elec.get_Jrms(output=output)
 
     # Calculate linear current density along airgap
     Irms = np.sqrt(output.elec.OP.Id_ref**2 + output.elec.OP.Iq_ref**2)

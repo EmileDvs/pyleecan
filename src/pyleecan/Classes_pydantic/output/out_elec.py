@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
+from ...classes_common.parents import container_or_parent
 from .._legacy_model import LegacyModel
 from ..electrical.eec import EEC
 from ..import_data.import_gen_pwm import ImportGenPWM
@@ -21,6 +22,7 @@ if TYPE_CHECKING:
     from ..scidatatool.data import Data
     from ..scidatatool.data_nd import DataND
     from ..scidatatool.normalization import Normalization
+    from .output import Output
 
 
 class OutElec(LegacyModel):
@@ -138,6 +140,7 @@ class OutElec(LegacyModel):
         is_fund_only: bool = False,
         is_harm_only: bool = False,
         is_freq: bool | None = None,
+        output: Output | None = None,
     ) -> DataND:
         """Generic getter to return voltage/current as DataND object
 
@@ -157,12 +160,15 @@ class OutElec(LegacyModel):
             True to return only components at higher frequencies than fundamental component
         is_freq: bool
             True to calculate dqh transformation in frequency domain
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         Returns
         -------
         obj: DataND
             Requested quantity
         """
+        output = container_or_parent(self, output, "output")
 
         if is_fund_only and is_harm_only:
             raise Exception("is_fund_only and is_harm_only cannot be both True")
@@ -176,9 +182,7 @@ class OutElec(LegacyModel):
             if Time is None:
                 Time = self.axes_dict["time"]
 
-            lamination = self.parent.simu.machine.get_lam_by_label(
-                data_dict["lam_label"]
-            )
+            lamination = output.simu.machine.get_lam_by_label(data_dict["lam_label"])
 
             # Recalculate quantity
             qs = lamination.winding.qs
@@ -326,6 +330,7 @@ class OutElec(LegacyModel):
         is_fund_only: bool = False,
         is_harm_only: bool = False,
         is_freq: bool | None = None,
+        output: Output | None = None,
     ) -> DataND:
         """Return the stator current DataND object
 
@@ -343,14 +348,17 @@ class OutElec(LegacyModel):
             True to return only components at higher frequencies than fundamental component
         is_freq: bool
             True to calculate dqh transformation in frequency domain
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         Returns
         -------
         Is: DataND
             stator current
         """
+        output = container_or_parent(self, output, "output")
 
-        label = self.parent.simu.machine.stator.get_label()
+        label = output.simu.machine.stator.get_label()
         Idq_dict = self.OP.get_Id_Iq()
 
         data_dict = {
@@ -369,27 +377,30 @@ class OutElec(LegacyModel):
             is_fund_only=is_fund_only,
             is_harm_only=is_harm_only,
             is_freq=is_freq,
+            output=output,
         )
 
         return Is
 
     # Inlined from Methods.Output.OutElec.get_Jrms
-    def get_Jrms(self) -> float:
+    def get_Jrms(self, output: Output | None = None) -> float:
         """Return the stator current density rms value
 
         Parameters
         ----------
         self : OutElec
             an OutElec object
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         Returns
         -------
         Jrms: float
             stator current density rms value [A/m^2]
         """
+        output = container_or_parent(self, output, "output")
 
         if self.Jrms is None:
-            output = self.parent
             machine = output.simu.machine
 
             Swire = machine.stator.winding.conductor.comp_surface_active()
@@ -442,6 +453,7 @@ class OutElec(LegacyModel):
         is_fund_only: bool = False,
         is_harm_only: bool = False,
         is_freq: bool | None = None,
+        output: Output | None = None,
     ) -> DataND:
         """Return the fundamental stator voltage as DataND object
 
@@ -459,14 +471,17 @@ class OutElec(LegacyModel):
             True to return only components at higher frequencies than fundamental component
         is_freq: bool
             True to calculate dqh transformation in frequency domain
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         Returns
         -------
         Us: DataND
             stator voltage
         """
+        output = container_or_parent(self, output, "output")
 
-        label = self.parent.simu.machine.stator.get_label()
+        label = output.simu.machine.stator.get_label()
         Udq_dict = self.OP.get_Ud_Uq()
 
         data_dict = {
@@ -485,12 +500,13 @@ class OutElec(LegacyModel):
             is_fund_only=is_fund_only,
             is_harm_only=is_harm_only,
             is_freq=is_freq,
+            output=output,
         )
 
         return Us
 
     # Inlined from Methods.Output.OutElec.store
-    def store(self, out_dict: dict) -> None:
+    def store(self, out_dict: dict, output: Output | None = None) -> None:
         """Store the standard outputs of Electrical that are temporarily in out_dict as arrays into OutElec as Data object
 
         Parameters
@@ -499,10 +515,12 @@ class OutElec(LegacyModel):
             the OutElec object to update
         out_dict : dict
             Dict containing all electrical quantities that have been calculated in EEC
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         """
+        output = container_or_parent(self, output, "output")
 
-        output = self.parent
         machine = output.simu.machine
 
         # Store Id, Iq, Ud, Uq in OP
@@ -512,7 +530,7 @@ class OutElec(LegacyModel):
         self.Pj_losses = out_dict["Pj_losses"]
         self.Tem_av = out_dict["Tem_av"]
         self.Pem_av = out_dict["Pem_av"]
-        self.get_Jrms()
+        self.get_Jrms(output=output)
 
         if "Ir" in out_dict and self.OP.get_slip() != 0:
             # Calculate rotor currents for each bar
@@ -581,7 +599,7 @@ class OutElec(LegacyModel):
 
             # Merge Spectrums
             # Get fundamental current spectrum
-            Is = self.get_Is(is_freq=True)
+            Is = self.get_Is(is_freq=True, output=output)
             Is_fund = Is.get_along("freqs=" + str(self.OP.felec), "phase")[Is.symbol]
             # Get PWM frequency vector
             freqs = Is_PWM.axes[0].get_values()

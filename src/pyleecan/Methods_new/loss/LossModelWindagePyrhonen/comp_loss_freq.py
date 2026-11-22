@@ -31,10 +31,8 @@ def comp_loss_freq(self, loss: Loss | None = None, output: Output | None = None)
     loss = container_or_parent(self, loss, "loss")
     output = container_or_parent(self, output, "output", depth=3)
 
-    if output is None and self.parent.parent is None:
+    if output is None:
         raise ValueError("Cannot calculate losses if simu is not in an Output")
-    else:
-        pass
 
     if output.elec is None:
         raise ValueError("Cannot calculate losses if OutElec is None")

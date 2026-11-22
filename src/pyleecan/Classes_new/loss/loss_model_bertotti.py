@@ -189,8 +189,6 @@ class LossModelBertotti(LossModel):
 
         if output is None:
             raise ValueError("Cannot calculate core losses if simu is not in an Output")
-        else:
-            pass
 
         machine = output.simu.machine
 
@@ -349,8 +347,6 @@ class LossModelBertotti(LossModel):
 
         if output is None:
             raise ValueError("Cannot calculate core losses if simu is not in an Output")
-        else:
-            pass
 
         machine = output.simu.machine
 
@@ -482,8 +478,6 @@ class LossModelBertotti(LossModel):
 
         if output is None:
             raise ValueError("Cannot calculate core losses if simu is not in an Output")
-        else:
-            pass
 
         machine = output.simu.machine
 

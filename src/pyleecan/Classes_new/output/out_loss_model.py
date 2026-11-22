@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
+from ...classes_common.parents import container_or_parent
 from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.solution_data import SolutionData
@@ -16,7 +17,8 @@ from ..scidatatool.data_nd import DataND
 from ..scidatatool.data_time import DataTime
 
 if TYPE_CHECKING:
-    from .out_loss_model import OutLossModel
+    from .out_loss import OutLoss
+    from .output import Output
 
 
 @dataclass(eq=False)
@@ -261,7 +263,12 @@ class OutLossModel(LegacyClass):
         )
 
     # Inlined from Methods.Output.OutLossModel.get_loss_scalar
-    def get_loss_scalar(self, felec: float | None = None) -> float:
+    def get_loss_scalar(
+        self,
+        felec: float | None = None,
+        out_loss: OutLoss | None = None,
+        output: Output | None = None,
+    ) -> float:
         """Get loss power from coefficients stored in coeff_dict
 
         Parameters
@@ -270,18 +277,22 @@ class OutLossModel(LegacyClass):
             an OutLossModel object
         felec : float
             the electrical frequency [Hz]
+        out_loss : OutLoss, optional
+            OutLoss holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the OutLoss)
 
         Returns
         -------
         Ploss : float
             loss power for the specified frequency [W]
         """
+        output = container_or_parent(self, output, "output", depth=2)
 
         if self.coeff_dict is None:
             return self.scalar_value  # Can be None
         else:
             if felec is None:
-                output = self.parent.parent
                 felec = output.elec.OP.felec
             Ploss = 0
             for key, value in self.coeff_dict.items():
@@ -290,22 +301,29 @@ class OutLossModel(LegacyClass):
         return self.scalar_value
 
     # Inlined from Methods.Output.OutLossModel.get_mesh_solution
-    def get_mesh_solution(self) -> MeshSolution:
+    def get_mesh_solution(
+        self, out_loss: OutLoss | None = None, output: Output | None = None
+    ) -> MeshSolution:
         """Returns the MeshSolution object corresponding to the losses
 
         Parameters
         ----------
         self : OutLossModel
             Result of a Loss model computation
+        out_loss : OutLoss, optional
+            OutLoss holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the OutLoss)
 
         Returns
         -------
         MS : MeshSolution
             Losses as fct(freq) on the machine mesh
         """
-        output = self.parent.parent
+        out_loss = container_or_parent(self, out_loss, "out_loss")
+        output = container_or_parent(self, output, "output", depth=2)
         # group = meshsol.group
-        axes_dict = self.parent.axes_dict
+        axes_dict = out_loss.axes_dict
         # freqs = axes_dict["freqs"].get_values()
         # Nelem = meshsol.mesh.element["triangle"].nb_element
 

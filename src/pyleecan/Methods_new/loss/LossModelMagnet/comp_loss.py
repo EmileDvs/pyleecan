@@ -51,8 +51,6 @@ def comp_loss(self, meshsol: MeshSolution | None = None, loss: Loss | None = Non
 
     if output is None:
         raise Exception("Cannot calculate core losses if simu is not in an Output")
-    else:
-        pass
 
     machine = output.simu.machine
 

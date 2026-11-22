@@ -67,6 +67,7 @@ class Loss(LegacyClass):
         self,
         axes_dict: dict | None = None,
         meshsol: MeshSolution | None = None,
+        output: Output | None = None,
     ) -> None:
         """Compute all the losses models set in model_dict
 
@@ -78,9 +79,11 @@ class Loss(LegacyClass):
             Dict containing axes for loss calculation
         meshsol : MeshSolution
             magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
         """
+        output = container_or_parent(self, output, "output", depth=2)
 
-        output = self.parent.parent
         out_loss = output.loss
         # Store dict of axes
         if axes_dict is not None:
@@ -182,7 +185,7 @@ class Loss(LegacyClass):
             Output of the simulation (default: the parent of the simulation)
         """
         output = container_or_parent(self, output, "output", depth=2)
-        if output is None and self.parent is None:
+        if output is None and container_or_parent(self, None, "simu") is None:
             raise InputError("The Loss object must be in a Simulation object to run")
         if output is None:
             raise InputError("The Loss object must be in an Output object to run")

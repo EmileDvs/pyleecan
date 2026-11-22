@@ -196,7 +196,7 @@ class LossFEA(Loss):
             A LossFEA object
         """
         output = container_or_parent(self, output, "output", depth=2)
-        if output is None and self.parent is None:
+        if output is None and container_or_parent(self, None, "simu") is None:
             raise InputError("The LossFEA object must be in a Simulation object to run")
         if output is None:
             raise InputError("The LossFEA object must be in an Output object to run")
@@ -365,7 +365,7 @@ class LossFEA(Loss):
         loss_dict = output.loss.loss_dict  # The stored dict
 
         # Calculate meshsolution to get overall loss density
-        output.loss.get_meshsolution()
+        output.loss.get_meshsolution(output=output)
         loss_density_all = output.loss.meshsolution["L"].field.values
 
         # Add overall OutLossModel by adding all losses sources

@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.errors import FieldMissingError
 from ....classes_common.logger_context import get_logger
 import os
@@ -49,12 +50,13 @@ def comp_fluxlinkage(self, machine: Machine | None = None, OP: OP | None = None,
     if machine is None:
         machine = self.get_machine_from_parent()
 
-    # Get simulation name and result path
-    if isinstance(machine.parent, Simu1) and machine.parent.name not in [None, ""]:
-        simu_name = machine.parent.name + "_FluxLinkFEMM"
+    # Get simulation name and result path (simulation of the machine)
+    machine_simu = container_or_parent(machine, None, "simu")
+    if isinstance(machine_simu, Simu1) and machine_simu.name not in [None, ""]:
+        simu_name = machine_simu.name + "_FluxLinkFEMM"
         path_result = (
-            os.path.join(machine.parent.path_result, "FluxLinkFEMM")
-            if machine.parent.path_result not in [None, ""]
+            os.path.join(machine_simu.path_result, "FluxLinkFEMM")
+            if machine_simu.path_result not in [None, ""]
             else None
         )
     elif machine.name not in [None, ""]:

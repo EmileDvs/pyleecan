@@ -46,7 +46,7 @@ def comp_I_mag(self, output: Output, Time: Data) -> tuple[np.ndarray, np.ndarray
         and stator.winding.conductor is not None
     ):
         # Get Data object on magnetic Time axis
-        Is = output.elec.get_Is(Time=Time)
+        Is = output.elec.get_Is(Time=Time, output=output)
 
         # Get the number of parallel circuit per phase of winding
         if hasattr(stator.winding, "Npcp") and stator.winding.Npcp is not None:

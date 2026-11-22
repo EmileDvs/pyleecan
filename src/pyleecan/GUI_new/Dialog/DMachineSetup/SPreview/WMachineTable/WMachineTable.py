@@ -155,7 +155,7 @@ class WMachineTable(Ui_WMachineTable, QWidget):
             output.simu.input.gen_input(simu=output.simu, output=output)
 
             # Get current values for given OP
-            Is = output.elec.get_Is().values
+            Is = output.elec.get_Is(output=output).values
 
             # Divide phase current by the number of parallel circuit per phase of winding
             stator = self.machine.stator

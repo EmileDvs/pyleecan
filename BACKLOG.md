@@ -1521,6 +1521,42 @@ Same signature rule as Step 11 (optional container argument, fallback through
         Checks: class tests, Simulation method tests (43 passed, 4 skipped)
         and simulation / preview GUI tests pass with each backend; `ty`
         unchanged.
+  - [x] (2026-11-22) Output, loss, electrical, structural, magnetics,
+        optimization, force packages: 82 -> 0 (no direct parent read left
+        in `Methods_new`):
+        - the guards Step 11 kept (`if output is None and self.parent is
+          None`): one message -> `if output is None:`, two messages (the
+          missing level) -> `container_or_parent(self, None, "simu")`; the
+          `else: pass` left by the pass removed;
+        - the pass as a tool: the sub-outputs take `output` (`OutElec`
+          getters and `store`, `OutMag` `comp_emf` / `comp_power` /
+          `comp_torque_MT` / `store`, `OutLoss` getters and plot;
+          `OutLossModel` `out_loss` and `output`), `Loss.comp_all_losses`
+          `output`, `ElecLUTdq` `simu` (and `output`), `get_slice_model` /
+          `MagFEMM.build_meshsolution` and `StructElmer.gen_case` `simu`,
+          `Mode` `meshsol`; the calls on a local output pass it
+          (`output.elec.get_Is(output=output)`, 21 calls, GUI included);
+        - by hand: the loss models' `comp_coeff` (Joule `output`, Winding
+          `simu`, Proximity `loss` and `simu`; the conductor's slot and
+          turns read on the lamination it comes from), `DriveWave.get_wave`
+          (`output`, depth 4, instead of `check_parent(self, 4)`),
+          `Structural.comp_axes` (`output` optional), `XOutput.plot_pareto`
+          (`solver`, the OptiSolver holding it); the parent of another
+          object through the helper (`container_or_parent(machine, None,
+          "simu")` in `EEC.comp_fluxlinkage`, the magnet's hole / lamination
+          in `MagElmer.solve_FEA`, the problem simulation's output in the
+          optimization solvers).
+        Checks: class tests; Methods, Plot, Simulation and Functions tests
+        4735 passed with each backend; loss validation tests 14 passed
+        with each backend; simulation / preview GUI tests pass; `ty`
+        unchanged. Failures before Step 16 too (checked on the commit
+        before the step): `test_ICEM_2020` (3), `test_post_var_simu`, the
+        retrocompatibility `test_save_OPM_retro` / `test_load_opti`, the
+        multi-simulation validations (`VarSimu` parent type,
+        `XOutput._get_symbol_data_` arguments), the collection of
+        `test_save_load` / `test_import_class` (`InitUnKnowClassError`).
+        Found: `Loss.run` passes `meshsol=` to `comp_axes`, which
+        `LossFEA.comp_axes` does not take (LossFEA overrides `run`).
 - [ ] Function helpers with explicit arguments: `check_parent`,
       `assign_femm_surface`.
 - [ ] Tests of a refactored package hand-maintained; numerical parity against
@@ -1604,6 +1640,13 @@ the fallback, the parent links, and makes the argument required.
 | `VarSimu.run`, `VarOpti.run` | `simu`, `xoutput` | Step 16 |
 | `check_param`, `get_input_list`, `get_elec_datakeeper`, `VarLoad.set_OP_array` of the VarSimu family; `VarOpti.check`, `VarOpti.get_full_solver` | `simu` | Step 16 |
 | `OP.get_machine_from_parent`, `EEC.get_machine_from_parent` (no argument: the lookup itself) | `ancestor_with` walk | Step 16 |
+| `OutElec` (`get_electrical`, `get_Is`, `get_Us`, `get_Jrms`, `store`), `OutMag` (`comp_emf`, `comp_power`, `comp_torque_MT`, `store`), `OutLoss` (`get_loss_density_ag`, `get_meshsolution`, `get_power_dict`, `plot_losses`), `Loss.comp_all_losses`, `Structural.comp_axes`, `DriveWave.get_wave` | `output` | Step 16 |
+| `OutLossModel.get_loss_scalar`, `get_mesh_solution` | `out_loss`, `output` | Step 16 |
+| `ElecLUTdq.comp_LUTdq`, `solve_MTPA`, `solve_power`; `Magnetics.get_slice_model`, `MagFEMM.build_meshsolution`, `StructElmer.gen_case` | `simu` (`solve_*`: also `output`) | Step 16 |
+| `comp_coeff` of `LossModelJoule` / `LossModelWinding` / `LossModelProximity` | `output` / `simu` / `loss`, `simu` | Step 16 |
+| `get_shape_pol`, `get_shape_xyz`, `plot`, `plot_animated` of `Mode` | `meshsol` | Step 16 |
+| `XOutput.plot_pareto` | `solver` | Step 16 |
+| Parent of another object (`EEC.comp_fluxlinkage`, `MagElmer.solve_FEA`, the optimization solvers) | `container_or_parent(obj, None, ...)` | Step 16 |
 
 Full list: `container_arguments.fallback_methods(gen_dict, Methods_new)`.
 

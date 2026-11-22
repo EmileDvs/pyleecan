@@ -37,10 +37,8 @@ def comp_loss(self, meshsol: MeshSolution | None = None, loss: Loss | None = Non
     loss = container_or_parent(self, loss, "loss")
     output = container_or_parent(self, output, "output", depth=3)
 
-    if output is None and self.parent.parent is None:
+    if output is None:
         raise ValueError("Cannot calculate joule losses if simu is not in an Output")
-    else:
-        pass
 
     if output.elec is None:
         raise ValueError("Cannot calculate joule losses if OutElec is None")
@@ -62,6 +60,7 @@ def comp_loss(self, meshsol: MeshSolution | None = None, loss: Loss | None = Non
     if self.type_skin_effect > 0:
         # Account for skin effect
         k = self.comp_coeff(
+            simu=output.simu,
             T_op=T_op,
         )
     else:

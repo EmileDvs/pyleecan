@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from deap import base, creator, tools
 from ....Classes_new.output.output import Output
 from ....Classes_new.output.xoutput import XOutput
@@ -28,8 +29,9 @@ def create_toolbox(self) -> None:
     self.toolbox.register("creator", creator.Individual)
 
     # Create default output
-    if isinstance(self.problem.simu.parent, Output):
-        output = self.problem.simu.parent
+    ref_output = container_or_parent(self.problem.simu, None, "output")
+    if isinstance(ref_output, Output):
+        output = ref_output
     elif isinstance(
         self.problem.simu.var_simu, VarSimu
     ):  # Optimization of a multi-simulation

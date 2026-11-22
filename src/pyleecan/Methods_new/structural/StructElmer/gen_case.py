@@ -1,9 +1,14 @@
+from ....classes_common.parents import container_or_parent
 import os
 import numpy as np
 
 from ....Classes_new.elmer.section import Section
 from ....Classes_new.elmer.solver_input_file import SolverInputFile
 from ...elmer.Section import File, Variable, MATC
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
 
 
 # constants
@@ -15,8 +20,15 @@ ID_LAM = 1
 ID_MAG = 2
 
 
-def gen_case(self, output, mesh_names) -> None:
-    """Setup the Elmer Case file (.sif file)"""
+def gen_case(self, output, mesh_names, simu: Simulation | None = None) -> None:
+    """Setup the Elmer Case file (.sif file)
+
+    Parameters
+    ----------
+    simu : Simulation, optional
+        Simulation holding the model (default: the parent)
+    """
+    simu = container_or_parent(self, simu, "simu")
 
     # get the save path
     save_dir = self.get_path_save_fea(output)
@@ -270,7 +282,7 @@ def gen_case(self, output, mesh_names) -> None:
     boundaries.append(bnd)
 
     # --- body force ----------------------------------------------------------------- #
-    omega = 2 * np.pi * self.parent.input.OP.N0 / 60
+    omega = 2 * np.pi * simu.input.OP.N0 / 60
     bfs = []
 
     ID_list = [

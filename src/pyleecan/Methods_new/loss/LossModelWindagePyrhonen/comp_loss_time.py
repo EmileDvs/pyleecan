@@ -35,10 +35,8 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool, loss: Loss
     loss = container_or_parent(self, loss, "loss")
     output = container_or_parent(self, output, "output", depth=3)
 
-    if output is None and self.parent.parent is None:
+    if output is None:
         raise ValueError("Cannot calculate windage losses if simu is not in an Output")
-    else:
-        pass
 
     if output.elec is None:
         raise ValueError("Cannot calculate windage losses if OutElec is None")

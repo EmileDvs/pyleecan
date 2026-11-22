@@ -13,6 +13,7 @@ from pydantic import Field
 
 from ...classes_common.errors import PlotError, XOutputError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
 from ...Functions_pydantic.utils.init_fig import init_fig
@@ -26,6 +27,7 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from ..optimization.opti_solver import OptiSolver
     from ..simulation.simulation import Simulation
 
 
@@ -513,6 +515,7 @@ class XOutput(Output):
         grid: bool = False,
         is_show_fig: bool = True,
         save_path: str | None = None,
+        solver: OptiSolver | None = None,
     ):
         """Plot the pareto front for 2 objective functions
 
@@ -531,9 +534,12 @@ class XOutput(Output):
             True to show figure after plot
         save_path : str
             full path of the png file where the figure is saved if save_path is not None
+        solver : OptiSolver, optional
+            Solver holding the XOutput (default: the parent)
         """
 
-        return self.parent.plot_pareto(
+        solver = container_or_parent(self, solver, "solver")
+        return solver.plot_pareto(
             x_symbol,
             y_symbol,
             c_symbol,

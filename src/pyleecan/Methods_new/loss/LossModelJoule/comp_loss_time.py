@@ -35,10 +35,8 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool, loss: Loss
     loss = container_or_parent(self, loss, "loss")
     output = container_or_parent(self, output, "output", depth=3)
 
-    if output is None and self.parent.parent is None:
+    if output is None:
         raise ValueError("Cannot calculate Joule losses if simu is not in an Output")
-    else:
-        pass
 
     if output.elec is None:
         raise ValueError("Cannot calculate Joule losses if OutElec is None")
@@ -58,6 +56,7 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool, loss: Loss
     if self.type_skin_effect > 0:
         # Account for skin effect
         k = self.comp_coeff(
+            output=output,
             T_op=T_op,
         )
     else:
@@ -67,7 +66,7 @@ def comp_loss_time(self, axes_dict: dict[str, Data], is_mirror: bool, loss: Loss
     per_a = meshsol.mesh.sym
 
     # Get stator currents over time and phases
-    Is = output.elec.get_Is()
+    Is = output.elec.get_Is(output=output)
     if is_mirror:
         # Rebuild mesh quantities on time steps given by axes_dict
         time_val = axes_dict["time"].get_values(is_smallestperiod=True)

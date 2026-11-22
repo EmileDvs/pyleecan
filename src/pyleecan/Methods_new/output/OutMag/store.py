@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 
@@ -10,9 +11,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.output.output import Output
 
 
-def store(self, out_dict: dict, axes_dict: dict[str, Data]) -> None:
+def store(self, out_dict: dict, axes_dict: dict[str, Data], output: Output | None = None) -> None:
     """Store the standard outputs of Magnetics that are temporarily in out_dict as arrays into OutMag as Data object
 
     Parameters
@@ -23,8 +25,11 @@ def store(self, out_dict: dict, axes_dict: dict[str, Data]) -> None:
         Dict containing all magnetic quantities that have been calculated in comp_flux_airgap
     axes_dict: {Data}
         Dict of axes used for magnetic calculation
+    output : Output, optional
+        Output of the simulation holding the object (default: the parent)
 
     """
+    output = container_or_parent(self, output, "output")
 
     # Store axes dict
     self.axes_dict = axes_dict
@@ -92,9 +97,9 @@ def store(self, out_dict: dict, axes_dict: dict[str, Data]) -> None:
     if (
         "Tem" in out_dict
         or (
-            self.parent is not None
-            and self.parent.simu is not None
-            and self.parent.simu.machine is not None
+            output is not None
+            and output.simu is not None
+            and output.simu.machine is not None
             and self.B is not None
             and "radial" in self.B.components.keys()
             and "tangential" in self.B.components.keys()
@@ -104,7 +109,7 @@ def store(self, out_dict: dict, axes_dict: dict[str, Data]) -> None:
         if "Tem" in out_dict:
             Tem_slice = out_dict.pop("Tem")
         else:
-            Tem_slice = self.comp_torque_MT()
+            Tem_slice = self.comp_torque_MT(output=output)
 
         # Store electromagnetic torque per slice (in Newton)
         self.Tem_slice = DataTime(
@@ -136,14 +141,14 @@ def store(self, out_dict: dict, axes_dict: dict[str, Data]) -> None:
     # Store list of winding flux linkage, stator winding fluxlinkage
     # and calculate electromotive force
     if "Phi_wind" in out_dict:
-        machine = self.parent.simu.machine
+        machine = output.simu.machine
         self.Phi_wind_slice = dict()
         self.Phi_wind = dict()
         for key, phi_wind in out_dict["Phi_wind"].items():
             # Store stator winding flux
             lam = machine.get_lam_by_label(key)
 
-            Phase = self.parent.elec.axes_dict["phase_" + key]
+            Phase = output.elec.axes_dict["phase_" + key]
             prefix = "Stator" if lam.is_stator else "Rotor"
 
             # Store winding flux linkage per phase and per slice (in Weber per meter)

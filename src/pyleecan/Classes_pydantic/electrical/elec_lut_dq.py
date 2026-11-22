@@ -19,6 +19,7 @@ from .electrical import Electrical
 if TYPE_CHECKING:
     from ..output.lut_dq import LUTdq
     from ..output.output import Output
+    from ..simulation.simulation import Simulation
 
 
 class ElecLUTdq(Electrical):
@@ -102,26 +103,29 @@ class ElecLUTdq(Electrical):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Simulation.ElecLUTdq.comp_LUTdq
-    def comp_LUTdq(self) -> LUTdq:
+    def comp_LUTdq(self, simu: Simulation | None = None) -> LUTdq:
         """Compute Look up table function of Id / Iq
 
         Parameters
         ----------
         self : ElecLUTdq
             a ElecLUTdq object
+        simu : Simulation, optional
+            Simulation holding the model (default: the parent)
 
         Returns
         ----------
         LUT : LUTdq
             Calculated look-up table
         """
+        simu = container_or_parent(self, simu, "simu")
 
         if self.LUT_simu is None:
             raise Exception("Cannot calculate LUTdq if self.LUT_simu is None")
         else:
             simu = self.LUT_simu.copy()
 
-        N0 = self.parent.input.OP.N0
+        N0 = simu.input.OP.N0
 
         if self.is_grid_dq:
             N_OP = self.n_Id * self.n_Iq
@@ -145,7 +149,7 @@ class ElecLUTdq(Electrical):
         OP_matrix[:, 1] = Id.ravel()
         OP_matrix[:, 2] = Iq.ravel()
 
-        simu.machine = self.parent.machine
+        simu.machine = simu.machine
         simu.var_simu.set_OP_array(
             OP_matrix, "N0", "Id", "Iq", is_update_input=True, input_index=0, simu=simu
         )
@@ -166,7 +170,7 @@ class ElecLUTdq(Electrical):
             Output of the simulation (default: the parent of the simulation)
         """
         output = container_or_parent(self, output, "output", depth=2)
-        if output is None and self.parent is None:
+        if output is None and container_or_parent(self, None, "simu") is None:
             raise InputError(
                 "The Electrical object must be in a Simulation object to run"
             )
@@ -306,7 +310,7 @@ class ElecLUTdq(Electrical):
             )
 
         # Calculate slot current density
-        output.elec.get_Jrms()
+        output.elec.get_Jrms(output=output)
 
         # Calculate linear current density along airgap
         Irms = np.sqrt(output.elec.OP.Id_ref**2 + output.elec.OP.Iq_ref**2)
@@ -324,7 +328,13 @@ class ElecLUTdq(Electrical):
             output.mag.Tem_rip_norm = out_dict["Tem_rip_norm"]
 
     # Inlined from Methods.Simulation.ElecLUTdq.solve_MTPA
-    def solve_MTPA(self, LUT: LUTdq, Rs: float) -> dict:
+    def solve_MTPA(
+        self,
+        LUT: LUTdq,
+        Rs: float,
+        simu: Simulation | None = None,
+        output: Output | None = None,
+    ) -> dict:
         """Solve EEC using Maximum Torque Per Ampere strategy with respect to voltage and current constraints
 
         Parameters
@@ -335,6 +345,10 @@ class ElecLUTdq(Electrical):
             Calculated look-up table
         Rs: float
             Stator phase resistance [Ohm]
+        simu : Simulation, optional
+            Simulation holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         ----------
@@ -342,9 +356,9 @@ class ElecLUTdq(Electrical):
             Dict containing all output quantities
 
         """
+        output = container_or_parent(self, output, "output", depth=2)
 
         # Get output, machine and OP
-        output = self.parent.parent
 
         machine = output.simu.machine
         OP = output.elec.OP
@@ -537,7 +551,13 @@ class ElecLUTdq(Electrical):
         return out_dict
 
     # Inlined from Methods.Simulation.ElecLUTdq.solve_power
-    def solve_power(self, LUT: LUTdq, Rs: float) -> dict:
+    def solve_power(
+        self,
+        LUT: LUTdq,
+        Rs: float,
+        simu: Simulation | None = None,
+        output: Output | None = None,
+    ) -> dict:
         """Solve EEC to achieve given input / output power with respect to voltage and current constraints
 
         Parameters
@@ -548,6 +568,10 @@ class ElecLUTdq(Electrical):
             Calculated look-up table
         Rs: float
             Stator phase resistance [Ohm]
+        simu : Simulation, optional
+            Simulation holding the model (default: the parent)
+        output : Output, optional
+            Output of the simulation (default: the parent of the simulation)
 
         Returns
         ----------
@@ -555,9 +579,9 @@ class ElecLUTdq(Electrical):
             Dict containing all output quantities
 
         """
+        output = container_or_parent(self, output, "output", depth=2)
 
         # Get output, machine and OP
-        output = self.parent.parent
 
         machine = output.simu.machine
         OP = output.elec.OP

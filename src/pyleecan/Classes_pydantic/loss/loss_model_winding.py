@@ -12,6 +12,7 @@ from .loss_model import LossModel
 if TYPE_CHECKING:
     from ..mesh.mesh_solution import MeshSolution
     from ..output.output import Output
+    from ..simulation.simulation import Simulation
     from .loss import Loss
 
 
@@ -32,7 +33,9 @@ class LossModelWinding(LossModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelWinding.comp_coeff
-    def comp_coeff(self, T_op: float = 20, T_ref: float = 20) -> float:
+    def comp_coeff(
+        self, T_op: float = 20, T_ref: float = 20, simu: Simulation | None = None
+    ) -> float:
         """Compute the skin effect factor on resistance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
         All parameters are defined p.270 / 271
         In this method, the returned value is the one from the reference divided by the frequency, as the effect of
@@ -46,6 +49,8 @@ class LossModelWinding(LossModel):
             Conductor operational temperature [degC]
         T_ref: float
             Conductor reference temperature [degC]
+        simu : Simulation, optional
+            Simulation of the loss model (default: the parent of the Loss object)
 
         Returns
         ----------
@@ -53,14 +58,16 @@ class LossModelWinding(LossModel):
             skin effect coeff for resistance at given frequency and temperature
         """
 
-        conductor = self.parent.parent.machine.stator.winding.conductor
+        simu = container_or_parent(self, simu, "simu", depth=2)
+        lamination = simu.machine.stator
+        conductor = lamination.winding.conductor
 
         # Compute slot average width
-        slot = conductor.parent.parent.slot
+        slot = lamination.slot
         b = slot.comp_width()
 
         # Get number of turns in series per coil
-        zt = conductor.parent.Ntcoil
+        zt = lamination.winding.Ntcoil
 
         # check if wires are round or rectangular
         is_round_wire = conductor.is_round_wire()
@@ -135,12 +142,10 @@ class LossModelWinding(LossModel):
         loss = container_or_parent(self, loss, "loss")
         output = container_or_parent(self, output, "output", depth=3)
 
-        if output is None and self.parent.parent is None:
+        if output is None:
             raise ValueError(
                 "Cannot calculate joule losses if simu is not in an Output"
             )
-        else:
-            pass
 
         if output.elec is None:
             raise ValueError("Cannot calculate joule losses if OutElec is None")
@@ -162,6 +167,7 @@ class LossModelWinding(LossModel):
         if self.type_skin_effect > 0:
             # Account for skin effect
             k = self.comp_coeff(
+                simu=output.simu,
                 T_op=T_op,
             )
         else:

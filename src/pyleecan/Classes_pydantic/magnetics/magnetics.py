@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from ..output.output import Output
     from ..scidatatool.data import Data
     from ..scidatatool.data_pattern import DataPattern
+    from ..simulation.simulation import Simulation
 
 
 class Magnetics(LegacyModel):
@@ -303,7 +304,7 @@ class Magnetics(LegacyModel):
             and stator.winding.conductor is not None
         ):
             # Get Data object on magnetic Time axis
-            Is = output.elec.get_Is(Time=Time)
+            Is = output.elec.get_Is(Time=Time, output=output)
 
             # Get the number of parallel circuit per phase of winding
             if hasattr(stator.winding, "Npcp") and stator.winding.Npcp is not None:
@@ -366,13 +367,15 @@ class Magnetics(LegacyModel):
         return Is_val, Ir_val
 
     # Inlined from Methods.Simulation.Magnetics.get_slice_model
-    def get_slice_model(self) -> DataPattern:
+    def get_slice_model(self, simu: Simulation | None = None) -> DataPattern:
         """Compute the slice axis required in any Magnetics module
 
         Parameters
         ----------
         self : SliceModel
             a SliceModel object
+        simu : Simulation, optional
+            Simulation holding the model (default: the parent)
 
         Returns
         -------
@@ -380,9 +383,10 @@ class Magnetics(LegacyModel):
             Slice axis
 
         """
+        simu = container_or_parent(self, simu, "simu")
 
         if self.Slice_enforced is None:
-            machine = self.parent.machine
+            machine = simu.machine
 
             # Rotor length
             L = machine.rotor.L1
@@ -462,7 +466,7 @@ class Magnetics(LegacyModel):
             Output of the simulation (default: the parent of the simulation)
         """
         output = container_or_parent(self, output, "output", depth=2)
-        if output is None and self.parent is None:
+        if output is None and container_or_parent(self, None, "simu") is None:
             raise InputError(
                 "The Magnetic object must be in a Simulation object to run"
             )
@@ -606,5 +610,5 @@ class Magnetics(LegacyModel):
             axes_dict["time"] = axes_dict["time_S"].copy()
 
         # Store magnetic quantities contained in out_dict in OutMag, as Data object if necessary
-        output.mag.store(out_dict, axes_dict)
-        output.mag.comp_power()
+        output.mag.store(out_dict, axes_dict, output=output)
+        output.mag.comp_power(output=output)

@@ -561,7 +561,9 @@ class EEC_PMSM(EEC):
         freqs_n = output.elec.Us.get_axes("freqs")[0].values
 
         # Get stator voltage harmonics in dqh frame
-        Us_PWM = output.elec.get_Us(is_dqh=True, is_harm_only=True, is_freq=True)
+        Us_PWM = output.elec.get_Us(
+            is_dqh=True, is_harm_only=True, is_freq=True, output=output
+        )
         result = Us_PWM.get_along("freqs", "phase")
         Udqh_val = result[Us_PWM.symbol]
         freqs_dqh = result["freqs"]

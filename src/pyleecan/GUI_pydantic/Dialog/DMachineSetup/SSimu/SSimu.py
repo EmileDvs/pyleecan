@@ -412,6 +412,7 @@ class SSimu(Gen_SSimu, QWidget):
                 out.loss.plot_losses(
                     is_show_fig=False,
                     save_path=(join(self.simu.path_result, "Losses.png")),
+                    output=out,
                 )
             except Exception as e:
                 self.test_err_msg = "Error while plotting Losses: " + str(e)

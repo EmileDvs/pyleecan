@@ -18,7 +18,7 @@ def run(self, output: Output | None = None) -> None:
         Output of the simulation (default: the parent of the simulation)
     """
     output = container_or_parent(self, output, "output", depth=2)
-    if output is None and self.parent is None:
+    if output is None and container_or_parent(self, None, "simu") is None:
         raise InputError("The Loss object must be in a Simulation object to run")
     if output is None:
         raise InputError("The Loss object must be in an Output object to run")

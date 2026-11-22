@@ -47,7 +47,7 @@ def comp_loss_freq(self, loss: Loss | None = None, output: Output | None = None)
 
     # Compute the Proximity loss coefficient (if not enforced)
     if self.k_p is None:
-        self.comp_coeff()
+        self.comp_coeff(loss=loss, simu=output.simu)
     k_p = self.k_p
 
     # Get fundamental frequency

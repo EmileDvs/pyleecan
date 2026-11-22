@@ -12,6 +12,7 @@ from pydantic import Field
 from ... import __version__
 from ...classes_common.errors import FieldMissingError, NotImplementedYetError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ...Functions_pydantic.utils.get_path_binary import get_path_binary
 from ...Functions_pydantic.utils.labels import (
     AIRBOX_R_LAB,
@@ -711,7 +712,7 @@ class MagElmer(Magnetics):
                         magnetization_type = "parallel"
                         # calculate pole angle and angle of pole middle
                         T_id = label_dict["T_id"]
-                        hole = mag_obj.parent
+                        hole = container_or_parent(mag_obj, None, "hole")
                         Zh = hole.Zh
                         alpha_p = 360 / Zh
                         mag_0 = (
@@ -758,7 +759,7 @@ class MagElmer(Magnetics):
                         )  # South pole magnet
                         magnetization_type = "parallel"
                     elif mag_obj.type_magnetization == 2:
-                        Zs = mag_obj.parent.slot.Zs
+                        Zs = container_or_parent(mag_obj, None, "lam").slot.Zs
                         mag = str(-(Zs / 2 - 1)) + " * theta + 90 "
                         magnetization_type = "hallback"
                     else:

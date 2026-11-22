@@ -2,16 +2,20 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
+from ...classes_common.parents import container_or_parent
 from ...Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from .._legacy_class import LegacyClass
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.solution_data import SolutionData
 from ..scidatatool.data import Data
 from .out_loss_model import OutLossModel
+
+if TYPE_CHECKING:
+    from .output import Output
 
 
 @dataclass(eq=False)
@@ -79,13 +83,15 @@ class OutLoss(LegacyClass):
         return len(self.loss_dict)
 
     # Inlined from Methods.Output.OutLoss.get_loss_density_ag
-    def get_loss_density_ag(self) -> float:
+    def get_loss_density_ag(self, output: Output | None = None) -> float:
         """Get loss density in the airgap
 
         Parameters
         ----------
         self : OutLoss
             an OutLoss object
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         Returns
         -------
@@ -93,10 +99,11 @@ class OutLoss(LegacyClass):
             airgap loss density [W/m^2]
 
         """
+        output = container_or_parent(self, output, "output")
 
         loss = self.get_loss_overall()
 
-        machine = self.parent.simu.machine
+        machine = output.simu.machine
 
         Rag = machine.comp_Rgap_mec()
         Sag = 2 * np.pi * Rag * machine.stator.L1
@@ -130,13 +137,15 @@ class OutLoss(LegacyClass):
         return overall_loss
 
     # Inlined from Methods.Output.OutLoss.get_meshsolution
-    def get_meshsolution(self) -> MeshSolution:
+    def get_meshsolution(self, output: Output | None = None) -> MeshSolution:
         """Get loss density meshsolution
 
         Parameters
         ----------
         self : OutLoss
             an OutLoss object
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         Returns
         -------
@@ -144,10 +153,11 @@ class OutLoss(LegacyClass):
             Losses as function of time on the machine mesh
 
         """
+        output = container_or_parent(self, output, "output")
 
         if self.meshsolution is None:
             # Get magnetic output
-            outmag = self.parent.mag
+            outmag = output.mag
 
             # Get mesh and groups from magnetic meshsolution
             meshsol = outmag.meshsolution
@@ -191,23 +201,26 @@ class OutLoss(LegacyClass):
         return self.meshsolution
 
     # Inlined from Methods.Output.OutLoss.get_power_dict
-    def get_power_dict(self) -> dict[str, float]:
+    def get_power_dict(self, output: Output | None = None) -> dict[str, float]:
         """Return a dictionnary with all the scalar losses
 
         Parameters
         ----------
         self : OutLoss
             An OutLoss object
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
 
         Returns
         -------
         power_dict : {float}
             Dictionnary of all the scalar losses
         """
+        output = container_or_parent(self, output, "output")
 
-        if self.parent is None:
+        if output is None:
             raise Exception("Error: OutLoss is not in Output object")
-        out = self.parent
+        out = output
         if out.elec is None or out.elec.OP is None:
             raise Exception("Error: OP is not set")
 
@@ -229,6 +242,7 @@ class OutLoss(LegacyClass):
         N0_array: np.ndarray | None = None,
         save_path: str | None = None,
         is_show_fig: bool = True,
+        output: Output | None = None,
     ) -> None:
         """Plot the losses as a fct of speed
 
@@ -242,14 +256,17 @@ class OutLoss(LegacyClass):
             full path including folder, name and extension of the file to save if save_path is not None
         is_show_fig : bool
             True to show figure after plot
+        output : Output, optional
+            Output of the simulation holding the object (default: the parent)
         """
+        output = container_or_parent(self, output, "output")
 
         if N0_array is None:
             N0_array = np.linspace(10, 8000, 100)
-        if self.parent is None:
+        if output is None:
             raise Exception("Error: OutLoss is not in Output object")
 
-        p = self.parent.simu.machine.get_pole_pair_number()
+        p = output.simu.machine.get_pole_pair_number()
 
         array_list = [
             np.array([out_loss.get_loss_scalar(speed / 60 * p) for speed in N0_array])

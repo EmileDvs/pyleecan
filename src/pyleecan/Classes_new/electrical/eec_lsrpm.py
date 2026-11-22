@@ -249,8 +249,8 @@ class EEC_LSRPM(EEC):
 
         # Compute currents
         output.elec.Is = None
-        output.elec.Is = output.elec.get_Is()
+        output.elec.Is = output.elec.get_Is(output=output)
 
         # Compute voltage
         output.elec.Us = None
-        output.elec.Us = output.elec.get_Us()
+        output.elec.Us = output.elec.get_Us(output=output)

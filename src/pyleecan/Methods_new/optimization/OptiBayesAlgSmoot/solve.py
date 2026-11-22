@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.logger_context import get_logger
 from ....Classes_new._smoot.smoot import MOO
 from copy import deepcopy
@@ -53,9 +54,10 @@ def solve(self):
 
     try:
         # Add the reference output to multi_output
-        if isinstance(self.problem.simu.parent, Output):
+        ref_output = container_or_parent(self.problem.simu, None, "output")
+        if isinstance(ref_output, Output):
             xoutput = XOutput(
-                init_dict=self.problem.simu.parent.as_dict(keep_function=True)
+                init_dict=ref_output.as_dict(keep_function=True)
             )
         else:
             xoutput = XOutput(simu=self.problem.simu)

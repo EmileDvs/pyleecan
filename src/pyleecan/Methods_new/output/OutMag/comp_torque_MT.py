@@ -1,15 +1,22 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Functions_new.SciDataTool.derivation_integration import integrate
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def comp_torque_MT(self) -> np.ndarray:
+def comp_torque_MT(self, output: Output | None = None) -> np.ndarray:
     """Compute the rotor electromagnetic torque from Maxwell Stress Tensor.
 
     Parameters
     ----------
     self : OutMag
         an OutMag object
+    output : Output, optional
+        Output of the simulation holding the object (default: the parent)
 
     Returns
     -------
@@ -17,6 +24,7 @@ def comp_torque_MT(self) -> np.ndarray:
         Rotor electromagnetic torque per slice [N]
 
     """
+    output = container_or_parent(self, output, "output")
     Tem_slice = None
     B = self.B
 
@@ -25,7 +33,7 @@ def comp_torque_MT(self) -> np.ndarray:
         and "radial" in B.components.keys()
         and "tangential" in B.components.keys()
     ):
-        machine = self.parent.simu.machine
+        machine = output.simu.machine
 
         # Load airgap Maxwell Stress Tensor
         Brphiz = B.get_rphiz_along(

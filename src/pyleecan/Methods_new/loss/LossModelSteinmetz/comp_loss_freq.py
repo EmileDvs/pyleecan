@@ -36,8 +36,6 @@ def comp_loss_freq(self, loss: Loss | None = None, output: Output | None = None)
 
     if output is None:
         raise ValueError("Cannot calculate core losses if simu is not in an Output")
-    else:
-        pass
 
     machine = output.simu.machine
 

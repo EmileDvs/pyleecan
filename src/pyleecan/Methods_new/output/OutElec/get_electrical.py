@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 
@@ -9,6 +10,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data import Data
     from ....Classes_new.scidatatool.data_nd import DataND
+    from ....Classes_new.output.output import Output
 
 
 def get_electrical(
@@ -18,7 +20,7 @@ def get_electrical(
     is_dqh: bool = False,
     is_fund_only: bool = False,
     is_harm_only: bool = False,
-    is_freq: bool | None = None,
+    is_freq: bool | None = None, output: Output | None = None,
 ) -> DataND:
     """Generic getter to return voltage/current as DataND object
 
@@ -38,12 +40,15 @@ def get_electrical(
         True to return only components at higher frequencies than fundamental component
     is_freq: bool
         True to calculate dqh transformation in frequency domain
+    output : Output, optional
+        Output of the simulation holding the object (default: the parent)
 
     Returns
     -------
     obj: DataND
         Requested quantity
     """
+    output = container_or_parent(self, output, "output")
 
     if is_fund_only and is_harm_only:
         raise Exception("is_fund_only and is_harm_only cannot be both True")
@@ -57,7 +62,7 @@ def get_electrical(
         if Time is None:
             Time = self.axes_dict["time"]
 
-        lamination = self.parent.simu.machine.get_lam_by_label(data_dict["lam_label"])
+        lamination = output.simu.machine.get_lam_by_label(data_dict["lam_label"])
 
         # Recalculate quantity
         qs = lamination.winding.qs

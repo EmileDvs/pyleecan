@@ -139,8 +139,6 @@ class LossModelMagnet(LossModel):
 
         if output is None:
             raise Exception("Cannot calculate core losses if simu is not in an Output")
-        else:
-            pass
 
         machine = output.simu.machine
 
@@ -401,8 +399,6 @@ class LossModelMagnet(LossModel):
             raise ValueError(
                 "Cannot calculate magnet losses if simu is not in an Output"
             )
-        else:
-            pass
 
         machine = output.simu.machine
 
@@ -537,8 +533,6 @@ class LossModelMagnet(LossModel):
             raise ValueError(
                 "Cannot calculate magnet losses if simu is not in an Output"
             )
-        else:
-            pass
 
         machine = output.simu.machine
 

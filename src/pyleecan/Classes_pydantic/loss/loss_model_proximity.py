@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from ..mesh.mesh_solution import MeshSolution
     from ..output.output import Output
     from ..scidatatool.data import Data
+    from ..simulation.simulation import Simulation
     from .loss import Loss
 
 
@@ -34,18 +35,27 @@ class LossModelProximity(LossModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Loss.LossModelProximity.comp_coeff
-    def comp_coeff(self) -> None:
+    def comp_coeff(
+        self, loss: Loss | None = None, simu: Simulation | None = None
+    ) -> None:
         """Compute the Proximity loss coefficient [W/kg]
 
         Parameters
         ----------
         self : LossModelProximity
+            a LossModelProximity object
+        loss : Loss, optional
+            Loss object holding the model (default: the parent)
+        simu : Simulation, optional
+            Simulation of the loss model (default: the parent of the Loss object)
         """
-        T_op = self.parent.Tsta
-        winding = self.parent.parent.machine.stator.winding
+        loss = container_or_parent(self, loss, "loss")
+        simu = container_or_parent(self, simu, "simu", depth=2)
+        T_op = loss.Tsta
+        winding = simu.machine.stator.winding
         sigma = winding.conductor.cond_mat.elec.get_conductivity(T_op=T_op)
         d = winding.conductor.Wwire
-        kf = self.parent.parent.machine.stator.comp_fill_factor()
+        kf = simu.machine.stator.comp_fill_factor()
 
         # Proximity loss coefficient [W/kg]
         self.k_p = kf * np.pi**2 / 8 * sigma * d**2
@@ -83,8 +93,6 @@ class LossModelProximity(LossModel):
 
         if output is None:
             raise Exception("Cannot calculate core losses if simu is not in an Output")
-        else:
-            pass
 
         machine = output.simu.machine
 
@@ -97,7 +105,7 @@ class LossModelProximity(LossModel):
 
         # Compute the Proximity loss coefficient (if not enforced)
         if self.k_p is None:
-            self.comp_coeff()
+            self.comp_coeff(loss=loss, simu=output.simu)
         k_p = self.k_p
 
         # Get fundamental frequency
@@ -216,7 +224,7 @@ class LossModelProximity(LossModel):
 
         # Compute the Proximity loss coefficient (if not enforced)
         if self.k_p is None:
-            self.comp_coeff()
+            self.comp_coeff(loss=loss, simu=output.simu)
         k_p = self.k_p
 
         # Get fundamental frequency
@@ -312,7 +320,7 @@ class LossModelProximity(LossModel):
 
         # Compute the Proximity loss coefficient (if not enforced)
         if self.k_p is None:
-            self.comp_coeff()
+            self.comp_coeff(loss=loss, simu=output.simu)
         k_p = self.k_p
 
         # Get magnetic meshsolution and label suffix of the frame in which group quantities are calculated

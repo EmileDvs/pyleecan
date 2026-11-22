@@ -30,10 +30,8 @@ def comp_loss_freq(self, loss: Loss | None = None, output: Output | None = None)
     loss = container_or_parent(self, loss, "loss")
     output = container_or_parent(self, output, "output", depth=3)
 
-    if output is None and self.parent.parent is None:
+    if output is None:
         raise ValueError("Cannot calculate joule losses if simu is not in an Output")
-    else:
-        pass
 
     if output.elec is None:
         raise ValueError("Cannot calculate joule losses if OutElec is None")
@@ -58,6 +56,7 @@ def comp_loss_freq(self, loss: Loss | None = None, output: Output | None = None)
     if self.type_skin_effect > 0:
         # Account for skin effect
         k = self.comp_coeff(
+            output=output,
             T_op=T_op,
         )
     else:
@@ -67,7 +66,7 @@ def comp_loss_freq(self, loss: Loss | None = None, output: Output | None = None)
     per_a = meshsol.mesh.sym
 
     # Get stator currents over frequency and phases
-    Is = output.elec.get_Is()
+    Is = output.elec.get_Is(output=output)
     result = Is.get_along("freqs", "phase[]")
     Is_val = result[Is.symbol]
     freqs = result["freqs"]

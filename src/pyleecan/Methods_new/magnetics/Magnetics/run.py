@@ -19,7 +19,7 @@ def run(self, output: Output | None = None) -> None:
         Output of the simulation (default: the parent of the simulation)
     """
     output = container_or_parent(self, output, "output", depth=2)
-    if output is None and self.parent is None:
+    if output is None and container_or_parent(self, None, "simu") is None:
         raise InputError("The Magnetic object must be in a Simulation object to run")
     if output is None:
         raise InputError("The Simulation object must be in an Output object to run")
@@ -153,5 +153,5 @@ def run(self, output: Output | None = None) -> None:
         axes_dict["time"] = axes_dict["time_S"].copy()
 
     # Store magnetic quantities contained in out_dict in OutMag, as Data object if necessary
-    output.mag.store(out_dict, axes_dict)
-    output.mag.comp_power()
+    output.mag.store(out_dict, axes_dict, output=output)
+    output.mag.comp_power(output=output)

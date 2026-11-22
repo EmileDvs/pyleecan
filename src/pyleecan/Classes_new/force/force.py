@@ -256,7 +256,7 @@ class Force(LegacyClass):
             Output of the simulation (default: the parent of the simulation)
         """
         output = container_or_parent(self, output, "output", depth=2)
-        if output is None and self.parent is None:
+        if output is None and container_or_parent(self, None, "simu") is None:
             raise InputError(
                 "ERROR: The Force object must be in a Simulation object to run"
             )

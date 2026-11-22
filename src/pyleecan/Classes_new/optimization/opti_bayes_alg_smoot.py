@@ -10,6 +10,7 @@ import numpy as np
 
 from ...classes_common.errors import OptimizationAttributeError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from .._smoot.smoot import MOO
 from ..output.output import Output
 from ..output.xoutput import XOutput
@@ -339,10 +340,9 @@ class OptiBayesAlgSmoot(OptiBayesAlg):
 
         try:
             # Add the reference output to multi_output
-            if isinstance(self.problem.simu.parent, Output):
-                xoutput = XOutput(
-                    init_dict=self.problem.simu.parent.as_dict(keep_function=True)
-                )
+            ref_output = container_or_parent(self.problem.simu, None, "output")
+            if isinstance(ref_output, Output):
+                xoutput = XOutput(init_dict=ref_output.as_dict(keep_function=True))
             else:
                 xoutput = XOutput(simu=self.problem.simu)
 

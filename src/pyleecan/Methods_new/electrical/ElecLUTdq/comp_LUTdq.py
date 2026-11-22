@@ -1,29 +1,37 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Classes_new.output.lut_dq import LUTdq
 from ....Classes_new.simulation.op_matrix import OPMatrix
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
 
 
-def comp_LUTdq(self) -> LUTdq:
+def comp_LUTdq(self, simu: Simulation | None = None) -> LUTdq:
     """Compute Look up table function of Id / Iq
 
     Parameters
     ----------
     self : ElecLUTdq
         a ElecLUTdq object
+    simu : Simulation, optional
+        Simulation holding the model (default: the parent)
 
     Returns
     ----------
     LUT : LUTdq
         Calculated look-up table
     """
+    simu = container_or_parent(self, simu, "simu")
 
     if self.LUT_simu is None:
         raise Exception("Cannot calculate LUTdq if self.LUT_simu is None")
     else:
         simu = self.LUT_simu.copy()
 
-    N0 = self.parent.input.OP.N0
+    N0 = simu.input.OP.N0
 
     if self.is_grid_dq:
         N_OP = self.n_Id * self.n_Iq
@@ -47,7 +55,7 @@ def comp_LUTdq(self) -> LUTdq:
     OP_matrix[:, 1] = Id.ravel()
     OP_matrix[:, 2] = Iq.ravel()
 
-    simu.machine = self.parent.machine
+    simu.machine = simu.machine
     simu.var_simu.set_OP_array(
         OP_matrix, "N0", "Id", "Iq", is_update_input=True, input_index=0, simu=simu
     )

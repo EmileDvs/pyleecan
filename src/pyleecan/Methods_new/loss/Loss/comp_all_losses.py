@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.errors import FieldMissingError
 import numpy as np
 
@@ -6,12 +7,13 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.mesh.mesh_solution import MeshSolution
+    from ....Classes_new.output.output import Output
 
 
 def comp_all_losses(
     self,
     axes_dict: dict | None = None,
-    meshsol: MeshSolution | None = None,
+    meshsol: MeshSolution | None = None, output: Output | None = None,
 ) -> None:
     """Compute all the losses models set in model_dict
 
@@ -23,9 +25,11 @@ def comp_all_losses(
         Dict containing axes for loss calculation
     meshsol : MeshSolution
         magnetic meshsolution with stator and rotor solutions merged (default: OutMag.get_meshsolution())
+    output : Output, optional
+        Output of the simulation (default: the parent of the simulation)
     """
+    output = container_or_parent(self, output, "output", depth=2)
 
-    output = self.parent.parent
     out_loss = output.loss
     # Store dict of axes
     if axes_dict is not None:

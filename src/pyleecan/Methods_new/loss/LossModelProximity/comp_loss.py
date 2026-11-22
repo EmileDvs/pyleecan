@@ -39,8 +39,6 @@ def comp_loss(self, meshsol: MeshSolution | None = None, loss: Loss | None = Non
 
     if output is None:
         raise Exception("Cannot calculate core losses if simu is not in an Output")
-    else:
-        pass
 
     machine = output.simu.machine
 
@@ -53,7 +51,7 @@ def comp_loss(self, meshsol: MeshSolution | None = None, loss: Loss | None = Non
 
     # Compute the Proximity loss coefficient (if not enforced)
     if self.k_p is None:
-        self.comp_coeff()
+        self.comp_coeff(loss=loss, simu=output.simu)
     k_p = self.k_p
 
     # Get fundamental frequency

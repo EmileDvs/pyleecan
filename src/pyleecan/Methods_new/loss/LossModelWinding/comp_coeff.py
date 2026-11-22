@@ -1,7 +1,15 @@
+from ....classes_common.parents import container_or_parent
+from typing import TYPE_CHECKING
 import numpy as np
 
 
-def comp_coeff(self, T_op: float = 20, T_ref: float = 20) -> float:
+if TYPE_CHECKING:
+    from ....Classes_new.simulation.simulation import Simulation
+
+
+def comp_coeff(
+    self, T_op: float = 20, T_ref: float = 20, simu: Simulation | None = None
+) -> float:
     """Compute the skin effect factor on resistance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
     All parameters are defined p.270 / 271
     In this method, the returned value is the one from the reference divided by the frequency, as the effect of
@@ -15,6 +23,8 @@ def comp_coeff(self, T_op: float = 20, T_ref: float = 20) -> float:
         Conductor operational temperature [degC]
     T_ref: float
         Conductor reference temperature [degC]
+    simu : Simulation, optional
+        Simulation of the loss model (default: the parent of the Loss object)
 
     Returns
     ----------
@@ -22,14 +32,16 @@ def comp_coeff(self, T_op: float = 20, T_ref: float = 20) -> float:
         skin effect coeff for resistance at given frequency and temperature
     """
 
-    conductor = self.parent.parent.machine.stator.winding.conductor
+    simu = container_or_parent(self, simu, "simu", depth=2)
+    lamination = simu.machine.stator
+    conductor = lamination.winding.conductor
 
     # Compute slot average width
-    slot = conductor.parent.parent.slot
+    slot = lamination.slot
     b = slot.comp_width()
 
     # Get number of turns in series per coil
-    zt = conductor.parent.Ntcoil
+    zt = lamination.winding.Ntcoil
 
     # check if wires are round or rectangular
     is_round_wire = conductor.is_round_wire()

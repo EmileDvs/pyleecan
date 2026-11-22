@@ -199,7 +199,7 @@ class Output(LegacyClass):
                 data_dict["Iq"] = I_dict["Iq"]
                 if hasattr(self.elec.OP, "If_ref"):
                     data_dict["If"] = self.elec.OP.If_ref
-                Is = self.elec.get_Is()
+                Is = self.elec.get_Is(output=self)
                 if Is is not None:
                     data_dict["Is"] = Is.get_along("phase", "time")["I_s"]
         # Magnetic data

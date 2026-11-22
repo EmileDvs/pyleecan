@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
@@ -7,10 +8,11 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data import Data
+    from ....Classes_new.simulation.simulation import Simulation
 
 
 def build_meshsolution(
-    self, out_dict: dict, axes_dict: dict[str, Data], B_elem: np.ndarray, H_elem: np.ndarray, mu_elem: np.ndarray, A_node: np.ndarray, meshFEMM, groups: dict, A_elem: np.ndarray
+    self, out_dict: dict, axes_dict: dict[str, Data], B_elem: np.ndarray, H_elem: np.ndarray, mu_elem: np.ndarray, A_node: np.ndarray, meshFEMM, groups: dict, A_elem: np.ndarray, simu: Simulation | None = None
 ) -> None:
     """Build meshsolution dict from FEMM results.
     The meshsolution dict contains meshsolution for stator and rotor frame with their respective time periodicity.
@@ -37,12 +39,15 @@ def build_meshsolution(
         Dict whose values are group label and values are array of indices of related elements
     A_elem : ndarray
         Magnetic Vector Potential for each elem (Nelem,1) []
+    simu : Simulation, optional
+        Simulation holding the model (default: the parent)
 
     """
+    simu = container_or_parent(self, simu, "simu")
 
     from ....Classes_new.mesh.solution_data import SolutionData
     from ....Classes_new.mesh.solution_vector import SolutionVector
-    machine = self.parent.machine
+    machine = simu.machine
 
     # Get the angular symmetry factor
     sym, is_antiper_a = axes_dict["angle"].get_periodicity()

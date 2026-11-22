@@ -222,7 +222,7 @@ class Electrical(LegacyModel):
             Output of the simulation (default: the parent of the simulation)
         """
         output = container_or_parent(self, output, "output", depth=2)
-        if output is None and self.parent is None:
+        if output is None and container_or_parent(self, None, "simu") is None:
             raise InputError(
                 "The Electrical object must be in a Simulation object to run"
             )
@@ -312,4 +312,4 @@ class Electrical(LegacyModel):
         self.comp_torque(out_dict, output.elec.OP.get_N0())
 
         # Store electrical quantities contained in out_dict in OutElec, as Data object if necessary
-        output.elec.store(out_dict)
+        output.elec.store(out_dict, output=output)

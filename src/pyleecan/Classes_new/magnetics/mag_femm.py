@@ -12,6 +12,7 @@ import numpy as np
 
 from ...classes_common.errors import FieldMissingError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ...definitions import MAIN_DIR
 from ...Functions_new.FEMM import FEMM_GROUPS
 from ...Functions_new.utils.labels import STATOR_LAB
@@ -35,6 +36,7 @@ if TYPE_CHECKING:
     from ..mesh.solution import Solution
     from ..output.output import Output
     from ..scidatatool.data import Data
+    from ..simulation.simulation import Simulation
 
 
 @dataclass(eq=False)
@@ -150,6 +152,7 @@ class MagFEMM(Magnetics):
         meshFEMM,
         groups: dict,
         A_elem: np.ndarray,
+        simu: Simulation | None = None,
     ) -> None:
         """Build meshsolution dict from FEMM results.
         The meshsolution dict contains meshsolution for stator and rotor frame with their respective time periodicity.
@@ -176,10 +179,13 @@ class MagFEMM(Magnetics):
             Dict whose values are group label and values are array of indices of related elements
         A_elem : ndarray
             Magnetic Vector Potential for each elem (Nelem,1) []
+        simu : Simulation, optional
+            Simulation holding the model (default: the parent)
 
         """
+        simu = container_or_parent(self, simu, "simu")
 
-        machine = self.parent.machine
+        machine = simu.machine
 
         # Get the angular symmetry factor
         sym, is_antiper_a = axes_dict["angle"].get_periodicity()

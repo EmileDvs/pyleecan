@@ -1,15 +1,22 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Classes_new.mesh.mesh_solution import MeshSolution
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.output.output import Output
 
 
-def get_meshsolution(self) -> MeshSolution:
+def get_meshsolution(self, output: Output | None = None) -> MeshSolution:
     """Get loss density meshsolution
 
     Parameters
     ----------
     self : OutLoss
         an OutLoss object
+    output : Output, optional
+        Output of the simulation holding the object (default: the parent)
 
     Returns
     -------
@@ -17,11 +24,12 @@ def get_meshsolution(self) -> MeshSolution:
         Losses as function of time on the machine mesh
 
     """
+    output = container_or_parent(self, output, "output")
 
     from ....Classes_new.mesh.solution_data import SolutionData
     if self.meshsolution is None:
         # Get magnetic output
-        outmag = self.parent.mag
+        outmag = output.mag
 
         # Get mesh and groups from magnetic meshsolution
         meshsol = outmag.meshsolution

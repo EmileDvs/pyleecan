@@ -1,12 +1,15 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.logger_context import get_logger
 import numpy as np
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.output.lut_dq import LUTdq
+    from ....Classes_new.output.output import Output
+    from ....Classes_new.simulation.simulation import Simulation
 
 
-def solve_MTPA(self, LUT: LUTdq, Rs: float) -> dict:
+def solve_MTPA(self, LUT: LUTdq, Rs: float, simu: Simulation | None = None, output: Output | None = None) -> dict:
     """Solve EEC using Maximum Torque Per Ampere strategy with respect to voltage and current constraints
 
     Parameters
@@ -17,6 +20,10 @@ def solve_MTPA(self, LUT: LUTdq, Rs: float) -> dict:
         Calculated look-up table
     Rs: float
         Stator phase resistance [Ohm]
+    simu : Simulation, optional
+        Simulation holding the model (default: the parent)
+    output : Output, optional
+        Output of the simulation (default: the parent of the simulation)
 
     Returns
     ----------
@@ -24,9 +31,9 @@ def solve_MTPA(self, LUT: LUTdq, Rs: float) -> dict:
         Dict containing all output quantities
 
     """
+    output = container_or_parent(self, output, "output", depth=2)
 
     # Get output, machine and OP
-    output = self.parent.parent
 
     machine = output.simu.machine
     OP = output.elec.OP
