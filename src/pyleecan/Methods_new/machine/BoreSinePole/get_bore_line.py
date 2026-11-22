@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.logger_context import get_logger
 from ....Classes_new.geometry.segment import Segment
 from ....classes_common.errors import ParentMissingError
@@ -7,11 +8,12 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.machine.bore_sine_pole import BoreSinePole
+    from ....Classes_new.machine.lamination import Lamination
 
 NN = 30  # number of segments per half pole
 
 
-def get_bore_line(self, prop_dict: dict | None = None) -> list:
+def get_bore_line(self, prop_dict: dict | None = None, lam: Lamination | None = None) -> list:
     """Return the bore line description
     adapted sine field pole geometry from the text book:
     "Müller, Germar, et al. Berechnung Elektrischer Maschinen. Hoboken, NJ, United States, Wiley, 2008."
@@ -23,15 +25,18 @@ def get_bore_line(self, prop_dict: dict | None = None) -> list:
         A BoreSinePole object
     prop_dict : dict
         Property dictionary to apply on the lines
+    lam : Lamination, optional
+        Lamination holding the bore (default: the parent)
 
     Returns
     -------
     bore_list : list
         List of bore lines
     """
+    lam = container_or_parent(self, lam, "lam")
 
-    if self.parent is not None:
-        Rbo = self.parent.get_Rbo()
+    if lam is not None:
+        Rbo = lam.get_Rbo()
     else:
         raise ParentMissingError("Error: The slot is not inside a Lamination")
 
@@ -50,12 +55,12 @@ def get_bore_line(self, prop_dict: dict | None = None) -> list:
     phi_max = _get_phi(self, w_max)
     phi = np.linspace(-phi_max, phi_max, 2 * NN + 1)
 
-    Zedge = self.get_pole_shape(-phi_max)
+    Zedge = self.get_pole_shape(-phi_max, lam=lam)
     xedge = (Zedge * np.exp(1j * alpha1)).real
     Rq = Rbo + self.delta_d - self.delta_q
 
     # Create the first pole bore line
-    Z = [self.get_pole_shape(p) for p in phi]
+    Z = [self.get_pole_shape(p, lam=lam) for p in phi]
 
     if self.delta_q is not None and Rq < xedge:
         line = Segment(begin=Zedge * np.exp(1j * alpha1), end=1j * Zedge.imag * np.exp(1j * alpha1))

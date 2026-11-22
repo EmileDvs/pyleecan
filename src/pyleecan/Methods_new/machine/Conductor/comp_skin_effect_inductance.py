@@ -1,8 +1,14 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.winding import Winding
 
 
 def comp_skin_effect_inductance(
-    self, freq: float | np.ndarray, T_op: float = 20, T_ref: float = 20, b4: float | None = None, h4: float | None = None, zt: int | None = None
+    self, freq: float | np.ndarray, T_op: float = 20, T_ref: float = 20, b4: float | None = None, h4: float | None = None, zt: int | None = None, winding: Winding | None = None, lam: Lamination | None = None
 ) -> float:
     """Compute the skin effect factor on inductance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
     All parameters bc, h4, z4, are defined in Fig(4.14) p.249
@@ -23,29 +29,35 @@ def comp_skin_effect_inductance(
         Slot height [m]
     zt: int
         Number of radial adjacent conductors
+    winding : Winding, optional
+        Winding holding the object (default: the parent)
+    lam : Lamination, optional
+        Lamination of the winding (default: the parent of the winding)
 
     Returns
     ----------
     kl_skin : float
         skin effect coeff for inductance at given frequency and temperature
     """
+    winding = container_or_parent(self, winding, "winding")
+    lam = container_or_parent(self, lam, "lam", depth=2)
 
     if b4 is None:
         # Compute slot average width
-        slot = self.parent.parent.slot
+        slot = lam.slot
         b4 = slot.comp_width()
 
     if h4 is None:
         # Compute slot height
-        slot = self.parent.parent.slot
+        slot = lam.slot
         h4 = slot.comp_height()
 
     if zt is None:
         # Get number of turns in series per coil
-        zt = self.parent.Ntcoil
+        zt = winding.Ntcoil
 
     # conductor width
-    bc = self.comp_width_wire()
+    bc = self.comp_width_wire(winding=winding, lam=lam)
 
     # Electrical conductivity accounting for temperature increase
     sigma = self.cond_mat.elec.get_conductivity(T_op=T_op, T_ref=T_ref)

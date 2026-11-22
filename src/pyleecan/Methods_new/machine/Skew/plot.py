@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Functions_new.Plot import dict_2D
@@ -7,6 +8,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.machine import Machine
 
 
 def plot(
@@ -16,7 +19,7 @@ def plot(
     lam_name="",
     is_show_fig: bool = False,
     save_path: str | None = None,
-    win_title: str | None = None,
+    win_title: str | None = None, lam: Lamination | None = None, machine: Machine | None = None,
 ) -> None:
     """Plots skew angle
 
@@ -24,8 +27,13 @@ def plot(
     ----------
     self : Skew
         a Skew object
+    lam : Lamination, optional
+        Lamination holding the skew (default: the parent)
+    machine : Machine, optional
+        Machine of the lamination (default: the parent of the lamination)
 
     """
+    lam = container_or_parent(self, lam, "lam")
 
     # Local import: avoids circular imports
     from ....Classes_new.machine.lam_slot_m import LamSlotM
@@ -38,7 +46,7 @@ def plot(
     linestyle_list = ["solid"]
 
 
-    if isinstance(self.parent, (LamSlotM, LamH)):
+    if isinstance(lam, (LamSlotM, LamH)):
         legend_list.append("Rotor d-axis")
         y_list.append([0 for z in z_list])
         linestyle_list.append("dashed")

@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, Patch, Rectangle
 import numpy as np
@@ -13,6 +14,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.machine import Machine
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
@@ -27,7 +30,7 @@ def plot_linear(
     is_show_fig: bool = True,
     save_path: str | None = None,
     win_title: str | None = None,
-    is_legend: bool = True,
+    is_legend: bool = True, lam: Lamination | None = None, machine: Machine | None = None,
 ):
     """Plots the winding linear pattern. Method based on plot_overhang method of swat-em module
 
@@ -51,7 +54,13 @@ def plot_linear(
         Title for the window
     is_legend : bool
         True to add the legend
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
+    machine : Machine, optional
+        Machine of the lamination, for the window title (default: the parent of the lamination)
     """
+    lam = container_or_parent(self, lam, "lam")
+    machine = container_or_parent(self, machine, "machine", depth=2)
 
     # Recovering the colors of the phases
     if (
@@ -72,8 +81,8 @@ def plot_linear(
         ]
 
     # Step 1 : Generate a datamodel for the winding
-    Zs = self.parent.get_Zs()
-    p = self.parent.get_pole_pair_number()
+    Zs = lam.get_Zs()
+    p = lam.get_pole_pair_number()
 
     # Generating the winding from inputs and recovering its attributes
     wdg = datamodel()
@@ -106,7 +115,7 @@ def plot_linear(
     # Only plotting the machine for a period (if antiperiod given using the full period)
     # This done by only taking into account Zs for a period
     if is_max_sym:
-        per, is_antiper = self.comp_periodicity()
+        per, is_antiper = self.comp_periodicity(lam=lam)
         Zs_per = Zs // (per // 2) if is_antiper else Zs // per
     else:
         Zs_per = Zs
@@ -132,7 +141,7 @@ def plot_linear(
             xy=point,
             width=width_patch,
             height=height,
-            color=STATOR_COLOR if self.parent.is_stator else ROTOR_COLOR,
+            color=STATOR_COLOR if lam.is_stator else ROTOR_COLOR,
             linewidth=0,
         )
         patches.append(patch)
@@ -357,15 +366,15 @@ def plot_linear(
     ax.set_axis_off()
 
     # Step 3-6: Setting the title of the window and of the figure
-    if self.parent.is_stator:
+    if lam.is_stator:
         title = "Stator winding linear pattern"
         prefix = "Stator "
     else:
         title = "Rotor winding linear pattern"
         prefix = "Rotor "
     # Add machine name if available
-    if self.parent.parent is not None and self.parent.parent.name not in ["", None]:
-        win_title = self.parent.parent.name + " " + title
+    if machine is not None and machine.name not in ["", None]:
+        win_title = machine.name + " " + title
     else:
         win_title = title
     manager = plt.get_current_fig_manager()
@@ -375,10 +384,10 @@ def plot_linear(
 
     # Step 3-7: Setting the legend of the figure
     # Adding lamination name in the lamination
-    if self.parent.is_stator and "Stator" not in label_leg:
+    if lam.is_stator and "Stator" not in label_leg:
         patch_leg.append(Patch(color=STATOR_COLOR))
         label_leg.append("Stator")
-    elif not self.parent.is_stator and "Rotor" not in label_leg:
+    elif not lam.is_stator and "Rotor" not in label_leg:
         patch_leg.append(Patch(color=ROTOR_COLOR))
         label_leg.append("Rotor")
 

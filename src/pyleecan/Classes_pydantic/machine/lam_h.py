@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
+from ...classes_common.parents import container_or_parent
 from ...Functions_pydantic.utils.init_fig import init_fig
 from ..slot.hole import Hole
 from .lamination import Lamination
@@ -15,6 +16,8 @@ from .machine import Machine
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+
+    from .machine import Machine
 
 
 class LamH(Lamination):
@@ -290,6 +293,7 @@ class LamH(Lamination):
         win_title: str | None = None,
         is_clean_plot: bool = False,
         is_winding_connection: bool = False,
+        machine: Machine | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot a Lamination with Buried Magnets in a matplotlib fig
 
@@ -325,6 +329,8 @@ class LamH(Lamination):
             True to remove title, legend, axis (only machine on plot with white background)
         is_winding_connection : bool
             True to display winding connections (not used)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -333,6 +339,7 @@ class LamH(Lamination):
         ax : Matplotlib.axes.Axes object
             Axis containing the plot
         """
+        machine = container_or_parent(self, machine, "machine")
 
         # Lamination bore
 
@@ -381,12 +388,8 @@ class LamH(Lamination):
         ax.set_ylim(-Lim, Lim)
 
         # Window title
-        if (
-            win_title is None
-            and self.parent is not None
-            and self.parent.name not in [None, ""]
-        ):
-            win_title = self.parent.name + " " + lam_name
+        if win_title is None and machine is not None and machine.name not in [None, ""]:
+            win_title = machine.name + " " + lam_name
         elif win_title is None:
             win_title = lam_name
         manager = plt.get_current_fig_manager()

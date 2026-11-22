@@ -2,9 +2,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.machine import Machine
 
 
-def plot_mmf_unit(self, r_max=100, fig: Figure | None = None, save_path: str | None = None, is_show_fig: bool = True) -> None:
+def plot_mmf_unit(self, r_max=100, fig: Figure | None = None, save_path: str | None = None, is_show_fig: bool = True, machine: Machine | None = None) -> None:
     """Plot the winding unit mmf as a function of space
     Parameters
     ----------
@@ -17,6 +18,8 @@ def plot_mmf_unit(self, r_max=100, fig: Figure | None = None, save_path: str | N
         existing figure to use if None create a new one
     is_show_fig : bool
         To call show at the end of the method
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
     """
 
     # Local import: avoids circular imports

@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
+from ...classes_common.parents import container_or_parent
 from ...Functions_pydantic.utils.init_fig import init_fig
 from ...Functions_pydantic.utils.labels import MAG_LAB, decode_label
 from .._pyleecan_model import NDArray
@@ -16,6 +17,8 @@ from .machine import Machine
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+
+    from .machine import Machine
 
 
 class LamSlotM(LamSlot):
@@ -146,6 +149,7 @@ class LamSlotM(LamSlot):
         is_legend: bool = True,
         is_clean_plot: bool = False,
         is_winding_connection: bool = False,
+        machine: Machine | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot a Lamination with Magnets in a matplotlib fig
 
@@ -179,6 +183,8 @@ class LamSlotM(LamSlot):
             True to remove title, legend, axis (only machine on plot with white background)
         is_winding_connection : bool
             True to display winding connections (not used)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -187,6 +193,7 @@ class LamSlotM(LamSlot):
         ax : Matplotlib.axes.Axes object
             Axis containing the plot
         """
+        machine = container_or_parent(self, machine, "machine")
 
         if self.is_stator:
             lam_name = "Stator"
@@ -271,12 +278,8 @@ class LamSlotM(LamSlot):
         ax.set_ylim(-Lim, Lim)
 
         # Window title
-        if (
-            win_title is None
-            and self.parent is not None
-            and self.parent.name not in [None, ""]
-        ):
-            win_title = self.parent.name + " " + lam_name
+        if win_title is None and machine is not None and machine.name not in [None, ""]:
+            win_title = machine.name + " " + lam_name
         elif win_title is None:
             win_title = lam_name
         manager = plt.get_current_fig_manager()

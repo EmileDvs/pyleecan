@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
@@ -6,9 +7,13 @@ from ....Classes_new.scidatatool.data_time import DataTime
 from ....Classes_new.simulation.op_dq import OPdq
 from ....Functions_new.SciDataTool.dqh_transformation import dqh2n
 from ...simulation.Input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
-def comp_mmf_unit(self, Na: int | None = None, Nt: int | None = None, felec: float = 1, current_dir: int | None = None, phase_dir: int | None = None) -> tuple[DataTime, DataTime]:
+def comp_mmf_unit(self, Na: int | None = None, Nt: int | None = None, felec: float = 1, current_dir: int | None = None, phase_dir: int | None = None, machine: Machine | None = None) -> tuple[DataTime, DataTime]:
     """Compute the winding unit magnetomotive force for given inputs
 
     Parameters
@@ -25,6 +30,8 @@ def comp_mmf_unit(self, Na: int | None = None, Nt: int | None = None, felec: flo
         Stator current rotation direction +/-1
     phase_dir: int
         Stator winding phasor rotation direction +/-1
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Returns
     -------
@@ -34,15 +41,16 @@ def comp_mmf_unit(self, Na: int | None = None, Nt: int | None = None, felec: flo
         Winding functions (qs,Na)
 
     """
+    machine = container_or_parent(self, machine, "machine")
 
     # Local import: avoids circular imports
     from ....Classes_new.simulation.input_voltage import InputVoltage
 
     # Check that parent machine is not None
-    if self.parent is None:
+    if machine is None:
         raise Exception("Cannot calculate mmf unit if parent machine is None")
     else:
-        machine = self.parent
+        pass
 
     # Compute the winding function and mmf
     if self.winding is None:
@@ -154,7 +162,7 @@ def comp_mmf_unit(self, Na: int | None = None, Nt: int | None = None, felec: flo
         name="Phase MMF",
         unit="A",
         symbol="MMF",
-        axes=[axes_dict["angle"], axes_dict["phase_" + self.get_label()]],
+        axes=[axes_dict["angle"], axes_dict["phase_" + self.get_label(machine=machine)]],
         values=wf.T,
     )
 

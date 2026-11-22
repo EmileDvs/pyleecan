@@ -2,10 +2,13 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from ..geometry.line import Line
 from .bore import Bore
+
+if TYPE_CHECKING:
+    from .lamination import Lamination
 
 
 @dataclass(eq=False)
@@ -55,13 +58,15 @@ class BoreUD(Bore):
         return self.sym, False
 
     # Inlined from Methods.Machine.BoreUD.get_bore_line
-    def get_bore_line(self, label=None) -> list:
+    def get_bore_line(self, label=None, lam: Lamination | None = None) -> list:
         """Return the bore line description
 
         Parameters
         ----------
         self : BoreUD
             A BoreUD object
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------

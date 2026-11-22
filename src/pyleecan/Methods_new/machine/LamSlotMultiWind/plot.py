@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 
@@ -11,6 +12,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.machine import Machine
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 PLUS_HATCH = "++"
@@ -33,7 +35,7 @@ def plot(
     is_show_fig: bool = True,
     save_path: str | None = None,
     win_title: str | None = None,
-    is_winding_connection: bool = False,
+    is_winding_connection: bool = False, machine: Machine | None = None,
 ) -> list | tuple[Figure, Axes]:
     """Plot the Lamination with empty Slots in a matplotlib fig
 
@@ -63,6 +65,8 @@ def plot(
         To call show at the end of the method
     is_winding_connection : bool
         True to display winding connections (not used)
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Returns
     -------
@@ -73,6 +77,7 @@ def plot(
     ax : Matplotlib.axes.Axes object
         Axis containing the plot
     """
+    machine = container_or_parent(self, machine, "machine")
 
     from ....Classes_new.machine.machine import Machine
     from ....Classes_new.machine.winding import Winding
@@ -149,10 +154,10 @@ def plot(
             prefix = "Rotor "
         if (
             win_title is None
-            and self.parent is not None
-            and self.parent.name not in [None, ""]
+            and machine is not None
+            and machine.name not in [None, ""]
         ):
-            win_title = self.parent.name + " " + prefix[:-1]
+            win_title = machine.name + " " + prefix[:-1]
         elif win_title is None:
             win_title = prefix[:-1]
         manager = plt.get_current_fig_manager()

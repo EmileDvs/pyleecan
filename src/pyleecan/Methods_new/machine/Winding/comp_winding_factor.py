@@ -1,8 +1,13 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 from . import WindingError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_winding_factor(self, Harmonics: list[float] = [1]) -> np.ndarray:
+def comp_winding_factor(self, Harmonics: list[float] = [1], lam: Lamination | None = None) -> np.ndarray:
     """Compute the winding factor of phase 1 (asuming symmetry)
 
     Parameters
@@ -11,6 +16,8 @@ def comp_winding_factor(self, Harmonics: list[float] = [1]) -> np.ndarray:
         A: Winding object
     Harmonics : list of floats
         list of harmonics to calculate the winding factor
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     Returns
     -------
@@ -21,15 +28,16 @@ def comp_winding_factor(self, Harmonics: list[float] = [1]) -> np.ndarray:
     ------
 
     """
-    if self.parent is None:
+    lam = container_or_parent(self, lam, "lam")
+    if lam is None:
         raise WindingError("ERROR: The Winding object must be in a Lamination object.")
 
-    if self.parent.slot is None:
+    if lam.slot is None:
         raise WindingError(
             "ERROR: The Winding object must be in a Lamination object with Slot."
         )
 
-    Zs = self.parent.slot.Zs
+    Zs = lam.slot.Zs
 
     assert Zs > 0, "Zs must be >0"
     assert Zs % 1 == 0, "Zs must be an integer"

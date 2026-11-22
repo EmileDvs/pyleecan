@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
+from ...classes_common.parents import container_or_parent
 from ..geometry.arc_1 import Arc1
 from ..geometry.arc_2 import Arc2
 from ..geometry.segment import Segment
@@ -15,6 +16,7 @@ from .frame import Frame
 
 if TYPE_CHECKING:
     from ..geometry.line import Line
+    from .machine import Machine
 
 
 class FrameBar(Frame):
@@ -72,7 +74,11 @@ class FrameBar(Frame):
 
     # Inlined from Methods.Machine.FrameBar.build_geometry_bar
     def build_geometry_bar(
-        self, sym: int = 1, alpha: float = 0, delta: complex = 0
+        self,
+        sym: int = 1,
+        alpha: float = 0,
+        delta: complex = 0,
+        machine: Machine | None = None,
     ) -> list:
         """Build the geometry of the structural bars
 
@@ -86,6 +92,8 @@ class FrameBar(Frame):
             Angle for rotation [rad]
         delta : complex
             Complex value for translation
+        machine : Machine, optional
+            Machine holding the frame (default: the parent)
 
         Returns
         -------
@@ -93,10 +101,11 @@ class FrameBar(Frame):
             list of surface
 
         """
+        machine = container_or_parent(self, machine, "machine")
         surf_list = []
-        h_gap = self.comp_height_gap()
+        h_gap = self.comp_height_gap(machine=machine)
         if h_gap > 0:
-            lam_outer = self.parent.get_lam_list()[-1]
+            lam_outer = machine.get_lam_list()[-1]
             ###Rectangular Shape
             # #Define Points
             # Z0 = lam_outer.Rext
@@ -146,13 +155,15 @@ class FrameBar(Frame):
         return surf_list
 
     # Inlined from Methods.Machine.FrameBar.comp_height_gap
-    def comp_height_gap(self) -> float:
+    def comp_height_gap(self, machine: Machine | None = None) -> float:
         """Computation of the Height of the gap between the Frame and Outer Lamination
 
         Parameters
         ----------
         self : FrameBar
             A FrameBar object
+        machine : Machine, optional
+            Machine holding the frame (default: the parent)
 
         Returns
         -------
@@ -160,7 +171,8 @@ class FrameBar(Frame):
             Height of the Gap [m]
 
         """
-        lam_outer = self.parent.get_lam_list()[-1]
+        machine = container_or_parent(self, machine, "machine")
+        lam_outer = machine.get_lam_list()[-1]
 
         return self.Rint - lam_outer.Rext
 

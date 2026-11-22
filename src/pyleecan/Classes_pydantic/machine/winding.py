@@ -10,6 +10,7 @@ from pydantic import Field
 
 from ...classes_common.errors import WindingError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ...Classes_new._swat_em import datamodel
 from ...definitions import config_dict
 from ...Functions_new._swat_em import plots
@@ -26,6 +27,9 @@ from .end_winding import EndWinding
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+
+    from .lamination import Lamination
+    from .machine import Machine
 
 
 class Winding(LegacyModel):
@@ -161,7 +165,7 @@ class Winding(LegacyModel):
 
     # Inlined from Methods.Machine.Winding.comp_connection_mat
     def comp_connection_mat(
-        self, Zs: int | None = None, p: int | None = None
+        self, Zs: int | None = None, p: int | None = None, lam: Lamination | None = None
     ) -> np.ndarray:
         """Compute the Winding Matrix for
 
@@ -173,6 +177,8 @@ class Winding(LegacyModel):
             Number of Slot (Integer >0)
         p : int
             Number of pole pairs (Integer >0)
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -185,20 +191,19 @@ class Winding(LegacyModel):
             Zs/qs/2 must be an integer
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
         if Zs is None:
-            if not hasattr(self.parent, "slot") and not hasattr(
-                self.parent, "slot_list"
-            ):
+            if not hasattr(lam, "slot") and not hasattr(lam, "slot_list"):
                 raise WindingError("The Winding object must be in a Lamination object.")
 
-            Zs = self.parent.get_Zs()
+            Zs = lam.get_Zs()
 
         if p is None:
-            if self.parent is None:
+            if lam is None:
                 raise WindingError("The Winding object must be in a Lamination object.")
 
-            p = self.parent.get_pole_pair_number()
+            p = lam.get_pole_pair_number()
 
         assert Zs > 0, "Zs must be >0"
         assert Zs % 1 == 0, "Zs must be an integer"
@@ -298,7 +303,7 @@ class Winding(LegacyModel):
         # self.is_aper_a = wdg.get_is_symmetric()
 
         # To check periodicities swat-em / pyleecan definitions
-        self.per_a, self.is_aper_a = self.comp_periodicity(wind_mat=wind_mat)
+        self.per_a, self.is_aper_a = self.comp_periodicity(wind_mat=wind_mat, lam=lam)
         # if is_aper_a:  # Different def for Anti per
         #     per_a = per_a / 2
         # if self.per_a != per_a or self.is_aper_a != is_aper_a:
@@ -332,7 +337,7 @@ class Winding(LegacyModel):
         if self.end_winding is None:
             return self.Lewout
         else:
-            return self.Lewout + self.end_winding.comp_length()
+            return self.Lewout + self.end_winding.comp_length(winding=self)
 
     # Inlined from Methods.Machine.Winding.comp_Ncps
     def comp_Ncps(self) -> float:
@@ -363,7 +368,7 @@ class Winding(LegacyModel):
         return Ncps
 
     # Inlined from Methods.Machine.Winding.comp_Ncspc
-    def comp_Ncspc(self, Zs: int | None = None) -> float:
+    def comp_Ncspc(self, Zs: int | None = None, lam: Lamination | None = None) -> float:
         """Compute the number of coils in series per parallel circuit
 
         Parameters
@@ -372,6 +377,8 @@ class Winding(LegacyModel):
             A Winding object
         Zs : int
             number of slot
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -379,18 +386,19 @@ class Winding(LegacyModel):
             Number of coils in series per parallel circuit
 
         """
+        lam = container_or_parent(self, lam, "lam")
         if Zs is None:
-            if self.parent is None:
+            if lam is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object."
                 )
 
-            if self.parent.slot is None:
+            if lam.slot is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object with Slot."
                 )
 
-            Zs = self.parent.slot.Zs
+            Zs = lam.slot.Zs
 
         (Nrad, Ntan) = self.get_dim_wind()
         Ncspc = Zs * Nrad * Ntan / (2.0 * self.qs * self.Npcp)
@@ -398,7 +406,7 @@ class Winding(LegacyModel):
         return Ncspc
 
     # Inlined from Methods.Machine.Winding.comp_Ntsp
-    def comp_Ntsp(self, Zs: int | None = None) -> float:
+    def comp_Ntsp(self, Zs: int | None = None, lam: Lamination | None = None) -> float:
         """Compute the number of turns in series per phase
 
         Parameters
@@ -407,6 +415,8 @@ class Winding(LegacyModel):
             A Winding object
         Zs : int
             Number of slot
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -414,18 +424,19 @@ class Winding(LegacyModel):
             Number of turns in series per phase
 
         """
+        lam = container_or_parent(self, lam, "lam")
         if Zs is None:
-            if self.parent is None:
+            if lam is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object."
                 )
 
-            if self.parent.slot is None:
+            if lam.slot is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object with Slot."
                 )
 
-            Zs = self.parent.slot.Zs
+            Zs = lam.slot.Zs
 
         # effective number of turns in series per phase from connection matrix
         Ntspc_eff_ = (
@@ -445,7 +456,9 @@ class Winding(LegacyModel):
         return Ntspc_eff
 
     # Inlined from Methods.Machine.Winding.comp_periodicity
-    def comp_periodicity(self, wind_mat: np.ndarray | None = None) -> tuple[int, bool]:
+    def comp_periodicity(
+        self, wind_mat: np.ndarray | None = None, lam: Lamination | None = None
+    ) -> tuple[int, bool]:
         """Computes the winding matrix (anti-)periodicity
 
         Parameters
@@ -454,6 +467,8 @@ class Winding(LegacyModel):
             A Winding object
         wind_mat : ndarray
             Winding connection matrix
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -523,7 +538,9 @@ class Winding(LegacyModel):
         return int(Nperw), bool(is_aper)
 
     # Inlined from Methods.Machine.Winding.comp_phasor_angle
-    def comp_phasor_angle(self, Zs: int | None = None) -> np.ndarray:
+    def comp_phasor_angle(
+        self, Zs: int | None = None, lam: Lamination | None = None
+    ) -> np.ndarray:
         """Compute the phasor angle of the winding phases related to the first slot
 
         Parameters
@@ -532,6 +549,8 @@ class Winding(LegacyModel):
             A: Winding object
         Zs : int
             Number of Slot (Integer >0)
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -542,18 +561,19 @@ class Winding(LegacyModel):
         ------
 
         """
+        lam = container_or_parent(self, lam, "lam")
         if Zs is None:
-            if self.parent is None:
+            if lam is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object."
                 )
 
-            if self.parent.slot is None:
+            if lam.slot is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object with Slot."
                 )
 
-            Zs = self.parent.slot.Zs
+            Zs = lam.slot.Zs
 
         assert Zs > 0, "Zs must be >0"
         assert Zs % 1 == 0, "Zs must be an integer"
@@ -577,7 +597,9 @@ class Winding(LegacyModel):
         return angle_vec
 
     # Inlined from Methods.Machine.Winding.comp_winding_factor
-    def comp_winding_factor(self, Harmonics: list[float] = [1]) -> np.ndarray:
+    def comp_winding_factor(
+        self, Harmonics: list[float] = [1], lam: Lamination | None = None
+    ) -> np.ndarray:
         """Compute the winding factor of phase 1 (asuming symmetry)
 
         Parameters
@@ -586,6 +608,8 @@ class Winding(LegacyModel):
             A: Winding object
         Harmonics : list of floats
             list of harmonics to calculate the winding factor
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -596,17 +620,18 @@ class Winding(LegacyModel):
         ------
 
         """
-        if self.parent is None:
+        lam = container_or_parent(self, lam, "lam")
+        if lam is None:
             raise WindingError(
                 "ERROR: The Winding object must be in a Lamination object."
             )
 
-        if self.parent.slot is None:
+        if lam.slot is None:
             raise WindingError(
                 "ERROR: The Winding object must be in a Lamination object with Slot."
             )
 
-        Zs = self.parent.slot.Zs
+        Zs = lam.slot.Zs
 
         assert Zs > 0, "Zs must be >0"
         assert Zs % 1 == 0, "Zs must be an integer"
@@ -810,6 +835,8 @@ class Winding(LegacyModel):
         save_path: str | None = None,
         win_title: str | None = None,
         is_legend: bool = True,
+        lam: Lamination | None = None,
+        machine: Machine | None = None,
     ):
         """Plots the winding linear pattern. Method based on plot_overhang method of swat-em module
 
@@ -833,7 +860,13 @@ class Winding(LegacyModel):
             Title for the window
         is_legend : bool
             True to add the legend
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
+        machine : Machine, optional
+            Machine of the lamination, for the window title (default: the parent of the lamination)
         """
+        lam = container_or_parent(self, lam, "lam")
+        machine = container_or_parent(self, machine, "machine", depth=2)
 
         # Recovering the colors of the phases
         if (
@@ -854,8 +887,8 @@ class Winding(LegacyModel):
             ]
 
         # Step 1 : Generate a datamodel for the winding
-        Zs = self.parent.get_Zs()
-        p = self.parent.get_pole_pair_number()
+        Zs = lam.get_Zs()
+        p = lam.get_pole_pair_number()
 
         # Generating the winding from inputs and recovering its attributes
         wdg = datamodel()
@@ -888,7 +921,7 @@ class Winding(LegacyModel):
         # Only plotting the machine for a period (if antiperiod given using the full period)
         # This done by only taking into account Zs for a period
         if is_max_sym:
-            per, is_antiper = self.comp_periodicity()
+            per, is_antiper = self.comp_periodicity(lam=lam)
             Zs_per = Zs // (per // 2) if is_antiper else Zs // per
         else:
             Zs_per = Zs
@@ -914,7 +947,7 @@ class Winding(LegacyModel):
                 xy=point,
                 width=width_patch,
                 height=height,
-                color=self.STATOR_COLOR if self.parent.is_stator else self.ROTOR_COLOR,
+                color=self.STATOR_COLOR if lam.is_stator else self.ROTOR_COLOR,
                 linewidth=0,
             )
             patches.append(patch)
@@ -1143,15 +1176,15 @@ class Winding(LegacyModel):
         ax.set_axis_off()
 
         # Step 3-6: Setting the title of the window and of the figure
-        if self.parent.is_stator:
+        if lam.is_stator:
             title = "Stator winding linear pattern"
             prefix = "Stator "
         else:
             title = "Rotor winding linear pattern"
             prefix = "Rotor "
         # Add machine name if available
-        if self.parent.parent is not None and self.parent.parent.name not in ["", None]:
-            win_title = self.parent.parent.name + " " + title
+        if machine is not None and machine.name not in ["", None]:
+            win_title = machine.name + " " + title
         else:
             win_title = title
         manager = plt.get_current_fig_manager()
@@ -1161,10 +1194,10 @@ class Winding(LegacyModel):
 
         # Step 3-7: Setting the legend of the figure
         # Adding lamination name in the lamination
-        if self.parent.is_stator and "Stator" not in label_leg:
+        if lam.is_stator and "Stator" not in label_leg:
             patch_leg.append(Patch(color=self.STATOR_COLOR))
             label_leg.append("Stator")
-        elif not self.parent.is_stator and "Rotor" not in label_leg:
+        elif not lam.is_stator and "Rotor" not in label_leg:
             patch_leg.append(Patch(color=self.ROTOR_COLOR))
             label_leg.append("Rotor")
 
@@ -1195,7 +1228,9 @@ class Winding(LegacyModel):
         return fig, ax
 
     # Inlined from Methods.Machine.Winding.plot_radial
-    def plot_radial(self, is_show_fig: bool = True) -> None:
+    def plot_radial(
+        self, is_show_fig: bool = True, lam: Lamination | None = None
+    ) -> None:
         """Plots the winding radial pattern
 
         Parameters
@@ -1204,11 +1239,14 @@ class Winding(LegacyModel):
             A Winding object
         is_show_fig : bool
             True to call fig.show
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         """
-        Zs = self.parent.get_Zs()
+        lam = container_or_parent(self, lam, "lam")
+        Zs = lam.get_Zs()
 
-        p = self.parent.get_pole_pair_number()
+        p = lam.get_pole_pair_number()
 
         # generate a datamodel for the winding
         wdg = datamodel()

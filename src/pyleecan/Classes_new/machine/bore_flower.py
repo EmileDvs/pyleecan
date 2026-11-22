@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from ...classes_common.errors import ParentMissingError
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -26,6 +27,8 @@ from .lamination import Lamination
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+
+    from .lamination import Lamination
 
 
 @dataclass(eq=False)
@@ -72,7 +75,9 @@ class BoreFlower(Bore):
         return self.N, False
 
     # Inlined from Methods.Machine.BoreFlower.get_bore_line
-    def get_bore_line(self, prop_dict: dict | None = None) -> list:
+    def get_bore_line(
+        self, prop_dict: dict | None = None, lam: Lamination | None = None
+    ) -> list:
         """Return the bore line description
 
         Parameters
@@ -81,18 +86,21 @@ class BoreFlower(Bore):
             A BoreFlower object
         prop_dict : dict
             Property dictionary to apply on the lines
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
         bore_list : list
             List of bore lines
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            if self.is_yoke():
-                R = self.parent.get_Ryoke()
+        if lam is not None:
+            if self.is_yoke(lam=lam):
+                R = lam.get_Ryoke()
             else:
-                R = self.parent.get_Rbo()
+                R = lam.get_Rbo()
         else:
             raise ParentMissingError(
                 "Error: The Bore object is not inside a Lamination"
@@ -121,6 +129,7 @@ class BoreFlower(Bore):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
@@ -142,6 +151,8 @@ class BoreFlower(Bore):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
@@ -150,6 +161,7 @@ class BoreFlower(Bore):
         ax : Matplotlib.axes.Axes object
             Axis containing the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -168,19 +180,18 @@ class BoreFlower(Bore):
             )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The bore is not inside a Lamination")
-            lam = self.parent
             fig, ax = lam.plot(is_show_fig=False, fig=fig, ax=ax)
 
             # Comp point coordinates
-            lines = self.get_bore_line()
+            lines = self.get_bore_line(lam=lam)
             Zc = lines[1].get_center()
             Z1 = lines[1].get_begin()
             Z2 = lines[1].get_end()
             Zm0 = lines[1].get_middle()
             Zm1 = lines[2].get_middle()
-            Rbo = self.parent.get_Rbo()
+            Rbo = lam.get_Rbo()
             H = self.Rarc / 8  # Small distance for label placement
 
             # Adding schematics

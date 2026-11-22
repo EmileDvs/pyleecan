@@ -17,6 +17,7 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from ..slot.hole import Hole
+    from .machine import Machine
 
 
 @dataclass(eq=False)
@@ -240,6 +241,7 @@ class LamSquirrelCageMag(LamSquirrelCage):
         is_add_arrow: bool = False,
         is_show_fig: bool = True,
         is_winding_connection: bool = False,
+        machine: Machine | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot the Lamination in a matplotlib fig
 
@@ -267,6 +269,8 @@ class LamSquirrelCageMag(LamSquirrelCage):
             To call show at the end of the method
         is_winding_connection : bool
             True to display winding connections (not used)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------

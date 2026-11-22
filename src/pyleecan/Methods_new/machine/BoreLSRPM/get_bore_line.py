@@ -1,11 +1,16 @@
+from ....classes_common.parents import container_or_parent
 from ....Functions_new.utils.geometry import comp_flower_arc
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....classes_common.errors import ParentMissingError
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def get_bore_line(self, prop_dict: dict | None = None) -> list:
+def get_bore_line(self, prop_dict: dict | None = None, lam: Lamination | None = None) -> list:
     """Return the bore line description
 
     Parameters
@@ -14,18 +19,21 @@ def get_bore_line(self, prop_dict: dict | None = None) -> list:
         A BoreLSRPM object
     prop_dict : dict
         Property dictionary to apply on the lines
+    lam : Lamination, optional
+        Lamination holding the bore (default: the parent)
 
     Returns
     -------
     bore_list : list
         List of bore lines
     """
+    lam = container_or_parent(self, lam, "lam")
 
-    if self.parent is not None:
-        if self.is_yoke():
-            R = self.parent.get_Ryoke()
+    if lam is not None:
+        if self.is_yoke(lam=lam):
+            R = lam.get_Ryoke()
         else:
-            R = self.parent.get_Rbo()
+            R = lam.get_Rbo()
     else:
         raise ParentMissingError("Error: The Bore object is not inside a Lamination")
 

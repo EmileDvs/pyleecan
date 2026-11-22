@@ -2,9 +2,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.data_nd import DataND
+    from ....Classes_new.machine.machine import Machine
 
 
-def comp_mmf_unit(self, Na: int, Nt: int, felec: float = 1, current_dir: int | None = None, phase_dir: int | None = None) -> tuple[DataND, DataND]:
+def comp_mmf_unit(self, Na: int, Nt: int, felec: float = 1, current_dir: int | None = None, phase_dir: int | None = None, machine: Machine | None = None) -> tuple[DataND, DataND]:
     """Compute the winding Unit magnetomotive force
 
     Parameters
@@ -21,6 +22,8 @@ def comp_mmf_unit(self, Na: int, Nt: int, felec: float = 1, current_dir: int | N
         Stator current rotation direction +/-1
     phase_dir: int
         Stator winding phasor rotation direction +/-1
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Returns
     -------

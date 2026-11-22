@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.machine import Machine
 
 
 def plot(
@@ -18,7 +19,7 @@ def plot(
     edgecolor: str | None = None,
     is_add_arrow: bool = False,
     is_show_fig: bool = True,
-    is_winding_connection: bool = False,
+    is_winding_connection: bool = False, machine: Machine | None = None,
 ) -> tuple[Figure, Axes]:
     """Plot the Lamination in a matplotlib fig
 
@@ -46,6 +47,8 @@ def plot(
         To call show at the end of the method
     is_winding_connection : bool
         True to display winding connections (not used)
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Returns
     -------

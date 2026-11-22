@@ -1472,6 +1472,28 @@ Same signature rule as Step 11 (optional container argument, fallback through
         both backends, Slot / Machine method tests 1131 passed and the
         schematics plot tests 157 passed with each backend, GUI tests of the
         machine setup pages 524 passed with each backend; `ty` unchanged.
+  - [x] (2026-11-22) Machine package: 148 -> 0, with the Step 11 pass run
+        as a tool (specs per family): `Winding` family `lam` (the
+        connection matrix, turns, factors, plots, `WindingUD` imports and
+        `init_as_*`; `plot_linear` also `machine`, depth 2, for the window
+        title), `Conductor` and `EndWinding` families `winding` and `lam`
+        (depth 2), `Skew` `lam` and `machine`, `Bore` and `Notch` families
+        `lam`, `Frame` family and `Lamination` family (`get_label`, the
+        plots, `comp_mmf_unit`) `machine`. The containers known by the
+        callers are passed (the laminations to their winding, the winding
+        to its conductor and end winding, the machine to its laminations;
+        GUI: `SWinding` (`lam=self.obj`, `machine=self.machine`), `SSkew`,
+        the bore pages). By hand: the guards the pass wrote with a shorter
+        chain (`lam is None and self.parent is None`: the `EndWinding*`,
+        `Skew.comp_angle`). Legacy bug found: `self.get_logger.warning(`
+        (missing call, AttributeError instead of the warning) in
+        `EndWindingCirc` / `EndWindingRect` and `VarLoad.set_OP_array`:
+        `get_logger(self).warning(`. Checks: class tests, Slot / Machine
+        method and plot tests (4254 passed with each backend; 3
+        pre-existing failures of `test_ICEM_2020`, before Step 16 too:
+        `OPdq` rejected by an `OP` field, `test_WindingUD_layer`), GUI tests
+        of the winding, skew, bore, bar, conductor, notch and preview pages
+        49 passed with each backend.
 - [ ] Function helpers with explicit arguments: `check_parent`,
       `assign_femm_surface`.
 - [ ] Tests of a refactored package hand-maintained; numerical parity against
@@ -1545,6 +1567,11 @@ the fallback, the parent links, and makes the argument required.
 | `comp_loss`, `comp_loss_freq`, `comp_loss_time`, `comp_loss_value` of the LossModel family | `loss`, `output` | Step 11, pass 4 |
 | `plot_schematics` (and `_constant_tooth`, `_top_flat`, `_radial`), `check`, `comp_height`, `comp_surface`, `comp_surface_active`, `get_name_lam`, `get_surface_tooth`, `comp_width_opening` of the Slot family | `lam` | Step 16 |
 | `plot_schematics` (and variants), `get_R_id`, `get_Rbo`, `get_Rext`, `get_is_stator`, `build_geometry`, `comp_mass_magnets`, `comp_mass_magnet_id`, `comp_volume_magnets` of the Hole family | `lam` | Step 16 |
+| `comp_Ncspc`, `comp_Ntsp`, `comp_connection_mat`, `comp_phasor_angle`, `comp_winding_factor`, `plot_linear`, `plot_radial`, `comp_periodicity`, `import_from_csv`, `init_as_*` of the Winding family | `lam` (`plot_linear`: also `machine`) | Step 16 |
+| `comp_skin_effect_inductance`, `comp_skin_effect_resistance`, `comp_width_wire`, `comp_height_wire` of the Conductor family; `comp_length`, `comp_inductance` of the EndWinding family | `winding`, `lam` | Step 16 |
+| `Skew.comp_angle`, `Skew.plot` | `lam`, `machine` | Step 16 |
+| `plot_schematics`, `get_bore_line`, `get_pole_shape`, `is_yoke` of the Bore family; `get_Rbo`, `get_Ryoke`, `get_label`, `is_outwards` of the Notch family | `lam` | Step 16 |
+| `comp_height_gap`, `build_geometry_bar` of the Frame family; `get_label`, `plot`, `plot_winding`, `plot_mmf_unit`, `comp_mmf_unit` of the Lamination family | `machine` | Step 16 |
 
 Full list: `container_arguments.fallback_methods(gen_dict, Methods_new)`.
 

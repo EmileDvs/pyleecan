@@ -1,8 +1,12 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
 
-def comp_periodicity(self, wind_mat: np.ndarray | None = None) -> tuple[int, bool]:
+def comp_periodicity(self, wind_mat: np.ndarray | None = None, lam: Lamination | None = None) -> tuple[int, bool]:
     """Computes the winding matrix (anti-)periodicity
 
     Parameters
@@ -11,6 +15,8 @@ def comp_periodicity(self, wind_mat: np.ndarray | None = None) -> tuple[int, boo
         A Winding object
     wind_mat : ndarray
         Winding connection matrix
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     Returns
     -------

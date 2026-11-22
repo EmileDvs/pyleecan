@@ -7,6 +7,7 @@ import numpy as np
 from pydantic import Field
 
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ...Functions_pydantic.Plot import dict_2D
 from ...Functions_pydantic.SciDataTool.Plot.plot_2d import plot_2D
 from .._legacy_model import LegacyModel
@@ -14,6 +15,9 @@ from .._legacy_model import LegacyModel
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+
+    from .lamination import Lamination
+    from .machine import Machine
 
 TYPE_SKEW_LIST = ["linear", "vshape", "zig-zag", "user-defined", "function"]
 
@@ -74,22 +78,30 @@ class Skew(LegacyModel):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.Skew.comp_angle
-    def comp_angle(self) -> None:
+    def comp_angle(
+        self, lam: Lamination | None = None, machine: Machine | None = None
+    ) -> None:
         """Compute skew angles and positions
         Parameters
         ----------
         self : Skew
             a Skew object
+        lam : Lamination, optional
+            Lamination holding the skew (default: the parent)
+        machine : Machine, optional
+            Machine of the lamination (default: the parent of the lamination)
         """
+        lam = container_or_parent(self, lam, "lam")
+        machine = container_or_parent(self, machine, "machine", depth=2)
 
         logger = get_logger(self)
 
-        if self.parent is None:
+        if lam is None:
             raise Exception(
                 "ERROR: The Skew object must be in a Lamination object to run"
             )
 
-        L = self.parent.comp_length()
+        L = lam.comp_length()
         rate = self.rate
         angle_overall = self.angle_overall
         is_step = self.is_step
@@ -98,10 +110,10 @@ class Skew(LegacyModel):
         z_list = self.z_list
         angle_list = self.angle_list
 
-        if "PMSM" in self.parent.parent.get_machine_type():
-            Z = self.parent.parent.stator.get_Zs()
+        if "PMSM" in machine.get_machine_type():
+            Z = machine.stator.get_Zs()
         else:
-            Z = self.parent.parent.rotor.get_Zs()
+            Z = machine.rotor.get_Zs()
 
         sp = 2 * np.pi / Z
 
@@ -287,6 +299,8 @@ class Skew(LegacyModel):
         is_show_fig: bool = False,
         save_path: str | None = None,
         win_title: str | None = None,
+        lam: Lamination | None = None,
+        machine: Machine | None = None,
     ) -> None:
         """Plots skew angle
 
@@ -294,8 +308,13 @@ class Skew(LegacyModel):
         ----------
         self : Skew
             a Skew object
+        lam : Lamination, optional
+            Lamination holding the skew (default: the parent)
+        machine : Machine, optional
+            Machine of the lamination (default: the parent of the lamination)
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Local import: avoids circular imports
         from .lam_h import LamH
@@ -307,7 +326,7 @@ class Skew(LegacyModel):
         y_list = [[a * 180 / np.pi for a in angle_list]]
         linestyle_list = ["solid"]
 
-        if isinstance(self.parent, (LamSlotM, LamH)):
+        if isinstance(lam, (LamSlotM, LamH)):
             legend_list.append("Rotor d-axis")
             y_list.append([0 for z in z_list])
             linestyle_list.append("dashed")

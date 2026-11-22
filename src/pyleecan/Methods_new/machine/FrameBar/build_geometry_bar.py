@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....Classes_new.geometry.circle import Circle
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.arc_2 import Arc2
@@ -10,9 +11,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.geometry.line import Line
+    from ....Classes_new.machine.machine import Machine
 
 
-def build_geometry_bar(self, sym: int = 1, alpha: float = 0, delta: complex = 0) -> list:
+def build_geometry_bar(self, sym: int = 1, alpha: float = 0, delta: complex = 0, machine: Machine | None = None) -> list:
     """Build the geometry of the structural bars
 
     Parameters
@@ -25,6 +27,8 @@ def build_geometry_bar(self, sym: int = 1, alpha: float = 0, delta: complex = 0)
         Angle for rotation [rad]
     delta : complex
         Complex value for translation
+    machine : Machine, optional
+        Machine holding the frame (default: the parent)
 
     Returns
     -------
@@ -32,10 +36,11 @@ def build_geometry_bar(self, sym: int = 1, alpha: float = 0, delta: complex = 0)
         list of surface
 
     """
+    machine = container_or_parent(self, machine, "machine")
     surf_list = list()
-    h_gap = self.comp_height_gap()
+    h_gap = self.comp_height_gap(machine=machine)
     if h_gap > 0:
-        lam_outer = self.parent.get_lam_list()[-1]
+        lam_outer = machine.get_lam_list()[-1]
         ###Rectangular Shape
         # #Define Points
         # Z0 = lam_outer.Rext

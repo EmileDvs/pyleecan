@@ -15,7 +15,7 @@ def comp_resistance_wind(self, T: float = 20) -> float:
     """
 
     Zs = self.slot.Zs
-    Ntspc = self.winding.comp_Ntsp(Zs)
+    Ntspc = self.winding.comp_Ntsp(Zs, lam=self)
     # length of the stack including ventilation ducts
     L1vd = self.comp_length()
 

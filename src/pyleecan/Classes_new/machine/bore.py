@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 
 from ...classes_common.errors import ParentMissingError
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_new.utils.geometry import cut_lines_between_angles
 from ...Functions_new.utils.init_fig import init_fig
@@ -19,6 +20,7 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from ..geometry.surface import Surface
+    from .lamination import Lamination
 
 
 @dataclass(eq=False)
@@ -129,22 +131,25 @@ class Bore(LegacyClass):
         return SurfLine(line_list=line_list, point_ref=0, label="Bore")
 
     # Inlined from Methods.Machine.Bore.is_yoke
-    def is_yoke(self) -> bool:
+    def is_yoke(self, lam: Lamination | None = None) -> bool:
         """Return if the Shape is for the Bore or Yoke radius
 
         Parameters
         ----------
         self : Bore
             A Bore object
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
         is_yoke : bool
             True if the shape is on the yoke
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            return self is self.parent.yoke
+        if lam is not None:
+            return self is lam.yoke
         else:
             raise ParentMissingError(
                 "Error: The Bore object is not inside a Lamination"

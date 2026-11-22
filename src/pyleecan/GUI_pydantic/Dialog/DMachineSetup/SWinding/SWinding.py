@@ -501,7 +501,7 @@ class SWinding(Gen_SWinding, QWidget):
         )
         if load_path != "":
             try:
-                self.obj.winding.import_from_csv(file_path=load_path)
+                self.obj.winding.import_from_csv(file_path=load_path, lam=self.obj)
                 # Update GUI
                 self.comp_output()
                 self.update_graph()
@@ -553,12 +553,12 @@ class SWinding(Gen_SWinding, QWidget):
         self.out_Nperw.setText(self.tr("Winding periodicity: ") + str(Nperw))
 
         try:
-            Ntspc = str(self.obj.winding.comp_Ntsp(self.obj.slot.Zs))
+            Ntspc = str(self.obj.winding.comp_Ntsp(self.obj.slot.Zs, lam=self.obj))
             Ntspc = Ntspc[:-2] if Ntspc[-2:] == ".0" else Ntspc
         except:
             Ntspc = "?"
         try:
-            Ncspc = str(self.obj.winding.comp_Ncspc(self.obj.slot.Zs))
+            Ncspc = str(self.obj.winding.comp_Ncspc(self.obj.slot.Zs, lam=self.obj))
             Ncspc = Ncspc[:-2] if Ncspc[-2:] == ".0" else Ncspc
         except:
             Ncspc = "?"
@@ -601,7 +601,9 @@ class SWinding(Gen_SWinding, QWidget):
             A SWinding object
         """
         try:
-            fig, _ = self.obj.winding.plot_linear(is_show_fig=not self.is_test)
+            fig, _ = self.obj.winding.plot_linear(
+                is_show_fig=not self.is_test, lam=self.obj, machine=self.machine
+            )
             set_plot_gui_icon()
             self.fig_linear = fig
         except Exception as e:

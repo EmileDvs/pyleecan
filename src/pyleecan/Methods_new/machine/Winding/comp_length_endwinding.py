@@ -15,4 +15,4 @@ def comp_length_endwinding(self) -> float:
     if self.end_winding is None:
         return self.Lewout
     else:
-        return self.Lewout + self.end_winding.comp_length()
+        return self.Lewout + self.end_winding.comp_length(winding=self)

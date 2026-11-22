@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.patches import Patch
 
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_new.utils.init_fig import init_fig
 from ...Functions_new.utils.labels import BAR_LAB, WIND_LAB, decode_label
@@ -24,6 +25,7 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from ..scidatatool.data_nd import DataND
+    from .machine import Machine
 
 
 @dataclass(eq=False)
@@ -197,6 +199,7 @@ class LamSlotMultiWind(LamSlotMulti):
         felec: float = 1,
         current_dir: int | None = None,
         phase_dir: int | None = None,
+        machine: Machine | None = None,
     ) -> tuple[DataND, DataND]:
         """Compute the winding Unit magnetomotive force
 
@@ -214,6 +217,8 @@ class LamSlotMultiWind(LamSlotMulti):
             Stator current rotation direction +/-1
         phase_dir: int
             Stator winding phasor rotation direction +/-1
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -364,6 +369,7 @@ class LamSlotMultiWind(LamSlotMulti):
         save_path: str | None = None,
         win_title: str | None = None,
         is_winding_connection: bool = False,
+        machine: Machine | None = None,
     ) -> list | tuple[Figure, Axes]:
         """Plot the Lamination with empty Slots in a matplotlib fig
 
@@ -393,6 +399,8 @@ class LamSlotMultiWind(LamSlotMulti):
             To call show at the end of the method
         is_winding_connection : bool
             True to display winding connections (not used)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -403,6 +411,7 @@ class LamSlotMultiWind(LamSlotMulti):
         ax : Matplotlib.axes.Axes object
             Axis containing the plot
         """
+        machine = container_or_parent(self, machine, "machine")
 
         (fig, ax, patch_leg, label_leg) = init_fig(fig=fig, ax=ax, shape="rectangle")
 
@@ -482,10 +491,10 @@ class LamSlotMultiWind(LamSlotMulti):
                 prefix = "Rotor "
             if (
                 win_title is None
-                and self.parent is not None
-                and self.parent.name not in [None, ""]
+                and machine is not None
+                and machine.name not in [None, ""]
             ):
-                win_title = self.parent.name + " " + prefix[:-1]
+                win_title = machine.name + " " + prefix[:-1]
             elif win_title is None:
                 win_title = prefix[:-1]
             manager = plt.get_current_fig_manager()
@@ -553,6 +562,7 @@ class LamSlotMultiWind(LamSlotMulti):
         fig: Figure | None = None,
         save_path: str | None = None,
         is_show_fig: bool = True,
+        machine: Machine | None = None,
     ) -> None:
         """Plot the winding unit mmf as a function of space
         Parameters
@@ -566,6 +576,8 @@ class LamSlotMultiWind(LamSlotMulti):
             existing figure to use if None create a new one
         is_show_fig : bool
             To call show at the end of the method
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
         """
 
         # Local import: avoids circular imports

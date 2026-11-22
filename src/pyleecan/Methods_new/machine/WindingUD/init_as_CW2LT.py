@@ -1,9 +1,14 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ..Winding import WindingError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def init_as_CW2LT(self, Zs: int | None = None) -> None:
+def init_as_CW2LT(self, Zs: int | None = None, lam: Lamination | None = None) -> None:
     """Compute the Winding Matrix (for winding type 1)
     type 1 : TOOTH WINDING, DOUBLE LAYER ALL TEETH WOUND, ORTHORADIAL
     SUPERPOSITION  (Nlay_rad=1,Nlay_tan=2)
@@ -14,6 +19,8 @@ def init_as_CW2LT(self, Zs: int | None = None) -> None:
         A: WindingUD object
     Zs : int
         Number of Slot (Integer >0)
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     Raises
     ------
@@ -21,18 +28,19 @@ def init_as_CW2LT(self, Zs: int | None = None) -> None:
         You must have 0.25< Zs/2/p/qs <= 0.5
 
     """
+    lam = container_or_parent(self, lam, "lam")
     if Zs is None:
-        if self.parent is None:
+        if lam is None:
             raise WindingError(
                 "ERROR: The Winding object must be in a Lamination object."
             )
 
-        if self.parent.slot is None:
+        if lam.slot is None:
             raise WindingError(
                 "ERROR: The Winding object must be in a Lamination object with Slot."
             )
 
-        Zs = self.parent.slot.Zs
+        Zs = lam.slot.Zs
 
     assert Zs > 0, "Zs must be >0"
     assert Zs % 1 == 0, "Zs must be an integer"

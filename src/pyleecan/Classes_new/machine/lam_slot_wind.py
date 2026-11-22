@@ -13,6 +13,7 @@ from matplotlib.patches import FancyArrowPatch, Patch
 from matplotlib.pyplot import plot, subplots
 
 from ...classes_common.errors import LWC_SlotTooLong
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_new.Plot import dict_2D
 from ...Functions_new.SciDataTool.dqh_transformation import dqh2n
@@ -50,6 +51,7 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from ..output.out_geo_lam import OutGeoLam
+    from .machine import Machine
 
 
 @dataclass(eq=False)
@@ -379,7 +381,7 @@ class LamSlotWind(LamSlot):
         Lew = self.winding.comp_length_endwinding()
 
         # total end-winding length
-        Ntspc = self.winding.comp_Ntsp(self.get_Zs())
+        Ntspc = self.winding.comp_Ntsp(self.get_Zs(), lam=self)
         qb = self.comp_number_phase_eq()
         Lewt = qb * Ntspc * self.winding.Npcp * 4 * Lew
 
@@ -530,6 +532,7 @@ class LamSlotWind(LamSlot):
         felec: float = 1,
         current_dir: int | None = None,
         phase_dir: int | None = None,
+        machine: Machine | None = None,
     ) -> tuple[DataTime, DataTime]:
         """Compute the winding unit magnetomotive force for given inputs
 
@@ -547,6 +550,8 @@ class LamSlotWind(LamSlot):
             Stator current rotation direction +/-1
         phase_dir: int
             Stator winding phasor rotation direction +/-1
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -556,15 +561,16 @@ class LamSlotWind(LamSlot):
             Winding functions (qs,Na)
 
         """
+        machine = container_or_parent(self, machine, "machine")
 
         # Local import: avoids circular imports
         from ..simulation.input_voltage import InputVoltage
 
         # Check that parent machine is not None
-        if self.parent is None:
+        if machine is None:
             raise Exception("Cannot calculate mmf unit if parent machine is None")
         else:
-            machine = self.parent
+            pass
 
         # Compute the winding function and mmf
         if self.winding is None:
@@ -676,7 +682,10 @@ class LamSlotWind(LamSlot):
             name="Phase MMF",
             unit="A",
             symbol="MMF",
-            axes=[axes_dict["angle"], axes_dict["phase_" + self.get_label()]],
+            axes=[
+                axes_dict["angle"],
+                axes_dict["phase_" + self.get_label(machine=machine)],
+            ],
             values=wf.T,
         )
 
@@ -774,7 +783,7 @@ class LamSlotWind(LamSlot):
         """
 
         Zs = self.slot.Zs
-        Ntspc = self.winding.comp_Ntsp(Zs)
+        Ntspc = self.winding.comp_Ntsp(Zs, lam=self)
         # length of the stack including ventilation ducts
         L1vd = self.comp_length()
 
@@ -1010,6 +1019,7 @@ class LamSlotWind(LamSlot):
         is_clean_plot: bool = False,
         is_winding_connection: bool = False,
         is_winding_connection_phase_A: bool = False,
+        machine: Machine | None = None,
     ) -> list | tuple[Figure, Axes]:
         """Plot the Lamination in a matplotlib fig
 
@@ -1051,6 +1061,8 @@ class LamSlotWind(LamSlot):
             True to display winding connections (plot based on plot_polar_layout method of swat-em)
         is_winding_connection : bool
             True to display winding connections on phase A only
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
         Returns
         -------
         patches : list
@@ -1060,6 +1072,7 @@ class LamSlotWind(LamSlot):
         ax : Matplotlib.axes.Axes object
             Axis containing the plot
         """
+        machine = container_or_parent(self, machine, "machine")
         # Arrow style
 
         head = None
@@ -1307,10 +1320,10 @@ class LamSlotWind(LamSlot):
                     prefix = "Rotor "
             if (
                 win_title is None
-                and self.parent is not None
-                and self.parent.name not in [None, ""]
+                and machine is not None
+                and machine.name not in [None, ""]
             ):
-                win_title = self.parent.name + " " + prefix[:-1]
+                win_title = machine.name + " " + prefix[:-1]
             elif win_title is None:
                 win_title = prefix[:-1]
             manager = plt.get_current_fig_manager()
@@ -1406,7 +1419,10 @@ class LamSlotWind(LamSlot):
 
     # Inlined from Methods.Machine.LamSlotWind.plot_mmf_unit
     def plot_mmf_unit(
-        self, save_path: str | None = None, is_show_fig: bool = False
+        self,
+        save_path: str | None = None,
+        is_show_fig: bool = False,
+        machine: Machine | None = None,
     ) -> Figure:
         """Plot the winding unit mmf as a function of space
 
@@ -1418,16 +1434,19 @@ class LamSlotWind(LamSlot):
             File path to save the figure
         is_show_fig : bool
             To call show at the end of the method
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
         fig : Matplotlib.figure.Figure
             Figure containing the plot
         """
+        machine = container_or_parent(self, machine, "machine")
 
         name = ""
-        if self.parent is not None and self.parent.name not in [None, ""]:
-            name += self.parent.name + " "
+        if machine is not None and machine.name not in [None, ""]:
+            name += machine.name + " "
         if self.is_stator:
             name += "Stator "
         else:
@@ -1436,7 +1455,7 @@ class LamSlotWind(LamSlot):
         # Compute the winding function and mmf
         qs = self.winding.qs
         p = self.get_pole_pair_number()
-        MMF_U, WF = self.comp_mmf_unit(Nt=1, Na=400 * p)
+        MMF_U, WF = self.comp_mmf_unit(Nt=1, Na=400 * p, machine=machine)
 
         color_list = config_dict["PLOT"]["COLOR_DICT"]["COLOR_LIST"][:qs]
 
@@ -1484,6 +1503,7 @@ class LamSlotWind(LamSlot):
         is_show_fig: bool = True,
         save_path: str | None = None,
         win_title: str | None = None,
+        machine: Machine | None = None,
     ):
         """Plot the Winding in a matplotlib fig
 
@@ -1501,10 +1521,13 @@ class LamSlotWind(LamSlot):
             full path including folder, name and extension of the file to save if save_path is not None
         win_title:str
             Window title
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
         Returns
         -------
         None
         """
+        machine = container_or_parent(self, machine, "machine")
 
         # We compute the wind_mat only if needed
         if wind_mat is None:
@@ -1592,12 +1615,8 @@ class LamSlotWind(LamSlot):
             ax.set_title(Lam_Name + "'s Winding (periodicity 1/" + str(Nperw) + ")")
 
         # Window title
-        if (
-            win_title is None
-            and self.parent is not None
-            and self.parent.name not in [None, ""]
-        ):
-            win_title = self.parent.name + " " + Lam_Name + " Winding"
+        if win_title is None and machine is not None and machine.name not in [None, ""]:
+            win_title = machine.name + " " + Lam_Name + " Winding"
         elif win_title is None:
             win_title = Lam_Name + " Winding"
         manager = plt.get_current_fig_manager()

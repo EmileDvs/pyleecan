@@ -309,6 +309,10 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   (`Axes.xscale` did not exist) and the stem plots (`matplotlib.cm.get_cmap`,
   removed in matplotlib 3.9) work; `is_logscale_z` of the 3D plots no
   longer calls a missing `zscale` (the values are already in dB).
+- **End winding and `VarLoad` warnings**: `EndWindingCirc` / `EndWindingRect`
+  (`comp_length`, `comp_inductance`) outside a slot winding lamination and
+  `VarLoad.set_OP_array` raised an `AttributeError` (`self.get_logger.warning`,
+  the call was missing) instead of logging their warning.
 - **`n2dqh` without `phase_dir`** (SciDataTool dqh transformation): an
   explicit `ValueError` instead of a `TypeError` (the phase direction
   needs the current direction, which the values alone do not give).

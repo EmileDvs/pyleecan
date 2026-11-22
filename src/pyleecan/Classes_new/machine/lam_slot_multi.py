@@ -18,6 +18,8 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from .machine import Machine
+
 
 @dataclass(eq=False)
 class LamSlotMulti(Lamination):
@@ -284,6 +286,7 @@ class LamSlotMulti(Lamination):
         is_show_fig: bool = True,
         is_clean_plot: bool = False,
         is_winding_connection: bool = False,
+        machine: Machine | None = None,
     ) -> list | tuple[Figure, Axes]:
         """Plot the Lamination with empty Slots in a matplotlib fig
 
@@ -315,6 +318,8 @@ class LamSlotMulti(Lamination):
             True to remove title, legend, axis (only machine on plot with white background)
         is_winding_connection : bool
             True to display winding connections (not used)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------

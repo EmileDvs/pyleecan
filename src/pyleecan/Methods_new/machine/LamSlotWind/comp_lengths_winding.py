@@ -24,7 +24,7 @@ def comp_lengths_winding(self) -> dict:
     Lew = self.winding.comp_length_endwinding()
 
     # total end-winding length
-    Ntspc = self.winding.comp_Ntsp(self.get_Zs())
+    Ntspc = self.winding.comp_Ntsp(self.get_Zs(), lam=self)
     qb = self.comp_number_phase_eq()
     Lewt = qb * Ntspc * self.winding.Npcp * 4 * Lew
 

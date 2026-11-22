@@ -177,7 +177,7 @@ class VarLoad(VarSimu):
 
         # Set the input OP
         if input_index >= self.OP_matrix.get_N_OP():
-            self.get_logger.warning(
+            get_logger(self).warning(
                 "Index "
                 + str(input_index)
                 + " is not in the OP_matrix with "

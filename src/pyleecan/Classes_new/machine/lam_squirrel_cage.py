@@ -32,6 +32,8 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from .machine import Machine
+
 
 @dataclass(eq=False)
 class LamSquirrelCage(LamSlotWind):
@@ -382,6 +384,7 @@ class LamSquirrelCage(LamSlotWind):
         is_add_arrow: bool = False,
         is_show_fig: bool = True,
         is_winding_connection: bool = False,
+        machine: Machine | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot the Lamination in a matplotlib fig
 
@@ -409,6 +412,8 @@ class LamSquirrelCage(LamSlotWind):
             To call show at the end of the method
         is_winding_connection : bool
             True to display winding connections (not used)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------

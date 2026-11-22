@@ -170,6 +170,6 @@ class PBoreSinePole(Gen_PBoreSinePole, QWidget):
         # Check that everything is set right
         # Constraints
         try:
-            lam.bore.get_bore_line()
+            lam.bore.get_bore_line(lam=lam)
         except Exception as error:
             return str(error)

@@ -2,13 +2,17 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
 from ...classes_common.errors import WindingError, WindingT10DefQsError
+from ...classes_common.parents import container_or_parent
 from .lamination import Lamination
 from .winding import Winding
+
+if TYPE_CHECKING:
+    from .lamination import Lamination
 
 
 @dataclass(eq=False)
@@ -27,7 +31,9 @@ class WindingSC(Winding):
     # Inlined from Methods.Machine.WindingSC.comp_connection_mat
     # TODO: update docstring -> there should not be elementary circuits since
     #       every bar could have its own unique current
-    def comp_connection_mat(self, Zs: int | None = None, p: int | None = None):
+    def comp_connection_mat(
+        self, Zs: int | None = None, p: int | None = None, lam: Lamination | None = None
+    ):
         """Compute the Winding Matrix (for winding type 10)
         type 10 : Squirrel cage Winding (elementary circuit loop involving bar n°1
         and bar n°Zr for alphar0_rad=0) (Nlay_rad=Nlay_tan=1)
@@ -40,6 +46,8 @@ class WindingSC(Winding):
             Number of Slot (Integer >0)
         p : int
             Number of pole pairs (Integer >0)
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -52,26 +60,27 @@ class WindingSC(Winding):
             qs must be equal to Zs
 
         """
+        lam = container_or_parent(self, lam, "lam")
         if Zs is None:
-            if self.parent is None:
+            if lam is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object."
                 )
 
-            if self.parent.slot is None:
+            if lam.slot is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object with Slot."
                 )
 
-            Zs = self.parent.slot.Zs
+            Zs = lam.slot.Zs
 
         if p is None:
-            if self.parent is None:
+            if lam is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object."
                 )
 
-            p = self.parent.get_pole_pair_number()
+            p = lam.get_pole_pair_number()
 
         assert Zs > 0, "Zs must be >0"
         assert Zs % 1 == 0, "Zs must be an integer"
@@ -103,13 +112,17 @@ class WindingSC(Winding):
         return wind_mat
 
     # Inlined from Methods.Machine.WindingSC.comp_periodicity
-    def comp_periodicity(self) -> tuple[int | None, bool]:
+    def comp_periodicity(
+        self, lam: Lamination | None = None
+    ) -> tuple[int | None, bool]:
         """Computes the winding matrix (anti-)periodicity
 
         Parameters
         ----------
         self : WindingSC
             A WindingSC object
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Returns
         -------
@@ -119,8 +132,9 @@ class WindingSC(Winding):
             True if the winding is anti-periodic over space
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        lamination = self.parent
+        lamination = lam
 
         if lamination is not None:
             # Call comp_periodicity of Lamination class since squirrel cage periodicity

@@ -1,15 +1,19 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/BoreLSRPM.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 from pydantic import Field
 
 from ...classes_common.errors import ParentMissingError
+from ...classes_common.parents import container_or_parent
 from ..geometry.arc_1 import Arc1
 from ..geometry.segment import Segment
 from .bore import Bore
+
+if TYPE_CHECKING:
+    from .lamination import Lamination
 
 
 class BoreLSRPM(Bore):
@@ -58,7 +62,9 @@ class BoreLSRPM(Bore):
         return self.N, False
 
     # Inlined from Methods.Machine.BoreLSRPM.get_bore_line
-    def get_bore_line(self, prop_dict: dict | None = None) -> list:
+    def get_bore_line(
+        self, prop_dict: dict | None = None, lam: Lamination | None = None
+    ) -> list:
         """Return the bore line description
 
         Parameters
@@ -67,18 +73,21 @@ class BoreLSRPM(Bore):
             A BoreLSRPM object
         prop_dict : dict
             Property dictionary to apply on the lines
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
         bore_list : list
             List of bore lines
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            if self.is_yoke():
-                R = self.parent.get_Ryoke()
+        if lam is not None:
+            if self.is_yoke(lam=lam):
+                R = lam.get_Ryoke()
             else:
-                R = self.parent.get_Rbo()
+                R = lam.get_Rbo()
         else:
             raise ParentMissingError(
                 "Error: The Bore object is not inside a Lamination"

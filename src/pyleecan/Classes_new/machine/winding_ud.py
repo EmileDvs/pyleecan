@@ -4,7 +4,7 @@
 import os
 from csv import reader
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
@@ -15,7 +15,11 @@ from ...classes_common.errors import (
     WindingT2DefNtError,
     WindingT5DefMsError,
 )
+from ...classes_common.parents import container_or_parent
 from .winding import Winding
+
+if TYPE_CHECKING:
+    from .lamination import Lamination
 
 
 @dataclass(eq=False)
@@ -35,6 +39,7 @@ class WindingUD(Winding):
     def import_from_csv(
         self,
         file_path: str | None = None,
+        lam: Lamination | None = None,
         *,
         ZS_COL=0,
         COIL_COL=1,
@@ -51,7 +56,10 @@ class WindingUD(Winding):
             A: WindingUD object
         file_path : str
             Path to the file to load
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # parse file_path
         if file_path[-4:] != ".csv":
@@ -77,10 +85,10 @@ class WindingUD(Winding):
                         Zs = max(Zs, int(line[ZS_COL]))
                 wind_shape = (Nrad + 1, Ntan + 1, Zs + 1, qs)
 
-            if self.parent is not None and self.parent.slot is not None:
-                assert self.parent.slot.Zs % wind_shape[2] == 0, (
+            if lam is not None and lam.slot is not None:
+                assert lam.slot.Zs % wind_shape[2] == 0, (
                     "Mismatch between Lamination Zs ("
-                    + str(self.parent.slot.Zs)
+                    + str(lam.slot.Zs)
                     + ") and imported winding Zs ("
                     + str(wind_shape[2])
                     + ")"
@@ -101,8 +109,8 @@ class WindingUD(Winding):
                     wind_mat[Rad_id, Tan_id, Zs_id, qs_id] = line[COIL_COL + offset]
 
         # complete partial winding matrix
-        if self.parent is not None and self.parent.slot is not None:
-            Zs = self.parent.slot.Zs
+        if lam is not None and lam.slot is not None:
+            Zs = lam.slot.Zs
             if wind_mat.shape[2] < Zs:
                 wind_mat = np.tile(wind_mat, (1, 1, Zs // wind_mat.shape[2], 1))
 
@@ -114,7 +122,9 @@ class WindingUD(Winding):
         self.Ntcoil = np.amax(self.wind_mat)
 
     # Inlined from Methods.Machine.WindingUD.init_as_CW1L
-    def init_as_CW1L(self, Zs: int | None = None) -> None:
+    def init_as_CW1L(
+        self, Zs: int | None = None, lam: Lamination | None = None
+    ) -> None:
         """Compute the Winding Matrix (for winding type 2)
         type 2 : TOOTH WINDING, SINGLE LAYER ALTERNATE TEETH WOUND
         (Nlay_rad=1,Nlay_tan=1)
@@ -125,6 +135,8 @@ class WindingUD(Winding):
             A: WindingUD object
         Zs : int
             Number of Slot (Integer >0)
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Raises
         ------
@@ -132,18 +144,19 @@ class WindingUD(Winding):
             Zs/qs/2 must be an integer
 
         """
+        lam = container_or_parent(self, lam, "lam")
         if Zs is None:
-            if self.parent is None:
+            if lam is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object."
                 )
 
-            if self.parent.slot is None:
+            if lam.slot is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object with Slot."
                 )
 
-            Zs = self.parent.slot.Zs
+            Zs = lam.slot.Zs
 
         assert Zs > 0, "Zs must be >0"
         assert Zs % 1 == 0, "Zs must be an integer"
@@ -199,7 +212,9 @@ class WindingUD(Winding):
         self.is_aper_a = None
 
     # Inlined from Methods.Machine.WindingUD.init_as_CW2LR
-    def init_as_CW2LR(self, Zs: int | None = None) -> None:
+    def init_as_CW2LR(
+        self, Zs: int | None = None, lam: Lamination | None = None
+    ) -> None:
         """Compute the Winding Matrix (for winding type 5) (Nlay_rad=1,Nlay_tan=1)
         type 5 : TOOTH WINDING, DOUBLE LAYER ALL TEETH WOUND, RADIAL SUPERPOSITION
 
@@ -209,6 +224,8 @@ class WindingUD(Winding):
             A: WindingUD object
         Zs : int
             Number of Slot (Integer >0)
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Raises
         ------
@@ -216,18 +233,19 @@ class WindingUD(Winding):
             You must have 0.25< Zs/2/p/qs <= 0.5
 
         """
+        lam = container_or_parent(self, lam, "lam")
         if Zs is None:
-            if self.parent is None:
+            if lam is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object."
                 )
 
-            if self.parent.slot is None:
+            if lam.slot is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object with Slot."
                 )
 
-            Zs = self.parent.slot.Zs
+            Zs = lam.slot.Zs
 
         assert Zs > 0, "Zs must be >0"
         assert Zs % 1 == 0, "Zs must be an integer"
@@ -296,7 +314,9 @@ class WindingUD(Winding):
         self.is_aper_a = None
 
     # Inlined from Methods.Machine.WindingUD.init_as_CW2LT
-    def init_as_CW2LT(self, Zs: int | None = None) -> None:
+    def init_as_CW2LT(
+        self, Zs: int | None = None, lam: Lamination | None = None
+    ) -> None:
         """Compute the Winding Matrix (for winding type 1)
         type 1 : TOOTH WINDING, DOUBLE LAYER ALL TEETH WOUND, ORTHORADIAL
         SUPERPOSITION  (Nlay_rad=1,Nlay_tan=2)
@@ -307,6 +327,8 @@ class WindingUD(Winding):
             A: WindingUD object
         Zs : int
             Number of Slot (Integer >0)
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Raises
         ------
@@ -314,18 +336,19 @@ class WindingUD(Winding):
             You must have 0.25< Zs/2/p/qs <= 0.5
 
         """
+        lam = container_or_parent(self, lam, "lam")
         if Zs is None:
-            if self.parent is None:
+            if lam is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object."
                 )
 
-            if self.parent.slot is None:
+            if lam.slot is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object with Slot."
                 )
 
-            Zs = self.parent.slot.Zs
+            Zs = lam.slot.Zs
 
         assert Zs > 0, "Zs must be >0"
         assert Zs % 1 == 0, "Zs must be an integer"
@@ -392,7 +415,9 @@ class WindingUD(Winding):
         self.is_aper_a = None
 
     # Inlined from Methods.Machine.WindingUD.init_as_DWL
-    def init_as_DWL(self, Zs: int | None = None, nlay: int = 1) -> None:
+    def init_as_DWL(
+        self, Zs: int | None = None, nlay: int = 1, lam: Lamination | None = None
+    ) -> None:
         """Compute the Winding Matrix (for winding type 3 or 4) (Nlay_rad=1 or 2,Nlay_tan=1)
         type 3 or 4 : DISTRIBUTED SHORTED PITCH INTEGRAL WINDING
 
@@ -404,6 +429,8 @@ class WindingUD(Winding):
             Number of Slot (Integer >0)
         nlay: int
             Number of layers
+        lam : Lamination, optional
+            Lamination holding the winding (default: the parent)
 
         Raises
         ------
@@ -411,18 +438,19 @@ class WindingUD(Winding):
             Zs/2/p/qs must be an integer
 
         """
+        lam = container_or_parent(self, lam, "lam")
         if Zs is None:
-            if self.parent is None:
+            if lam is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object."
                 )
 
-            if self.parent.slot is None:
+            if lam.slot is None:
                 raise WindingError(
                     "ERROR: The Winding object must be in a Lamination object with Slot."
                 )
 
-            Zs = self.parent.slot.Zs
+            Zs = lam.slot.Zs
 
         assert Zs > 0, "Zs must be >0"
         assert Zs % 1 == 0, "Zs must be an integer"

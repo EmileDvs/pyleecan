@@ -1,6 +1,11 @@
+from ....classes_common.parents import container_or_parent
 from os.path import isfile
 from csv import reader
 from numpy import zeros, amax, tile
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 ZS_COL = 0  # Slot id
 COIL_COL = 1  # Ntcoil (+/-)
@@ -8,7 +13,7 @@ RAD_COL = 2  # Rad layer id
 TAN_COL = 3  # Tan layer id
 
 
-def import_from_csv(self, file_path: str | None = None) -> None:
+def import_from_csv(self, file_path: str | None = None, lam: Lamination | None = None) -> None:
     """Import the winding matrix from a csv file.
     One matrix for each phase
     Column Slot id, Ntcoil, Rad id, Tan id
@@ -19,7 +24,10 @@ def import_from_csv(self, file_path: str | None = None) -> None:
         A: WindingUD object
     file_path : str
         Path to the file to load
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
     """
+    lam = container_or_parent(self, lam, "lam")
 
     # parse file_path
     if file_path[-4:] != ".csv":
@@ -45,10 +53,10 @@ def import_from_csv(self, file_path: str | None = None) -> None:
                     Zs = max(Zs, int(line[ZS_COL]))
             wind_shape = (Nrad + 1, Ntan + 1, Zs + 1, qs)
 
-        if self.parent is not None and self.parent.slot is not None:
-            assert self.parent.slot.Zs % wind_shape[2] == 0, (
+        if lam is not None and lam.slot is not None:
+            assert lam.slot.Zs % wind_shape[2] == 0, (
                 "Mismatch between Lamination Zs ("
-                + str(self.parent.slot.Zs)
+                + str(lam.slot.Zs)
                 + ") and imported winding Zs ("
                 + str(wind_shape[2])
                 + ")"
@@ -69,8 +77,8 @@ def import_from_csv(self, file_path: str | None = None) -> None:
                 wind_mat[Rad_id, Tan_id, Zs_id, qs_id] = line[COIL_COL + offset]
 
     # complete partial winding matrix
-    if self.parent is not None and self.parent.slot is not None:
-        Zs = self.parent.slot.Zs
+    if lam is not None and lam.slot is not None:
+        Zs = lam.slot.Zs
         if wind_mat.shape[2] < Zs:
             wind_mat = tile(wind_mat, (1, 1, Zs // wind_mat.shape[2], 1))
 

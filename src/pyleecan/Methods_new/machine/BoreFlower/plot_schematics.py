@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -24,7 +25,7 @@ def plot_schematics(
     save_path: str | None = None,
     is_show_fig: bool = True,
     fig: Figure | None = None,
-    ax: Axes | None = None,
+    ax: Axes | None = None, lam: Lamination | None = None,
 ) -> tuple[Figure, Axes]:
     """Plot the schematics of the slot
 
@@ -46,6 +47,8 @@ def plot_schematics(
         existing figure to use if None create a new one
     ax : Matplotlib.axes.Axes object
         Axis on which to plot the data
+    lam : Lamination, optional
+        Lamination holding the bore (default: the parent)
 
     Returns
     -------
@@ -54,6 +57,7 @@ def plot_schematics(
     ax : Matplotlib.axes.Axes object
         Axis containing the schematics
     """
+    lam = container_or_parent(self, lam, "lam")
 
     # Use some default parameter
     if is_default:
@@ -72,19 +76,18 @@ def plot_schematics(
         )
     else:
         # Getting the main plot
-        if self.parent is None:
+        if lam is None:
             raise ParentMissingError("Error: The bore is not inside a Lamination")
-        lam = self.parent
         fig, ax = lam.plot(is_show_fig=False, fig=fig, ax=ax)
 
         # Comp point coordinates
-        lines = self.get_bore_line()
+        lines = self.get_bore_line(lam=lam)
         Zc = lines[1].get_center()
         Z1 = lines[1].get_begin()
         Z2 = lines[1].get_end()
         Zm0 = lines[1].get_middle()
         Zm1 = lines[2].get_middle()
-        Rbo = self.parent.get_Rbo()
+        Rbo = lam.get_Rbo()
         H = self.Rarc / 8  # Small distance for label placement
 
         # Adding schematics

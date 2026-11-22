@@ -18,6 +18,8 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from .machine import Machine
+
 
 class LamSlot(Lamination):
     """Lamination with empty Slot
@@ -366,6 +368,7 @@ class LamSlot(Lamination):
         is_display: bool = True,
         is_show_fig: bool = True,
         is_winding_connection: bool = False,
+        machine: Machine | None = None,
     ) -> list | tuple[Figure, Axes]:
         """Plot the Lamination with empty Slots in a matplotlib fig
 
@@ -395,6 +398,8 @@ class LamSlot(Lamination):
             To call show at the end of the method
         is_winding_connection : bool
             True to display winding connections (not used)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------

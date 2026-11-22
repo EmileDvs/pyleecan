@@ -12,6 +12,7 @@ from scipy.optimize import fmin
 
 from ...classes_common.errors import ParentMissingError
 from ...classes_common.logger_context import get_logger
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_new.Plot import (
     ARROW_COLOR,
@@ -31,6 +32,8 @@ if TYPE_CHECKING:
 
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+
+    from .lamination import Lamination
 
 
 @dataclass(eq=False)
@@ -92,7 +95,9 @@ class BoreSinePole(Bore):
         return self.N, False
 
     # Inlined from Methods.Machine.BoreSinePole.get_bore_line
-    def get_bore_line(self, prop_dict: dict | None = None, *, NN=30) -> list:
+    def get_bore_line(
+        self, prop_dict: dict | None = None, lam: Lamination | None = None, *, NN=30
+    ) -> list:
         """Return the bore line description
         adapted sine field pole geometry from the text book:
         "Müller, Germar, et al. Berechnung Elektrischer Maschinen. Hoboken, NJ, United States, Wiley, 2008."
@@ -104,15 +109,18 @@ class BoreSinePole(Bore):
             A BoreSinePole object
         prop_dict : dict
             Property dictionary to apply on the lines
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
         bore_list : list
             List of bore lines
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            Rbo = self.parent.get_Rbo()
+        if lam is not None:
+            Rbo = lam.get_Rbo()
         else:
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
@@ -131,12 +139,12 @@ class BoreSinePole(Bore):
         phi_max = self._get_phi(self, w_max)
         phi = np.linspace(-phi_max, phi_max, 2 * NN + 1)
 
-        Zedge = self.get_pole_shape(-phi_max)
+        Zedge = self.get_pole_shape(-phi_max, lam=lam)
         xedge = (Zedge * np.exp(1j * alpha1)).real
         Rq = Rbo + self.delta_d - self.delta_q
 
         # Create the first pole bore line
-        Z = [self.get_pole_shape(p) for p in phi]
+        Z = [self.get_pole_shape(p, lam=lam) for p in phi]
 
         if self.delta_q is not None and Rq < xedge:
             line = Segment(
@@ -234,7 +242,7 @@ class BoreSinePole(Bore):
         return w_max
 
     # Inlined from Methods.Machine.BoreSinePole.get_pole_shape
-    def get_pole_shape(self, phi: float) -> complex:
+    def get_pole_shape(self, phi: float, lam: Lamination | None = None) -> complex:
         """Return the complex coordinates of the point at phi
 
         Parameters
@@ -243,15 +251,18 @@ class BoreSinePole(Bore):
             A BoreSinePole object
         phi : float
             Angle where to compute the point [rad]
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
         Z : complex
             Coordinates of the requested point
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            Rbo = self.parent.get_Rbo()
+        if lam is not None:
+            Rbo = lam.get_Rbo()
         else:
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
@@ -278,6 +289,7 @@ class BoreSinePole(Bore):
         is_show_fig: bool = True,
         fig: Figure | None = None,
         ax: Axes | None = None,
+        lam: Lamination | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot the schematics of the slot
 
@@ -299,6 +311,8 @@ class BoreSinePole(Bore):
             existing figure to use if None create a new one
         ax : Matplotlib.axes.Axes object
             Axis on which to plot the data
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------
@@ -307,6 +321,7 @@ class BoreSinePole(Bore):
         ax : Matplotlib.axes.Axes object
             Axis containing the schematics
         """
+        lam = container_or_parent(self, lam, "lam")
 
         # Use some default parameter
         if is_default:
@@ -325,16 +340,15 @@ class BoreSinePole(Bore):
             )
         else:
             # Getting the main plot
-            if self.parent is None:
+            if lam is None:
                 raise ParentMissingError("Error: The bore is not inside a Lamination")
-            lam = self.parent
             fig, ax = lam.plot(is_show_fig=False, fig=fig, ax=ax)
 
             # Comp point coordinates
-            lines = self.get_bore_line()
+            lines = self.get_bore_line(lam=lam)
             Zq1 = lines[0].get_end()
             Zq2 = lines[-1].get_begin()
-            Rbo = self.parent.get_Rbo()
+            Rbo = lam.get_Rbo()
             alpha = np.pi / self.N
             # H = self.Rarc / 8  # Small distance for label placement
 

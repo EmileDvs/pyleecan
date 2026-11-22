@@ -24,6 +24,9 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from .lamination import Lamination
+    from .winding import Winding
+
 
 class CondType11(Conductor):
     """parallel stranded conductor consisting of at least a single rectangular wire
@@ -95,13 +98,19 @@ class CondType11(Conductor):
         return (2 * self.Wins_wire + self.Hwire) * self.Nwppc_rad
 
     # Inlined from Methods.Machine.CondType11.comp_height_wire
-    def comp_height_wire(self) -> float:
+    def comp_height_wire(
+        self, winding: Winding | None = None, lam: Lamination | None = None
+    ) -> float:
         """Return wire height
 
         Parameters
         ----------
         self : CondType11
             A CondType11 object
+        winding : Winding, optional
+            Winding holding the object (default: the parent)
+        lam : Lamination, optional
+            Lamination of the winding (default: the parent of the winding)
 
         Returns
         -------
@@ -207,13 +216,19 @@ class CondType11(Conductor):
         return (2 * self.Wins_wire + self.Wwire) * self.Nwppc_tan
 
     # Inlined from Methods.Machine.CondType11.comp_width_wire
-    def comp_width_wire(self) -> float:
+    def comp_width_wire(
+        self, winding: Winding | None = None, lam: Lamination | None = None
+    ) -> float:
         """Return wire width
 
         Parameters
         ----------
         self : CondType11
             A CondType11 object
+        winding : Winding, optional
+            Winding holding the object (default: the parent)
+        lam : Lamination, optional
+            Lamination of the winding (default: the parent of the winding)
 
         Returns
         -------

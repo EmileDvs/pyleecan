@@ -6,9 +6,14 @@ from typing import TYPE_CHECKING, Any, ClassVar
 import numpy as np
 from pydantic import Field
 
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from .._legacy_model import LegacyModel
 from ..material.material import Material
+
+if TYPE_CHECKING:
+    from .lamination import Lamination
+    from .winding import Winding
 
 
 class Conductor(LegacyModel):
@@ -65,6 +70,8 @@ class Conductor(LegacyModel):
         b4: float | None = None,
         h4: float | None = None,
         zt: int | None = None,
+        winding: Winding | None = None,
+        lam: Lamination | None = None,
     ) -> float:
         """Compute the skin effect factor on inductance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
         All parameters bc, h4, z4, are defined in Fig(4.14) p.249
@@ -85,29 +92,35 @@ class Conductor(LegacyModel):
             Slot height [m]
         zt: int
             Number of radial adjacent conductors
+        winding : Winding, optional
+            Winding holding the object (default: the parent)
+        lam : Lamination, optional
+            Lamination of the winding (default: the parent of the winding)
 
         Returns
         ----------
         kl_skin : float
             skin effect coeff for inductance at given frequency and temperature
         """
+        winding = container_or_parent(self, winding, "winding")
+        lam = container_or_parent(self, lam, "lam", depth=2)
 
         if b4 is None:
             # Compute slot average width
-            slot = self.parent.parent.slot
+            slot = lam.slot
             b4 = slot.comp_width()
 
         if h4 is None:
             # Compute slot height
-            slot = self.parent.parent.slot
+            slot = lam.slot
             h4 = slot.comp_height()
 
         if zt is None:
             # Get number of turns in series per coil
-            zt = self.parent.Ntcoil
+            zt = winding.Ntcoil
 
         # conductor width
-        bc = self.comp_width_wire()
+        bc = self.comp_width_wire(winding=winding, lam=lam)
 
         # Electrical conductivity accounting for temperature increase
         sigma = self.cond_mat.elec.get_conductivity(T_op=T_op, T_ref=T_ref)
@@ -153,6 +166,8 @@ class Conductor(LegacyModel):
         T_ref: float = 20,
         b: float | None = None,
         zt: int | None = None,
+        winding: Winding | None = None,
+        lam: Lamination | None = None,
     ) -> float:
         """Compute the skin effect factor on resistance for the conductors from "Design of Rotating Electrical Machines", J. Pyrhonen, second edition
         All parameters are defined p.270 / 271
@@ -171,29 +186,35 @@ class Conductor(LegacyModel):
             Conductor operational temperature [degC]
         T_ref: float
             Conductor reference temperature [degC]
+        winding : Winding, optional
+            Winding holding the object (default: the parent)
+        lam : Lamination, optional
+            Lamination of the winding (default: the parent of the winding)
 
         Returns
         ----------
         kr_skin : float
             skin effect coeff for resistance at given frequency and temperature
         """
+        winding = container_or_parent(self, winding, "winding")
+        lam = container_or_parent(self, lam, "lam", depth=2)
 
         if b is None:
             # Compute slot average width
-            slot = self.parent.parent.slot
+            slot = lam.slot
             b = slot.comp_width()
 
         if zt is None:
             # Get number of turns in series per coil
-            zt = self.parent.Ntcoil
+            zt = winding.Ntcoil
 
         # check if wires are round or rectangular
         is_round_wire = self.is_round_wire()
 
         # conductor height
-        hc0 = self.comp_height_wire()
+        hc0 = self.comp_height_wire(winding=winding, lam=lam)
         # conductor width
-        bc0 = self.comp_width_wire()
+        bc0 = self.comp_width_wire(winding=winding, lam=lam)
         # Number of circumferential adjacent wires
         za = self.comp_nb_circumferential_wire()
         # Number of radial adjacent wires

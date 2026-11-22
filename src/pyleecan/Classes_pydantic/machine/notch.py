@@ -4,8 +4,12 @@
 from typing import TYPE_CHECKING, Any, ClassVar
 
 from ...classes_common.errors import ParentMissingError
+from ...classes_common.parents import container_or_parent
 from .._legacy_model import LegacyModel
 from ..material.material import Material
+
+if TYPE_CHECKING:
+    from .lamination import Lamination
 
 
 class Notch(LegacyModel):
@@ -31,7 +35,7 @@ class Notch(LegacyModel):
         def get_key_Ox_radius(self, *args: Any, **kwargs: Any) -> float | None: ...
 
     # Inlined from Methods.Machine.Notch.get_label
-    def get_label(self, is_add_id: bool = True) -> str:
+    def get_label(self, is_add_id: bool = True, lam: Lamination | None = None) -> str:
         """Return the label of the lamination (Stator-0 for instance)
 
         Parameters
@@ -40,6 +44,8 @@ class Notch(LegacyModel):
             a Notch object
         is_add_id : bool
             True to add the "-X" part
+        lam : Lamination, optional
+            Lamination holding the notch (default: the parent)
 
         Returns
         -------
@@ -47,14 +53,15 @@ class Notch(LegacyModel):
             Label of the lamination
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            return self.parent.get_label()
+        if lam is not None:
+            return lam.get_label()
         else:
             raise ParentMissingError("Error: The notch is not inside a Lamination")
 
     # Inlined from Methods.Machine.Notch.get_Rbo
-    def get_Rbo(self) -> float:
+    def get_Rbo(self, lam: Lamination | None = None) -> float:
         """Return the parent lamination bore radius
         (to make lam.notch[ii].notch_shape match lam.slot parent)
 
@@ -62,6 +69,8 @@ class Notch(LegacyModel):
         ----------
         self : Notch
             A Notch object
+        lam : Lamination, optional
+            Lamination holding the notch (default: the parent)
 
         Returns
         -------
@@ -69,14 +78,15 @@ class Notch(LegacyModel):
             The parent lamination bore radius [m]
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            return self.parent.get_Rbo()
+        if lam is not None:
+            return lam.get_Rbo()
         else:
             raise ParentMissingError("Error: The notch is not inside a Lamination")
 
     # Inlined from Methods.Machine.Notch.get_Ryoke
-    def get_Ryoke(self) -> float:
+    def get_Ryoke(self, lam: Lamination | None = None) -> float:
         """Return the parent lamination yoke radius
         (to make lam.notch[ii].notch_shape match lam.slot parent)
 
@@ -84,6 +94,8 @@ class Notch(LegacyModel):
         ----------
         self : Notch
             A Notch object
+        lam : Lamination, optional
+            Lamination holding the notch (default: the parent)
 
         Returns
         -------
@@ -91,9 +103,10 @@ class Notch(LegacyModel):
             The parent lamination yoke radius [m]
 
         """
+        lam = container_or_parent(self, lam, "lam")
 
-        if self.parent is not None:
-            return self.parent.get_Ryoke()
+        if lam is not None:
+            return lam.get_Ryoke()
         else:
             raise ParentMissingError("Error: The notch is not inside a Lamination")
 
@@ -115,7 +128,7 @@ class Notch(LegacyModel):
         return self.key_mat is not None
 
     # Inlined from Methods.Machine.Notch.is_outwards
-    def is_outwards(self) -> bool:
+    def is_outwards(self, lam: Lamination | None = None) -> bool:
         """Return if the notch is outwards (on an external lamination) or inwards
         (on an internal lamination).
         (to make lam.notch[ii].notch_shape match lam.slot parent)
@@ -124,6 +137,8 @@ class Notch(LegacyModel):
         ----------
         self : Notch
             A Notch object
+        lam : Lamination, optional
+            Lamination holding the notch (default: the parent)
 
         Returns
         -------
@@ -131,7 +146,8 @@ class Notch(LegacyModel):
             True if the Lamination is not internal and false if not. For yoke notch,
             result is negated.
         """
-        if self.parent is not None:
-            return self.parent.is_outwards()
+        lam = container_or_parent(self, lam, "lam")
+        if lam is not None:
+            return lam.is_outwards()
         else:
             raise ParentMissingError("Error: The notch is not inside a Lamination")

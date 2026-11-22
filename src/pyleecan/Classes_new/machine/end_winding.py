@@ -2,9 +2,13 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from .._legacy_class import LegacyClass
+
+if TYPE_CHECKING:
+    from .lamination import Lamination
+    from .winding import Winding
 
 
 @dataclass(eq=False)
@@ -25,13 +29,19 @@ class EndWinding(LegacyClass):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Machine.EndWinding.comp_inductance
-    def comp_inductance(self) -> float:
+    def comp_inductance(
+        self, winding: Winding | None = None, lam: Lamination | None = None
+    ) -> float:
         """Return the enforced end winding inductance
 
         Parameters
         ----------
         self: EndWinding
             A EndWinding object
+        winding : Winding, optional
+            Winding holding the object (default: the parent)
+        lam : Lamination, optional
+            Lamination of the winding (default: the parent of the winding)
 
         Returns
         -------
@@ -42,7 +52,9 @@ class EndWinding(LegacyClass):
         return self.Lew_enforced
 
     # Inlined from Methods.Machine.EndWinding.comp_length
-    def comp_length(self) -> float:
+    def comp_length(
+        self, winding: Winding | None = None, lam: Lamination | None = None
+    ) -> float:
         """Compute the end winding conductor length on one side for a half-turn
         excluding the straight conductor length outside of the lamination (winding.Lewout).
         Since this is the abstract class method the actual length returned will be zero.
@@ -51,6 +63,10 @@ class EndWinding(LegacyClass):
         ----------
         self: EndWinding
             A EndWinding object
+        winding : Winding, optional
+            Winding holding the object (default: the parent)
+        lam : Lamination, optional
+            Lamination of the winding (default: the parent of the winding)
         Returns
         -------
         end_wind_length : float

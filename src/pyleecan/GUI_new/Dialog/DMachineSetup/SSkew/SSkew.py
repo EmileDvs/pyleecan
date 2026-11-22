@@ -413,7 +413,12 @@ class SSkew(Ui_SSkew, QWidget):
 
         # Plot the skew in the viewer fig
         try:
-            self.machine.rotor.skew.plot(fig=self.w_viewer.fig, ax=self.w_viewer.axes)
+            self.machine.rotor.skew.plot(
+                fig=self.w_viewer.fig,
+                ax=self.w_viewer.axes,
+                lam=self.machine.rotor,
+                machine=self.machine,
+            )
         except Exception as e:
             QMessageBox().critical(
                 self,

@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, Patch
 import numpy as np
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
     from typing import Any
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.machine import Machine
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 PLUS_HATCH = "++"
@@ -41,7 +43,7 @@ def plot(
     is_legend: bool = True,
     is_clean_plot: bool = False,
     is_winding_connection: bool = False,
-    is_winding_connection_phase_A: bool = False,
+    is_winding_connection_phase_A: bool = False, machine: Machine | None = None,
 ) -> list | tuple[Figure, Axes]:
     """Plot the Lamination in a matplotlib fig
 
@@ -83,6 +85,8 @@ def plot(
         True to display winding connections (plot based on plot_polar_layout method of swat-em)
     is_winding_connection : bool
         True to display winding connections on phase A only
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
     Returns
     -------
     patches : list
@@ -92,6 +96,7 @@ def plot(
     ax : Matplotlib.axes.Axes object
         Axis containing the plot
     """
+    machine = container_or_parent(self, machine, "machine")
     # Arrow style
     from ....Classes_new.machine.machine import Machine
     from ....Classes_new.machine.winding import Winding
@@ -335,10 +340,10 @@ def plot(
                 prefix = "Rotor "
         if (
             win_title is None
-            and self.parent is not None
-            and self.parent.name not in [None, ""]
+            and machine is not None
+            and machine.name not in [None, ""]
         ):
-            win_title = self.parent.name + " " + prefix[:-1]
+            win_title = machine.name + " " + prefix[:-1]
         elif win_title is None:
             win_title = prefix[:-1]
         manager = plt.get_current_fig_manager()

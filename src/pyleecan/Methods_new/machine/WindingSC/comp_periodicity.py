@@ -1,13 +1,16 @@
+from ....classes_common.parents import container_or_parent
 from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_periodicity(self) -> tuple[int | None, bool]:
+def comp_periodicity(self, lam: Lamination | None = None) -> tuple[int | None, bool]:
     """Computes the winding matrix (anti-)periodicity
 
     Parameters
     ----------
     self : WindingSC
         A WindingSC object
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     Returns
     -------
@@ -17,8 +20,9 @@ def comp_periodicity(self) -> tuple[int | None, bool]:
         True if the winding is anti-periodic over space
 
     """
+    lam = container_or_parent(self, lam, "lam")
 
-    lamination = self.parent
+    lamination = lam
 
     if lamination is not None:
         # Call comp_periodicity of Lamination class since squirrel cage periodicity

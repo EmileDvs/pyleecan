@@ -18,6 +18,7 @@ from ...classes_common.errors import (
     NotchError,
     NotImplementedYetError,
 )
+from ...classes_common.parents import container_or_parent
 from ...definitions import config_dict
 from ...Functions_new.utils.init_fig import init_fig
 from ...Functions_new.utils.labels import (
@@ -58,6 +59,7 @@ if TYPE_CHECKING:
     from matplotlib.figure import Figure
 
     from ..geometry.line import Line
+    from .machine import Machine
 
 
 @dataclass(eq=False)
@@ -1278,7 +1280,7 @@ class Lamination(LegacyClass):
         return {"Vlam": Vlam, "Vvent": Vvent, "Vyoke": Vyoke, "Vteeth": Vteeth}
 
     # Inlined from Methods.Machine.Lamination.get_label
-    def get_label(self, is_add_id: bool = True) -> str:
+    def get_label(self, is_add_id: bool = True, machine: Machine | None = None) -> str:
         """Return the label of the lamination (Stator-0 for instance)
 
         Parameters
@@ -1287,6 +1289,8 @@ class Lamination(LegacyClass):
             a Lamination object
         is_add_id : bool
             True to add the "-X" part
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------
@@ -1294,6 +1298,7 @@ class Lamination(LegacyClass):
             Label of the lamination
 
         """
+        machine = container_or_parent(self, machine, "machine")
 
         if self.is_stator:
             label = STATOR_LAB
@@ -1301,9 +1306,9 @@ class Lamination(LegacyClass):
             label = ROTOR_LAB
 
         if is_add_id:
-            if self.parent is not None:
+            if machine is not None:
                 try:
-                    lam_list = self.parent.get_lam_list(is_int_to_ext=True, key=label)
+                    lam_list = machine.get_lam_list(is_int_to_ext=True, key=label)
                     label += "-" + str(lam_list.index(self))
                 except:
                     pass
@@ -1571,6 +1576,7 @@ class Lamination(LegacyClass):
         is_show_fig: bool = True,
         save_path: str | None = None,
         is_winding_connection: bool = False,
+        machine: Machine | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot the Lamination in a matplotlib fig
 
@@ -1600,6 +1606,8 @@ class Lamination(LegacyClass):
             full path including folder, name and extension of the file to save if save_path is not None
         is_winding_connection : bool
             True to display winding connections (not used)
+        machine : Machine, optional
+            Machine holding the lamination (default: the parent)
 
         Returns
         -------

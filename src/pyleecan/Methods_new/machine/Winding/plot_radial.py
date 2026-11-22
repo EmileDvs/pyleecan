@@ -1,10 +1,15 @@
+from ....classes_common.parents import container_or_parent
 from ....Classes_new._swat_em import datamodel
 from ....definitions import config_dict
 from ....Functions_new._swat_em import plots
 from ....Functions_new._swat_em.config import config
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def plot_radial(self, is_show_fig: bool = True) -> None:
+def plot_radial(self, is_show_fig: bool = True, lam: Lamination | None = None) -> None:
     """Plots the winding radial pattern
 
     Parameters
@@ -13,11 +18,14 @@ def plot_radial(self, is_show_fig: bool = True) -> None:
         A Winding object
     is_show_fig : bool
         True to call fig.show
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     """
-    Zs = self.parent.get_Zs()
+    lam = container_or_parent(self, lam, "lam")
+    Zs = lam.get_Zs()
 
-    p = self.parent.get_pole_pair_number()
+    p = lam.get_pole_pair_number()
 
     # generate a datamodel for the winding
     wdg = datamodel()

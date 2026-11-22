@@ -1,9 +1,14 @@
+from ....classes_common.parents import container_or_parent
 from matplotlib.lines import Line2D
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import plot, subplots
 import numpy as np
 
 from ....Functions_new.Winding.gen_phase_list import gen_color, gen_name
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.machine import Machine
 
 
 def plot_winding(
@@ -12,7 +17,7 @@ def plot_winding(
     all_slot: bool = False,
     is_show_fig: bool = True,
     save_path: str | None = None,
-    win_title: str | None = None,
+    win_title: str | None = None, machine: Machine | None = None,
 ):
     """Plot the Winding in a matplotlib fig
 
@@ -30,10 +35,13 @@ def plot_winding(
         full path including folder, name and extension of the file to save if save_path is not None
     win_title:str
         Window title
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
     Returns
     -------
     None
     """
+    machine = container_or_parent(self, machine, "machine")
 
     # We compute the wind_mat only if needed
     if wind_mat is None:
@@ -123,10 +131,10 @@ def plot_winding(
     # Window title
     if (
         win_title is None
-        and self.parent is not None
-        and self.parent.name not in [None, ""]
+        and machine is not None
+        and machine.name not in [None, ""]
     ):
-        win_title = self.parent.name + " " + Lam_Name + " Winding"
+        win_title = machine.name + " " + Lam_Name + " Winding"
     elif win_title is None:
         win_title = Lam_Name + " Winding"
     manager = plt.get_current_fig_manager()

@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from matplotlib.patches import Patch
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,6 +9,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.machine import Machine
 
 
 def plot(
@@ -25,7 +27,7 @@ def plot(
     win_title: str | None = None,
     is_legend: bool = True,
     is_clean_plot: bool = False,
-    is_winding_connection: bool = False,
+    is_winding_connection: bool = False, machine: Machine | None = None,
 ) -> tuple[Figure, Axes]:
     """Plot a Lamination with Magnets in a matplotlib fig
 
@@ -59,6 +61,8 @@ def plot(
         True to remove title, legend, axis (only machine on plot with white background)
     is_winding_connection : bool
         True to display winding connections (not used)
+    machine : Machine, optional
+        Machine holding the lamination (default: the parent)
 
     Returns
     -------
@@ -67,6 +71,7 @@ def plot(
     ax : Matplotlib.axes.Axes object
         Axis containing the plot
     """
+    machine = container_or_parent(self, machine, "machine")
 
     from ....Classes_new.machine.machine import Machine
     if self.is_stator:
@@ -150,10 +155,10 @@ def plot(
     # Window title
     if (
         win_title is None
-        and self.parent is not None
-        and self.parent.name not in [None, ""]
+        and machine is not None
+        and machine.name not in [None, ""]
     ):
-        win_title = self.parent.name + " " + lam_name
+        win_title = machine.name + " " + lam_name
     elif win_title is None:
         win_title = lam_name
     manager = plt.get_current_fig_manager()

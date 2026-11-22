@@ -1,12 +1,15 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Machine/BoreUD.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from pydantic import Field
 
 from ..geometry.line import Line
 from .bore import Bore
+
+if TYPE_CHECKING:
+    from .lamination import Lamination
 
 
 class BoreUD(Bore):
@@ -55,13 +58,15 @@ class BoreUD(Bore):
         return self.sym, False
 
     # Inlined from Methods.Machine.BoreUD.get_bore_line
-    def get_bore_line(self, label=None) -> list:
+    def get_bore_line(self, label=None, lam: Lamination | None = None) -> list:
         """Return the bore line description
 
         Parameters
         ----------
         self : BoreUD
             A BoreUD object
+        lam : Lamination, optional
+            Lamination holding the bore (default: the parent)
 
         Returns
         -------

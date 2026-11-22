@@ -1,11 +1,16 @@
+from ....classes_common.parents import container_or_parent
 from ....classes_common.logger_context import get_logger
 import numpy as np
 
 from ....Classes_new._swat_em import datamodel
 from . import WindingError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def comp_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np.ndarray:
+def comp_connection_mat(self, Zs: int | None = None, p: int | None = None, lam: Lamination | None = None) -> np.ndarray:
     """Compute the Winding Matrix for
 
     Parameters
@@ -16,6 +21,8 @@ def comp_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np
         Number of Slot (Integer >0)
     p : int
         Number of pole pairs (Integer >0)
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     Returns
     -------
@@ -28,18 +35,19 @@ def comp_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np
         Zs/qs/2 must be an integer
 
     """
+    lam = container_or_parent(self, lam, "lam")
 
     if Zs is None:
-        if not hasattr(self.parent, "slot") and not hasattr(self.parent, "slot_list"):
+        if not hasattr(lam, "slot") and not hasattr(lam, "slot_list"):
             raise WindingError("The Winding object must be in a Lamination object.")
 
-        Zs = self.parent.get_Zs()
+        Zs = lam.get_Zs()
 
     if p is None:
-        if self.parent is None:
+        if lam is None:
             raise WindingError("The Winding object must be in a Lamination object.")
 
-        p = self.parent.get_pole_pair_number()
+        p = lam.get_pole_pair_number()
 
     assert Zs > 0, "Zs must be >0"
     assert Zs % 1 == 0, "Zs must be an integer"
@@ -139,7 +147,7 @@ def comp_connection_mat(self, Zs: int | None = None, p: int | None = None) -> np
     # self.is_aper_a = wdg.get_is_symmetric()
 
     # To check periodicities swat-em / pyleecan definitions
-    self.per_a, self.is_aper_a = self.comp_periodicity(wind_mat=wind_mat)
+    self.per_a, self.is_aper_a = self.comp_periodicity(wind_mat=wind_mat, lam=lam)
     # if is_aper_a:  # Different def for Anti per
     #     per_a = per_a / 2
     # if self.per_a != per_a or self.is_aper_a != is_aper_a:

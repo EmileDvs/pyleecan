@@ -20,6 +20,9 @@ if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
 
+    from .lamination import Lamination
+    from .winding import Winding
+
 
 @dataclass(eq=False)
 class CondType12(Conductor):
@@ -111,13 +114,19 @@ class CondType12(Conductor):
         return self.comp_width()
 
     # Inlined from Methods.Machine.CondType12.comp_height_wire
-    def comp_height_wire(self) -> float:
+    def comp_height_wire(
+        self, winding: Winding | None = None, lam: Lamination | None = None
+    ) -> float:
         """Return wire diameter
 
         Parameters
         ----------
         self : CondType12
             A CondType12 object
+        winding : Winding, optional
+            Winding holding the object (default: the parent)
+        lam : Lamination, optional
+            Lamination of the winding (default: the parent of the winding)
 
         Returns
         -------
@@ -230,13 +239,19 @@ class CondType12(Conductor):
         return width
 
     # Inlined from Methods.Machine.CondType12.comp_width_wire
-    def comp_width_wire(self) -> float:
+    def comp_width_wire(
+        self, winding: Winding | None = None, lam: Lamination | None = None
+    ) -> float:
         """Return wire diameter
 
         Parameters
         ----------
         self : CondType12
             A CondType12 object
+        winding : Winding, optional
+            Winding holding the object (default: the parent)
+        lam : Lamination, optional
+            Lamination of the winding (default: the parent of the winding)
 
         Returns
         -------

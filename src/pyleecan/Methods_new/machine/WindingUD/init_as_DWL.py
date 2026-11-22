@@ -1,9 +1,14 @@
+from ....classes_common.parents import container_or_parent
 import numpy as np
 
 from ..Winding import WindingError
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
 
 
-def init_as_DWL(self, Zs: int | None = None, nlay: int = 1) -> None:
+def init_as_DWL(self, Zs: int | None = None, nlay: int = 1, lam: Lamination | None = None) -> None:
     """Compute the Winding Matrix (for winding type 3 or 4) (Nlay_rad=1 or 2,Nlay_tan=1)
     type 3 or 4 : DISTRIBUTED SHORTED PITCH INTEGRAL WINDING
 
@@ -15,6 +20,8 @@ def init_as_DWL(self, Zs: int | None = None, nlay: int = 1) -> None:
         Number of Slot (Integer >0)
     nlay: int
         Number of layers
+    lam : Lamination, optional
+        Lamination holding the winding (default: the parent)
 
     Raises
     ------
@@ -22,18 +29,19 @@ def init_as_DWL(self, Zs: int | None = None, nlay: int = 1) -> None:
         Zs/2/p/qs must be an integer
 
     """
+    lam = container_or_parent(self, lam, "lam")
     if Zs is None:
-        if self.parent is None:
+        if lam is None:
             raise WindingError(
                 "ERROR: The Winding object must be in a Lamination object."
             )
 
-        if self.parent.slot is None:
+        if lam.slot is None:
             raise WindingError(
                 "ERROR: The Winding object must be in a Lamination object with Slot."
             )
 
-        Zs = self.parent.slot.Zs
+        Zs = lam.slot.Zs
 
     assert Zs > 0, "Zs must be >0"
     assert Zs % 1 == 0, "Zs must be an integer"
