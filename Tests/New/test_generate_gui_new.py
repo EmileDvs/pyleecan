@@ -175,3 +175,15 @@ def test_write_tree_applies_fixes(tmp_path):
     assert "def f(*args, unit='')" in (target_dir / "Tools" / "Edit.py").read_text()
     with pytest.raises(FileNotFoundError):
         _write_tree(source_dir, target_dir, lambda s, p: s, fixes={"Tools/No.py": ()})
+
+
+def test_clear_gui_results(tmp_path):
+    from Tests.New.conftest import clear_gui_results
+
+    folder = tmp_path / "GUI"
+    (folder / "Old").mkdir(parents=True)
+    (folder / "Old" / "left.csv").write_text("x")
+    clear_gui_results(folder)
+    assert folder.is_dir() and not any(folder.iterdir())
+    clear_gui_results(tmp_path / "New")  # Created when missing
+    assert (tmp_path / "New").is_dir()

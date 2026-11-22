@@ -738,14 +738,17 @@ generated first so that the same passes rewrite its calls.
       pydantic 653 passed, 3 skipped. The regressions listed before
       (`test_PHoleM53`, `test_PHoleM52R`, `test_SMHoleMag`, `test_PHoleMUD`,
       `test_PMSlot17`, `NewMachine`) all pass.
-- [ ] `test_SMachineType.test_set_p_syrm` (and the other `test_set_p_*`)
-      is flaky, legacy as well: the random `p` (3 to 99) equal to the
-      default winding `p` (3) emits no `valueChanged`, `Zh` is not set.
-      Fix in the test generator (a value different from the current one).
-- [ ] The GUI tests that write in `Tests/New/Results/GUI` fail when a
-      previous run left its files (`assert not isfile(...)`,
-      `FileExistsError`: `SPreview`, `SSimu`, `SWinding`, `NewMachine`): a
-      clean result folder per run (fixture or runner).
+- [x] (2026-11-22) `test_SMachineType.test_set_p_*` were flaky, legacy as
+      well: the random `p` (3 to 99) equal to the default winding `p` (3)
+      emits no `valueChanged`, `Zh` is not set. `TEST_FIXES` (test
+      generator, `LegacyFix` of the copies): the value is changed when it
+      equals the spinbox value. Checked with `uniform` forced to 3: legacy
+      3 failed, both backends pass.
+- [x] (2026-11-22) The GUI tests that write in `Tests/New/Results/GUI`
+      failed when a previous run left its files (`assert not isfile(...)`,
+      `FileExistsError`: `SPreview`, `SSimu`, `SWinding`, `NewMachine`):
+      `Tests/New/conftest.py` empties `Results/GUI` at the session start
+      (xdist controller only).
 - [ ] Left: the stator winding flux plot of `SSimu` with one time step
       (`plot_2D_Data` label None, as legacy).
 - [ ] The GUI calls of the logger chain (Step 9) and of the moved functions

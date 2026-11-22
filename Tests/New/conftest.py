@@ -5,7 +5,10 @@ tests import through the ``backend_classes`` / ``backend_functions`` alias
 packages (see _backend.py). The default is dataclass.
 """
 
+import os
+import shutil
 from os.path import dirname, isfile, join
+from pathlib import Path
 
 import pytest
 
@@ -26,6 +29,30 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     # Before the collection: the test modules import the alias packages
     _backend.install(config.getoption("backend"))
+
+
+def pytest_sessionstart(session):
+    """Start the GUI tests on an empty result folder.
+
+    The GUI tests check that their output files do not exist yet
+    (``assert not isfile(...)``, ``makedirs``): the files left by a run
+    stopped midway made the next run fail. Only ``Results/GUI`` is emptied
+    (the legacy tests empty the whole Tests/Results folder at import); under
+    pytest-xdist, only by the controller.
+    """
+    if os.environ.get("PYTEST_XDIST_WORKER"):
+        return
+    clear_gui_results()
+
+
+def clear_gui_results(path=None):
+    """Empty the result folder of the GUI tests (save_gui_path)."""
+    from Tests.New._test_paths import save_gui_path
+
+    path = Path(path or save_gui_path)
+    if path.is_dir():
+        shutil.rmtree(path)
+    path.mkdir(parents=True, exist_ok=True)
 
 
 def pytest_report_header(config):

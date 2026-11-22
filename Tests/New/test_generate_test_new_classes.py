@@ -207,3 +207,18 @@ def test_alias_gui_imports():
         "mock.patch('backend_gui.Dialog.DMachineSetup.DMachineSetup.QFileDialog')\n"
         "from pyleecan.GUIOther import x\n"
     )
+
+
+def test_test_fixes_apply_to_legacy_tests():
+    import tokenize
+
+    from pyleecan.definitions import TEST_DIR
+    from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import (
+        TEST_FIXES,
+    )
+    from pyleecan.Generator.ClassGenerator.New.legacy_fixes import apply_fixes
+
+    for path, fixes in TEST_FIXES.items():
+        with tokenize.open(Path(TEST_DIR) / path) as file:
+            fixed = apply_fixes(file.read(), fixes, path.as_posix())  # Raises if changed
+        assert all(fix.new in fixed for fix in fixes)

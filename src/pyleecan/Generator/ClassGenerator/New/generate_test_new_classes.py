@@ -30,6 +30,7 @@ from pyleecan.Generator.ClassGenerator.New.class_generator import (
     generated_module_paths,
     relocate_class_imports,
 )
+from pyleecan.Generator.ClassGenerator.New.legacy_fixes import LegacyFix, apply_fixes
 from pyleecan.Generator.ClassGenerator.New.modernize import _keyword_geometry_calls
 from pyleecan.Generator.ClassGenerator.New.function_module_names import (
     function_module_mapping,
@@ -57,6 +58,25 @@ PRESERVED_TESTS = {
     Path("Classes") / "test_classes.py",
     Path("Classes") / "test_loggers.py",
 }
+TEST_FIXES = {
+    # The random p may be the current value of the spinbox (default winding
+    # p = 3): setValue then emits no valueChanged and p is not set (flaky,
+    # 1 run in 97, legacy as well)
+    Path("GUI") / "Dialog" / "DMachineSetup" / "test_SMachineType.py": (
+        LegacyFix(
+            old="        value = int(uniform(3, 100))\n"
+            "        self.widget.si_p.setValue(value)\n",
+            new="        value = int(uniform(3, 100))\n"
+            "        if value == self.widget.si_p.value():  # valueChanged on change only\n"
+            "            value += 1\n"
+            "        self.widget.si_p.setValue(value)\n",
+            count=7,
+        ),
+    ),
+}
+"""Fixes of the legacy tests in their copy ({path in Tests: LegacyFix tuple}),
+applied before the rewriting; the legacy tests are unchanged"""
+
 RESULT_NAMES = {
     "save_path",
     "save_plot_path",
@@ -320,6 +340,9 @@ def generate_tests(tests_dir=None, class_dir=None):
     generated_module_paths.cache_clear()
     class_module_paths = generated_module_paths(class_dir)
     output = tests_dir / "New"
+    missing = [path for path in TEST_FIXES if not (tests_dir / path).is_file()]
+    if missing:
+        raise FileNotFoundError(f"Fixed legacy tests not found: {missing}")
     unsupported = []
     for folder in TEST_FOLDERS:
         source_dir = tests_dir / folder
@@ -339,6 +362,9 @@ def generate_tests(tests_dir=None, class_dir=None):
                 with tokenize.open(path) as source_file:
                     source = source_file.read()
                     encoding = source_file.encoding
+                relative = path.relative_to(tests_dir)
+                if relative in TEST_FIXES:
+                    source = apply_fixes(source, TEST_FIXES[relative], relative.as_posix())
                 rewritten, issues = _rewrite_source(source, path, class_dir)
                 # Class modules are in sub-packages of Classes_new
                 rewritten = relocate_class_imports(

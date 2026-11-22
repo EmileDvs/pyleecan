@@ -222,6 +222,8 @@ class TestSMachineType(object):
         # Clear the field before writing the new value
         self.widget.si_p.clear()
         value = int(uniform(3, 100))
+        if value == self.widget.si_p.value():  # valueChanged on change only
+            value += 1
         self.widget.si_p.setValue(value)
 
         assert self.test_obj.stator.winding.p == value
@@ -243,6 +245,8 @@ class TestSMachineType(object):
         # Clear the field before writing the new value
         self.widget.si_p.clear()
         value = int(uniform(3, 100))
+        if value == self.widget.si_p.value():  # valueChanged on change only
+            value += 1
         self.widget.si_p.setValue(value)
 
         assert self.test_obj.stator.winding.p == value
@@ -265,6 +269,8 @@ class TestSMachineType(object):
         # Clear the field before writing the new value
         self.widget.si_p.clear()
         value = int(uniform(3, 100))
+        if value == self.widget.si_p.value():  # valueChanged on change only
+            value += 1
         self.widget.si_p.setValue(value)
 
         assert self.test_obj.stator.winding.p == value
@@ -289,6 +295,8 @@ class TestSMachineType(object):
         # Clear the field before writing the new value
         self.widget.si_p.clear()
         value = int(uniform(3, 100))
+        if value == self.widget.si_p.value():  # valueChanged on change only
+            value += 1
         self.widget.si_p.setValue(value)
         assert self.test_obj.stator.winding.p == value
         assert self.test_obj.rotor.hole[0].Zh == 2 * value
@@ -311,6 +319,8 @@ class TestSMachineType(object):
         # Clear the field before writing the new value
         self.widget.si_p.clear()
         value = int(uniform(3, 100))
+        if value == self.widget.si_p.value():  # valueChanged on change only
+            value += 1
         self.widget.si_p.setValue(value)
 
         assert self.test_obj.stator.winding.p == value
@@ -335,6 +345,8 @@ class TestSMachineType(object):
         # Clear the field before writing the new value
         self.widget.si_p.clear()
         value = int(uniform(3, 100))
+        if value == self.widget.si_p.value():  # valueChanged on change only
+            value += 1
         self.widget.si_p.setValue(value)
 
         assert self.widget.machine.stator.winding.p == value
@@ -353,6 +365,8 @@ class TestSMachineType(object):
         # Clear the field before writing the new value
         self.widget.si_p.clear()
         value = int(uniform(3, 100))
+        if value == self.widget.si_p.value():  # valueChanged on change only
+            value += 1
         self.widget.si_p.setValue(value)
 
         assert self.widget.machine.stator.winding.p == value
