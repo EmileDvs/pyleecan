@@ -1805,7 +1805,20 @@ First figures: creation time in Step 2 of the plan (`Segment`, `LamSlotWind`).
       `ContainerFallbackWarning`: `warnings.warn` walks the stack; with
       `lam=lam` the dataclass `comp_surface` is 1.4 us, as legacy). Report
       and Phase 2 decision when the other benchmark items are done.
-- [ ] Machine files: load and save of the 37 files of `Data/Machine`, memory.
+- [x] (2026-11-22) Machine files: load and save of the 37 files of
+      `Data/Machine`, memory (`--files` mode of the same script, class
+      imports out of the timing; peak memory of the loaded machines with
+      `tracemalloc`). All 37 load and save with each backend:
+
+      | Machine files | legacy | dataclass | pydantic |
+      |---|---:|---:|---:|
+      | load 37 files [ms] | 412 | 1055 | 1815 |
+      | save [ms] | 78 | 214 | 97 |
+      | loaded machines, peak [MB] | 6.6 | 4.3 | 9.6 |
+
+      The dataclass objects take the least memory; the pydantic save is
+      close to legacy (serializer in Rust), its load is the slowest
+      (validation of every field).
 - [ ] Methods and simulations: the parity baseline of the freeze (Step 12)
       timed per package; a few full simulations (FEMM excluded or timed
       apart).
