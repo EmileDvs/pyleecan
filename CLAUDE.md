@@ -42,7 +42,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `Methods_new/` | Methods shared by both backends, written by the method generator from `Methods/` until the freeze | Hand-written since Step 12 (all sub-packages frozen); regenerate the classes after an edit |
 | `Functions_new/` | Functions for `Classes_new`, written by the functions generator from `Functions` | Generated, except `HAND_WRITTEN_FUNCTION_MODULES` (hand-written since Step 12) |
 | `Functions_pydantic/` | Generated from `Functions_new` by import rewriting | Never by hand |
-| `classes_common/` | Backend-agnostic support: class lookup, `ClassInfo`, errors, checks, legacy dump/values, equality, custom setters, parent types | Hand-written (incl. `logger_context.py`: loggers without parents), except `errors.py`, `parent_types.py` and `retrocompatibility.py` (generated) |
+| `classes_common/` | Backend-agnostic support: class lookup, `ClassInfo`, errors, checks, legacy dump/values, equality, custom setters, parent types | Hand-written (incl. `logger_context.py`: loggers without parents; `parents.py`: `container_or_parent` / `ancestor_with`, the only parent reads left in `Methods_new` / `Functions_new` since Step 16), except `errors.py`, `parent_types.py` and `retrocompatibility.py` (generated) |
 | `Generator/` | Legacy generators (`ClassGenerator/*.py`, GUI, UML) and the CSV class definitions (`ClassesRef/`) | Legacy generator: never |
 | `Generator/ClassGenerator/New/` | New generators (classes, methods, functions, tests) | Yes: this is where changes go |
 | `GUI/`, `Data/`, `Results/` | Legacy GUI, reference machines/materials, outputs | GUI: never (legacy) |

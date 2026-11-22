@@ -392,11 +392,14 @@ can be automated is left to the frozen steps.
 
 ### Step 16: parent links, second pass (frozen)
 
-- [ ] Remove the parent reads left by Step 11, package by package; the GUI
-      calls of a refactored package are updated in the same increment.
-- [ ] Function helpers: `check_parent`, `assign_femm_surface`.
+- [x] Remove the parent reads left by Step 11, package by package; the GUI
+      calls of a refactored package are updated in the same increment
+      (2026-11-22: no direct parent read left in `Methods_new` and
+      `Functions_new`; `container_or_parent` / `ancestor_with` only).
+- [x] Function helpers: `check_parent`, `assign_femm_surface`.
 - [ ] Tests of a refactored package become hand-maintained; parity on the
-      numerical results against legacy.
+      numerical results against legacy (parity checked 2026-11-22; freezing
+      the generated tests: to decide).
 
 ### Step 17: GUI, second pass (frozen)
 

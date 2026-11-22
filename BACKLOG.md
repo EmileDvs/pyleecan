@@ -1440,7 +1440,7 @@ Same signature rule as Step 11 (optional container argument, fallback through
 `container_or_parent`); each new site is added to
 [Phase 2 deprecations](#phase-2-deprecations).
 
-- [ ] Remove the reads left by Step 11, package by package (Slot, Machine,
+- [x] (2026-11-22) Remove the reads left by Step 11, package by package (Slot, Machine,
       Simulation, Loss, Output, Optimization). Direct `.parent` reads at the
       start (2026-11-22): `Methods_new` 486 in 202 modules (slot 194, machine
       148, simulation 58, output 26, loss 21, electrical 18, structural 11,
@@ -1568,13 +1568,25 @@ Same signature rule as Step 11 (optional container argument, fallback through
       `Functions_new/get_logger.py` walks with `container_or_parent`.
 - [ ] Tests of a refactored package hand-maintained; numerical parity against
       legacy, from the Step 12 baseline.
+  - [x] (2026-11-22) Parity after the Step 16 packages, `Tests/New/Methods`
+        per package (both backends the same): Converter 49, Frame 5,
+        Geometry 282, Import 28, Machine 79, Mesh 42 (6 skipped),
+        Simulation 43 (4 skipped), Slot 1052 passed: as the baseline or
+        better (Frame and Simulation failures of the baseline fixed by Steps
+        13 and 16). The legacy-derived tests still call the methods without
+        the containers (the fallback), so they measure the parity.
+  - [ ] Hand-maintained tests: the full generation still rewrites the
+        `Tests/New` tree from the legacy tests (`generate_tests()` in
+        `run_generate_classes`); freezing it (as `FROZEN_PACKAGES`) and
+        passing the containers in the tests is the maintainer's decision.
 - [x] (2026-11-22) No parent read left in `Methods_new` and `Functions_new`
       outside `container_or_parent` (and `ancestor_with`, its walk of an
       unknown depth); the parent links stay only in the legacy layer.
       Direct `.parent` reads: `Methods_new` 486 -> 0, `Functions_new` 7 ->
       0 (AST count of the `.parent` attributes).
-- [ ] The `GUI_new` calls of each refactored package updated in the same
-      increment.
+- [x] (2026-11-22) The `GUI_new` calls of each refactored package updated in the same
+      increment (slot 54 calls, machine: winding, skew and bore pages,
+      simulation: preview table, outputs: simulation page).
 - [x] (2026-11-22) `Winding.find_wind_phase_color` as a regular method reading
       the connection matrix (like `get_phase_id`): `find_wind_phase_color(
       self, label, wind_mat=None)` (default `self.get_connection_mat()`),
