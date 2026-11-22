@@ -83,7 +83,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `generate_methods_new.py` | Wrote `Methods_new` from legacy `Methods` (modernization pipeline); since the freeze only its `__init__.py` (every package in `FROZEN_PACKAGES`) |
 | `modernize.py`, `source_names.py`, `function_module_names.py` | Shared modernization passes and name mappings for methods and functions |
 | `type_hints.py` | Type hints from the numpydoc docstrings |
-| `legacy_fixes.py` | Fixes of legacy method bugs (`LEGACY_FIXES`), applied to the `Methods_new` copies before modernization |
+| `legacy_fixes.py` | Fixes of legacy bugs, text replacements checked against the legacy source: methods (`LEGACY_FIXES`, applied to the `Methods_new` copies before modernization), GUI (`GUI_LEGACY_FIXES`), functions (`FUNCTION_LEGACY_FIXES`, applied by the functions generator when a legacy module is read, merges included) |
 | `container_arguments.py`, `parent_reads.py` | Step 11: container arguments replacing the parent reads (`CONTAINER_ARGUMENTS`, fallback `classes_common.parents.container_or_parent`); classification report of the parent reads |
 | `femm_object.py` | Interface objects gathering the functions of a folder: `femm_pyleecan` (`Functions/FEMM`, with the handler), `gmsh_pyleecan` (`Functions/GMSH`), `pv_plotter_pyleecan` (`Functions/Plot/Pyvista`) (static methods); aliases, callers |
 | `moved_functions.py` | Legacy functions moved to a class as methods (`MOVED_FUNCTIONS`), deprecated aliases at the old paths |

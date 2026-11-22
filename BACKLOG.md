@@ -1396,7 +1396,41 @@ generator; this step finishes by hand what the generator could not do.
   - Found: `Tests/New/Functions/test_save_load.py` does not collect
     (`InitUnKnowClassError` no longer in `classes_common.check`), before
     this step too.
-- [ ] Mark the class-independent functions for `src/pyleecan/utils/` (Phase 2).
+  - Left (206 diagnostics, 2026-11-22), not mechanical: the 3D plots read
+    `Axes3D` members on `ax: Axes` (~60, local narrowing or an
+    `Axes | Axes3D` hint); the rule functions read the fields of the slot
+    or hole they just set through `machine.rotor.slot: Slot` /
+    `Lamination.hole` (38, local narrowing per rule); the nested gmsh
+    dicts (27); the vendored `_swat_em` / `_smoot` (26, not ours); the
+    annotated legacy signatures of `omp` (`n_coefs: int = None`, returns);
+    `winding_layer.P_to_other` (empty body documented `dict`).
+- [x] (2026-11-22) Mark the class-independent functions for
+      `src/pyleecan/utils/` (Phase 2). Audit of the `Functions_new` modules
+      that stay (not the deprecated modules and aliases, the vendored code,
+      the rule functions, the hand-written parent readers): a module is
+      class-independent when it imports no pyleecan class, at runtime or for
+      typing, directly or through the modules it imports.
+  - `utils/` candidates (class-independent): `utils.get_path_binary`,
+    `utils.init_environment`, `utils.init_fig`, `utils.labels`,
+    `utils.make_ndarray_equal`, `utils.path_tools`, `utils.geometry` (all
+    but `cut_lines_between_angles`, which takes `Line` lists),
+    `Winding.gen_phase_list`; the SciDataTool math helpers
+    (`change_referential`, `conversions`, `derivation_integration`,
+    `fft_functions`, `filter_spectral_leakage`, `fix_axes_order`,
+    `interpolations`, `nudft_functions`, `set_routines`, `sum_convolution`,
+    `sum_mean`, `symmetries`) and plots (`SciDataTool.Plot`: `init_fig`,
+    `plot_2D`, `plot_3D`, `plot_4D`).
+  - Class-independent, but with a Phase 2 home already decided: the file
+    backends `Load.load_array` / `load_hdf5` / `load_json` / `load_pkl`,
+    `Save.save_array` / `save_hdf5` / `save_pkl` (load and save classes,
+    group 12), `pv_plotter_pyleecan` (interface object, like
+    `femm_pyleecan` and `gmsh_pyleecan`).
+  - Class-dependent, stay with the classes: `SciDataTool.dqh_transformation`
+    (`DataTime` / `DataFreq` helpers), `SciDataTool.is_axes_in_order`,
+    `omp` (`Data1D`), `parser` (`RequestedAxis`), `utils.geometry.cut_lines_between_angles`,
+    `Save.save_json`, `load` / `save`, `Load.retrocompatibility`,
+    `Load.import_class` and `Converter.rule_functions` (loaders),
+    `gmsh_pyleecan`.
 
 ## Step 16: parent links, second pass
 
