@@ -361,6 +361,7 @@ class LossFEA(Loss):
 
         # Storing loss_dict in OutLoss (requested for OutLoss.get_meshsolution)
         output.loss.loss_dict = loss_dict
+        loss_dict = output.loss.loss_dict  # The stored dict
 
         # Calculate meshsolution to get overall loss density
         output.loss.get_meshsolution()

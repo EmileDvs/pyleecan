@@ -13,6 +13,7 @@ from ..mesh.mesh_solution import MeshSolution
 from ..mesh.solution_data import SolutionData
 from ..scidatatool.data_freq import DataFreq
 from ..scidatatool.data_nd import DataND
+from ..scidatatool.data_time import DataTime
 
 if TYPE_CHECKING:
     from .out_loss_model import OutLossModel
@@ -339,14 +340,34 @@ class OutLossModel(LegacyClass):
 
         ms_mag = output.mag.get_meshsolution()
 
-        Loss_density_df = DataFreq(
-            name=f"{self.name} loss density",
-            unit="W/m3",
-            symbol="L",
-            values=self.loss_density,
-            is_real=True,
-            axes=[axes_dict["freqs"], axes_dict["indice"]],
-        )
+        # The loss density on all the elements of the mesh (indice_element axis
+        # since the OutMag meshsolution of #751; the density of a model is given
+        # on the elements of its group), as OutLoss.get_meshsolution
+        Indice_Element = axes_dict["indice_element"]
+        Nelem = Indice_Element.get_length()
+        loss_density = self.loss_density
+        if loss_density.shape[-1] != Nelem:
+            loss_density_all = np.zeros((loss_density.shape[0], Nelem), dtype=float)
+            loss_density_all[:, ms_mag.group[self.group]] = loss_density
+            loss_density = loss_density_all
+        if loss_density.shape[0] == 1:  # Frequency model: average value
+            Loss_density_df = DataFreq(
+                name=f"{self.name} loss density",
+                unit="W/m3",
+                symbol="L",
+                values=loss_density,
+                is_real=True,
+                axes=[axes_dict["freqs"], Indice_Element],
+            )
+        else:  # Time model
+            Loss_density_df = DataTime(
+                name=f"{self.name} loss density",
+                unit="W/m3",
+                symbol="L",
+                values=loss_density,
+                is_real=True,
+                axes=[axes_dict["time"], Indice_Element],
+            )
 
         Loss_density_sd = SolutionData(
             label=Loss_density_df.name,

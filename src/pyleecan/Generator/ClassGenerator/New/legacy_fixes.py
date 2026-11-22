@@ -145,6 +145,38 @@ _LEGEND_COLORS_AT_CALL = '''        Legend to display for the surface
     BAR_COLOR = color_dict["BAR_COLOR"]
 '''
 
+_LOSS_MODEL_MESH_SOLUTION = '''    # The loss density on all the elements of the mesh (indice_element axis
+    # since the OutMag meshsolution of #751; the density of a model is given
+    # on the elements of its group), as OutLoss.get_meshsolution
+    Indice_Element = axes_dict["indice_element"]
+    Nelem = Indice_Element.get_length()
+    loss_density = self.loss_density
+    if loss_density.shape[-1] != Nelem:
+        loss_density_all = np.zeros((loss_density.shape[0], Nelem), dtype=float)
+        loss_density_all[:, ms_mag.group[self.group]] = loss_density
+        loss_density = loss_density_all
+    if loss_density.shape[0] == 1:  # Frequency model: average value
+        Loss_density_df = DataFreq(
+            name=f"{self.name} loss density",
+            unit="W/m3",
+            symbol="L",
+            values=loss_density,
+            is_real=True,
+            axes=[axes_dict["freqs"], Indice_Element],
+        )
+    else:  # Time model
+        from ....Classes.DataTime import DataTime
+
+        Loss_density_df = DataTime(
+            name=f"{self.name} loss density",
+            unit="W/m3",
+            symbol="L",
+            values=loss_density,
+            is_real=True,
+            axes=[axes_dict["time"], Indice_Element],
+        )
+'''
+
 GUI_LEGACY_FIXES = {
     # The Qt Designer modules build the line edits with their parent as only
     # positional argument (FloatEdit(self.g_x)): it was taken as the unit,
@@ -164,6 +196,36 @@ GUI_LEGACY_FIXES = {
 {module path in GUI (posix): fixes}"""
 
 LEGACY_FIXES = {
+    # The loss density of a model on the whole mesh: the "indice" axis no
+    # longer exists (KeyError when plotting the losses of a model)
+    ("OutLossModel", "get_mesh_solution.py"): (
+        LegacyFix(
+            old="from ....Classes.DataFreq import DataFreq\n",
+            new="import numpy as np\n\nfrom ....Classes.DataFreq import DataFreq\n",
+        ),
+        LegacyFix(
+            old='''    Loss_density_df = DataFreq(
+        name=f"{self.name} loss density",
+        unit="W/m3",
+        symbol="L",
+        values=self.loss_density,
+        is_real=True,
+        axes=[axes_dict["freqs"], axes_dict["indice"]],
+    )
+''',
+            new=_LOSS_MODEL_MESH_SOLUTION,
+        ),
+    ),
+    # The new classes store a copy of an assigned dict (the legacy property
+    # kept the object): the overall loss is added to the stored dict, read
+    # back through the local name (KeyError: 'overall' before)
+    ("LossFEA", "run.py"): (
+        LegacyFix(
+            old="    output.loss.loss_dict = loss_dict\n",
+            new="    output.loss.loss_dict = loss_dict\n"
+            "    loss_dict = output.loss.loss_dict  # The stored dict\n",
+        ),
+    ),
     # Step 8 group 9 (decision 2026-11-21): Machine.get_color_legend_from_surface
     # reads the plot colors when called, not when the module is imported (the
     # unused PHASE_COLORS and hatches dropped)

@@ -273,6 +273,15 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
     AttributeError / IndexError instead of the default columns;
   - `ElecLUTdq.run` with loss models: `OutLoss` built with unknown fields
     (TypeError); the losses are stored in `OutLoss.loss_dict`.
+  - `OutLossModel.get_mesh_solution` (`plot_mesh` of a loss model): the
+    `indice` axis no longer exists since the OutMag mesh solution of #751
+    (KeyError): the loss density is given on the `indice_element` axis, on
+    the elements of the model's group, as `OutLoss.get_meshsolution`.
+- **`LossFEA.run` with the new classes**: the overall loss added to
+  `output.loss.loss_dict` was read back through the local dict, which the
+  legacy classes stored as is; the new classes store a copy of an assigned
+  dict (`ParentDict`), so the local name lacked it (`KeyError: 'overall'`).
+  The local name is rebound to the stored dict (`legacy_fixes.py`).
 - Generation of the phase axis.
 - **Upstream fixes carried to the new code** (#748, #749, #752): MagFEMM
   mesh extraction without a hardcoded Windows separator; MagElmer
