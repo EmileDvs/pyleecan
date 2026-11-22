@@ -4797,6 +4797,7 @@ TYPE_CHECKING_MEMBERS = {
             f"def get_center({_ANY_ARGS}) -> complex: ...",
         )
     },
+    "Arc": {"lines": (f"def comp_radius({_ANY_ARGS}) -> float: ...",)},
     "Solution": {"lines": ("field: Any",)},
     "Mesh": {
         "lines": (

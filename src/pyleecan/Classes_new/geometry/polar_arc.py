@@ -220,10 +220,8 @@ class PolarArc(Surface):
         """
 
         # Set default color
-        if edgecolor is None and not is_edge_only:
-            edgecolor = self.PATCH_EDGE
-        elif edgecolor is None and is_edge_only:
-            edgecolor = self.PATCH_EDGE_ALPHA
+        if edgecolor is None:
+            edgecolor = self.PATCH_EDGE_ALPHA if is_edge_only else self.PATCH_EDGE
         if is_edge_only:
             color = self.PATCH_COLOR_ALPHA
         if "--" in edgecolor:

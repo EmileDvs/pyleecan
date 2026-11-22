@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar, cast
 
 import numpy as np
 
@@ -32,6 +32,12 @@ class Arc(Line):
 
     _package: ClassVar[str] = "Geometry"
     """Name of the package of the legacy class module"""
+
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+
+        def comp_radius(self, *args: Any, **kwargs: Any) -> float: ...
 
     # Inlined from Methods.Geometry.Arc.comp_distance
     def comp_distance(self, Z: complex) -> float:
@@ -282,11 +288,12 @@ class Arc(Line):
         """
 
         if other.is_arc():
+            other_arc = cast("Arc", other)
             inter_list = inter_circle_circle(
                 Zc1=self.get_center(),
-                Zc2=other.get_center(),
+                Zc2=other_arc.get_center(),
                 R1=abs(self.comp_radius()),
-                R2=abs(other.comp_radius()),
+                R2=abs(other_arc.comp_radius()),
             )
         else:
             inter_list = self.intersect_line(Z1=other.get_begin(), Z2=other.get_end())

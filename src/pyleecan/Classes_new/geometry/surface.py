@@ -135,6 +135,8 @@ class Surface(LegacyClass):
         from ...Functions_new.FEMM.femm_pyleecan import femm_pyleecan
 
         self.check()
+        if FEMM_dict is None:
+            raise ValueError("draw_FEMM needs FEMM_dict (FEMM mesh parameters)")
 
         # Draw all the lines
         lines = self.get_lines()
@@ -168,6 +170,10 @@ class Surface(LegacyClass):
                 is_yoke_BC = LAM_LAB + YOKE_LAB in line.prop_dict[BOUNDARY_PROP_LAB]
 
                 if type_set_BC == 0 or (type_set_BC == 1 and is_yoke_BC):
+                    if BC_dict is None:
+                        raise ValueError(
+                            f"draw_FEMM needs BC_dict to set the boundary condition of {self.label!r}"
+                        )
                     propname = femm.get_FEMM_BC_propname(
                         line_label=line.prop_dict[BOUNDARY_PROP_LAB],
                         BC_dict=BC_dict,

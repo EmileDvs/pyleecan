@@ -1171,7 +1171,8 @@ Recurring causes, to solve once where possible:
       with generic arguments, attributes as properties so that a checker
       does not take them for dataclass fields; nothing at runtime, Python
       3.14 skips the block): `Machine` (`stator`, `rotor`), `Lamination`
-      (`winding`), `Data`, `Line`, `Solution`, `Mesh`, `Simulation` (the
+      (`winding`), `Data`, `Line`, `Arc` (`comp_radius`, added with the
+      geometry review), `Solution`, `Mesh`, `Simulation` (the
       models of `Simu1`), `ImportMatrix`, `OutInternal`. Test:
       `Tests/New/test_type_checking_members.py`.
 - [x] (2026-11-22) Optional fields, first part: a field whose default is an
@@ -1207,7 +1208,7 @@ Recurring causes, to solve once where possible:
       SciDataTool plot functions), `EEC_SCIM` (30), `MagElmer` (27),
       `OptiGenAlgNsga2Deap` (26), `MagFEMM` (26), `LUTdq` (22). Then -> 465
       (`FieldMissingError` checks) -> 464 (required `ref_simu`) -> 452
-      (implicit `None` returns).
+      (implicit `None` returns) -> 439 (geometry review).
 - [x] (2026-11-22) Implicit `None` returns (12, none left), by case:
       - unreachable last case written as `else` (no behaviour change):
         `Segment.intersect_line` (`inter_line_line` returns 0, 1 or 2
@@ -1231,10 +1232,19 @@ Recurring causes, to solve once where possible:
 Review list by package (behaviour or class definition to decide):
 
 - Geometry:
-  - [ ] `get_patches` uses `"--" in linestyle` with a None default (PolarArc,
-        SurfLine, Trapeze: `replace`/`in` on an optional style);
+  - [x] (2026-11-22) `get_patches` (Circle, PolarArc, SurfLine, Trapeze):
+        `"--" in edgecolor` after a defaulting that ty could not follow, one
+        `if edgecolor is None:` (same behaviour);
   - [x] (2026-11-22) `Segment.intersect_line` implicit `None` return;
-  - [ ] a `Polygon` returned for `list[Polygon]`.
+  - [x] (2026-11-22) `SurfLine.get_patches` without lines returned a bare
+        `Polygon([])` for `list[Polygon]` (and an empty `Polygon` raises
+        `ValueError`): returns `[]`;
+  - [x] (2026-11-22) also in the package: `Arc` / `Segment.intersect_obj`
+        (`comp_radius` of the daughters: declared on `Arc` in
+        `TYPE_CHECKING_MEMBERS`, `cast` after `other.is_arc()`),
+        `Surface.draw_FEMM` (`FEMM_dict`, and `BC_dict` when a line has a
+        boundary condition, `None` defaults: `ValueError`). `ty` clean on
+        `Methods_new/geometry`. Test: `Tests/New/test_geometry_review.py`.
 - Slot:
   - [x] (2026-11-22) implicit `None` returns: `SlotW14`/`SlotW15`/`SlotW29.comp_surface_opening`,
         `SlotW14`/`SlotW29.comp_surface_wedge` (`wedge_type` other than 0 and 1),

@@ -1,7 +1,8 @@
 from ....Functions_new.utils.geometry import inter_circle_circle
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
+    from ....Classes_new.geometry.arc import Arc
     from ....Classes_new.geometry.line import Line
 
 # import matplotlib.pyplot as plt
@@ -27,11 +28,12 @@ def intersect_obj(self, other: Line, is_on_line: bool = True) -> list:
     """
 
     if other.is_arc():
+        other_arc = cast("Arc", other)
         inter_list = inter_circle_circle(
             Zc1=self.get_center(),
-            Zc2=other.get_center(),
+            Zc2=other_arc.get_center(),
             R1=abs(self.comp_radius()),
-            R2=abs(other.comp_radius()),
+            R2=abs(other_arc.comp_radius()),
         )
     else:
         inter_list = self.intersect_line(Z1=other.get_begin(), Z2=other.get_end())

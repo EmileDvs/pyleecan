@@ -297,6 +297,11 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   and 1 raise `NotImplementedError`, `SlotW15.comp_surface_opening` on an
   inward slot raises `S15InnerError`, `HoleUD.comp_surface_magnet_id` on an
   index without magnet raises `ValueError` (all returned None).
+- **`SurfLine.get_patches` without lines** returns `[]` (it built an empty
+  `Polygon`, which raises `ValueError`, and returned it outside a list).
+  `Surface.draw_FEMM` without `FEMM_dict` (or without `BC_dict` for a line
+  with a boundary condition) raises a `ValueError` instead of a `TypeError`
+  on None.
 - Generation of the phase axis.
 - **Upstream fixes carried to the new code** (#748, #749, #752): MagFEMM
   mesh extraction without a hardcoded Windows separator; MagElmer
