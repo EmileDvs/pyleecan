@@ -3,17 +3,18 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
+    from ....Classes_new.converter.rule_complex import RuleComplex
     from ....Classes_new.machine.machine import Machine
 
 
 def other_to_P(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+    rule: RuleComplex, machine: Machine, other_dict: dict, other_unit_dict: dict
 ) -> Machine:
     """Converts motor-cad inset_parallel slot into pyleecan slotM15
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict
@@ -28,9 +29,9 @@ def other_to_P(
     """
     Rbo = machine.rotor.get_Rbo()
 
-    self.unit_type = "ED"
+    rule.unit_type = "ED"
     other_path_list = ["[Dimensions]", "Magnet_Arc_[ED]"]
-    W1 = self.get_other(other_dict, other_path_list, other_unit_dict)
+    W1 = rule.get_other(other_dict, other_path_list, other_unit_dict)
 
     # In Pyleecan W1[m] and W0[rad]
     # In MC W1 = W0 [ED]
@@ -52,14 +53,17 @@ def other_to_P(
 
 
 def P_to_other(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+    rule: RuleComplex,
+    machine: Machine,
+    other_dict: dict,
+    other_unit_dict: dict | None = None,
 ) -> dict:
     """conversion obj machine into dict
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict

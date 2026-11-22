@@ -3,18 +3,19 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
+    from ....Classes_pydantic.converter.rule_complex import RuleComplex
     from ....Classes_pydantic.machine.machine import Machine
 
 
 def other_to_P(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+    rule: RuleComplex, machine: Machine, other_dict: dict, other_unit_dict: dict
 ) -> Machine:
     """Conversion of the slot salient_pole (motor-cad) into the slotW62 (pyleecan)
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict
@@ -28,9 +29,9 @@ def other_to_P(
         A pyleecan machine
     """
 
-    self.unit_type = "m"
+    rule.unit_type = "m"
     other_path_list = ["[Dimensions]", "Pole_Tip_Depth"]
-    H1 = self.get_other(other_dict, other_path_list, other_unit_dict)
+    H1 = rule.get_other(other_dict, other_path_list, other_unit_dict)
 
     Rbo = machine.rotor.get_Rbo()
 
@@ -48,14 +49,17 @@ def other_to_P(
 
 
 def P_to_other(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+    rule: RuleComplex,
+    machine: Machine,
+    other_dict: dict,
+    other_unit_dict: dict | None = None,
 ) -> dict:
     """conversion obj machine into dict
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict

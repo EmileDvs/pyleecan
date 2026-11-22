@@ -3,18 +3,19 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
+    from ....Classes_pydantic.converter.rule_complex import RuleComplex
     from ....Classes_pydantic.machine.machine import Machine
 
 
 def other_to_P(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+    rule: RuleComplex, machine: Machine, other_dict: dict, other_unit_dict: dict
 ) -> Machine:
     """Conversion of the slot inset_breadloaf (motor-cad) into the slotM12 (pyleecan)
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict
@@ -27,20 +28,20 @@ def other_to_P(
     machine : Machine
         A pyleecan machine
     """
-    if isinstance(self.param_dict["hole_id"], int):
-        hole_id = self.param_dict["hole_id"]
+    if isinstance(rule.param_dict["hole_id"], int):
+        hole_id = rule.param_dict["hole_id"]
     else:
         ValueError("hole_id isn't int")
 
-    self.unit_type = "m"
+    rule.unit_type = "m"
     other_path_list = ["[Dimensions]", "Magnet_Embed_Depth"]
-    H1 = self.get_other(other_dict, other_path_list, other_unit_dict)
+    H1 = rule.get_other(other_dict, other_path_list, other_unit_dict)
     Rbo = machine.rotor.get_Rbo()
 
     H = Rbo - H1
-    self.unit_type = "ED"
+    rule.unit_type = "ED"
     other_path_list = ["[Dimensions]", "Magnet_Arc_[ED]"]
-    W0 = self.get_other(other_dict, other_path_list, other_unit_dict)
+    W0 = rule.get_other(other_dict, other_path_list, other_unit_dict)
 
     Rbo = machine.rotor.get_Rbo()
 
@@ -52,14 +53,17 @@ def other_to_P(
 
 
 def P_to_other(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+    rule: RuleComplex,
+    machine: Machine,
+    other_dict: dict,
+    other_unit_dict: dict | None = None,
 ) -> dict:
     """conversion obj machine in dict
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict

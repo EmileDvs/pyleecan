@@ -212,6 +212,55 @@ def redirect_rule_module_name(source, soft_name="pyleecan"):
     return source
 
 
+RULE_SELF_DOCSTRING = (
+    "    self : ConvertMC\n        A ConvertMC object\n",
+    "    rule : RuleComplex\n        The complex conversion rule\n",
+)
+"""Legacy docstring entry of the first parameter of a rule function, and its
+replacement (Step 15)"""
+
+
+def rename_rule_self(source):
+    """Name the first parameter of the rule functions ``rule`` (Step 15).
+
+    The other_to_P / P_to_other functions of the complex rules are module
+    functions whose first parameter, ``self``, is the ``RuleComplex`` that
+    calls them positionally (``other_to_P(self, machine, ...)``); their
+    docstrings said ``self : ConvertMC``. Every module-level function whose
+    first parameter is ``self`` gets it renamed ``rule`` (with its uses),
+    and the docstring entry says ``rule : RuleComplex`` (the type hint pass
+    then annotates it). Idempotent.
+    """
+    tree = ast.parse(source)
+    data = source.encode("utf-8")
+    offsets = [0]
+    for index, value in enumerate(data):
+        if value == 10:
+            offsets.append(index + 1)
+
+    def span(node):
+        start = offsets[node.lineno - 1] + node.col_offset
+        return start, start + len(b"self")
+
+    replacements = []
+    for function in tree.body:
+        if not (
+            isinstance(function, ast.FunctionDef)
+            and function.args.args
+            and function.args.args[0].arg == "self"
+        ):
+            continue
+        replacements.append(span(function.args.args[0]))
+        replacements.extend(
+            span(node)
+            for node in ast.walk(function)
+            if isinstance(node, ast.Name) and node.id == "self"
+        )
+    for start, end in sorted(set(replacements), reverse=True):
+        data = data[:start] + b"rule" + data[end:]
+    return data.decode("utf-8").replace(*RULE_SELF_DOCSTRING)
+
+
 def rule_functions_source(source_dir, deprecated=()):
     """Source of the registry of the complex rule functions (Functions_new).
 

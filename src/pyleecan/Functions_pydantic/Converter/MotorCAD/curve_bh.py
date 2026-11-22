@@ -3,18 +3,19 @@ from typing import TYPE_CHECKING
 from ....Classes_pydantic.import_data.import_matrix_val import ImportMatrixVal
 
 if TYPE_CHECKING:
+    from ....Classes_pydantic.converter.rule_complex import RuleComplex
     from ....Classes_pydantic.machine.machine import Machine
 
 
 def other_to_P(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+    rule: RuleComplex, machine: Machine, other_dict: dict, other_unit_dict: dict
 ) -> Machine:
     """Converts motor-cad curve B(H) into pyleecan
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict
@@ -27,8 +28,8 @@ def other_to_P(
     machine : Machine
         A pyleecan machine
     """
-    path_P = self.param_dict["path_P"]
-    material = self.param_dict["material"]
+    path_P = rule.param_dict["path_P"]
+    material = rule.param_dict["material"]
 
     # exemple curve into file .mot
     # "BValue[0]": "0",
@@ -77,30 +78,33 @@ def other_to_P(
         # set curve B(H) into class add previously
         path = f"{path_P}.mag.BH_curve.value"
 
-        self.set_P(machine, other_value, path)
+        rule.set_P(machine, other_value, path)
 
     # set name of material
     path_name = f"{path_P}.name"
     other_value = f"{material}"
-    self.set_P(machine, other_value, path_name)
+    rule.set_P(machine, other_value, path_name)
 
     # set is_isotropic
     path = f"{path_P}.is_isotropic"
     other_value = True
-    self.set_P(machine, other_value, path)
+    rule.set_P(machine, other_value, path)
 
     return machine
 
 
 def P_to_other(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+    rule: RuleComplex,
+    machine: Machine,
+    other_dict: dict,
+    other_unit_dict: dict | None = None,
 ) -> dict:
     """conversion obj machine in dict
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict

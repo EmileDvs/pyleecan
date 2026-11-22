@@ -245,8 +245,15 @@ conversion rules: `other_to_P(self, ...)` / `P_to_other(self, ...)`, with
       `normpath` / `abspath` are not imported, so it returns the path
       unchanged (`DMatSetup` material paths stay absolute). Kept as is
       (parity); to fix with the maintainer (it changes the saved paths).
-- [ ] Docstrings of the rule functions: `self : RuleComplex` (they say
-      `ConvertMC`); rename `self` to `rule` (Step 15).
+- [x] (2026-11-22, Step 15) Docstrings of the rule functions: `self` renamed
+      `rule` (`rename_rule_self`, `function_module_names.py`, run by the
+      functions generator on the `Converter/MotorCAD` modules; the
+      `RuleComplex` calls them positionally), docstring `rule : RuleComplex`
+      (they said `ConvertMC`), so the hint pass types it: 46/46 functions.
+      `ty` on `Functions_new/Converter` 69 -> 71: the typed `rule` shows
+      `other_unit_dict=None` given to `Rule.get_other` (`winding_layer`).
+      Converter tests 49 passed with each backend. Test:
+      `Tests/New/test_rename_rule_self.py`.
 
 ### Inventory
 

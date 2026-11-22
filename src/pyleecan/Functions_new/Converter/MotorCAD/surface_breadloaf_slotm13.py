@@ -3,18 +3,19 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
+    from ....Classes_new.converter.rule_complex import RuleComplex
     from ....Classes_new.machine.machine import Machine
 
 
 def other_to_P(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+    rule: RuleComplex, machine: Machine, other_dict: dict, other_unit_dict: dict
 ) -> Machine:
     """Converts the surface_breadloaf motor-cad slot into pyleecan slotM13
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict
@@ -29,15 +30,15 @@ def other_to_P(
     """
 
     # Magnet arc is equivalent at W1 in ED
-    self.unit_type = "ED"
+    rule.unit_type = "ED"
     other_path_list = ["[Dimensions]", "Magnet_Arc_[ED]"]
-    W1 = self.get_other(other_dict, other_path_list, other_unit_dict)
+    W1 = rule.get_other(other_dict, other_path_list, other_unit_dict)
 
-    self.unit_type = "m"
+    rule.unit_type = "m"
 
     if "MagnetReduction" in other_dict["[Dimensions]"]:
         other_path_list = ["[Dimensions]", "MagnetReduction"]
-        Red = self.get_other(other_dict, other_path_list, other_unit_dict)
+        Red = rule.get_other(other_dict, other_path_list, other_unit_dict)
 
     else:
         Red = 0
@@ -100,14 +101,17 @@ def other_to_P(
 
 
 def P_to_other(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+    rule: RuleComplex,
+    machine: Machine,
+    other_dict: dict,
+    other_unit_dict: dict | None = None,
 ) -> dict:
     """conversion obj machine in dict
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict

@@ -5,18 +5,19 @@ import numpy as np
 from ....classes_common.errors import ConvertionError
 
 if TYPE_CHECKING:
+    from ....Classes_new.converter.rule_complex import RuleComplex
     from ....Classes_new.machine.machine import Machine
 
 
 def other_to_P(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+    rule: RuleComplex, machine: Machine, other_dict: dict, other_unit_dict: dict
 ) -> Machine:
     """Converts motor-cad skew into pyleecan skew
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict
@@ -63,7 +64,7 @@ def other_to_P(
     else:
         path = f"machine.rotor.skew.angle_list"
 
-        self.set_P(machine, skew_list, path)
+        rule.set_P(machine, skew_list, path)
 
     # set overall of skew
     min_ele = min(skew_list)
@@ -72,29 +73,32 @@ def other_to_P(
     angle_overall = abs(max_ele - min_ele)
     path_name = "machine.rotor.skew.angle_overall"
     other_value = angle_overall
-    self.set_P(machine, other_value, path_name)
+    rule.set_P(machine, other_value, path_name)
 
     # set name of skew
     path_name = f"machine.rotor.skew.type_skew"
     other_value = "user-defined"
-    self.set_P(machine, other_value, path_name)
+    rule.set_P(machine, other_value, path_name)
 
     # set number of step for skew
     path_name = f"machine.rotor.skew.Nstep"
     other_value = skew_step
-    self.set_P(machine, other_value, path_name)
+    rule.set_P(machine, other_value, path_name)
     return machine
 
 
 def P_to_other(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+    rule: RuleComplex,
+    machine: Machine,
+    other_dict: dict,
+    other_unit_dict: dict | None = None,
 ) -> dict:
     """conversion obj machine in dict
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict

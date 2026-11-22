@@ -3,17 +3,18 @@ from typing import TYPE_CHECKING
 import numpy as np
 
 if TYPE_CHECKING:
+    from ....Classes_pydantic.converter.rule_complex import RuleComplex
     from ....Classes_pydantic.machine.machine import Machine
 
 
 def other_to_P(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+    rule: RuleComplex, machine: Machine, other_dict: dict, other_unit_dict: dict
 ) -> Machine:
     """Converts interior_V_webe motor-cad slot into pyleecan holeM57
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict
@@ -28,14 +29,14 @@ def other_to_P(
     """
 
     # selection hole_id
-    if isinstance(self.param_dict["hole_id"], int):
-        hole_id = self.param_dict["hole_id"]
+    if isinstance(rule.param_dict["hole_id"], int):
+        hole_id = rule.param_dict["hole_id"]
     else:
         ValueError("hole_id isn't int")
 
-    self.unit_type = "m"
+    rule.unit_type = "m"
     other_path_list = ["[Dimensions]", f"MagnetSeparation_Array[{hole_id}]"]
-    W = self.get_other(other_dict, other_path_list, other_unit_dict)
+    W = rule.get_other(other_dict, other_path_list, other_unit_dict)
 
     point_dict = machine.rotor.hole[hole_id]._comp_point_coordinate()
     Z9 = point_dict["Z9"]
@@ -56,14 +57,17 @@ def other_to_P(
 
 
 def P_to_other(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+    rule: RuleComplex,
+    machine: Machine,
+    other_dict: dict,
+    other_unit_dict: dict | None = None,
 ) -> dict:
     """conversion obj machine in dict
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict

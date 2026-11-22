@@ -26,9 +26,11 @@ from pyleecan.classes_common.class_lookup import NORMALIZATION_CLASS_NAMES
 from pyleecan.Generator.ClassGenerator.New.class_generator import VENDORED_CLASS_PACKAGES, _format_source_with_ruff, _static_local_class_imports, class_module_name, common_dir, generated_module_paths, relocate_class_imports
 from pyleecan.Generator.ClassGenerator.New.modernize import _keyword_geometry_calls, _replace_empty_containers
 from pyleecan.Generator.ClassGenerator.New.function_module_names import (
+    RULE_FUNCTIONS_FOLDER,
     function_module_mapping,
     function_module_name,
     redirect_function_module_imports,
+    rename_rule_self,
 )
 from pyleecan.Generator.ClassGenerator.New.femm_object import (
     INTERFACE_OBJECTS,
@@ -934,6 +936,9 @@ def generate_functions(
                 encoding = source_file.encoding
         if path.suffix == ".py":
             legacy_module = ".".join(relative.with_suffix("").parts)
+            if removed_alias is None and legacy_module.startswith(RULE_FUNCTIONS_FOLDER + "."):
+                # Complex rule functions: `self` is the RuleComplex (Step 15)
+                source = rename_rule_self(source)
             moved = MOVED_FUNCTIONS.get(legacy_module)
             shared_errors_imported = (
                 path in moved_module_paths and removed_alias is not None

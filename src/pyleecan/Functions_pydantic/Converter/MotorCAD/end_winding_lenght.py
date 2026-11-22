@@ -1,18 +1,19 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    from ....Classes_pydantic.converter.rule_complex import RuleComplex
     from ....Classes_pydantic.machine.machine import Machine
 
 
 def other_to_P(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict
+    rule: RuleComplex, machine: Machine, other_dict: dict, other_unit_dict: dict
 ) -> Machine:
     """Converts the MLT motor-cad slot into pyleecan lewout
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict
@@ -25,9 +26,9 @@ def other_to_P(
     machine : Machine
         A pyleecan machine
     """
-    self.unit_type = "m"
+    rule.unit_type = "m"
     other_path_list = ["[Winding_Design]", "EWdg_MLT"]
-    MLT = self.get_other(other_dict, other_path_list, other_unit_dict)
+    MLT = rule.get_other(other_dict, other_path_list, other_unit_dict)
 
     if machine.stator.winding.end_winding is None:
         cp = 0
@@ -41,14 +42,17 @@ def other_to_P(
 
 
 def P_to_other(
-    self, machine: Machine, other_dict: dict, other_unit_dict: dict | None = None
+    rule: RuleComplex,
+    machine: Machine,
+    other_dict: dict,
+    other_unit_dict: dict | None = None,
 ) -> dict:
     """conversion obj machine in dict
 
     Parameters
     ----------
-    self : ConvertMC
-        A ConvertMC object
+    rule : RuleComplex
+        The complex conversion rule
     machine : Machine
         A pyleecan machine
     other_dict : dict
