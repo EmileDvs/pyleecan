@@ -1,5 +1,4 @@
 from sys import getsizeof
-from ....Functions.Load.import_class import import_class
 
 
 def print_memory(self, tab_level: int = 0, detail_level: int = 1, is_print: bool = True) -> str | None:
@@ -26,7 +25,6 @@ def print_memory(self, tab_level: int = 0, detail_level: int = 1, is_print: bool
     for _ in range(tab_level):
         tab += "    "
 
-    Output = import_class("pyleecan.Classes", "Output")
     if type(self) is Output:
         mem_str = tab + "Total Output size: " + str(getsizeof(self)) + " o\n"
     else:  # XOutput (print only the Output part of the size)

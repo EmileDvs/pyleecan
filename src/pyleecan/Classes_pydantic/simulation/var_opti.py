@@ -53,6 +53,7 @@ class VarOpti(VarParam):
     def check(self) -> None:
         """Check VarOpti parameters validity"""
 
+        # Local import: avoids circular imports
         from ..optimization.opti_bayes_alg_smoot import OptiBayesAlgSmoot
         from ..optimization.opti_design_var_interval import OptiDesignVarInterval
         from ..optimization.opti_design_var_set import OptiDesignVarSet

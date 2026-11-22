@@ -1,4 +1,4 @@
-from ....Methods import ParentMissingError
+from ....classes_common.errors import ParentMissingError
 
 
 def get_Rbo(self) -> float:

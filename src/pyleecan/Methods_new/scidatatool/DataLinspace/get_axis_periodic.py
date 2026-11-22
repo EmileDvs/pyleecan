@@ -24,9 +24,6 @@ def get_axis_periodic(self, Nper: int, is_aper: bool = False) -> DataLinspace:
         Axis with requested (anti-)periodicities
     """
 
-    # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes.DataLinspace", fromlist=["DataLinspace"])
-    DataLinspace = module.DataLinspace
 
     try:
         # Reduce axis to the given periodicity

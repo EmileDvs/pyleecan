@@ -338,6 +338,10 @@ NAME_PASSES = (
 )
 """Name passes of modernize_names, in the order of the class generator"""
 
+LOCAL_IMPORT_GUARD = "Local import: avoids circular imports"
+"""Comment above the class imports made static in Methods_new (the class
+generator keeps them local, as it does for its own import_class loads)"""
+
 MOVED_NAME_PASSES = frozenset({"errors", "classes", "keywords", "functions"})
 """Name passes moved from the class generator (PLAN.md Step 5, point 2).
 
@@ -424,7 +428,11 @@ def modernize_names(
             )
             source = ast.unparse(loader) + "\n" + source
     if "errors" in passes:
-        source = _redirect_shared_error_imports(source, package, soft_name)
+        # The errors of the Methods package too (ParentMissingError...): the
+        # shared ones (Step 12: no legacy import left in Methods_new)
+        source = _redirect_shared_error_imports(
+            source, package, soft_name, method_error_names=shared_error_names()
+        )
     if "classes" in passes:
         source = _redirect_experimental_class_imports(source, soft_name, gen_dict)
         if "normalizations" not in passes:
@@ -441,6 +449,7 @@ def modernize_names(
             soft_name,
             gen_dict,
             NORMALIZATION_CLASS_NAMES.get(class_name, class_name),
+            guard_comment=LOCAL_IMPORT_GUARD,
         )
     if "functions" in passes:
         source = _redirect_experimental_function_imports(source, soft_name)
@@ -1271,19 +1280,18 @@ def _keyword_geometry_calls(source, soft_name, gen_dict=None):
 
 
 def _redirect_experimental_function_imports(source, soft_name):
-    """Use copied functions while retaining the legacy loading and saving APIs."""
+    """Use the copied functions (Functions -> Functions_new).
+
+    The load and save functions included (Step 12: the legacy ones loaded the
+    legacy classes, e.g. VarLoad._set_OP_matrix with load_init_dict).
+    """
     data = source.encode("utf-8")
     offsets = [0]
     for index, value in enumerate(data):
         if value == ord("\n"):
             offsets.append(index + 1)
     prefix = soft_name + ".Functions"
-    deferred = {
-        prefix + ".load",
-        prefix + ".save",
-        prefix + ".Load",
-        prefix + ".Save",
-    }
+    deferred = set()
     replacements = []
     for node in ast.walk(ast.parse(source)):
         if (

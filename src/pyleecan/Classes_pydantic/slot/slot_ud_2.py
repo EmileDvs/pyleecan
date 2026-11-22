@@ -129,8 +129,6 @@ class SlotUD2(Slot):
             List of surface delimiting the active zone
         """
 
-        from .slot import Slot
-
         key = "Nrad=" + str(Nrad) + ", Ntan=" + str(Ntan)
 
         if (

@@ -225,3 +225,17 @@ def test_widget_metadata_from_class_info():
         "desc": "Hole diameters",
     }
     assert metadata[("Hole", "Zh")]["min"] == 0
+
+
+def test_redirect_class_loader_from_copied_loader():
+    from pyleecan.Generator.ClassGenerator.New.generate_gui_new import (
+        redirect_class_loader,
+    )
+
+    source = (
+        "from ....Functions_new.Load.import_class import import_class\n"
+        'X = import_class("pyleecan.Classes", name, "")\n'
+    )
+    result = redirect_class_loader(source, "pyleecan.GUI_new.Tools.WTreeEdit")
+    assert "from ....Classes_new._import import import_class\n" in result
+    assert 'import_class(name, "")' in result

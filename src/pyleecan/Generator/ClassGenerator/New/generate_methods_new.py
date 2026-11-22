@@ -316,6 +316,7 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     """
     from .modernize import (
         apply_import_styles,
+        MOVED_NAME_PASSES,
         modernize_names,
         remove_coding_declaration,
         remove_python2_branches,
@@ -348,7 +349,16 @@ def modernize_method_source(source, package, class_dir, gen_dict=None):
     source = add_container_arguments(source, package, class_name, gen_dict)
     source = _redirect_methods_imports(source, package, class_dir)
     source = apply_import_styles(source)  # numpy as np, pyvista as pv, os
-    source = modernize_names(source, package, gen_dict, class_name)
+    # The class loads made static imports too (Step 12): no import_class of
+    # the legacy package left in Methods_new; the dynamic imports and the
+    # normalization names stay in the class generator (NAME_PASSES)
+    source = modernize_names(
+        source,
+        package,
+        gen_dict,
+        class_name,
+        passes=MOVED_NAME_PASSES | {"dynamic_imports", "loaders", "static_imports"},
+    )
     # External names clashing with a class once inlined (matplotlib Circle)
     from .modernize import alias_external_class_names
 

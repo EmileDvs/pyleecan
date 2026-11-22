@@ -1,4 +1,3 @@
-from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -22,13 +21,14 @@ def set_default_simulation(self, machine: Machine, OP_matrix: OPMatrix | np.ndar
         Name of the simulation
     """
 
-    # Dynamic import to avoid loop
-    Simu1 = import_class("pyleecan.Classes", "Simu1")
-    InputCurrent = import_class("pyleecan.Classes", "InputCurrent")
-    VarLoadCurrent = import_class("pyleecan.Classes", "VarLoadCurrent")
-    OPdq = import_class("pyleecan.Classes", "OPdq")
-    MagFEMM = import_class("pyleecan.Classes", "MagFEMM")
-    PostLUT = import_class("pyleecan.Classes", "PostLUT")
+    # Local import: avoids circular imports
+    from ....Classes_new.simulation.simu_1 import Simu1
+    from ....Classes_new.simulation.input_current import InputCurrent
+    from ....Classes_new.simulation.var_load_current import VarLoadCurrent
+    from ....Classes_new.simulation.op_dq import OPdq
+    from ....Classes_new.magnetics.mag_femm import MagFEMM
+    from ....Classes_new.post.post_lut import PostLUT
+
 
     if name is None:
         name = "comp_LUT_" + machine.name

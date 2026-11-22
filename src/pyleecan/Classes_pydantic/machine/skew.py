@@ -297,6 +297,7 @@ class Skew(LegacyModel):
 
         """
 
+        # Local import: avoids circular imports
         from .lam_h import LamH
         from .lam_slot_m import LamSlotM
 

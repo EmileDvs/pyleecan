@@ -5,7 +5,6 @@ import numpy as np
 
 
 from ....Classes_new.scidatatool.norm_indices import NormIndices as Norm_indices
-from ....Functions.Load.import_class import import_class
 from ....Functions_new.SciDataTool.fix_axes_order import fix_axes_order
 from ....Functions_new.SciDataTool.parser import read_input_strings
 from ....Functions_new.SciDataTool.Plot import axes_dict, norm_dict, unit_dict
@@ -125,8 +124,9 @@ def plot_3D_Data(
         True to use flat shading instead of Gouraud for pcolormesh or bilinear for pcolor
     """
 
-    # Dynamic import to avoid import loop
-    DataPattern = import_class("pyleecan.Classes", "DataPattern")
+    # Local import: avoids circular imports
+    from ....Classes_new.scidatatool.data_pattern import DataPattern
+
 
     if len(arg_list) == 1 and type(arg_list[0]) == tuple:
         arg_list = arg_list[0]  # if called from another script with *arg_list

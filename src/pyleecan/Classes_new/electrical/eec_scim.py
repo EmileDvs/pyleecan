@@ -216,6 +216,7 @@ class EEC_SCIM(EEC):
             Stator magnetizing current [A]
         """
 
+        # Local import: avoids circular imports
         from ..magnetics.mag_femm import MagFEMM
         from ..simulation.input_current import InputCurrent
         from ..simulation.simu_1 import Simu1

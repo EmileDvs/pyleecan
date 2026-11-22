@@ -478,6 +478,7 @@ class Arc(Line):
             Both part of the arc
         """
 
+        # Local import: avoids circular imports
         from .arc_1 import Arc1
 
         # Get the intersection point

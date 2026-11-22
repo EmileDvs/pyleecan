@@ -5,7 +5,6 @@ from ....Classes_new.scidatatool.data_freq import DataFreq
 from ....Classes_new.scidatatool.data_time import DataTime
 from ....Classes_new.simulation.op_dq import OPdq
 from ....Functions_new.SciDataTool.dqh_transformation import dqh2n
-from ....Functions.Load.import_class import import_class
 from ...simulation.Input import CURRENT_DIR_REF, PHASE_DIR_REF, ROT_DIR_REF
 
 
@@ -36,6 +35,9 @@ def comp_mmf_unit(self, Na: int | None = None, Nt: int | None = None, felec: flo
 
     """
 
+    # Local import: avoids circular imports
+    from ....Classes_new.simulation.input_voltage import InputVoltage
+
     # Check that parent machine is not None
     if self.parent is None:
         raise Exception("Cannot calculate mmf unit if parent machine is None")
@@ -59,7 +61,6 @@ def comp_mmf_unit(self, Na: int | None = None, Nt: int | None = None, felec: flo
     elif phase_dir not in [-1, 1]:
         raise Exception("Cannot enforce phase_dir other than +1 or -1")
 
-    InputVoltage = import_class("pyleecan.Classes", "InputVoltage")
     input = InputVoltage(
         Na_tot=Na,
         Nt_tot=Nt,

@@ -276,6 +276,7 @@ class LamSquirrelCage(LamSlotWind):
             True if an spatial anti-periodicity is possible after the periodicities
         """
 
+        # Local import: avoids circular imports
         from .lamination import Lamination
 
         per_a, is_antiper_a = Lamination.comp_periodicity_spatial(self)

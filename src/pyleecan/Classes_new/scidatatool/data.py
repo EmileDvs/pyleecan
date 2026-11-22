@@ -66,10 +66,12 @@ class Data(LegacyClass):
                 elif isinstance(
                     obj, (float, int, np.int32, np.int64, np.float32, np.float64)
                 ):
+                    # Local import: avoids circular imports
                     from .norm_ref import NormRef
 
                     value[key] = NormRef(ref=obj)
                 elif isinstance(obj, (np.ndarray, list)):
+                    # Local import: avoids circular imports
                     from .norm_vector import NormVector
 
                     value[key] = NormVector(vector=np.asarray(obj))

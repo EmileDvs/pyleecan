@@ -1,4 +1,3 @@
-from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -32,8 +31,9 @@ def comp_mmf_unit(self, Na: int, Nt: int, felec: float = 1, current_dir: int | N
 
     """
 
-    # Call method of LamSlotWind
-    LamSlotWind = import_class("pyleecan.Classes", "LamSlotWind")
+    # Local import: avoids circular imports
+    from ....Classes_new.machine.lam_slot_wind import LamSlotWind
+
 
     MMF_U, WF = LamSlotWind.comp_mmf_unit(
         self, Na=Na, Nt=Nt, felec=felec, current_dir=current_dir, phase_dir=phase_dir

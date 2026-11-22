@@ -1,6 +1,6 @@
 from ....classes_common.logger_context import get_logger
 from ....Classes_new.geometry.segment import Segment
-from ....Methods import ParentMissingError
+from ....classes_common.errors import ParentMissingError
 import numpy as np
 from scipy.optimize import fmin
 from typing import TYPE_CHECKING

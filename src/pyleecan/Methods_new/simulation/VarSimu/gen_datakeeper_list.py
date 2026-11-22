@@ -1,9 +1,11 @@
 from ....Classes_new.simulation.data_keeper import DataKeeper
-from ....Functions.Load.import_class import import_class
 
 
 def gen_datakeeper_list(self, ref_simu) -> None:
     """Generate default DataKeepers according the reference simulation type"""
+    # Local import: avoids circular imports
+    from ....Classes_new.simulation.input_current import InputCurrent
+
     datakeeper_list = []
 
     # To avoid adding twice a DataKeeper
@@ -11,7 +13,6 @@ def gen_datakeeper_list(self, ref_simu) -> None:
     # For multi-simulation of multi-simulation (different DataKeepe<r)
     is_multi = ref_simu.var_simu is not None
     # Dynamic import to avoid loop
-    InputCurrent = import_class("pyleecan.Classes", "InputCurrent", "")
 
     # Save speed
     if not is_multi and "N0" not in symbol_list:

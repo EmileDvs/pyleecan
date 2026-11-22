@@ -17,11 +17,10 @@ def freq_to_time(self):
     a DataTime object
     """
 
-    # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes.DataTime", fromlist=["DataTime"])
-    DataTime = module.DataTime
-    module = __import__("pyleecan.Classes.DataPattern", fromlist=["DataPattern"])
-    DataPattern = module.DataPattern
+    # Local import: avoids circular imports
+    from ....Classes_new.scidatatool.data_time import DataTime
+    from ....Classes_new.scidatatool.data_pattern import DataPattern
+
 
     axes_str = []
     for i, axis in enumerate(self.axes):

@@ -1,7 +1,7 @@
 import numpy as np
 
 from ....Classes_new.machine.winding import Winding
-from ....Methods import NotImplementedYetError
+from ....classes_common.errors import NotImplementedYetError
 from ....Classes_new.machine.lam_slot import LamSlot
 
 

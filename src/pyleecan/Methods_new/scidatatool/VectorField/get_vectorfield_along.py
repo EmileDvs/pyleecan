@@ -15,9 +15,6 @@ def get_vectorfield_along(self, *args, unit="SI", is_norm: bool = False, axis_da
     a VectorField object
     """
 
-    # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes.VectorField", fromlist=["VectorField"])
-    VectorField = module.VectorField
 
     comp_dict: dict[str, DataND] = dict()
 

@@ -3,7 +3,7 @@ import numpy as np
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.surf_line import SurfLine
-from ....Methods import ParentMissingError
+from ....classes_common.errors import ParentMissingError
 from ....Functions_new.utils.labels import BOUNDARY_PROP_LAB, YSR_LAB, YSL_LAB, YOKE_LAB, NO_LAM_LAB, TOOTH_LAB
 from typing import TYPE_CHECKING
 

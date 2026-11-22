@@ -15,9 +15,6 @@ def to_rphiz(self):
     a VectorField object
     """
 
-    # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes.VectorField", fromlist=["VectorField"])
-    VectorField = module.VectorField
 
     if (
         "radial" in self.components

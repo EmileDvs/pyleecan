@@ -1,4 +1,3 @@
-from ....Functions.Load.import_class import import_class
 
 
 def comp_mmf_dir(self, current_dir: int | None = None, phase_dir: int | None = None, is_plot: bool = False) -> int:
@@ -23,8 +22,9 @@ def comp_mmf_dir(self, current_dir: int | None = None, phase_dir: int | None = N
         -1 or +1
     """
 
-    # Call method of LamSlotWind
-    LamSlotWind = import_class("pyleecan.Classes", "LamSlotWind")
+    # Local import: avoids circular imports
+    from ....Classes_new.machine.lam_slot_wind import LamSlotWind
+
 
     rot_dir = LamSlotWind.comp_mmf_dir(self, current_dir, phase_dir, is_plot)
 

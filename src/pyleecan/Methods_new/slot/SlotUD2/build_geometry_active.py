@@ -1,4 +1,3 @@
-from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -34,7 +33,9 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         List of surface delimiting the active zone
     """
 
-    Slot = import_class("pyleecan.Classes", "Slot")
+    # Local import: avoids circular imports
+    from ....Classes_new.slot.slot import Slot
+
 
     key = "Nrad=" + str(Nrad) + ", Ntan=" + str(Ntan)
 

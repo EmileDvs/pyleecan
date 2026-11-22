@@ -1,4 +1,3 @@
-from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -20,8 +19,9 @@ def plot_mmf_unit(self, r_max=100, fig: Figure | None = None, save_path: str | N
         To call show at the end of the method
     """
 
-    # Call method of LamSlotWind
-    LamSlotWind = import_class("pyleecan.Classes", "LamSlotWind")
+    # Local import: avoids circular imports
+    from ....Classes_new.machine.lam_slot_wind import LamSlotWind
+
 
     LamSlotWind.plot_mmf_unit(
         self, r_max=r_max, fig=fig, save_path=save_path, is_show_fig=is_show_fig

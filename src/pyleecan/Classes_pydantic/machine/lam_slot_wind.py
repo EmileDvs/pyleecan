@@ -554,6 +554,7 @@ class LamSlotWind(LamSlot):
 
         """
 
+        # Local import: avoids circular imports
         from ..simulation.input_voltage import InputVoltage
 
         # Check that parent machine is not None

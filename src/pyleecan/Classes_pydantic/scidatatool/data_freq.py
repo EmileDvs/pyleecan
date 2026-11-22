@@ -149,6 +149,7 @@ class DataFreq(DataND):
         a DataTime object
         """
 
+        # Local import: avoids circular imports
         from .data_pattern import DataPattern
         from .data_time import DataTime
 
@@ -310,6 +311,7 @@ class DataFreq(DataND):
         a DataDual object
         """
 
+        # Local import: avoids circular imports
         from .data_dual import DataDual
 
         # Fill DataDual object with fourier data

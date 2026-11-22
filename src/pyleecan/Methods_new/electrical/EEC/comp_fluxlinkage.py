@@ -1,7 +1,5 @@
 from ....classes_common.logger_context import get_logger
 import os
-
-from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -9,6 +7,7 @@ if TYPE_CHECKING:
     from ....Classes_new.machine.machine import Machine
     from ....Classes_new.simulation.op import OP
     import numpy as np
+
 
 
 def comp_fluxlinkage(self, machine: Machine | None = None, OP: OP | None = None, Nt_tot=None) -> tuple[np.ndarray, DataND]:
@@ -33,9 +32,11 @@ def comp_fluxlinkage(self, machine: Machine | None = None, OP: OP | None = None,
         Stator flux linkage Data object
     """
 
-    Simu1 = import_class("pyleecan.Classes", "Simu1")
-    InputCurrent = import_class("pyleecan.Classes", "InputCurrent")
-    MagFEMM = import_class("pyleecan.Classes", "MagFEMM")
+    # Local import: avoids circular imports
+    from ....Classes_new.simulation.simu_1 import Simu1
+    from ....Classes_new.simulation.input_current import InputCurrent
+    from ....Classes_new.magnetics.mag_femm import MagFEMM
+
 
     if self.fluxlink is None:
         mag_model = MagFEMM()

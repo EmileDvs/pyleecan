@@ -648,6 +648,7 @@ class Slot(LegacyClass):
         new_slot : SlotUD2
             SlotUD2 version of the Slot
         """
+        # Local import: avoids circular imports
         from .slot_ud_2 import SlotUD2
 
         new_slot = SlotUD2()

@@ -999,18 +999,37 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
 
 ## Step 12: freeze
 
-- [ ] Move the "loaders" and "static_imports" passes (with dynamic imports and
-      normalization renames, the chain that depends on the class imports)
-      from the class generator to the method generator, or make them produce
-      the final code in `Methods_new`: 31 modules still call
-      `import_class("pyleecan.Classes", "X")`, so `ty` sees the legacy types
-      there and a frozen copy would keep them.
+- [x] (2026-11-22) The "dynamic_imports", "loaders" and "static_imports"
+      passes also run in the method generator (`modernize_names`): the class
+      loads of `Methods_new` are static local imports under a guard comment
+      (`modernize.LOCAL_IMPORT_GUARD`, "Local import: avoids circular
+      imports"), which the class generator keeps local
+      (`_has_method_body_import_guard`; without it the imports were hoisted
+      and made import cycles). `_static_local_class_imports` accepts the
+      legacy normalization names (`Norm_ref` -> `NormRef as Norm_ref`), and
+      `_drop_guarded_header_duplicates` removes a guarded local import the
+      class header already makes. Also: the method errors imported from the
+      shared errors (19 modules `from ....Methods import ParentMissingError`),
+      the load and save functions no longer deferred (`VarLoad` imported the
+      legacy `Functions.load.load_init_dict`, which loads legacy classes),
+      `load_switch.py` (legacy class registry) dropped from the functions
+      generator. Generated classes: unchanged except the guard comment lines
+      (68 methods) and one redundant local import of `Slot` in `SlotUD2`
+      removed; `VarLoad` imports the new loader. `Methods_new`: no
+      `import_class("pyleecan.Classes", ...)`, no legacy import left, except
+      two dynamic imports `__import__("pyleecan.Classes.Norm_vector")` in
+      `Data1D.get_values` / `DataLinspace.get_values` (the local name `module`
+      is reused, the pass skips it; the class generator converts them): by
+      hand after the freeze.
+      The "normalizations" pass stays in the class generator: in
+      `Methods_new` the normalization classes keep their legacy local names
+      (`Norm_ref`), bound to the new classes.
 - [ ] Remove the compatibility shim of the class generator
       (`_read_method_source`: `to_legacy_names`).
-- [ ] No legacy object built in `Methods_new`: `SlotUD2._set_split_active_surf_dict`
-      and `VarLoad._set_OP_matrix` import the legacy
-      `Functions.Load.import_class` and build `pyleecan.Classes` objects with
-      `init_dict=`; `VarLoad` imports the legacy `Functions.load.load_init_dict`.
+- [x] (2026-11-22) No legacy object built in `Methods_new`:
+      `SlotUD2._set_split_active_surf_dict` and `VarLoad._set_OP_matrix` use
+      the class lookup of the backend (`Classes_new._import.import_class`) and
+      `Functions_new.load.load_init_dict`.
 - [ ] Parity baseline: run `Tests/New/Methods` per package with each backend;
       record the results here (passed / failed per package); compare the
       method results between backends (Step 4 item).

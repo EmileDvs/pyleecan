@@ -1,4 +1,4 @@
-from ....Methods import NotImplementedYetError
+from ....classes_common.errors import NotImplementedYetError
 
 
 def get_dim_wind(self):

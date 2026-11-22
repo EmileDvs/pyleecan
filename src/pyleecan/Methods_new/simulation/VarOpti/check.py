@@ -1,5 +1,4 @@
 from ....classes_common.logger_context import get_logger
-from ....Functions.Load.import_class import import_class
 
 
 class VarOptiError(Exception):
@@ -29,13 +28,15 @@ class VarOptiDataKeeperError(Exception):
 def check(self) -> None:
     """Check VarOpti parameters validity"""
 
-    Simu1 = import_class("pyleecan.Classes", "Simu1")
-    OptiObjective = import_class("pyleecan.Classes", "OptiObjective")
-    OptiConstraint = import_class("pyleecan.Classes", "OptiConstraint")
-    OptiDesignVarSet = import_class("pyleecan.Classes", "OptiDesignVarSet")
-    OptiBayesAlgSmoot = import_class("pyleecan.Classes", "OptiBayesAlgSmoot")
-    OptiGenAlgNsga2Deap = import_class("pyleecan.Classes", "OptiGenAlgNsga2Deap")
-    OptiDesignVarInterval = import_class("pyleecan.Classes", "OptiDesignVarInterval")
+    # Local import: avoids circular imports
+    from ....Classes_new.simulation.simu_1 import Simu1
+    from ....Classes_new.optimization.opti_objective import OptiObjective
+    from ....Classes_new.optimization.opti_constraint import OptiConstraint
+    from ....Classes_new.optimization.opti_design_var_set import OptiDesignVarSet
+    from ....Classes_new.optimization.opti_bayes_alg_smoot import OptiBayesAlgSmoot
+    from ....Classes_new.optimization.opti_gen_alg_nsga_2_deap import OptiGenAlgNsga2Deap
+    from ....Classes_new.optimization.opti_design_var_interval import OptiDesignVarInterval
+
 
     # Check that VarOpti is always in the first layer of var_simu
     if not isinstance(self.parent, Simu1):

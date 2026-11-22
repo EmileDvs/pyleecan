@@ -12,9 +12,9 @@ def to_linspace(self):
     DataLinspace or Data1D
     """
 
-    # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes.DataLinspace", fromlist=["DataLinspace"])
-    DataLinspace = module.DataLinspace
+    # Local import: avoids circular imports
+    from ....Classes_new.scidatatool.data_linspace import DataLinspace
+
 
     values = self.values
     number = values.size

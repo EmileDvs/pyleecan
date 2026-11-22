@@ -1,7 +1,7 @@
 from ....Functions_new.utils.geometry import comp_flower_arc
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.segment import Segment
-from ....Methods import ParentMissingError
+from ....classes_common.errors import ParentMissingError
 import numpy as np
 
 

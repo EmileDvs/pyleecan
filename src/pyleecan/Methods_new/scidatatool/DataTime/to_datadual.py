@@ -17,9 +17,9 @@ def to_datadual(self, datafreq: DataFreq | None = None):
     a DataDual object
     """
 
-    # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes.DataDual", fromlist=["DataDual"])
-    DataDual = module.DataDual
+    # Local import: avoids circular imports
+    from ....Classes_new.scidatatool.data_dual import DataDual
+
 
     # Fill DataDual object with time/space data
     datadual = DataDual(

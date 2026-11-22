@@ -5,12 +5,11 @@ from ....Classes_new.import_data.import_gen_vect_lin import ImportGenVectLin
 from ....Classes_new.import_data.import_matrix_val import ImportMatrixVal
 
 from ....Functions_new.SciDataTool.dqh_transformation import abc2n
-
-from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.machine.machine import Machine
+
 
 
 def _comp_Lm_FEA(self, machine: Machine, K21Z: float, Xke_skinS: float) -> tuple[float, float]:
@@ -35,9 +34,11 @@ def _comp_Lm_FEA(self, machine: Machine, K21Z: float, Xke_skinS: float) -> tuple
         Stator magnetizing current [A]
     """
 
-    Simu1 = import_class("pyleecan.Classes", "Simu1")
-    InputCurrent = import_class("pyleecan.Classes", "InputCurrent")
-    MagFEMM = import_class("pyleecan.Classes", "MagFEMM")
+    # Local import: avoids circular imports
+    from ....Classes_new.simulation.simu_1 import Simu1
+    from ....Classes_new.simulation.input_current import InputCurrent
+    from ....Classes_new.magnetics.mag_femm import MagFEMM
+
 
     p = machine.get_pole_pair_number()
 

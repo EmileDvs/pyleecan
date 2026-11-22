@@ -1,6 +1,5 @@
 import numpy as np
 
-from ....Functions.Load.import_class import import_class
 from ....Functions_new.SciDataTool.conversions import rphiz_to_xyz, rphiz_to_xyz_field, xyz_to_rphiz
 from ....Functions_new.SciDataTool.Plot import REV_COMP_DICT
 from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
@@ -127,8 +126,9 @@ def plot_2D_Data(
         True to display legend in a frame
     """
 
-    # Dynamic import to avoid import loop
-    DataPattern = import_class("pyleecan.Classes", "DataPattern")
+    # Local import: avoids circular imports
+    from ....Classes_new.scidatatool.data_pattern import DataPattern
+
 
     # Special case of quiver plot
     if type_plot == "quiver":

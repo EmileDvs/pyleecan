@@ -784,12 +784,15 @@ class DataND(Data):
 
         """
 
+        # Local import: avoids circular imports
         from .data_linspace import DataLinspace
         from .data_pattern import DataPattern
 
         if is_waveform:
+            # Local import: avoids circular imports
             from .data_time import DataTime as DataClass
         else:
+            # Local import: avoids circular imports
             from .data_freq import DataFreq as DataClass
 
         # Get axes list
@@ -1215,6 +1218,7 @@ class DataND(Data):
         # If args not specified, write only oneperiod/pattern
         if args == tuple():
             # Dynamic import to avoid loop
+            # Local import: avoids circular imports
             from .data_pattern import DataPattern
 
             arg_list = []
@@ -1469,6 +1473,7 @@ class DataND(Data):
             theoretical frequencies
         """
 
+        # Local import: avoids circular imports
         from .data_freq import DataFreq
         from .data_pattern import DataPattern
 
@@ -2464,6 +2469,7 @@ class DataND(Data):
             True to display legend in a frame
         """
 
+        # Local import: avoids circular imports
         from .data_pattern import DataPattern
 
         # Extract arg_list it the function called from another script with *arg_list
@@ -3217,6 +3223,7 @@ class DataND(Data):
         fps: int
             frames displayed per second
         """
+        # Local import: avoids circular imports
         from .data_pattern import DataPattern
 
         # Making sure that we have the right argument for a plot2D
@@ -3417,6 +3424,7 @@ class DataND(Data):
             True to use flat shading instead of Gouraud for pcolormesh or bilinear for pcolor
         """
 
+        # Local import: avoids circular imports
         from .data_pattern import DataPattern
 
         if len(arg_list) == 1 and type(arg_list[0]) == tuple:
@@ -4058,6 +4066,7 @@ class DataND(Data):
             frames displayed per second
         """
 
+        # Local import: avoids circular imports
         from .data_pattern import DataPattern
 
         # Making sure that we have the right argument for a plot3D

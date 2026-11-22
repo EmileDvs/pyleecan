@@ -1,4 +1,3 @@
-from ....Functions.Load.import_class import import_class
 
 
 def comp_angle_d_axis(self, is_plot: bool = False) -> float:
@@ -18,8 +17,9 @@ def comp_angle_d_axis(self, is_plot: bool = False) -> float:
         angle between the X axis and the first d+ axis
     """
 
-    # Call method of LamSlotWind
-    LamSlotWind = import_class("pyleecan.Classes", "LamSlotWind")
+    # Local import: avoids circular imports
+    from ....Classes_new.machine.lam_slot_wind import LamSlotWind
+
 
     d_angle = LamSlotWind.comp_angle_d_axis(self, is_plot=is_plot)
 

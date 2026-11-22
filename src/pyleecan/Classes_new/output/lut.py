@@ -124,6 +124,7 @@ class LUT(XOutput):
             Name of the simulation
         """
 
+        # Local import: avoids circular imports
         from ..magnetics.mag_femm import MagFEMM
         from ..post.post_lut import PostLUT
         from ..simulation.input_current import InputCurrent

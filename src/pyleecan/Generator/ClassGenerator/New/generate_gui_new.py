@@ -140,6 +140,9 @@ def redirect_dynamic_imports(source, old, new, soft_name="pyleecan"):
 LEGACY_CLASS_LOADER = "pyleecan.Functions.Load.import_class"
 """Module of the legacy class loader ``import_class(package, name, prop_name)``"""
 
+LEGACY_CLASS_LOADERS = (LEGACY_CLASS_LOADER, "pyleecan.Functions_new.Load.import_class")
+"""The legacy loader and its copy (same signature)"""
+
 BACKEND_CLASS_LOADER = "pyleecan.Classes_new._import"
 """Module of the class lookup of the backend ``import_class(name, prop_name)``
 (``Classes_pydantic._import`` in GUI_pydantic, by the import rewriting)"""
@@ -165,7 +168,7 @@ def redirect_class_loader(source, package, soft_name="pyleecan"):
         for node in ast.walk(tree)
         if isinstance(node, ast.ImportFrom)
         and (node.module or node.level)
-        and _absolute(node, package) == LEGACY_CLASS_LOADER
+        and _absolute(node, package) in LEGACY_CLASS_LOADERS
         and [(alias.name, alias.asname) for alias in node.names]
         == [("import_class", None)]
     ]
@@ -210,7 +213,7 @@ def redirect_class_loader(source, package, soft_name="pyleecan"):
         start = offsets[call.args[0].lineno - 1] + call.args[0].col_offset
         end = offsets[call.args[1].lineno - 1] + call.args[1].col_offset
         replacements.append((start, end, ""))
-    redirect = {LEGACY_CLASS_LOADER: BACKEND_CLASS_LOADER}.get
+    redirect = dict.fromkeys(LEGACY_CLASS_LOADERS, BACKEND_CLASS_LOADER).get
     for start, end, text in sorted(replacements, reverse=True):
         source = source[:start] + text + source[end:]
     return redirect_imports(source, package, redirect)
@@ -519,8 +522,11 @@ def widget_metadata(properties):
         input=json.dumps(wanted),
         capture_output=True,
         text=True,
-        check=True,
     )
+    if completed.returncode:  # e.g. the generated classes do not import
+        raise RuntimeError(
+            "ClassInfo of the generated classes failed:\n" + completed.stderr[-3000:]
+        )
     result = json.loads(completed.stdout.strip().splitlines()[-1])
     return {tuple(key.split(".", 1)): value for key, value in result.items()}
 

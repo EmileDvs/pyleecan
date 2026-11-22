@@ -1,6 +1,5 @@
 import numpy as np
 
-from ....Functions.Load.import_class import import_class
 from ....Functions_new.SciDataTool.change_referential import change_referential_spectrum, change_referential_waveform
 from typing import TYPE_CHECKING
 
@@ -74,14 +73,18 @@ def change_referential(
 
     """
 
-    Data1D = import_class("pyleecan.Classes", "Data1D")
-    DataLinspace = import_class("pyleecan.Classes", "DataLinspace")
-    DataPattern = import_class("pyleecan.Classes", "DataPattern")
+    # Local import: avoids circular imports
+    from ....Classes_new.scidatatool.data_1d import Data1D
+    from ....Classes_new.scidatatool.data_linspace import DataLinspace
+    from ....Classes_new.scidatatool.data_pattern import DataPattern
+
 
     if is_waveform:
-        DataClass = import_class("pyleecan.Classes", "DataTime")
+        # Local import: avoids circular imports
+        from ....Classes_new.scidatatool.data_time import DataTime as DataClass
     else:
-        DataClass = import_class("pyleecan.Classes", "DataFreq")
+        # Local import: avoids circular imports
+        from ....Classes_new.scidatatool.data_freq import DataFreq as DataClass
 
     # Get axes list
     axes_list = self.get_axes()

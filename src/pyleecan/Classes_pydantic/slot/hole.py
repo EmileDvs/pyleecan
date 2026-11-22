@@ -163,6 +163,7 @@ class Hole(LegacyModel):
     # Inlined from Methods.Slot.Hole.convert_to_UD
     def convert_to_UD(self):
         """Convert the hole to HoleUD"""
+        # Local import: avoids circular imports
         from .hole_ud import HoleUD
 
         surf_list = self.build_geometry()

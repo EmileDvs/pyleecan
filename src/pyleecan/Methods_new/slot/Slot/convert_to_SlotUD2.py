@@ -1,4 +1,3 @@
-from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -18,7 +17,9 @@ def convert_to_SlotUD2(self) -> SlotUD2:
     new_slot : SlotUD2
         SlotUD2 version of the Slot
     """
-    SlotUD2 = import_class("pyleecan.Classes", "SlotUD2")
+    # Local import: avoids circular imports
+    from ....Classes_new.slot.slot_ud_2 import SlotUD2
+
     new_slot = SlotUD2()
     new_slot.Zs = self.Zs
     new_slot.line_list = self.build_geometry()

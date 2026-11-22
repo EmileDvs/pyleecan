@@ -1,4 +1,3 @@
-from ....Functions.Load.import_class import import_class
 import numpy as np
 from ....definitions import config_dict
 from matplotlib.patches import Patch
@@ -35,6 +34,9 @@ def plot_preview_notch(self, index: int, fig: Figure | None = None, ax: Axes | N
         Axis containing the plot
     """
 
+    # Local import: avoids circular imports
+    from ....Classes_new.machine.lam_slot import LamSlot
+
     if self.notch is None:
         raise Exception("No notch set")
     if index > len(self.notch) - 1:
@@ -56,7 +58,6 @@ def plot_preview_notch(self, index: int, fig: Figure | None = None, ax: Axes | N
     )
 
     # Create equivalent LamSlot with notch as slot
-    LamSlot = import_class("pyleecan.Classes", "LamSlot")
     lam_notch = LamSlot(
         is_stator=lam.is_stator,
         is_internal=lam.is_internal,

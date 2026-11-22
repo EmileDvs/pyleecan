@@ -1,4 +1,4 @@
-from ....Functions.Load.import_class import import_class
+from ....Classes_new._import import import_class
 from ....classes_common.check import check_var
 
 
@@ -9,11 +9,7 @@ def _set_split_active_surf_dict(self, value) -> None:
             if type(obj_list) is list:
                 for ii, obj in enumerate(obj_list):
                     if type(obj) is dict and "__class__" in obj:
-                        class_obj = import_class(
-                            "pyleecan.Classes",
-                            obj["__class__"],
-                            "split_active_surf_dict",
-                        )
+                        class_obj = import_class(obj['__class__'], 'split_active_surf_dict')
                         value[key][ii] = class_obj(init_dict=obj)
     if value == -1:
         value = dict()

@@ -1,4 +1,3 @@
-from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -34,7 +33,6 @@ def __rsub__(self, other: OutLossModel | dict) -> OutLossModel:
         other_group = other["group"]
         other_name = other["name"]
 
-    OutLossModel = import_class("pyleecan.Classes", "OutLossModel")
     new_loss_density = other_loss_density - self.loss_density
     new_coeff_dict = other_coeff_dict.copy()
     for key, value in self.coeff_dict.items():

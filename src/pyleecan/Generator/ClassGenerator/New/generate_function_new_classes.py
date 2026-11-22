@@ -61,6 +61,10 @@ from pyleecan.Generator.ClassGenerator.New.modernize import (
 )
 
 SKIPPED_FUNCTION_MODULES = {
+    Path("load_switch.py"): (
+        "registry of the legacy classes (from Classes.import_all import *), imported "
+        "by no new module: the class lookup of each backend replaces it"
+    ),
     Path("copy.py"): (
         "unused legacy function (copy objects through init_dict): the new classes "
         "use model_copy (or the legacy copy)"

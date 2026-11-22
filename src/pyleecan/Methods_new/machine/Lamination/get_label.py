@@ -1,5 +1,5 @@
 from ....Functions_new.utils.labels import STATOR_LAB, ROTOR_LAB
-from ....Methods import ParentMissingError
+from ....classes_common.errors import ParentMissingError
 
 
 def get_label(self, is_add_id: bool = True) -> str:

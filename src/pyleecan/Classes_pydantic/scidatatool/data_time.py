@@ -45,6 +45,7 @@ class DataTime(DataND):
         a DataFreq object
         """
 
+        # Local import: avoids circular imports
         from .data_freq import DataFreq
         from .data_pattern import DataPattern
 
@@ -123,6 +124,7 @@ class DataTime(DataND):
         a DataDual object
         """
 
+        # Local import: avoids circular imports
         from .data_dual import DataDual
 
         # Fill DataDual object with time/space data

@@ -1660,6 +1660,7 @@ class Lamination(LegacyModel):
             Axis containing the plot
         """
 
+        # Local import: avoids circular imports
         from .lam_slot import LamSlot
 
         if self.notch is None:

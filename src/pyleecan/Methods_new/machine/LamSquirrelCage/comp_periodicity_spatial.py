@@ -1,4 +1,3 @@
-from ....Functions.load import import_class
 
 
 def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
@@ -17,8 +16,9 @@ def comp_periodicity_spatial(self) -> tuple[int | None, bool]:
         True if an spatial anti-periodicity is possible after the periodicities
     """
 
-    # Reuse method from Lamination instead of LamSlotWind since winding periodicity is given by lamination periodicity
-    Lamination = import_class("pyleecan.Classes", "Lamination")
+    # Local import: avoids circular imports
+    from ....Classes_new.machine.lamination import Lamination
+
 
     per_a, is_antiper_a = Lamination.comp_periodicity_spatial(self)
 

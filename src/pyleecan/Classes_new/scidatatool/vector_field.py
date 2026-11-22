@@ -88,6 +88,7 @@ class VectorField(LegacyClass):
             Vectorfield converted with new periodicities
         """
 
+        # Local import: avoids circular imports
         from .data_linspace import DataLinspace
         from .data_pattern import DataPattern
 
@@ -1846,6 +1847,7 @@ class VectorField(LegacyClass):
             True to display legend in a frame
         """
 
+        # Local import: avoids circular imports
         from .data_pattern import DataPattern
 
         # Special case of quiver plot

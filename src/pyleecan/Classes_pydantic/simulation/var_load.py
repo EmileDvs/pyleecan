@@ -7,7 +7,7 @@ import numpy as np
 
 from ...classes_common.check import check_var
 from ...classes_common.logger_context import get_logger
-from ...Functions.load import load_init_dict
+from ...Functions_pydantic.load import load_init_dict
 from .._import import import_class
 from .op_matrix import OPMatrix
 from .var_simu import VarSimu
@@ -52,6 +52,7 @@ class VarLoad(VarSimu):
             value = class_obj(init_dict=value)
         elif isinstance(value, np.ndarray):
             # Conver matrix to OP_matrix object
+            # Local import: avoids circular imports
             from .op_matrix import OPMatrix as class_obj
 
             value_obj = class_obj()
@@ -65,6 +66,7 @@ class VarLoad(VarSimu):
                 value_obj.set_OP_array(value, "N0", "Id", "Iq")
             value = value_obj
         elif type(value) is int and value == -1:  # Default constructor
+            # Local import: avoids circular imports
             from .op_matrix import OPMatrix as OP_matrix
 
             value = OP_matrix()

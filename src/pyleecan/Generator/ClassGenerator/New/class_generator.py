@@ -3224,7 +3224,7 @@ def _remove_unused_loader_import(source, soft_name):
 
 
 def _static_local_class_imports(
-    source, soft_name, gen_dict, generated_name, modules=None
+    source, soft_name, gen_dict, generated_name, modules=None, guard_comment=None
 ):
     """Replace the method-local class loads by regular (static) local imports.
 
@@ -3234,6 +3234,10 @@ def _static_local_class_imports(
     The imports are grouped at the top of the method body (after its docstring
     and its existing local imports). ``import_class`` is kept for the class
     names only known at runtime.
+
+    guard_comment: comment written above the imports, so that the class
+    generator keeps them local when it reads the module again
+    (``_has_method_body_import_guard``: Methods_new, Step 12).
     """
     tree = ast.parse(source)
     if modules is None:  # class name -> module name of the generated classes
@@ -3278,7 +3282,11 @@ def _static_local_class_imports(
             and 1 <= len(node.value.args) <= 2
             and not node.value.keywords
             and isinstance(node.value.args[0], ast.Constant)
-            and node.value.args[0].value in modules
+            # Legacy normalization names accepted (Methods_new: "Norm_ref")
+            and NORMALIZATION_CLASS_NAMES.get(
+                node.value.args[0].value, node.value.args[0].value
+            )
+            in modules
             and alone_on_lines(node)
         )
 
@@ -3335,7 +3343,9 @@ def _static_local_class_imports(
         imports = []
         targets = [node.targets[0].id for node in statements]
         for node in statements:
-            class_name = node.value.args[0].value
+            class_name = NORMALIZATION_CLASS_NAMES.get(
+                node.value.args[0].value, node.value.args[0].value
+            )
             target = node.targets[0].id
             for line in range(node.lineno - 1, node.end_lineno):
                 removed.add(line)
@@ -3364,7 +3374,12 @@ def _static_local_class_imports(
             if not any(node is top for top in body) or targets.count(target) > 1:
                 # Load in a block (if/else, loop, try...) or name loaded several
                 # times: the import is kept in place to keep the bound class
-                replaced[node.lineno - 1] = " " * node.col_offset + statement + "\n"
+                guard = (
+                    " " * node.col_offset + f"# {guard_comment}\n" if guard_comment else ""
+                )
+                replaced[node.lineno - 1] = (
+                    guard + " " * node.col_offset + statement + "\n"
+                )
                 removed_statements.discard(id(node))
             elif statement not in existing and statement not in imports:
                 imports.append(statement)
@@ -3387,6 +3402,8 @@ def _static_local_class_imports(
             while line - 1 >= bound and lines[line - 1].lstrip().startswith("#"):
                 line -= 1
             block = [indent + statement + "\n" for statement in imports] + ["\n"]
+        if guard_comment:
+            block.insert(0, f"{indent}# {guard_comment}\n")
         inserted.setdefault(line, []).extend(block)
         hoisted_bodies.append(body)
 
@@ -5785,6 +5802,72 @@ def advance_class(state, processed, gen_dict):
     return _finish_class_module(source, gen_dict, **context)
 
 
+def _drop_guarded_header_duplicates(source):
+    """Remove the guarded local imports already made by the module header.
+
+    Methods_new turns its class loads into local imports under a guard
+    comment (modernize.LOCAL_IMPORT_GUARD), kept local by this generator. A
+    class the module header imports too needs no local import: the import is
+    removed, and its guard comment when no import is left under it.
+    """
+    from .modernize import LOCAL_IMPORT_GUARD
+
+    guard = f"# {LOCAL_IMPORT_GUARD}"
+    if guard not in source:
+        return source
+    tree = ast.parse(source)
+    header = {
+        (node.level, node.module, alias.name, alias.asname)
+        for node in tree.body
+        if isinstance(node, ast.ImportFrom)
+        for alias in node.names
+    }
+    lines = source.splitlines(keepends=True)
+    removed = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            continue
+        for statement in ast.walk(node):
+            if (
+                isinstance(statement, ast.ImportFrom)
+                and all(
+                    (statement.level, statement.module, alias.name, alias.asname)
+                    in header
+                    for alias in statement.names
+                )
+                and _under_guard(lines, statement.lineno - 1, guard)
+            ):
+                removed.update(range(statement.lineno - 1, statement.end_lineno))
+    if not removed:
+        return source
+    kept = [line for index, line in enumerate(lines) if index not in removed]
+    # Guard comments left without an import below them
+    result = []
+    for index, line in enumerate(kept):
+        if line.strip() == guard:
+            following = next(
+                (item.strip() for item in kept[index + 1 :] if item.strip()), ""
+            )
+            if not following.startswith(("from ", "import ")):
+                continue
+        result.append(line)
+    return "".join(result)
+
+
+def _under_guard(lines, index, guard):
+    """True if the import line at index is in a block under the guard comment."""
+    index -= 1
+    while index >= 0:
+        text = lines[index].strip()
+        if text == guard:
+            return True
+        if not text.startswith(("from ", "import ")) and text not in ("(", ")"):
+            if not (text.endswith(",") or text.endswith("(")):
+                return False
+        index -= 1
+    return False
+
+
 def _finish_class_module(
     source,
     gen_dict,
@@ -5800,6 +5883,7 @@ def _finish_class_module(
     # The header imports are now final: reuse them in the field factories
     source = _use_static_default_factories(source, soft_name, gen_dict, generated_name)
     source = _remove_unused_loader_import(source, soft_name)
+    source = _drop_guarded_header_duplicates(source)
     # The passes above work on flat module names: move the class imports to
     # their sub-package last, then apply the import style of the sub-package
     source = _apply_import_style(source, soft_name, "absolute", "Classes_new")

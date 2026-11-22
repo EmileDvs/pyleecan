@@ -1,5 +1,5 @@
 from ....classes_common.parents import container_or_parent
-from ....Methods import ParentMissingError
+from ....classes_common.errors import ParentMissingError
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

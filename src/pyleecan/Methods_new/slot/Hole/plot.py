@@ -4,7 +4,7 @@ import numpy as np
 from ....Functions_new.utils.init_fig import init_fig
 from ....Functions_new.utils.labels import HOLEM_LAB, decode_label
 from ....definitions import config_dict
-from ....Methods import ParentMissingError
+from ....classes_common.errors import ParentMissingError
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:

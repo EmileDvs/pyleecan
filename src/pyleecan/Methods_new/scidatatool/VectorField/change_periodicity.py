@@ -1,10 +1,9 @@
 import numpy as np
-
-from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from ....Classes_new.scidatatool.vector_field import VectorField
+
 
 
 def change_periodicity(
@@ -31,8 +30,10 @@ def change_periodicity(
         Vectorfield converted with new periodicities
     """
 
-    DataLinspace = import_class("pyleecan.Classes", "DataLinspace")
-    DataPattern = import_class("pyleecan.Classes", "DataPattern")
+    # Local import: avoids circular imports
+    from ....Classes_new.scidatatool.data_linspace import DataLinspace
+    from ....Classes_new.scidatatool.data_pattern import DataPattern
+
 
     # Get axes list in original VectorField
     # Assumes axes are the following: time, angle, z and z is DataPattern or radius

@@ -1,6 +1,5 @@
 import numpy as np
 
-from ....Functions.load import import_class
 from ....Functions_new.Plot import dict_2D
 from ....Functions_new.SciDataTool.Plot.plot_2d import plot_2D
 from typing import TYPE_CHECKING
@@ -28,14 +27,16 @@ def plot(
 
     """
 
+    # Local import: avoids circular imports
+    from ....Classes_new.machine.lam_slot_m import LamSlotM
+    from ....Classes_new.machine.lam_h import LamH
+
     angle_list, z_list = self.comp_pattern()
 
     legend_list = ["Skew pattern"]
     y_list = [[a * 180 / np.pi for a in angle_list]]
     linestyle_list = ["solid"]
 
-    LamSlotM = import_class("pyleecan.Classes", "LamSlotM")
-    LamH = import_class("pyleecan.Classes", "LamH")
 
     if isinstance(self.parent, (LamSlotM, LamH)):
         legend_list.append("Rotor d-axis")

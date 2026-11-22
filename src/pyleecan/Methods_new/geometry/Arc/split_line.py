@@ -29,9 +29,9 @@ def split_line(self, Z1: complex, Z2: complex, is_join: bool = False, prop_dict_
         Both part of the arc
     """
 
-    # Dynamic import of Arc1 to prevent import loop from code generator
-    module = __import__(PACKAGE_NAME + ".Classes.Arc1", fromlist=["Arc1"])
-    Arc1 = getattr(module, "Arc1")
+    # Local import: avoids circular imports
+    from ....Classes_new.geometry.arc_1 import Arc1
+
 
     # Get the intersection point
     Z_int = self.intersect_line(Z1, Z2)

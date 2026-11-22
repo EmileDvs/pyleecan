@@ -30,9 +30,9 @@ def split_line(self, Z1: complex, Z2: complex, is_join: bool = False, prop_dict_
         (one can be None if the line doesn't cut the surface)
     """
 
-    # Dynamic import to avoid import loop
-    module = __import__(PACKAGE_NAME + ".Classes.SurfLine", fromlist=["SurfLine"])
-    SurfLine = getattr(module, "SurfLine")
+    # Local import: avoids circular imports
+    from ....Classes_new.geometry.surf_line import SurfLine
+
 
     # Split all the lines of the surface
     lines = self.get_lines()

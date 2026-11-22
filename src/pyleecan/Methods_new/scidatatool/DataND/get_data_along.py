@@ -1,3 +1,4 @@
+from ....Classes_new._import import import_class
 from ....Classes_new.scidatatool.data_1d import Data1D
 from ....Functions_new.SciDataTool import axes_dict, rev_axes_dict
 from ....Functions_new.SciDataTool.conversions import get_unit_derivate, get_unit_integrate
@@ -44,8 +45,7 @@ def get_data_along(self, *args, unit: str = "SI", is_norm: bool = False, axis_da
         Data_type = "DataND"
 
     # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes." + Data_type, fromlist=[Data_type])
-    DataClass = getattr(module, Data_type)
+    DataClass = import_class(Data_type)
 
     for axis_name in axes_name_new:
         if not isinstance(results[axis_name], str):

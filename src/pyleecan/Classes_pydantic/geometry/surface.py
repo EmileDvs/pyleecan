@@ -404,6 +404,7 @@ class Surface(LegacyModel):
             (one can be None if the line doesn't cut the surface)
         """
 
+        # Local import: avoids circular imports
         from .surf_line import SurfLine
 
         # Split all the lines of the surface

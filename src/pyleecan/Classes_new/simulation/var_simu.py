@@ -103,6 +103,7 @@ class VarSimu(LegacyClass):
     # Inlined from Methods.Simulation.VarSimu.check_param
     def check_param(self) -> None:
         """Check VarParamSweep parameters validity"""
+        # Local import: avoids circular imports
         from .simulation import Simulation
 
         if type(self).__name__ == "VarSimu":
@@ -117,6 +118,7 @@ class VarSimu(LegacyClass):
     # Inlined from Methods.Simulation.VarSimu.gen_datakeeper_list
     def gen_datakeeper_list(self, ref_simu) -> None:
         """Generate default DataKeepers according the reference simulation type"""
+        # Local import: avoids circular imports
         from .input_current import InputCurrent
 
         datakeeper_list = []
@@ -452,6 +454,7 @@ class VarSimu(LegacyClass):
             A VarSimu object
         """
 
+        # Local import: avoids circular imports
         from ..output.output import Output
 
         logger = get_logger(self)
@@ -610,6 +613,7 @@ class VarSimu(LegacyClass):
             Logger to use (info)
         """
 
+        # Local import: avoids circular imports
         from .input_current import InputCurrent
         from .input_voltage import InputVoltage
 

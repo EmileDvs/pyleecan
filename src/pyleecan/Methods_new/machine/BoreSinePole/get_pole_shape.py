@@ -1,4 +1,4 @@
-from ....Methods import ParentMissingError
+from ....classes_common.errors import ParentMissingError
 import numpy as np
 
 

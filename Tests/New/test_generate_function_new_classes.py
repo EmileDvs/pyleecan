@@ -768,7 +768,8 @@ else:
 
 
 @pytest.mark.parametrize("style", ["absolute", "relative"])
-def test_generated_classes_redirect_functions_but_defer_load_save(style):
+def test_generated_classes_redirect_functions_load_save_included(style):
+    """Step 12: the load and save functions are the copies too."""
     source = (
         "from pyleecan.Functions.Electrical.dqh_transformation import n2dqh\n"
         "from pyleecan.Functions.load import load_init_dict\n"
@@ -782,12 +783,12 @@ def test_generated_classes_redirect_functions_but_defer_load_save(style):
         f"from {prefix}Functions_new.Electrical.dqh_transformation import n2dqh"
         in result
     )
-    assert f"from {prefix}Functions.load import load_init_dict" in result
+    assert f"from {prefix}Functions_new.load import load_init_dict" in result
     assert (
-        f"from {prefix}Functions.Load.retrocompatibility import convert_init_dict"
+        f"from {prefix}Functions_new.Load.retrocompatibility import convert_init_dict"
         in result
     )
-    assert f"from {prefix}Functions.save import save" in result
+    assert f"from {prefix}Functions_new.save import save" in result
 
 
 def test_generated_classes_redirect_dynamic_function_imports():
@@ -800,7 +801,7 @@ def test_generated_classes_redirect_dynamic_function_imports():
     result = _redirect_experimental_function_imports(source, "pyleecan")
     assert "import_module('pyleecan.Functions_new.SciDataTool.conversions')" in result
     assert "__import__(f'pyleecan.Functions_new.Converter.MotorCAD.{name}')" in result
-    assert "import_module('pyleecan.Functions.load')" in result
+    assert "import_module('pyleecan.Functions_new.load')" in result
     assert "message = 'pyleecan.Functions.not_an_import'" in result
 
 

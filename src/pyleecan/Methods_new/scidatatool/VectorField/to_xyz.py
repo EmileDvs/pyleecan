@@ -15,9 +15,6 @@ def to_xyz(self):
     a VectorField object
     """
 
-    # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes.VectorField", fromlist=["VectorField"])
-    VectorField = module.VectorField
 
     if "comp_x" in self.components or "comp_y" in self.components:
         return self.copy()

@@ -417,6 +417,7 @@ class Data1D(Data):
         DataLinspace or Data1D
         """
 
+        # Local import: avoids circular imports
         from .data_linspace import DataLinspace
 
         values = self.values

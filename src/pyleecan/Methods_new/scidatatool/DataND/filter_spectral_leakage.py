@@ -52,14 +52,13 @@ def filter_spectral_leakage(
         theoretical frequencies
     """
 
-    module = __import__("pyleecan.Classes.DataFreq", fromlist=["DataFreq"])
-    DataFreq = module.DataFreq
+    # Local import: avoids circular imports
+    from ....Classes_new.scidatatool.data_freq import DataFreq
+    from ....Classes_new.scidatatool.data_pattern import DataPattern
+    from ....Classes_new.scidatatool.data_1d import Data1D
 
-    module = __import__("pyleecan.Classes.DataPattern", fromlist=["DataPattern"])
-    DataPattern = module.DataPattern
 
-    module = __import__("pyleecan.Classes.Data1D", fromlist=["Data1D"])
-    Data1D = module.Data1D
+
 
     if len(axes_list_filt) == 0 or len(arg_list) == 0:
         # Get fft along frequency axis (keep other axes)

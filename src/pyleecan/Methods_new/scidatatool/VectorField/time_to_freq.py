@@ -15,9 +15,6 @@ def time_to_freq(self):
     a VectorField object
     """
 
-    # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes.VectorField", fromlist=["VectorField"])
-    VectorField = module.VectorField
 
     comp_dict: dict[str, DataND] = dict()
     for key, comp in self.components.items():

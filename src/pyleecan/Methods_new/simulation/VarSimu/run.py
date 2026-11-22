@@ -1,7 +1,6 @@
 from ....classes_common.logger_context import get_logger
 import numpy as np
 import itertools
-from ....Functions.Load.import_class import import_class
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -18,8 +17,10 @@ def run(self) -> None:
         A VarSimu object
     """
 
+    # Local import: avoids circular imports
+    from ....Classes_new.output.output import Output
+
     logger = get_logger(self)
-    Output = import_class("pyleecan.Classes", "Output")
 
     # Check var_simu parameters
     self.check_param()  # Check isinstance(self.parent, Simulation)
@@ -171,12 +172,14 @@ def log_step_simu(index: int, nb_simu: int, paramexplorer_list: list, logger: Lo
         Logger to use (info)
     """
 
+    # Local import: avoids circular imports
+    from ....Classes_new.simulation.input_current import InputCurrent
+    from ....Classes_new.simulation.input_voltage import InputVoltage
+
     if layer == 2:
         msg = "    "
     else:
         msg = ""
-    InputCurrent = import_class("pyleecan.Classes", "InputCurrent")
-    InputVoltage = import_class("pyleecan.Classes", "InputVoltage")
     msg += "Running simulation " + str(index + 1) + "/" + str(nb_simu) + " with "
     for param_exp in paramexplorer_list:
         value = param_exp.get_value()[index]

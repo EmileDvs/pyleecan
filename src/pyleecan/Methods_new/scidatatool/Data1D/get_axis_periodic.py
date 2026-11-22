@@ -24,9 +24,6 @@ def get_axis_periodic(self, Nper: int, is_aper: bool = False) -> Data1D:
         Axis with requested (anti-)periodicities
     """
 
-    # Dynamic import to avoid loop
-    module = __import__("pyleecan.Classes.Data1D", fromlist=["Data1D"])
-    Data1D = module.Data1D
 
     try:
         # Reduce axis to the given periodicity

@@ -144,6 +144,7 @@ class LamSlotMultiWind(LamSlotMulti):
             angle between the X axis and the first d+ axis
         """
 
+        # Local import: avoids circular imports
         from .lam_slot_wind import LamSlotWind
 
         d_angle = LamSlotWind.comp_angle_d_axis(self, is_plot=is_plot)
@@ -178,6 +179,7 @@ class LamSlotMultiWind(LamSlotMulti):
             -1 or +1
         """
 
+        # Local import: avoids circular imports
         from .lam_slot_wind import LamSlotWind
 
         rot_dir = LamSlotWind.comp_mmf_dir(self, current_dir, phase_dir, is_plot)
@@ -219,6 +221,7 @@ class LamSlotMultiWind(LamSlotMulti):
 
         """
 
+        # Local import: avoids circular imports
         from .lam_slot_wind import LamSlotWind
 
         MMF_U, WF = LamSlotWind.comp_mmf_unit(
@@ -562,6 +565,7 @@ class LamSlotMultiWind(LamSlotMulti):
             To call show at the end of the method
         """
 
+        # Local import: avoids circular imports
         from .lam_slot_wind import LamSlotWind
 
         LamSlotWind.plot_mmf_unit(
