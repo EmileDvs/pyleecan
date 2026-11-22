@@ -289,7 +289,7 @@ class MagElmer(Magnetics):
         }
 
     # Inlined from Methods.Simulation.MagElmer.gen_elmer_mesh
-    def gen_elmer_mesh(self, output: Output) -> dict[str, bool]:
+    def gen_elmer_mesh(self, output: Output) -> bool:
         """Call ElmerGrid process to convert mesh from Gmsh format to Elmer's compatible
 
         Parameters
@@ -336,7 +336,7 @@ class MagElmer(Magnetics):
         return True
 
     # Inlined from Methods.Simulation.MagElmer.get_meshsolution
-    def get_meshsolution(self, output: Output) -> MeshSolution:
+    def get_meshsolution(self, output: Output) -> bool:
         """Build the MeshSolution objects from the FEA outputs.
 
         Parameters

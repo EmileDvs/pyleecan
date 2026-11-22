@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def get_axes_list(self, *args) -> list:
+def get_axes_list(self, *args) -> tuple[list | None, list | None]:
     """Get the value of variables stored in Solution.
 
     Parameters

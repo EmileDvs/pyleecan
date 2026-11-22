@@ -233,7 +233,7 @@ class MeshMat(Mesh):
         return mesh_vtk
 
     # Inlined from Methods.Mesh.MeshMat.find_element
-    def find_element(self, points: np.ndarray, normal_t=None) -> list:
+    def find_element(self, points: np.ndarray, normal_t=None) -> tuple[list, list]:
         """Return the elements containing the target point(s)
 
         Parameters

@@ -3,7 +3,7 @@ from ....Functions_new.SciDataTool.omp import comp_undersampled_axe, omp
 
 
 def orthogonal_mp(
-    self, Time: Data1D, n_coefs: int = None, precompute: bool = True, dictionary=None
+    self, Time: Data1D, n_coefs: int | None = None, precompute: bool = True, dictionary=None
 ):
     """
     Execute the Orthogonal Matching Pursuit, this method returns a DataND object with the Time axe,

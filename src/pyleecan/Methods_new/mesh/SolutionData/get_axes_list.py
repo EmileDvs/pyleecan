@@ -4,7 +4,7 @@ if TYPE_CHECKING:
     import numpy as np
 
 
-def get_axes_list(self, *args) -> np.ndarray:
+def get_axes_list(self, *args) -> tuple[list, list]:
     """Get the axis of variables stored in Solution.
 
     Parameters

@@ -385,7 +385,9 @@ class DataND(Data):
         return values
 
     # Inlined from Methods.SciDataTool.DataND._extract_slices
-    def _extract_slices(self, values: np.ndarray, axes_list: list) -> np.ndarray:
+    def _extract_slices(
+        self, values: np.ndarray, axes_list: list
+    ) -> tuple[np.ndarray, dict]:
         """Returns the values of the field (with symmetries and transformations).
         Parameters
         ----------
@@ -2290,7 +2292,7 @@ class DataND(Data):
     def orthogonal_mp(
         self,
         Time: Data1D,
-        n_coefs: int = None,
+        n_coefs: int | None = None,
         precompute: bool = True,
         dictionary=None,
     ):

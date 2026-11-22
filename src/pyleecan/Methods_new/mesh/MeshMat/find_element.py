@@ -2,7 +2,7 @@ from ....classes_common.logger_context import get_logger
 import numpy as np
 
 
-def find_element(self, points: np.ndarray, normal_t=None) -> list:
+def find_element(self, points: np.ndarray, normal_t=None) -> tuple[list, list]:
     """Return the elements containing the target point(s)
 
     Parameters

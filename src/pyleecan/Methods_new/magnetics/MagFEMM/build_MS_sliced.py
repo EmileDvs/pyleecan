@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from ....Classes_new.mesh.solution import Solution
 
 
-def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii) -> dict:
+def build_MS_sliced(self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii) -> MeshSolution:
     """Build and solve FEMM model to calculate and store magnetic quantities
 
     Parameters

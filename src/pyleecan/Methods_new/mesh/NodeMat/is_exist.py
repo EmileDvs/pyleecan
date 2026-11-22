@@ -23,4 +23,4 @@ def is_exist(self, coordinate: np.ndarray) -> bool:
     # Compute the distance between the node coordinates and the provided coordinate
     dist_node = np.linalg.norm(self.coordinate - coordinate, axis=1)
 
-    return np.any(dist_node < self.delta)
+    return bool(np.any(dist_node < self.delta))

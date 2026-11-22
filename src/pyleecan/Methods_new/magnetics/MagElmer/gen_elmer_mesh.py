@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from ....Classes_new.output.output import Output
 
 
-def gen_elmer_mesh(self, output: Output) -> dict[str, bool]:
+def gen_elmer_mesh(self, output: Output) -> bool:
     """Call ElmerGrid process to convert mesh from Gmsh format to Elmer's compatible
 
     Parameters

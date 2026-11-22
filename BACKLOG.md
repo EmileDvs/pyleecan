@@ -1298,6 +1298,14 @@ Review list by package (behaviour or class definition to decide):
         (`ndarray | tuple[ndarray, dict]`); the `VectorField` methods build
         `type(self)(...)` (they named their own class, defined only once
         inlined). `ty` on `Methods_new`: 397 -> 380.
+  - [x] (2026-11-22) return hints of the legacy docstrings that did not
+        match the code: `MagElmer.gen_elmer_mesh` / `get_meshsolution`
+        (success flag `bool`), `MagFEMM.build_MS_sliced` (`MeshSolution`),
+        `MeshMat.find_element` and the `get_axes_list` of the solutions
+        (pair of lists), `DataND._extract_slices` (values and axes dict),
+        `orthogonal_mp(n_coefs: int | None = None)`; `ElementMat` /
+        `NodeMat.is_exist` return a Python `bool`. `ty` on `Methods_new`:
+        380 -> 368.
   - [ ] `LamSlotWind.comp_mmf_unit`: lists given to ndarray fields of `Data1D`;
         `LamSlotWind.plot`: lists for `FancyArrowPatch` positions (tuple);
         `Machine.plot_anim_rotor`: `Patch.xy`.

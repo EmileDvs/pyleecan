@@ -40,7 +40,7 @@ class SolutionData(Solution):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.SolutionData.get_axes_list
-    def get_axes_list(self, *args) -> np.ndarray:
+    def get_axes_list(self, *args) -> tuple[list, list]:
         """Get the axis of variables stored in Solution.
 
         Parameters

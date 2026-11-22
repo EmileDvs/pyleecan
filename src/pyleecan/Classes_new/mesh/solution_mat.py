@@ -48,7 +48,7 @@ class SolutionMat(Solution):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Mesh.SolutionMat.get_axes_list
-    def get_axes_list(self, *args) -> list:
+    def get_axes_list(self, *args) -> tuple[list | None, list | None]:
         """Get the value of variables stored in Solution.
 
         Parameters

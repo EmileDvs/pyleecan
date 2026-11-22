@@ -240,6 +240,6 @@ class ElementMat(LegacyClass):
         _, unique_counts = np.unique(node_element, return_counts=True)
 
         # The element already exist if all its node are present in the given connectivity
-        result = np.any(unique_counts == self.nb_node_per_element)
+        result = bool(np.any(unique_counts == self.nb_node_per_element))
 
         return result

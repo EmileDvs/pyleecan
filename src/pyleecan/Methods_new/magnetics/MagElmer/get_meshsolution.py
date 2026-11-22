@@ -20,7 +20,7 @@ if TYPE_CHECKING:
     from ....Classes_new.output.output import Output
 
 
-def get_meshsolution(self, output: Output) -> MeshSolution:
+def get_meshsolution(self, output: Output) -> bool:
     """Build the MeshSolution objects from the FEA outputs.
 
     Parameters

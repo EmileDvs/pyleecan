@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def _extract_slices(self, values: np.ndarray, axes_list: list) -> np.ndarray:
+def _extract_slices(self, values: np.ndarray, axes_list: list) -> tuple[np.ndarray, dict]:
     """Returns the values of the field (with symmetries and transformations).
     Parameters
     ----------

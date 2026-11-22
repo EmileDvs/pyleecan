@@ -410,7 +410,7 @@ class MagFEMM(Magnetics):
     # Inlined from Methods.Simulation.MagFEMM.build_MS_sliced
     def build_MS_sliced(
         self, MS_sliced, MS, axes_dict: dict[str, Data], Nslices, ii
-    ) -> dict:
+    ) -> MeshSolution:
         """Build and solve FEMM model to calculate and store magnetic quantities
 
         Parameters
