@@ -117,6 +117,10 @@ class PyleecanModel(BaseModel, PyleecanBase):
     @model_serializer(mode="wrap")
     def _dump_class(self, handler):
         data = handler(self)
+        if not isinstance(data, dict):
+            # None in a field typed with a class (accepted by the legacy
+            # layer: Material.mag of a loaded machine): dumped as is
+            return data
         data["__class__"] = type(self).__name__
         return data
 

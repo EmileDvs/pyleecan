@@ -64,3 +64,13 @@ def test_same_target_dump(class_name):
     dataclass_dump = import_dataclass(class_name)().model_dump(mode="json")
     pydantic_dump = import_pydantic(class_name)().model_dump(mode="json")
     assert values_equal(dataclass_dump, pydantic_dump)
+
+
+@pytest.mark.parametrize("implementation", sorted(IMPLEMENTATIONS))
+def test_target_dump_with_none_object_field(implementation):
+    """A class-typed field set to None (legacy layer) dumps as None (Step 18:
+    the pydantic dump of a loaded Toyota_Prius failed on Material.mag)."""
+    material = IMPLEMENTATIONS[implementation]("Material")()
+    material.mag = None
+    data = material.model_dump()
+    assert data["mag"] is None and data["__class__"] == "Material"

@@ -1770,9 +1770,38 @@ Same scenarios on each backend (`--backend=dataclass|pydantic`, `GUI_new` /
 `GUI_pydantic`), with the legacy classes as a reference where they apply.
 First figures: creation time in Step 2 of the plan (`Segment`, `LamSlotWind`).
 
-- [ ] Micro benchmarks: creation, validated assignment (valid and invalid
-      values), `model_dump` / `model_validate`, `model_copy`, `==`, import
-      time of the class packages.
+- [x] (2026-11-22) Micro benchmarks: `Tests/New/Benchmark/benchmark_backends.py`
+      (not collected by pytest; `MPLBACKEND=Agg uv run python -m
+      Tests.New.Benchmark.benchmark_backends`), one subprocess per
+      backend, legacy as reference. First run (2026-11-22, Windows, median
+      of 5, us per call unless stated; the `load` times are a first load,
+      class imports included):
+
+      | Scenario [us] | legacy | dataclass | pydantic |
+      |---|---:|---:|---:|
+      | import [ms] | 1664 | 1568 | 1824 |
+      | `Segment()` | 1.4 | 2.8 | 25.1 |
+      | `LamSlotWind()` | 113 | 203 | 1026 |
+      | valid assignment | 0.4 | 0.5 | 11.4 |
+      | invalid assignment | 1.0 | 1.1 | 12.0 |
+      | load Toyota_Prius [ms] | 29.3 | 33.0 | 46.5 |
+      | load SCIM_006 [ms] | 8.6 | 13.9 | 34.6 |
+      | dump Prius (`as_dict` / `model_dump`) | 44 | 118 | 155 |
+      | validate Prius (`init_dict` / `model_validate`) | 259 | 7700 | 4793 |
+      | copy Prius (`copy` / `model_copy(deep=True)`) | 284 | 668 | 2711 |
+      | `==` Prius | 32 | 169 | 160 |
+      | `slot.comp_surface()` (parent fallback) | 1.5 | 7.1 | 11.2 |
+
+      Findings: the pydantic `model_dump` of a loaded machine failed
+      (`Material.mag` None: the wrap serializer got None back): fixed in
+      `PyleecanModel._dump_class`, test in `Tests/New/Cross`; the
+      dataclass `model_validate` of a machine is 30 times slower than the
+      legacy `init_dict` (to profile: dacite); pydantic pays its validation
+      on creation and assignment (20 to 25 times the dataclass time); the
+      parent fallback costs about 5.5 us per call on the new backends (the
+      `ContainerFallbackWarning`: `warnings.warn` walks the stack; with
+      `lam=lam` the dataclass `comp_surface` is 1.4 us, as legacy). Report
+      and Phase 2 decision when the other benchmark items are done.
 - [ ] Machine files: load and save of the 37 files of `Data/Machine`, memory.
 - [ ] Methods and simulations: the parity baseline of the freeze (Step 12)
       timed per package; a few full simulations (FEMM excluded or timed
