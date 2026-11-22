@@ -16,12 +16,19 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
   Roadmap and step checklist: [PLAN.md](PLAN.md). Detailed tasks of the
   remaining steps (review lists, findings): [BACKLOG.md](BACKLOG.md).
   History: [CHANGELOG.md](CHANGELOG.md).
-- Steps 5–11 change the generators only; Step 12 freezes `Methods_new` (and
-  the listed `Functions_new` modules, and `GUI_new` once generated in Step
-  10), which are edited by hand from then on (Steps 13–17). Before the
-  freeze, never edit `Methods_new` by hand.
+- **Frozen since Step 12 (2026-11-22)**: `Methods_new` (every sub-package,
+  `FROZEN_PACKAGES`), the hand-written `Functions_new` modules
+  (`HAND_WRITTEN_FUNCTION_MODULES`: `check_parent.py`, `get_logger.py`,
+  `FEMM/femm_pyleecan.py`) and `GUI_new` (`GUI_NEW_FROZEN`, except its
+  `Gen_*` modules) are edited by hand (Steps 13–17). The class generator
+  still builds `Classes_new` / `Classes_pydantic` from `Methods_new`, read
+  through the shim `to_legacy_names`: keep the import forms it translates
+  (imports of `Classes_new` / `Functions_new`, class loads as local imports).
+  After editing `Methods_new`, regenerate the classes.
 - The legacy folders change only through merges of upstream pull requests
-  (Step 7); the generators carry the changes to the new code.
+  (Step 7). Since the freeze, a change merged in the legacy `Methods` or `GUI`
+  is ported by hand to `Methods_new` / `GUI_new`; the other `Functions`
+  modules are still generated.
 
 ## Package layout (`src/pyleecan/`)
 
@@ -32,14 +39,14 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `Functions/` | Legacy functions | Never |
 | `Classes_new/` | Dataclass + dacite backend, generated | Never by hand: change the generator |
 | `Classes_pydantic/` | Pydantic v2 backend (reference target), generated | Never by hand: change the generator |
-| `Methods_new/` | Methods shared by both backends, written by the method generator from `Methods/` | Generated, except frozen (hand-written) packages |
-| `Functions_new/` | Functions for `Classes_new`, written by the functions generator from `Functions` | Generated, except the modules listed as hand-written at the freeze (Step 12) |
+| `Methods_new/` | Methods shared by both backends, written by the method generator from `Methods/` until the freeze | Hand-written since Step 12 (all sub-packages frozen); regenerate the classes after an edit |
+| `Functions_new/` | Functions for `Classes_new`, written by the functions generator from `Functions` | Generated, except `HAND_WRITTEN_FUNCTION_MODULES` (hand-written since Step 12) |
 | `Functions_pydantic/` | Generated from `Functions_new` by import rewriting | Never by hand |
 | `classes_common/` | Backend-agnostic support: class lookup, `ClassInfo`, errors, checks, legacy dump/values, equality, custom setters, parent types | Hand-written (incl. `logger_context.py`: loggers without parents), except `errors.py`, `parent_types.py` and `retrocompatibility.py` (generated) |
 | `Generator/` | Legacy generators (`ClassGenerator/*.py`, GUI, UML) and the CSV class definitions (`ClassesRef/`) | Legacy generator: never |
 | `Generator/ClassGenerator/New/` | New generators (classes, methods, functions, tests) | Yes: this is where changes go |
 | `GUI/`, `Data/`, `Results/` | Legacy GUI, reference machines/materials, outputs | GUI: never (legacy) |
-| `GUI_new/`, `GUI_pydantic/` | GUI on the dataclass / pydantic classes, generated from `GUI` (Step 10); `Resources/pyleecan_rc.py` is a shim loading the legacy compiled resources | Never by hand: change the generator |
+| `GUI_new/`, `GUI_pydantic/` | GUI on the dataclass / pydantic classes, generated from `GUI` (Step 10); `Resources/pyleecan_rc.py` is a shim loading the legacy compiled resources | `GUI_new`: hand-written since Step 12, except the `Gen_*` modules (generated from `ClassInfo`); `GUI_pydantic`: never by hand (import rewriting of `GUI_new`) |
 
 ### New class backends
 
@@ -73,7 +80,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 |---|---|
 | `run_generate_classes.py` | Entry point: methods, both class backends, functions, tests |
 | `class_generator.py` | Class assembly (fields, inlining, imports, `BACKENDS`, `ROOT_BASES`, sub-packages) |
-| `generate_methods_new.py` | Writes `Methods_new` from legacy `Methods` (modernization pipeline) |
+| `generate_methods_new.py` | Wrote `Methods_new` from legacy `Methods` (modernization pipeline); since the freeze only its `__init__.py` (every package in `FROZEN_PACKAGES`) |
 | `modernize.py`, `source_names.py`, `function_module_names.py` | Shared modernization passes and name mappings for methods and functions |
 | `type_hints.py` | Type hints from the numpydoc docstrings |
 | `legacy_fixes.py` | Fixes of legacy method bugs (`LEGACY_FIXES`), applied to the `Methods_new` copies before modernization |
@@ -82,7 +89,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `moved_functions.py` | Legacy functions moved to a class as methods (`MOVED_FUNCTIONS`), deprecated aliases at the old paths |
 | `generate_function_new_classes.py` | `Functions_new` |
 | `generate_function_pydantic.py` | `Functions_pydantic` from `Functions_new` |
-| `generate_gui_new.py` | `GUI_new` from `GUI` (method pipeline, GUI imports redirected; `Gen_*` widget setup from `ClassInfo` and the `gen_list.json` files), `GUI_pydantic` from `GUI_new` (imports) |
+| `generate_gui_new.py` | `GUI_new` from `GUI` until the freeze (method pipeline, GUI imports redirected); still writes the `Gen_*` widget setup of `GUI_new` (from `ClassInfo` and the `gen_list.json` files) and `GUI_pydantic` from `GUI_new` (imports) |
 | `generate_test_new_classes.py` | `Tests/New` tree from the legacy tests |
 
 Full regeneration:

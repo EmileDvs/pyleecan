@@ -60,6 +60,19 @@ from pyleecan.Generator.ClassGenerator.New.modernize import (
     shared_error_names,
 )
 
+HAND_WRITTEN_FUNCTION_MODULES = frozenset(
+    {
+        # Step 12 freeze (decided 2026-11-22): the modules reading the parent
+        # links, refactored by hand in Steps 13-17
+        "check_parent.py",
+        "get_logger.py",
+        "FEMM/femm_pyleecan.py",
+    }
+)
+"""Modules of Functions_new written by hand (paths in Functions_new): the
+generator neither writes nor removes them; it writes the other modules and
+the deprecated aliases"""
+
 SKIPPED_FUNCTION_MODULES = {
     Path("load_switch.py"): (
         "registry of the legacy classes (from Classes.import_all import *), imported "
@@ -777,13 +790,30 @@ def _rewrite_source(source, path, relative_path, class_dir):
     return rewritten, sorted(issues)
 
 
-def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_style="relative"):
-    """Copy the complete function tree and return unresolved legacy references."""
+def generate_functions(
+    source_dir=None,
+    output_dir=None,
+    class_dir=None,
+    import_style="relative",
+    hand_written=None,
+):
+    """Copy the complete function tree and return unresolved legacy references.
+
+    hand_written: modules of output_dir edited by hand, kept (default:
+    HAND_WRITTEN_FUNCTION_MODULES for the Functions_new of the repository,
+    none for another output_dir).
+    """
     if import_style not in ("relative", "absolute"):
         raise ValueError("import_style must be 'relative' or 'absolute'")
     root = Path(MAIN_DIR)
     source_dir = Path(source_dir) if source_dir is not None else root / "Functions"
+    if hand_written is None:
+        hand_written = HAND_WRITTEN_FUNCTION_MODULES if output_dir is None else ()
     output_dir = Path(output_dir) if output_dir is not None else root / "Functions_new"
+    hand_written = frozenset(hand_written)
+    missing = [name for name in sorted(hand_written) if not (output_dir / name).is_file()]
+    if missing:
+        raise FileNotFoundError(f"Hand-written function modules not found: {missing}")
     class_dir = Path(class_dir) if class_dir is not None else root / "Classes_new"
     for directory in (source_dir, class_dir):
         if not directory.is_dir():
@@ -888,6 +918,9 @@ def generate_functions(source_dir=None, output_dir=None, class_dir=None, import_
                 continue  # Written by the GUI generator
             output_relative = Path(*moved_module_paths[path].split(".")).with_suffix(".py")
         destination = output_dir / output_relative
+        if destination.relative_to(output_dir).as_posix() in hand_written:
+            generated.add(destination)  # Edited by hand since the freeze: kept
+            continue
         if relative in SKIPPED_FUNCTION_MODULES:
             # Not generated: remove a copy left by a previous generation
             destination.unlink(missing_ok=True)

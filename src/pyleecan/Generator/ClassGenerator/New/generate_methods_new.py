@@ -20,6 +20,10 @@ not write it (e.g. the parent-link refactor, which is not mechanical).
 Run ``python -m pyleecan.Generator.ClassGenerator.New.generate_methods_new``
 (before the class generation). Methods_new is written again, frozen packages
 excepted: do not edit the other packages by hand.
+
+Since the Step 12 freeze every sub-package is frozen: this generator writes
+only ``Methods_new/__init__.py``; its passes remain for a package unfrozen
+again (e.g. to regenerate it from a new legacy version).
 """
 
 import argparse
@@ -57,8 +61,35 @@ from pyleecan.Generator.ClassGenerator.New.moved_functions import (
 from pyleecan.Generator.ClassGenerator.New.worker_pool import run_tasks, worker_count
 from pyleecan.Generator.read_fct import read_all
 
-FROZEN_PACKAGES = frozenset()
-"""Sub-packages of Methods_new written by hand (not generated)"""
+FROZEN_PACKAGES = frozenset(
+    {
+        "converter",
+        "electrical",
+        "elmer",
+        "force",
+        "geometry",
+        "gui_option",
+        "import_data",
+        "loss",
+        "machine",
+        "magnetics",
+        "material",
+        "mesh",
+        "optimization",
+        "output",
+        "post",
+        "scidatatool",
+        "simulation",
+        "slot",
+        "structural",
+    }
+)
+"""Sub-packages of Methods_new written by hand (not generated).
+
+Step 12 freeze (2026-11-22): every sub-package. Methods_new is edited by hand
+from then on (Steps 13-17); a method added to the legacy Methods by an
+upstream merge is ported by hand. The class generator still reads
+Methods_new to build the classes."""
 
 HINTED_SUBPACKAGES = frozenset(
     {

@@ -413,7 +413,13 @@ def _write_tree(source_dir, target_dir, convert, fixes=None):
     return written
 
 
-def generate_gui(root=None, gen_dict=None):
+GUI_NEW_FROZEN = True
+"""Step 12 freeze (2026-11-22): GUI_new is edited by hand. The generator
+writes only its Gen_ modules (from ClassInfo, never edited by hand) and
+GUI_pydantic (import rewriting of GUI_new)"""
+
+
+def generate_gui(root=None, gen_dict=None, frozen=GUI_NEW_FROZEN):
     """Write GUI_new from GUI, then GUI_pydantic from GUI_new.
 
     Parameters
@@ -422,6 +428,8 @@ def generate_gui(root=None, gen_dict=None):
         Folder of the pyleecan package (default: MAIN_DIR)
     gen_dict : dict, optional
         Generation dictionary (default: the one of the CSV files)
+    frozen : bool
+        GUI_new written by hand: only its Gen_ modules are written
 
     Returns
     -------
@@ -439,6 +447,16 @@ def generate_gui(root=None, gen_dict=None):
 
     dataclass_dir = root / GUI_PACKAGES["dataclass"]
     pydantic_dir = root / GUI_PACKAGES["pydantic"]
+    if frozen:
+        if not dataclass_dir.is_dir():
+            raise FileNotFoundError(f"Frozen {dataclass_dir} not found")
+        gen_modules = write_gen_classes(root / LEGACY_GUI_PACKAGE, dataclass_dir)
+        return {
+            dataclass_dir.name: len(gen_modules),
+            pydantic_dir.name: _write_tree(
+                dataclass_dir, pydantic_dir, pydantic_gui_source
+            ),
+        }
     written = {
         dataclass_dir.name: _write_tree(
             root / LEGACY_GUI_PACKAGE,

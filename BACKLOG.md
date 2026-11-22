@@ -1060,14 +1060,27 @@ def comp_height(self, lam: "Lamination | None" = None) -> float:
 - [ ] Compare the method results between backends (Step 4 item): the tests
       above check each backend against the expected values; a direct
       comparison of the outputs is left to Step 18.
-- [ ] Freeze mechanism (decided 2026-11-17: all at once, since Steps 13–17
-      cover every package): `GUI_new` frozen with them; all sub-packages in `FROZEN_PACKAGES`
-      (`generate_methods_new.py`); a list of the hand-written modules in the
-      functions generator (`generate_function_new_classes.py`), which keeps
-      writing the others and the deprecated aliases.
-- [ ] Full regeneration: generated classes unchanged by the freeze.
-- [ ] CLAUDE.md: `Methods_new` and the frozen `Functions_new` modules edited by
-      hand; which generator modules are still in use.
+- [x] (2026-11-22) Freeze mechanism (decided 2026-11-17: all at once, since
+      Steps 13–17 cover every package): all 19 sub-packages in
+      `FROZEN_PACKAGES` (`generate_methods_new.py`); the hand-written modules
+      in `HAND_WRITTEN_FUNCTION_MODULES` (`generate_function_new_classes.py`,
+      decided 2026-11-22: the parent readers `check_parent.py`,
+      `get_logger.py`, `FEMM/femm_pyleecan.py`; the functions generator
+      keeps writing the others and the deprecated aliases, and checks that
+      the listed modules exist); `GUI_new` frozen (`GUI_NEW_FROZEN` in
+      `generate_gui_new.py`: only its `Gen_*` modules, generated from
+      `ClassInfo`, and `GUI_pydantic` are written). Tests:
+      `Tests/New/test_freeze.py`; checked by hand: a marker added to a
+      module of each frozen area survives the three generators.
+- [x] (2026-11-22) Full regeneration: all generated files unchanged by the
+      freeze.
+- [x] (2026-11-22) CLAUDE.md: `Methods_new`, `GUI_new` and the hand-written
+      `Functions_new` modules edited by hand; the class generator still reads
+      `Methods_new` (through the shim).
+- [ ] After the freeze, by hand: the two dynamic imports
+      `__import__("pyleecan.Classes.Norm_vector")` of `Data1D.get_values` /
+      `DataLinspace.get_values` (static local imports); the `DXF_Slot`
+      container call (Step 17).
 
 ## Step 13: custom property setters and getters
 

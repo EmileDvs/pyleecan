@@ -188,7 +188,7 @@ Methods receive their context explicitly instead, for example
 | 9. Logger chain | generator | done (parent fallback kept until Phase 2) |
 | 10. GUI, first pass | generator | done (GUI tests pass on both backends; open points in the backlog) |
 | 11. Parent links, first pass | generator | done (passes 1-6; 198 methods left for Step 16) |
-| 12. Freeze | gate | to do |
+| 12. Freeze | gate | done (2026-11-22; shim kept) |
 | 13. Custom property setters and getters | frozen | to do |
 | 14. Type hints, second pass | frozen | to do |
 | 15. Utility functions | frozen | to do |
@@ -352,22 +352,26 @@ reads are left to Step 16.
       No mechanical pattern left after pass 6 (review in the backlog): 198
       methods still read a parent, for Step 16.
 
-### Step 12: freeze
+### Step 12: freeze — done
 
 The gate between the generator steps and the hand-written steps. Nothing that
 can be automated is left to the frozen steps.
 
-- [ ] Finish the generator passes: the dynamic loaders and static class
-      imports moved from the class generator to the method generator (31
-      `Methods_new` modules still call `import_class`), the compatibility shim
-      `_read_method_source` / `to_legacy_names` removed, no legacy class built
-      in `Methods_new` (`SlotUD2`, `VarLoad` setters).
-- [ ] Record the parity baseline: `Tests/New/Methods` per package with each
-      backend, and the method results compared between backends.
-- [ ] Freeze: all sub-packages in `FROZEN_PACKAGES`; a list of the hand-written
-      `Functions_new` modules in the functions generator; `GUI_new` frozen
-      (the GUI generator keeps only the `GUI_pydantic` import rewriting).
-- [ ] Update CLAUDE.md (where code is now written by hand).
+- [x] Finish the generator passes: the dynamic loaders and static class
+      imports also run in the method generator (no `import_class` of the
+      legacy package in `Methods_new`), no legacy class built in `Methods_new`
+      (`SlotUD2`, `VarLoad` setters). The compatibility shim
+      `_read_method_source` / `to_legacy_names` is kept (decided 2026-11-22:
+      its removal means reworking the class generator passes; backlog).
+- [x] Record the parity baseline: `Tests/New/Methods` per package with each
+      backend (backlog); the direct comparison of the method results between
+      backends is left to Step 18.
+- [x] Freeze (2026-11-22): all sub-packages in `FROZEN_PACKAGES`; the
+      hand-written `Functions_new` modules in `HAND_WRITTEN_FUNCTION_MODULES`
+      (the parent readers `check_parent`, `get_logger`, `FEMM/femm_pyleecan`);
+      `GUI_new` frozen (the GUI generator keeps the `Gen_*` modules and the
+      `GUI_pydantic` import rewriting).
+- [x] Update CLAUDE.md (where code is now written by hand).
 
 ### Step 13: custom property setters and getters (frozen)
 

@@ -105,7 +105,8 @@ def _fake_tree(root):
 def test_generate_methods(tmp_path):
     gen_dict = _fake_tree(tmp_path)
     try:
-        assert generate_methods(root=tmp_path, gen_dict=gen_dict) == {
+        # The generation itself (every package frozen since Step 12)
+        assert generate_methods(root=tmp_path, gen_dict=gen_dict, frozen=frozenset()) == {
             "Circle": 0,
             "Segment": 1,
         }
@@ -127,12 +128,12 @@ def test_generate_methods(tmp_path):
 def test_frozen_package_is_kept(tmp_path):
     gen_dict = _fake_tree(tmp_path)
     try:
-        generate_methods(root=tmp_path, gen_dict=gen_dict)
+        generate_methods(root=tmp_path, gen_dict=gen_dict, frozen=frozenset())
         edited = tmp_path / "Methods_new" / "geometry" / "Segment" / "comp_length.py"
         edited.write_text("def comp_length(self) -> int:\n    return 2\n")
         generate_methods(root=tmp_path, gen_dict=gen_dict, frozen={"geometry"})
         assert "-> int" in edited.read_text()
-        generate_methods(root=tmp_path, gen_dict=gen_dict)
+        generate_methods(root=tmp_path, gen_dict=gen_dict, frozen=frozenset())
         assert "-> int" not in edited.read_text()
     finally:
         _bootstrapped_method_dirs.cache_clear()

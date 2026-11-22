@@ -400,7 +400,8 @@ def test_generate_functions_uses_default_package_paths(tmp_path, monkeypatch):
     )
     monkeypatch.setattr(generate_function_new_classes, "MAIN_DIR", str(tmp_path))
 
-    assert generate_functions() == []
+    # No hand-written module in this tree (Step 12 freeze: the repository's)
+    assert generate_functions(hand_written=()) == []
     assert (tmp_path / "Functions_new" / "sample.py").read_text(
         encoding="utf-8"
     ) == "from .load import load\n"
