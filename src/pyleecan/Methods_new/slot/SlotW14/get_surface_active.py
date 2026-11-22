@@ -31,8 +31,8 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     """
     lam = container_or_parent(self, lam, "lam")
     # Create curve list
-    line_dict = self._comp_line_dict()
-    H1 = self.get_H1()
+    line_dict = self._comp_line_dict(lam=lam)
+    H1 = self.get_H1(lam=lam)
     if H1 > 1e-6:
         curve_list: list[Line] = [
             line_dict["3-4"],

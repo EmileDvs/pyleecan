@@ -1,14 +1,21 @@
 import numpy as np
 from ....Functions_new.utils.geometry import circle_from_3_points
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : SlotCirc
         A SlotCirc object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -18,20 +25,20 @@ def _comp_point_coordinate(self) -> dict:
 
     if self.is_H0_bore is None:
         self.is_H0_bore = True  # Set default value
-    Rbo = self.get_Rbo()
-    alpha = self.comp_angle_opening()
+    Rbo = self.get_Rbo(lam=lam)
+    alpha = self.comp_angle_opening(lam=lam)
 
     Z1 = Rbo * np.exp(-1j * alpha / 2)
     Z2 = Rbo * np.exp(1j * alpha / 2)
     if self.is_H0_bore:
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             ZM = Rbo + self.H0
         else:
             ZM = Rbo - self.H0
         R0, _ = circle_from_3_points(Z1, Z2, ZM)
         ZH = Rbo
     else:
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             ZM = (Z1 + Z2) / 2 + self.H0
         else:
             ZM = (Z1 + Z2) / 2 - self.H0

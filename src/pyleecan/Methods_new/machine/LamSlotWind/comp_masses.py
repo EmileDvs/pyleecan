@@ -49,7 +49,7 @@ def comp_masses(self) -> dict:
             self.slot.wedge_mat.struct.rho
             * Lf
             * self.get_Zs()
-            * self.slot.comp_surface_wedges()
+            * self.slot.comp_surface_wedges(lam=self)
         )
 
     M_dict["Mtot"] += Mwind + M_dict["Mwedge"]

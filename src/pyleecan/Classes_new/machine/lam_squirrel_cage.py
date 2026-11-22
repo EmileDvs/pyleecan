@@ -176,7 +176,7 @@ class LamSquirrelCage(LamSlotWind):
         """
 
         # calculation of the average radius of the center of the end-ring (distance to z-axis of the electrical machine)
-        Rmw = self.slot.comp_radius_mid_active()
+        Rmw = self.slot.comp_radius_mid_active(lam=self)
 
         return 2 * np.pi * Rmw
 
@@ -447,7 +447,7 @@ class LamSquirrelCage(LamSlotWind):
         patches = []
         if not is_lam_only:
             try:
-                Rmw = self.slot.comp_radius_mid_active()
+                Rmw = self.slot.comp_radius_mid_active(lam=self)
                 patches.append(
                     Wedge(
                         (0, 0),

@@ -25,12 +25,12 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
     """
 
     Rbo = self.get_Rbo(lam=lam)
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z1 = point_dict["Z1"]
     Z2 = point_dict["Z2"]
 
     # The bottom is an arc
-    alpha = self.comp_angle_opening()
+    alpha = self.comp_angle_opening(lam=lam)
     Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
     S1 = abs(Z1.real - Z2.real) * (self.W1 + self.W0) / 2

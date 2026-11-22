@@ -92,13 +92,15 @@ class SlotM17(Slot):
             raise SlotCheckError("SlotM17 must be inside an internal lamination")
 
     # Inlined from Methods.Slot.SlotM17.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotM17
             A SlotM17 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -262,13 +264,15 @@ class SlotM17(Slot):
         return surface
 
     # Inlined from Methods.Slot.SlotM17.is_airgap_active
-    def is_airgap_active(self) -> bool:
+    def is_airgap_active(self, lam: Lamination | Notch | None = None) -> bool:
         """Return True if a part or the full active surface is in the airgap
 
         Parameters
         ----------
         self : SlotM17
             A SlotM17 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -422,13 +426,14 @@ class SlotM17(Slot):
                 )
 
             if type_add_active == 1:
-                self.plot_active(fig=fig, ax=ax, is_show_fig=False)
+                self.plot_active(fig=fig, ax=ax, is_show_fig=False, lam=lam)
             elif type_add_active == 2:
                 self.plot_active(
                     fig=fig,
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning

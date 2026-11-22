@@ -28,7 +28,7 @@ def comp_height(self, Ndisc: int = 200, lam: Lamination | Notch | None = None) -
 
     Rbo = self.get_Rbo(lam=lam)
 
-    surf = self.get_surface()
+    surf = self.get_surface(lam=lam)
 
     point_list = surf.discretize(Ndisc)
     point_list = np.array(point_list)

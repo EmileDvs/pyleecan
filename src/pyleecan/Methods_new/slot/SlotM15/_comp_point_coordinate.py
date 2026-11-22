@@ -1,13 +1,20 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : SlotM15
         A SlotM15 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -15,27 +22,27 @@ def _comp_point_coordinate(self) -> dict:
         A dict of the slot coordinates
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     Z1 = Rbo * np.exp(-1j * self.W0 / 2)
 
     # alpha_lim = 2 * arcsin(self.W1 * 0.5 / self.Rtopm)  # Angle of the top arc
     # H_top_arc = self.Rtopm * (1 - cos(alpha_lim / 2))  # Height of the top arc
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Z2 = (Rbo + self.H0) * np.exp(-1j * self.W0 / 2)
     else:  # inward slot
         Z2 = (Rbo - self.H0) * np.exp(-1j * self.W0 / 2)
 
     alpha_M = float(np.arcsin(self.W1 / (2 * abs(Z2))))
     ZM1 = abs(Z2) * np.exp(-1j * alpha_M)
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         ZM0 = abs(Z2) - self.H1
         Zc = ZM0 + self.Rtopm
     else:  # inward slot
         ZM0 = abs(Z2) + self.H1
         Zc = ZM0 - self.Rtopm
 
-    sign = -1 if self.is_outwards() else 1
+    sign = -1 if self.is_outwards(lam=lam) else 1
     x = abs(Z2) - sign * (
         -self.H1 + self.Rtopm - (self.Rtopm**2 - self.W1**2 / 4) ** 0.5
     )

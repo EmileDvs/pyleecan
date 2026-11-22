@@ -42,7 +42,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
     # get the name of the lamination
     lam_label = lam.get_label()
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z1 = point_dict["Z1"]
     Z2 = point_dict["Z2"]
     Z3 = point_dict["Z3"]

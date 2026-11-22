@@ -1,22 +1,29 @@
 import numpy as np
 from ....Functions_new.utils.geometry import inter_line_line
 from ....Functions_new.utils.geometry import inter_line_circle
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : SlotW30
         A SlotW30 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
     point_dict: dict
         A dict of the slot point coordinates
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # alpha is the angle to rotate Z0 so ||Z1,Z12|| = W0
     alpha = np.arcsin(self.W0 / (2 * Rbo))
@@ -25,7 +32,7 @@ def _comp_point_coordinate(self) -> dict:
     Z0 = Rbo * np.exp(1j * 0)
     Z12 = Z0 * np.exp(1j * alpha)
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Z11 = Z12 + self.H0
 
         Zp1 = Rbo * np.exp(1j * hsp)

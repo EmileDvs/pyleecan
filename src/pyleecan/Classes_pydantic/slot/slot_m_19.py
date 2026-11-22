@@ -65,13 +65,15 @@ class SlotM19(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM19._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotM19
             A SlotM19 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -79,14 +81,14 @@ class SlotM19(Slot):
             A dict of the slot coordinates
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # alpha is the angle to rotate Z0 so ||Z1,Z4|| = W1
         alpha = float(np.arcsin(self.W1 / (2 * Rbo)))
 
         Z1 = Rbo * np.exp(-1j * alpha)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Zmid = Rbo + self.H0
 
         else:  # inward slot
@@ -123,7 +125,7 @@ class SlotM19(Slot):
             A list of 3 Segments
 
         """
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -158,13 +160,15 @@ class SlotM19(Slot):
         pass
 
     # Inlined from Methods.Slot.SlotM19.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotM19
             A SlotM19 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -173,7 +177,7 @@ class SlotM19(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         return float(2 * np.arcsin(self.W1 / (2 * Rbo)))
 
@@ -196,7 +200,7 @@ class SlotM19(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Zmid = point_dict["Zmid"]
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
@@ -228,7 +232,7 @@ class SlotM19(Slot):
             Height of the active area [m]
 
         """
-        return self.comp_height()
+        return self.comp_height(lam=lam)
 
     # Inlined from Methods.Slot.SlotM19.comp_surface
     def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
@@ -250,12 +254,12 @@ class SlotM19(Slot):
         """
 
         Rbo = self.get_Rbo(lam=lam)
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
 
         # The bottom is an arc
-        alpha = self.comp_angle_opening()
+        alpha = self.comp_angle_opening(lam=lam)
         Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         S1 = abs(Z1.real - Z2.real) * (self.W1 + self.W0) / 2
@@ -313,7 +317,7 @@ class SlotM19(Slot):
         # get the name of the lamination
         st = self.get_name_lam(lam=lam)
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Zmid = point_dict["Zmid"]
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
@@ -442,7 +446,7 @@ class SlotM19(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             if self.is_outwards(lam=lam):
                 sign = +1
             else:
@@ -539,18 +543,19 @@ class SlotM19(Slot):
                 )
 
             if type_add_active == 1:
-                self.plot_active(fig=fig, ax=ax, is_show_fig=False)
+                self.plot_active(fig=fig, ax=ax, is_show_fig=False, lam=lam)
             elif type_add_active == 2:
                 self.plot_active(
                     fig=fig,
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning
             W = self.W0 / 2 * 1.4
-            Rint, Rext = self.comp_radius()
+            Rint, Rext = self.comp_radius(lam=lam)
 
             ax.axis("equal")
             ax.set_xlim(Rint, Rext)

@@ -27,7 +27,7 @@ def comp_width_opening(self, is_curved: bool = False, lam: Lamination | None = N
 
     if is_curved:
         R = self.get_Rbo(lam=lam)
-        alpha = self.comp_angle_opening()
+        alpha = self.comp_angle_opening(lam=lam)
         Zs = lam.get_Zs()
         return 2 * np.pi * R / Zs - alpha * R
     else:

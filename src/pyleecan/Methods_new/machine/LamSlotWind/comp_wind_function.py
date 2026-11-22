@@ -38,8 +38,8 @@ def comp_wind_function(self, angle: np.ndarray | None = None, Na: int = 2048, al
     Zs = self.slot.Zs  # Number of slot
     Zs0 = int(Zs / per_a)
 
-    slot_angle = self.slot.comp_angle_active_eq()
-    slot_opening = self.slot.comp_angle_opening()
+    slot_angle = self.slot.comp_angle_active_eq(lam=self)
+    slot_opening = self.slot.comp_angle_opening(lam=self)
 
     wind_mat = self.winding.get_connection_mat(Zs)
     # sum wind_mat along Nlay_rad axis

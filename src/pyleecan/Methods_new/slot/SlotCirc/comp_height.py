@@ -22,4 +22,4 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         Height of the slot [m]
     """
 
-    return self.comp_height_active()
+    return self.comp_height_active(lam=lam)

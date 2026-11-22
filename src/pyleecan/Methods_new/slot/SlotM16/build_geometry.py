@@ -25,7 +25,7 @@ def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
 
     """
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
 
     # Creation of curve
     curve_list = list()

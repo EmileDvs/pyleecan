@@ -22,14 +22,14 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
         Slot inner surface for winding [m**2]
     """
 
-    R0 = self._comp_R0()
+    R0 = self._comp_R0(lam=lam)
     alpha = float(2 * np.arcsin(self.W0 / (2 * R0)))
     # Area of the full circle
     S1 = np.pi * (R0**2)
     # Area of the top Arc
     S2 = (R0**2.0) / 2.0 * (alpha - np.sin(alpha))
     # Arc of the bore
-    alpha_op = self.comp_angle_opening()
+    alpha_op = self.comp_angle_opening(lam=lam)
     S3 = (self.get_Rbo(lam=lam) ** 2.0) / 2.0 * (alpha_op - np.sin(alpha_op))
 
     if self.H0 < self.W0 / 2:

@@ -28,7 +28,7 @@ def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
     if self.is_H0_bore:
         return self.H0
     else:
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         ZM = point_dict["ZM"]
         Rbo = self.get_Rbo(lam=lam)
         return abs(Rbo - abs(ZM))

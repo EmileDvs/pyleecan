@@ -24,13 +24,13 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
 
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # Wint is the with at the top of the opening
-    alpha0 = self.comp_angle_opening()
-    alpha1 = self.comp_angle_bottom()
+    alpha0 = self.comp_angle_opening(lam=lam)
+    alpha1 = self.comp_angle_bottom(lam=lam)
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         R1 = Rbo + self.H0
     else:
         R1 = Rbo - self.H0

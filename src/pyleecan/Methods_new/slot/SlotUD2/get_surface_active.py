@@ -30,7 +30,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     surf_wind: Surface
         Surface corresponding to the Winding Area
     """
-    st = self.get_name_lam()
+    st = self.get_name_lam(lam=lam)
     surface = self.active_surf.copy()
 
     surface.label = "Wind_" + st + "_R0_T0_S0"

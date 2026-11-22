@@ -1624,11 +1624,16 @@ Same signature rule as Step 11 (optional container argument, fallback through
         Checks: `Tests/New` Classes / Methods / Plot / Functions /
         Simulation / GUI, 5391 passed with each backend, the known failures
         only (`test_save_OPM_retro`, `test_load_opti`, `test_post_var_simu`).
-  - [ ] The helpers without the container argument that call the container
-        methods on `self` (slot `_comp_point_coordinate`, `_comp_line_dict`,
-        `comp_surface_opening`, `comp_angle_opening`, `comp_radius`,
-        `get_H1`, ...: 23 methods in 137 modules, fixed point of the calls):
-        a pass-through `lam` argument, the Step 11 pass run as a tool.
+  - [x] (2026-11-22) The helpers without the container argument that call
+        the container methods on `self` (slot `_comp_point_coordinate`,
+        `_comp_line_dict`, `comp_surface_opening`, `comp_angle_opening`,
+        `comp_radius`, `get_H1`, ...: 23 methods in 137 modules, fixed point
+        of the calls) get a pass-through `lam` argument (no read of their
+        own): the Step 11 pass (`add_container_arguments`, then
+        `add_type_hints`) run as a tool with one spec, the Slot family and
+        every method of it taking `lam`; the laminations pass `lam=self`
+        (401 modules). Fallback warnings of the `Tests/New` run: about 81000
+        -> 7400, none left at a test or GUI call.
   - [ ] The machine down to the slot geometry: the slot labels read
         `lam.get_label()`, which needs the machine (the index of the
         lamination): `build_geometry`, `build_geometry_active`,

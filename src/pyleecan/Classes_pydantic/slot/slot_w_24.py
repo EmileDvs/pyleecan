@@ -64,7 +64,7 @@ class SlotW24(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW24._comp_line_dict
-    def _comp_line_dict(self) -> dict:
+    def _comp_line_dict(self, lam: Lamination | Notch | None = None) -> dict:
         """Define a dictionnary of the lines to draw the slot
         If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
 
@@ -72,6 +72,8 @@ class SlotW24(Slot):
         ----------
         self : SlotW24
             A SlotW24 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -79,7 +81,7 @@ class SlotW24(Slot):
             Dictionnary of the slot lines (key: line name, value: line object)
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -94,31 +96,33 @@ class SlotW24(Slot):
 
         # Closing Arc (Rbo)
         line_dict["4-1"] = Arc1(
-            begin=Z4, end=Z1, radius=-self.get_Rbo(), is_trigo_direction=False
+            begin=Z4, end=Z1, radius=-self.get_Rbo(lam=lam), is_trigo_direction=False
         )
 
         # Closing Active part
         line_dict["1-4"] = Arc1(
-            begin=Z1, end=Z4, radius=self.get_Rbo(), is_trigo_direction=True
+            begin=Z1, end=Z4, radius=self.get_Rbo(lam=lam), is_trigo_direction=True
         )
 
         return line_dict
 
     # Inlined from Methods.Slot.SlotW24._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotW24
             A SlotW24 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         point_dict: dict
             A dict of the slot point coordinates
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # alpha_0 is the angle to have a W3 tooth width on the bore
         alpha_0 = float(np.arcsin(self.W3 / (2 * Rbo)))
@@ -127,7 +131,7 @@ class SlotW24(Slot):
         Z0 = Rbo * np.exp(1j * 0)
         Z1t = Z0 * np.exp(1j * alpha_0)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Z2t = Z1t + self.H2
         else:  # inward slot
             Z2t = Z1t - self.H2
@@ -161,7 +165,7 @@ class SlotW24(Slot):
 
         """
 
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
 
         curve_list = [
             line_dict["1-2"],
@@ -207,7 +211,7 @@ class SlotW24(Slot):
         # get the name of the lamination
         lam_label = lam.get_label()
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -317,13 +321,15 @@ class SlotW24(Slot):
             raise S24_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
 
     # Inlined from Methods.Slot.SlotW24.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotW24
             A SlotW24 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -332,7 +338,7 @@ class SlotW24(Slot):
 
         """
 
-        alpha = float(np.arcsin(self.W3 / (2 * self.get_Rbo())))
+        alpha = float(np.arcsin(self.W3 / (2 * self.get_Rbo(lam=lam))))
         return 2 * np.pi / self.Zs - 2 * alpha
 
     # Inlined from Methods.Slot.SlotW24.comp_height
@@ -354,7 +360,7 @@ class SlotW24(Slot):
 
         """
 
-        return self.comp_height_active()
+        return self.comp_height_active(lam=lam)
 
     # Inlined from Methods.Slot.SlotW24.comp_height_active
     def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
@@ -374,7 +380,7 @@ class SlotW24(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Rbo = self.get_Rbo(lam=lam)
         return abs(Rbo - abs(point_dict["Z2"]))
 
@@ -418,7 +424,7 @@ class SlotW24(Slot):
         """
 
         Rbo = self.get_Rbo(lam=lam)
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         if self.is_outwards(lam=lam):
             Rint = Rbo
@@ -445,7 +451,7 @@ class SlotW24(Slot):
             return Sring - (St + Sarc_yoke - Sarc_bore)
 
     # Inlined from Methods.Slot.SlotW24.comp_surface_opening
-    def comp_surface_opening(self) -> float:
+    def comp_surface_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot opening surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -453,6 +459,8 @@ class SlotW24(Slot):
         ----------
         self : SlotW24
             A SlotW24 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -491,7 +499,7 @@ class SlotW24(Slot):
         lam = container_or_parent(self, lam, "lam")
 
         # Create curve list
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
         curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-3"],
@@ -634,7 +642,7 @@ class SlotW24(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             if self.is_outwards(lam=lam):
                 sign = 1
             else:
@@ -741,7 +749,11 @@ class SlotW24(Slot):
             if type_add_active in [1, 3]:  # Wind and Wedge
                 is_add_wedge = type_add_active == 3
                 self.plot_active(
-                    fig=fig, ax=ax, is_show_fig=False, is_add_wedge=is_add_wedge
+                    fig=fig,
+                    ax=ax,
+                    is_show_fig=False,
+                    is_add_wedge=is_add_wedge,
+                    lam=lam,
                 )
             elif type_add_active == 2:  # Magnet
                 self.plot_active(
@@ -749,6 +761,7 @@ class SlotW24(Slot):
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning

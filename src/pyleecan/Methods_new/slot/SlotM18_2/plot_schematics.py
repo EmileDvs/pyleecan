@@ -102,12 +102,12 @@ def plot_schematics(
         fig, ax = lam.plot(
             alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
-        point_dict = self._comp_point_coordinate()
-        if self.is_outwards():
+        point_dict = self._comp_point_coordinate(lam=lam)
+        if self.is_outwards(lam=lam):
             sign = +1
         else:
             sign = -1
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # Adding point label
         if is_add_point_label:
@@ -160,15 +160,15 @@ def plot_schematics(
                 )
 
         if type_add_active == 1:
-            self.plot_active(fig=fig, ax=ax, is_show_fig=False)
+            self.plot_active(fig=fig, ax=ax, is_show_fig=False, lam=lam)
         elif type_add_active == 2:
             self.plot_active(
-                fig=fig, ax=ax, is_show_fig=False, enforced_default_color=MAGNET_COLOR
+                fig=fig, ax=ax, is_show_fig=False, enforced_default_color=MAGNET_COLOR, lam=lam
             )
 
         # Zooming and cleaning
         W = point_dict["ZM3"].imag * 3
-        Rint, Rext = self.comp_radius()
+        Rint, Rext = self.comp_radius(lam=lam)
 
         ax.axis("equal")
         ax.set_xlim(Rint, Rext)

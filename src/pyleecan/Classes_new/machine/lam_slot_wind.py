@@ -461,7 +461,7 @@ class LamSlotWind(LamSlot):
                 self.slot.wedge_mat.struct.rho
                 * Lf
                 * self.get_Zs()
-                * self.slot.comp_surface_wedges()
+                * self.slot.comp_surface_wedges(lam=self)
             )
 
         M_dict["Mtot"] += Mwind + M_dict["Mwedge"]
@@ -826,7 +826,7 @@ class LamSlotWind(LamSlot):
 
         if self.slot is not None:
             S_dict["Swind"] = self.get_Zs() * self.slot.comp_surface_active(lam=self)
-            S_dict["Swedge"] = self.get_Zs() * self.slot.comp_surface_wedges()
+            S_dict["Swedge"] = self.get_Zs() * self.slot.comp_surface_wedges(lam=self)
         else:
             S_dict["Swind"] = 0
             S_dict["Swedge"] = 0
@@ -858,7 +858,9 @@ class LamSlotWind(LamSlot):
             V_dict["Vwind"] = (
                 Lf * self.get_Zs() * self.slot.comp_surface_active(lam=self)
             )
-            V_dict["Vwedge"] = Lf * self.get_Zs() * self.slot.comp_surface_wedges()
+            V_dict["Vwedge"] = (
+                Lf * self.get_Zs() * self.slot.comp_surface_wedges(lam=self)
+            )
         return V_dict
 
     # Inlined from Methods.Machine.LamSlotWind.comp_wind_function
@@ -904,8 +906,8 @@ class LamSlotWind(LamSlot):
         Zs = self.slot.Zs  # Number of slot
         Zs0 = int(Zs / per_a)
 
-        slot_angle = self.slot.comp_angle_active_eq()
-        slot_opening = self.slot.comp_angle_opening()
+        slot_angle = self.slot.comp_angle_active_eq(lam=self)
+        slot_opening = self.slot.comp_angle_opening(lam=self)
 
         wind_mat = self.winding.get_connection_mat(Zs)
         # sum wind_mat along Nlay_rad axis
@@ -965,8 +967,8 @@ class LamSlotWind(LamSlot):
         # Compute the polar dimension of the slot
         Hwind = self.slot.comp_height_active(lam=self)
         Histhmus = self.slot.comp_height(lam=self) - Hwind
-        Wwind = self.slot.comp_angle_active_eq()
-        Wisthmus = self.slot.comp_angle_opening()
+        Wwind = self.slot.comp_angle_active_eq(lam=self)
+        Wisthmus = self.slot.comp_angle_opening(lam=self)
 
         polar_eq.slot = SlotW22(
             Zs=self.slot.Zs, H0=Histhmus, W0=Wisthmus, H2=Hwind, W2=Wwind

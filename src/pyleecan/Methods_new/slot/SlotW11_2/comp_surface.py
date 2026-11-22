@@ -22,4 +22,4 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
         Slot total surface [m**2]
 
     """
-    return self.comp_surface_active(lam=lam) + self.comp_surface_opening()
+    return self.comp_surface_active(lam=lam) + self.comp_surface_opening(lam=lam)

@@ -1,13 +1,20 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : SlotM11
         A SlotM11 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -15,11 +22,11 @@ def _comp_point_coordinate(self) -> dict:
         A dict of the slot coordinates
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     Z1 = Rbo * np.exp(-1j * self.W0 / 2)
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Z2 = (Rbo + self.H0) * np.exp(-1j * self.W0 / 2)
         ZM1 = (Rbo + self.H0) * np.exp(-1j * self.W1 / 2)
         ZM2 = (Rbo + self.H0 - self.H1) * np.exp(-1j * self.W1 / 2)

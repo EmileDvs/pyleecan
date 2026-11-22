@@ -72,13 +72,15 @@ class SlotDC(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotDC._comp_point_coordinate
-    def _comp_point_coordinate(self) -> list:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotDC
             A SlotDC object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -87,7 +89,7 @@ class SlotDC(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # alpha is the angle to rotate Z0 so ||Z1,Z12|| = W1
         # alpha = self.comp_angle_opening()
@@ -96,7 +98,7 @@ class SlotDC(Slot):
         # Compute all points coordinates
         Z0 = Rbo * np.exp(1j * 0)
         Z1 = Rbo * np.exp(-1j * alpha / 2)
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             sign = +1
         else:
             sign = -1
@@ -170,7 +172,7 @@ class SlotDC(Slot):
             _,
             _,
             _,
-        ] = self._comp_point_coordinate()
+        ] = self._comp_point_coordinate(lam=lam)
 
         # Adapt the lines according to the lamination
         if self.is_outwards(lam=lam):
@@ -235,13 +237,15 @@ class SlotDC(Slot):
             raise SlotCheckError("Slot 17 must have D1/2 + D2/2 < H2")
 
     # Inlined from Methods.Slot.SlotDC.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotDC
             A SlotDC object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -250,7 +254,7 @@ class SlotDC(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         return float(2 * np.arcsin(self.W1 / (2 * Rbo)))
 
@@ -277,7 +281,7 @@ class SlotDC(Slot):
 
         # Computation of the arc height
         Rbo = self.get_Rbo(lam=lam)
-        alpha = self.comp_angle_opening() / 2
+        alpha = self.comp_angle_opening(lam=lam) / 2
         Harc = float(Rbo * (1 - np.cos(alpha)))
 
         if self.is_outwards(lam=lam):
@@ -345,7 +349,7 @@ class SlotDC(Slot):
             _,
             _,
             _,
-        ] = self._comp_point_coordinate()
+        ] = self._comp_point_coordinate(lam=lam)
 
         Rbo = self.get_Rbo(lam=lam)
 
@@ -353,7 +357,7 @@ class SlotDC(Slot):
         # Rectangle Z12,Z11,Z2,Z1
         S6 = self.W1 * abs(Z12.real - Z11.real)
         # Top arc of the slot (on bore radius)
-        alpha = self.comp_angle_opening()
+        alpha = self.comp_angle_opening(lam=lam)
         Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         if self.is_outwards(lam=lam):
@@ -395,7 +399,7 @@ class SlotDC(Slot):
             _,
             _,
             _,
-        ] = self._comp_point_coordinate()
+        ] = self._comp_point_coordinate(lam=lam)
 
         # Half circle R3
         S1 = self.R3**2 * np.pi / 2

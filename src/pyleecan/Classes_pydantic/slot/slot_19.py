@@ -50,13 +50,15 @@ class Slot19(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.Slot19._comp_point_coordinate
-    def _comp_point_coordinate(self) -> list:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> list:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : Slot19
             A Slot19 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -64,17 +66,17 @@ class Slot19(Slot):
             A list of Points
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # alpha is the angle to rotate Z0 so ||Z1,Z8|| = W0
-        alpha0 = self.comp_angle_opening() / 2
-        alpha1 = self.comp_angle_bottom() / 2
+        alpha0 = self.comp_angle_opening(lam=lam) / 2
+        alpha1 = self.comp_angle_bottom(lam=lam) / 2
 
         # comp point coordinate (in complex)
         Z_ = Rbo * np.exp(1j * 0)
         Z0 = Z_ * np.exp(1j * alpha0)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Z1 = (Rbo + self.H0) * np.exp(1j * alpha1)
         else:  # inward slot
             Z1 = (Rbo - self.H0) * np.exp(1j * alpha1)
@@ -105,7 +107,7 @@ class Slot19(Slot):
 
         """
 
-        [Z1, Z2, Z3, Z4] = self._comp_point_coordinate()
+        [Z1, Z2, Z3, Z4] = self._comp_point_coordinate(lam=lam)
 
         # Creation of curve
         curve_list = []
@@ -143,13 +145,15 @@ class Slot19(Slot):
             raise S19_W1CheckError("W1 must be larger than zero")
 
     # Inlined from Methods.Slot.Slot19.comp_angle_bottom
-    def comp_angle_bottom(self) -> float:
+    def comp_angle_bottom(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the slot bottom angle of the Slot
 
         Parameters
         ----------
         self : Slot19
             A Slot19 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -158,12 +162,12 @@ class Slot19(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         if self.Wx_is_rad:
             return self.W1
         else:
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 alpha = 2 * float(np.arcsin(self.W1 / (2 * Rbo + 2 * self.H0)))
             else:  # inward slot
                 alpha = 2 * float(np.arcsin(self.W1 / (2 * Rbo - 2 * self.H0)))
@@ -171,13 +175,15 @@ class Slot19(Slot):
         return alpha
 
     # Inlined from Methods.Slot.Slot19.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the slot opening angle of the Slot
 
         Parameters
         ----------
         self : Slot19
             A Slot19 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -186,7 +192,7 @@ class Slot19(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         if self.Wx_is_rad:
             return self.W0
@@ -233,13 +239,13 @@ class Slot19(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # Wint is the with at the top of the opening
-        alpha0 = self.comp_angle_opening()
-        alpha1 = self.comp_angle_bottom()
+        alpha0 = self.comp_angle_opening(lam=lam)
+        alpha1 = self.comp_angle_bottom(lam=lam)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             R1 = Rbo + self.H0
         else:
             R1 = Rbo - self.H0

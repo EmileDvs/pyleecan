@@ -24,4 +24,4 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
     """
     # comp_surface_active is an numerical computation (defined in Slot class)
     # comp_surface_opening is an analytical computation
-    return self.comp_surface_active(lam=lam) + self.comp_surface_opening()
+    return self.comp_surface_active(lam=lam) + self.comp_surface_opening(lam=lam)

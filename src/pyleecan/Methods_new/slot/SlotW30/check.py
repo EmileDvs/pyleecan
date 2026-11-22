@@ -60,7 +60,7 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
 
     self.R1 = 0
     self.R2 = 0
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     self.R1 = R1
     self.R2 = R2
 

@@ -32,7 +32,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     lam = container_or_parent(self, lam, "lam")
 
     # Create curve list
-    line_dict = self._comp_line_dict()
+    line_dict = self._comp_line_dict(lam=lam)
     curve_list: list[Line] = [
         line_dict["4-5"],
         line_dict["5-6"],
@@ -48,7 +48,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
         curve.prop_dict.update({DRAW_PROP_LAB: False})
 
     # Create surface
-    H1 = self.get_H1()
+    H1 = self.get_H1(lam=lam)
     if self.is_outwards(lam=lam):
         Zmid = self.get_Rbo(lam=lam) + self.H0 + H1 + self.H2 / 2
     else:

@@ -45,7 +45,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
         surf_list = [self.get_surface_active(lam=lam)]
         surf_list[0].label = lam_label + "_" + WIND_LAB + "_R0-T0-S0"
     elif Nrad == 2 and Ntan == 1:
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         ZM1 = point_dict["ZM1"]
         ZM2 = point_dict["ZM2"]
         ZM3 = point_dict["ZM3"]

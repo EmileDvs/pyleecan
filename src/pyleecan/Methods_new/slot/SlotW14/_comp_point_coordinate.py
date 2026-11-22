@@ -1,29 +1,36 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : SlotW14
         A SlotW14 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
     point_dict: dict
         A dict of the slot point coordinates
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
     hssp = np.pi / self.Zs
 
     # alpha is the angle to rotate P0 so ||P1,P9|| = W0
     alpha = np.arcsin(self.W0 / (2 * Rbo))
     Harc = float(Rbo * (1 - np.cos(alpha)))
-    H1 = self.get_H1()
+    H1 = self.get_H1(lam=lam)
 
     Z1 = Rbo * np.exp(-1j * alpha)
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         R1 = Rbo - Harc + self.H0 + H1
         Z2 = Z1 + self.H0
     else:
@@ -37,7 +44,7 @@ def _comp_point_coordinate(self) -> dict:
 
     # Z3t is Z3 in tooth ref
     Z3t = Z3 * np.exp(1j * hssp)
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Z4t = Z3t + self.H3
     else:
         Z4t = Z3t - self.H3

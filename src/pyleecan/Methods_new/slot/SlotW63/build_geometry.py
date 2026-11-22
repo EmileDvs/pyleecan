@@ -24,7 +24,7 @@ def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
 
     """
 
-    line_dict = self._comp_line_dict()
+    line_dict = self._comp_line_dict(lam=lam)
 
     if self.H2 != 0:
         # Creation of curve

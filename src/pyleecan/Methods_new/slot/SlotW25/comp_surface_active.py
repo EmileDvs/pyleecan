@@ -23,7 +23,7 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
 
     """
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z2 = point_dict["Z2"]
     Z4 = point_dict["Z4"]
 

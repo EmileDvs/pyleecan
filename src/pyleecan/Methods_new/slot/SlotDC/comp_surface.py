@@ -40,7 +40,7 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
         _,
         _,
         _,
-    ] = self._comp_point_coordinate()
+    ] = self._comp_point_coordinate(lam=lam)
 
     Rbo = self.get_Rbo(lam=lam)
 
@@ -48,7 +48,7 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
     # Rectangle Z12,Z11,Z2,Z1
     S6 = self.W1 * abs(Z12.real - Z11.real)
     # Top arc of the slot (on bore radius)
-    alpha = self.comp_angle_opening()
+    alpha = self.comp_angle_opening(lam=lam)
     Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
     if self.is_outwards(lam=lam):

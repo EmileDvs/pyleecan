@@ -512,8 +512,8 @@ class LamSlotMagNS(LamSlotM):
             return []
 
         slot_list = []
-        opN = self.slot.comp_angle_opening()
-        opS = self.slot_south.comp_angle_opening()
+        opN = self.slot.comp_angle_opening(lam=self)
+        opS = self.slot_south.comp_angle_opening(lam=self)
         Zs = self.slot.Zs
 
         for ii in range(Zs // sym):

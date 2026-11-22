@@ -23,7 +23,7 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
 
     """
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     ZM1 = point_dict["ZM1"]
     ZM2 = point_dict["ZM2"]
     alpha = 2 * float(np.arcsin(self.W1 / (2 * self.Rtopm)))

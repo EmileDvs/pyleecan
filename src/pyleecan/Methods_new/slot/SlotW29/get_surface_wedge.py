@@ -35,7 +35,7 @@ def get_surface_wedge(self, alpha: float = 0, delta: complex = 0, lam: Laminatio
         return []
 
     # Create curve list
-    line_dict = self._comp_line_dict()
+    line_dict = self._comp_line_dict(lam=lam)
     curve_list: list[Line] = [
         line_dict["2-3"],
         line_dict["3-4"],

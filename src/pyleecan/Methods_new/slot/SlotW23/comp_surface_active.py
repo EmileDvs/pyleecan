@@ -24,7 +24,7 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
     """
     if self.is_cstt_tooth and (self.W1 is None or self.W2 is None):
         # Compute W1 and W2 to match W3 tooth constraint
-        self._comp_W()
+        self._comp_W(lam=lam)
 
     Rbo = self.get_Rbo(lam=lam)
 

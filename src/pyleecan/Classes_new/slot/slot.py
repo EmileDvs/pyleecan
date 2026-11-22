@@ -200,7 +200,11 @@ class Slot(LegacyClass):
 
     # Inlined from Methods.Slot.Slot.build_geometry_half_tooth
     def build_geometry_half_tooth(
-        self, is_top: bool = False, alpha: float = 0, delta: complex = 0
+        self,
+        is_top: bool = False,
+        alpha: float = 0,
+        delta: complex = 0,
+        lam: Lamination | Notch | None = None,
     ) -> list:
         """Build the geometry of a Half Tooth
 
@@ -214,6 +218,8 @@ class Slot(LegacyClass):
             Angle for rotation [rad]
         delta : complex
             Complex value for translation
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -224,9 +230,9 @@ class Slot(LegacyClass):
 
         # getting Number of Slot
         Zs = self.Zs
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
-        slot_list = self.build_geometry()
+        slot_list = self.build_geometry(lam=lam)
         top_list = []
         bot_list = []
 
@@ -310,7 +316,7 @@ class Slot(LegacyClass):
         pass
 
     # Inlined from Methods.Slot.Slot.comp_angle_active_eq
-    def comp_angle_active_eq(self) -> float:
+    def comp_angle_active_eq(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the equivalent angle of the active part of the slot
         (Ideal polar shape with the same surface and height)
 
@@ -318,6 +324,8 @@ class Slot(LegacyClass):
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -326,22 +334,24 @@ class Slot(LegacyClass):
 
         """
 
-        Swind = self.comp_surface_active()
-        Hwind = self.comp_height_active()
-        Rmw = self.comp_radius_mid_active()
+        Swind = self.comp_surface_active(lam=lam)
+        Hwind = self.comp_height_active(lam=lam)
+        Rmw = self.comp_radius_mid_active(lam=lam)
         Rext = Rmw + Hwind / 2
         Rint = Rmw - Hwind / 2
 
         return Swind * 2 * np.pi / (np.pi * Rext**2 - np.pi * Rint**2)
 
     # Inlined from Methods.Slot.Slot.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -350,7 +360,7 @@ class Slot(LegacyClass):
 
         """
 
-        line_list = self.build_geometry()
+        line_list = self.build_geometry(lam=lam)
         Z1 = line_list[0].get_begin()
         Z2 = line_list[-1].get_end()
 
@@ -381,7 +391,7 @@ class Slot(LegacyClass):
 
         Rbo = self.get_Rbo(lam=lam)
 
-        surf = self.get_surface()
+        surf = self.get_surface(lam=lam)
 
         point_list = surf.discretize(Ndisc)
         point_list = np.array(point_list)
@@ -420,7 +430,9 @@ class Slot(LegacyClass):
         return max(point_list) - min(point_list)
 
     # Inlined from Methods.Slot.Slot.comp_height_opening
-    def comp_height_opening(self, Ndisc: int = 200) -> float:
+    def comp_height_opening(
+        self, Ndisc: int = 200, lam: Lamination | Notch | None = None
+    ) -> float:
         """Compute the height of the opening area (Hslot - Hactive)
 
         Parameters
@@ -429,6 +441,8 @@ class Slot(LegacyClass):
             A Slot object
         Ndisc : int
             Number of point to discretize the lines
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -437,16 +451,20 @@ class Slot(LegacyClass):
 
         """
 
-        return self.comp_height(Ndisc=Ndisc) - self.comp_height_active(Ndisc=Ndisc)
+        return self.comp_height(Ndisc=Ndisc, lam=lam) - self.comp_height_active(
+            Ndisc=Ndisc, lam=lam
+        )
 
     # Inlined from Methods.Slot.Slot.comp_radius
-    def comp_radius(self):
+    def comp_radius(self, lam: Lamination | Notch | None = None):
         """Compute the radius of the min and max circle that contains the slot
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -455,30 +473,32 @@ class Slot(LegacyClass):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
-        H = self.comp_height()
-        Hmag = self.comp_height_active()
+        H = self.comp_height(lam=lam)
+        Hmag = self.comp_height_active(lam=lam)
 
         if H < Hmag:
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 return (Rbo - Hmag + H, Rbo + H)
             else:
                 return (Rbo - H, Rbo + Hmag - H)
         else:
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 return (Rbo, Rbo + H)
             else:
                 return (Rbo - H, Rbo)
 
     # Inlined from Methods.Slot.Slot.comp_radius_mid_active
-    def comp_radius_mid_active(self) -> float:
+    def comp_radius_mid_active(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the radius at the middle of the active part of the slot
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -487,10 +507,10 @@ class Slot(LegacyClass):
 
         """
 
-        Rbo = self.get_Rbo()
-        Hslot = self.comp_height()
-        Hwind = self.comp_height_active()
-        if self.is_outwards():
+        Rbo = self.get_Rbo(lam=lam)
+        Hslot = self.comp_height(lam=lam)
+        Hwind = self.comp_height_active(lam=lam)
+        if self.is_outwards(lam=lam):
             return Rbo + Hslot - Hwind / 2
         else:
             return Rbo - Hslot + Hwind / 2
@@ -517,7 +537,7 @@ class Slot(LegacyClass):
             Slot total surface [m**2]
         """
 
-        surf = self.get_surface()
+        surf = self.get_surface(lam=lam)
         return surf.comp_surface(Ndisc=Ndisc)
 
     # Inlined from Methods.Slot.Slot.comp_surface_active
@@ -548,7 +568,9 @@ class Slot(LegacyClass):
         return surf.comp_surface(Ndisc=Ndisc)
 
     # Inlined from Methods.Slot.Slot.comp_surface_opening
-    def comp_surface_opening(self, Ndisc: int = 200) -> float:
+    def comp_surface_opening(
+        self, Ndisc: int = 200, lam: Lamination | Notch | None = None
+    ) -> float:
         """Compute the Slot opening surface (by numerical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -558,6 +580,8 @@ class Slot(LegacyClass):
             A Slot object
         Ndisc : int
             Number of point to discretize the lines
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -566,7 +590,7 @@ class Slot(LegacyClass):
 
         """
 
-        surf_list = self.get_surface_opening()
+        surf_list = self.get_surface_opening(lam=lam)
 
         S = 0
         for surf in surf_list:
@@ -574,7 +598,9 @@ class Slot(LegacyClass):
         return S
 
     # Inlined from Methods.Slot.Slot.comp_surface_wedges
-    def comp_surface_wedges(self, Ndisc: int = 200) -> float:
+    def comp_surface_wedges(
+        self, Ndisc: int = 200, lam: Lamination | Notch | None = None
+    ) -> float:
         """Compute the Slot wedges surface (by numerical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -584,6 +610,8 @@ class Slot(LegacyClass):
             A Slot object
         Ndisc : int
             Number of point to discretize the lines
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -592,7 +620,7 @@ class Slot(LegacyClass):
 
         """
 
-        surf_list = self.get_surface_wedges()
+        surf_list = self.get_surface_wedges(lam=lam)
 
         S = 0
         for surf in surf_list:
@@ -600,13 +628,15 @@ class Slot(LegacyClass):
         return S
 
     # Inlined from Methods.Slot.Slot.comp_width
-    def comp_width(self) -> float:
+    def comp_width(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average width of the Slot by dividing its surface by its height
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -614,9 +644,9 @@ class Slot(LegacyClass):
             Average width of the slot [m]
         """
 
-        S = self.comp_surface()
+        S = self.comp_surface(lam=lam)
 
-        H = self.comp_height()
+        H = self.comp_height(lam=lam)
 
         return S / H
 
@@ -644,7 +674,7 @@ class Slot(LegacyClass):
 
         if is_curved:
             R = self.get_Rbo(lam=lam)
-            alpha = self.comp_angle_opening()
+            alpha = self.comp_angle_opening(lam=lam)
             Zs = lam.get_Zs()
             return 2 * np.pi * R / Zs - alpha * R
         else:
@@ -654,13 +684,15 @@ class Slot(LegacyClass):
             return abs(Z2 - Z1)
 
     # Inlined from Methods.Slot.Slot.convert_to_SlotUD2
-    def convert_to_SlotUD2(self) -> SlotUD2:
+    def convert_to_SlotUD2(self, lam: Lamination | Notch | None = None) -> SlotUD2:
         """Convert the slot to the equivalent SlotUD2
 
         Parameters
         ----------
         self : Slot
             a Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -672,8 +704,8 @@ class Slot(LegacyClass):
 
         new_slot = SlotUD2()
         new_slot.Zs = self.Zs
-        new_slot.line_list = self.build_geometry()
-        new_slot.active_surf = self.get_surface_active()
+        new_slot.line_list = self.build_geometry(lam=lam)
+        new_slot.active_surf = self.get_surface_active(lam=lam)
         new_slot.split_active_surf_dict = None
 
         return new_slot
@@ -754,13 +786,15 @@ class Slot(LegacyClass):
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
     # Inlined from Methods.Slot.Slot.get_surface
-    def get_surface(self) -> SurfLine:
+    def get_surface(self, lam: Lamination | Notch | None = None) -> SurfLine:
         """Returns the surface delimiting the slot
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -768,8 +802,8 @@ class Slot(LegacyClass):
             A SurfLine object representing the slot
 
         """
-        Rbo = self.get_Rbo()
-        curve_list = self.build_geometry()
+        Rbo = self.get_Rbo(lam=lam)
+        curve_list = self.build_geometry(lam=lam)
 
         # Remove line overlapping with bore/yoke lines (for FEMM)
         for line in curve_list:
@@ -814,8 +848,8 @@ class Slot(LegacyClass):
 
         curve_list: list[Line] = []
         # tooth lines
-        top_list = self.build_geometry_half_tooth(is_top=True)
-        bot_list = self.build_geometry_half_tooth(is_top=False)
+        top_list = self.build_geometry_half_tooth(is_top=True, lam=lam)
+        bot_list = self.build_geometry_half_tooth(is_top=False, lam=lam)
         # Yoke lines
         Z1 = Ryoke * np.exp(1j * np.pi / self.Zs)
         Z2 = Ryoke * np.exp(-1j * np.pi / self.Zs)
@@ -913,13 +947,15 @@ class Slot(LegacyClass):
         return surf_list
 
     # Inlined from Methods.Slot.Slot.is_airgap_active
-    def is_airgap_active(self) -> bool:
+    def is_airgap_active(self, lam: Lamination | Notch | None = None) -> bool:
         """Return True if a part or the full active surface is in the airgap
 
         Parameters
         ----------
         self : Slot
             A Slot object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -982,6 +1018,7 @@ class Slot(LegacyClass):
         fig: Figure | None = None,
         ax: Axes | None = None,
         is_show_fig: bool = True,
+        lam: Lamination | Notch | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot the Slot in a matplotlib fig
 
@@ -992,6 +1029,8 @@ class Slot(LegacyClass):
         fig :
             if None, open a new fig and plot, else add to the current
             one (Default value = None)
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -1000,7 +1039,7 @@ class Slot(LegacyClass):
         ax : Matplotlib.axes.Axes object
             Axis containing the plot
         """
-        surf = self.get_surface()
+        surf = self.get_surface(lam=lam)
 
         # Display the result
         (fig, ax, patch_leg, label_leg) = init_fig(fig, ax)
@@ -1034,6 +1073,7 @@ class Slot(LegacyClass):
         alpha: float = 0,
         delta: complex = 0,
         is_add_wedge: bool = False,
+        lam: Lamination | Notch | None = None,
     ):
         """Plot the active area of the lamination according to the wind_mat
 
@@ -1058,6 +1098,8 @@ class Slot(LegacyClass):
             complex for translation (Default value = 0)
         is_add_wedge : bool
             True to add the wedges surfaces
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -1074,7 +1116,9 @@ class Slot(LegacyClass):
             (Nrad, Ntan, Zs, qs) = wind_mat.shape
         qs_name = gen_name(qs)
 
-        surf_list = self.build_geometry_active(Nrad, Ntan, alpha=alpha, delta=delta)
+        surf_list = self.build_geometry_active(
+            Nrad, Ntan, alpha=alpha, delta=delta, lam=lam
+        )
 
         patches = []
         for ii in range(len(surf_list)):
@@ -1110,7 +1154,7 @@ class Slot(LegacyClass):
             if self.wedge_mat is None:
                 self.wedge_mat = Material()
                 to_clean = True
-            wedge_surf_list = self.get_surface_wedges()
+            wedge_surf_list = self.get_surface_wedges(lam=lam)
             for surf in wedge_surf_list:
                 for ii in range(Zs):
                     surf2 = surf.copy()
@@ -1128,7 +1172,7 @@ class Slot(LegacyClass):
 
         # Axis Setup
         ax.axis("equal")
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         Lim = Rbo * 1.2
         ax.set_xlim(-Lim, Lim)

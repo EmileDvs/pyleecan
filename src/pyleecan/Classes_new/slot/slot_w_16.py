@@ -77,7 +77,7 @@ class SlotW16(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW16._comp_line_dict
-    def _comp_line_dict(self) -> dict:
+    def _comp_line_dict(self, lam: Lamination | Notch | None = None) -> dict:
         """Define a dictionnary of the lines to draw the slot
         If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
 
@@ -85,6 +85,8 @@ class SlotW16(Slot):
         ----------
         self : SlotW16
             A SlotW16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -92,9 +94,9 @@ class SlotW16(Slot):
             Dictionnary of the slot lines (key: line name, value: line object)
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -130,7 +132,7 @@ class SlotW16(Slot):
 
         # Closing Arc (Rbo)
         line_dict["10-1"] = Arc1(
-            begin=Z10, end=Z1, radius=-self.get_Rbo(), is_trigo_direction=False
+            begin=Z10, end=Z1, radius=-self.get_Rbo(lam=lam), is_trigo_direction=False
         )
 
         # Closing Active part
@@ -150,13 +152,15 @@ class SlotW16(Slot):
         return line_dict
 
     # Inlined from Methods.Slot.SlotW16._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotW16
             A SlotW16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -164,11 +168,11 @@ class SlotW16(Slot):
             A dict of the slot point coordinates
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         hsp = np.pi / self.Zs  # Half slot pitch
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             raise S16OutterError("Slot Type 16 can't be used on outer lamination")
 
         # ZXt => Complex coordinate in the tooth ref
@@ -244,7 +248,7 @@ class SlotW16(Slot):
 
         """
 
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
 
         curve_list = [
             line_dict["1-2"],
@@ -293,13 +297,15 @@ class SlotW16(Slot):
             )
 
     # Inlined from Methods.Slot.SlotW16.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotW16
             A SlotW16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -369,10 +375,10 @@ class SlotW16(Slot):
             Slot total surface [m**2]
 
         """
-        return self.comp_surface_active(lam=lam) + self.comp_surface_opening()
+        return self.comp_surface_active(lam=lam) + self.comp_surface_opening(lam=lam)
 
     # Inlined from Methods.Slot.SlotW16.comp_surface_opening
-    def comp_surface_opening(self) -> float:
+    def comp_surface_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot opening surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -380,6 +386,8 @@ class SlotW16(Slot):
         ----------
         self : SlotW16
             A SlotW16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -387,7 +395,7 @@ class SlotW16(Slot):
             Slot total surface [m**2]
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         S0 = (np.pi * Rbo**2 - np.pi * (Rbo - self.H0) ** 2) * self.W0 / (2 * np.pi)
 
@@ -421,7 +429,7 @@ class SlotW16(Slot):
         lam = container_or_parent(self, lam, "lam")
 
         # Create curve list
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
         curve_list: list[Line] = [
             line_dict["2-3"],
             line_dict["3-4"],
@@ -483,7 +491,7 @@ class SlotW16(Slot):
             return []
 
         # Create curve list
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
         curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-9"],
@@ -599,7 +607,7 @@ class SlotW16(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             if self.is_outwards(lam=lam):
                 sign = 1
             else:
@@ -793,7 +801,11 @@ class SlotW16(Slot):
             if type_add_active in [1, 3]:  # Wind and Wedge
                 is_add_wedge = type_add_active == 3
                 self.plot_active(
-                    fig=fig, ax=ax, is_show_fig=False, is_add_wedge=is_add_wedge
+                    fig=fig,
+                    ax=ax,
+                    is_show_fig=False,
+                    is_add_wedge=is_add_wedge,
+                    lam=lam,
                 )
             elif type_add_active == 2:  # Magnet
                 self.plot_active(
@@ -801,6 +813,7 @@ class SlotW16(Slot):
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning

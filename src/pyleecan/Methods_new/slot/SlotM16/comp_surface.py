@@ -29,7 +29,7 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
     S1 = self.H1 * self.W1
 
     # The bottom is an arc
-    alpha = self.comp_angle_opening()
+    alpha = self.comp_angle_opening(lam=lam)
     Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
     # Because Slamination = S - Zs * Sslot

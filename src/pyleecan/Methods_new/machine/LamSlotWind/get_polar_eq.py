@@ -25,8 +25,8 @@ def get_polar_eq(self) -> LamSlotWind:
     # Compute the polar dimension of the slot
     Hwind = self.slot.comp_height_active(lam=self)
     Histhmus = self.slot.comp_height(lam=self) - Hwind
-    Wwind = self.slot.comp_angle_active_eq()
-    Wisthmus = self.slot.comp_angle_opening()
+    Wwind = self.slot.comp_angle_active_eq(lam=self)
+    Wisthmus = self.slot.comp_angle_opening(lam=self)
 
     polar_eq.slot = SlotW22(
         Zs=self.slot.Zs, H0=Histhmus, W0=Wisthmus, H2=Hwind, W2=Wwind

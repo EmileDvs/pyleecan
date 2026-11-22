@@ -189,7 +189,7 @@ class NotchEvenDist(Notch):
         """
 
         notch_list = []
-        op = self.notch_shape.comp_angle_opening()
+        op = self.notch_shape.comp_angle_opening(lam=self)
         Zs = self.notch_shape.Zs
         # No need to rotate more than a notch pitch
         alpha = self.alpha % (2 * np.pi / Zs)

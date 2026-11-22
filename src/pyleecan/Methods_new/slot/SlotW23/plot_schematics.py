@@ -104,7 +104,7 @@ def plot_schematics(
         fig, ax = lam.plot(
             alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         if self.is_outwards(lam=lam):
             sign = 1
         else:
@@ -142,7 +142,7 @@ def plot_schematics(
                 label="W1",
                 color=ARROW_COLOR,
                 linewidth=ARROW_WIDTH,
-                offset_label=self.get_H1() * 0.2,
+                offset_label=self.get_H1(lam=lam) * 0.2,
                 is_arrow=True,
                 fontsize=SC_FONT_SIZE,
             )
@@ -182,7 +182,7 @@ def plot_schematics(
                 label="H1 [m]",
                 color=ARROW_COLOR,
                 linewidth=ARROW_WIDTH,
-                offset_label=1j * self.get_H1() * 0.3 - self.get_H1() * 0.6,
+                offset_label=1j * self.get_H1(lam=lam) * 0.3 - self.get_H1(lam=lam) * 0.6,
                 is_arrow=True,
                 fontsize=SC_FONT_SIZE,
             )
@@ -190,11 +190,11 @@ def plot_schematics(
             line = Arc1(
                 begin=(
                     (point_dict["Z2"] + point_dict["Z3"]) / 2
-                    - self.get_H1() / 2
+                    - self.get_H1(lam=lam) / 2
                     - 0.003j
                 ),
                 end=((point_dict["Z2"] + point_dict["Z3"]) / 2),
-                radius=(self.get_H1() / 2),
+                radius=(self.get_H1(lam=lam) / 2),
                 is_trigo_direction=True,
             )
             line.plot(
@@ -203,7 +203,7 @@ def plot_schematics(
                 color=ARROW_COLOR,
                 linewidth=ARROW_WIDTH,
                 label="H1 [rad]",
-                offset_label=-1j * sign * self.get_H1() * 0.7,
+                offset_label=-1j * sign * self.get_H1(lam=lam) * 0.7,
                 fontsize=SC_FONT_SIZE,
             )
 
@@ -288,14 +288,14 @@ def plot_schematics(
         if type_add_active in [1, 3]:  # Wind and Wedge
             is_add_wedge = type_add_active == 3
             self.plot_active(
-                fig=fig, ax=ax, is_show_fig=False, is_add_wedge=is_add_wedge
+                fig=fig, ax=ax, is_show_fig=False, is_add_wedge=is_add_wedge, lam=lam
             )
         elif type_add_active == 2:  # Magnet
             self.plot_active(
                 fig=fig,
                 ax=ax,
                 is_show_fig=False,
-                enforced_default_color=MAGNET_COLOR,
+                enforced_default_color=MAGNET_COLOR, lam=lam,
             )
 
         # Zooming and cleaning

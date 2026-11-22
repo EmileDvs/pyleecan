@@ -27,8 +27,8 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
     if self.wedge_type == 1:
         return (
             self.comp_surface_active(lam=lam)
-            + self.comp_surface_opening()
-            + self.comp_surface_wedge()
+            + self.comp_surface_opening(lam=lam)
+            + self.comp_surface_wedge(lam=lam)
         )
 
-    return self.comp_surface_active(lam=lam) + self.comp_surface_opening()
+    return self.comp_surface_active(lam=lam) + self.comp_surface_opening(lam=lam)

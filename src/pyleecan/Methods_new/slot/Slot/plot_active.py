@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 WEDGE_COLOR = config_dict["PLOT"]["COLOR_DICT"].get("WEDGE_COLOR", "y")
@@ -26,7 +28,7 @@ def plot_active(
     enforced_default_color: str | None = None,
     alpha: float = 0,
     delta: complex = 0,
-    is_add_wedge: bool = False,
+    is_add_wedge: bool = False, lam: Lamination | Notch | None = None,
 ):
     """Plot the active area of the lamination according to the wind_mat
 
@@ -51,6 +53,8 @@ def plot_active(
         complex for translation (Default value = 0)
     is_add_wedge : bool
         True to add the wedges surfaces
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -67,7 +71,7 @@ def plot_active(
         (Nrad, Ntan, Zs, qs) = wind_mat.shape
     qs_name = gen_name(qs)
 
-    surf_list = self.build_geometry_active(Nrad, Ntan, alpha=alpha, delta=delta)
+    surf_list = self.build_geometry_active(Nrad, Ntan, alpha=alpha, delta=delta, lam=lam)
 
     patches = list()
     for ii in range(len(surf_list)):
@@ -101,7 +105,7 @@ def plot_active(
         if self.wedge_mat is None:
             self.wedge_mat = Material()
             to_clean = True
-        wedge_surf_list = self.get_surface_wedges()
+        wedge_surf_list = self.get_surface_wedges(lam=lam)
         for surf in wedge_surf_list:
             for ii in range(Zs):
                 surf2 = surf.copy()
@@ -117,7 +121,7 @@ def plot_active(
 
     # Axis Setup
     ax.axis("equal")
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     Lim = Rbo * 1.2
     ax.set_xlim(-Lim, Lim)

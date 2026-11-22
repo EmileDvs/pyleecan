@@ -70,13 +70,15 @@ class SlotM16(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM16._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotM16
             A SlotM16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -84,7 +86,7 @@ class SlotM16(Slot):
             A dict of the slot coordinates
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # alpha is the angle to rotate Z0 so ||Z1,Z12|| = W0
         alpha = np.arcsin(self.W0 / (2 * Rbo))
@@ -92,7 +94,7 @@ class SlotM16(Slot):
         Z0 = Rbo * np.exp(1j * 0)
         Z1 = Z0 * np.exp(1j * -alpha)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Z2 = Z1 + self.H0
             Z3 = Z2 - (self.W1 - self.W0) * 1j / 2.0
             Z4 = Z3 + self.H1
@@ -139,7 +141,7 @@ class SlotM16(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         # Creation of curve
         curve_list = []
@@ -182,13 +184,15 @@ class SlotM16(Slot):
             raise S16_W01CheckError("You must have W0 < W1")
 
     # Inlined from Methods.Slot.SlotM16.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotM16
             A SlotM16 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -196,7 +200,7 @@ class SlotM16(Slot):
             Average opening angle of the slot [rad]
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
@@ -218,7 +222,7 @@ class SlotM16(Slot):
             Height of the slot [m]
 
         """
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z4 = point_dict["Z4"]
         Z5 = point_dict["Z5"]
 
@@ -247,7 +251,7 @@ class SlotM16(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z3 = point_dict["Z3"]
         Z4 = point_dict["Z4"]
         Z5 = point_dict["Z5"]
@@ -285,7 +289,7 @@ class SlotM16(Slot):
         S1 = self.H1 * self.W1
 
         # The bottom is an arc
-        alpha = self.comp_angle_opening()
+        alpha = self.comp_angle_opening(lam=lam)
         Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         # Because Slamination = S - Zs * Sslot
@@ -449,7 +453,7 @@ class SlotM16(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             if self.is_outwards(lam=lam):
                 sign = +1
             else:
@@ -542,18 +546,19 @@ class SlotM16(Slot):
                 )
 
             if type_add_active == 1:
-                self.plot_active(fig=fig, ax=ax, is_show_fig=False)
+                self.plot_active(fig=fig, ax=ax, is_show_fig=False, lam=lam)
             elif type_add_active == 2:
                 self.plot_active(
                     fig=fig,
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning
             W = self.W1 / 2 * 1.3
-            Rint, Rext = self.comp_radius()
+            Rint, Rext = self.comp_radius(lam=lam)
 
             ax.axis("equal")
             ax.set_xlim(Rint, Rext)

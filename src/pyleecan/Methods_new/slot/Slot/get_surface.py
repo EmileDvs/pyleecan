@@ -1,15 +1,22 @@
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Classes_new.geometry.surf_line import SurfLine
 from ....Functions_new.utils.labels import DRAW_PROP_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def get_surface(self) -> SurfLine:
+def get_surface(self, lam: Lamination | Notch | None = None) -> SurfLine:
     """Returns the surface delimiting the slot
 
     Parameters
     ----------
     self : Slot
         A Slot object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -17,8 +24,8 @@ def get_surface(self) -> SurfLine:
         A SurfLine object representing the slot
 
     """
-    Rbo = self.get_Rbo()
-    curve_list = self.build_geometry()
+    Rbo = self.get_Rbo(lam=lam)
+    curve_list = self.build_geometry(lam=lam)
 
     # Remove line overlapping with bore/yoke lines (for FEMM)
     for line in curve_list:

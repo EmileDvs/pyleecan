@@ -42,7 +42,7 @@ def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         _,
         _,
         _,
-    ] = self._comp_point_coordinate()
+    ] = self._comp_point_coordinate(lam=lam)
 
     # Adapt the lines according to the lamination
     if self.is_outwards(lam=lam):

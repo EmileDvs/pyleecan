@@ -41,12 +41,12 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
 
     if Nrad != 1 or Ntan != 2:
         raise S63_WindError("Slot 63 can use only for winding with Nrad=1 and Ntan=2")
-    self.check()
+    self.check(lam=lam)
 
     # get the name of the lamination
     lam_label = lam.get_label()
 
-    line_dict = self._comp_line_dict()
+    line_dict = self._comp_line_dict(lam=lam)
 
     if self.W2 != 0:
         Ref1 = (line_dict["w1-2"].get_begin() + line_dict["4-w2"].get_begin()) / 2

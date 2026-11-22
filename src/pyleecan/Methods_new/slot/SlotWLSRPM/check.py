@@ -25,5 +25,5 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
 
     """
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         raise SLSRPMOutterError("Slot Type LSRPM can’t be used on outer lamination")

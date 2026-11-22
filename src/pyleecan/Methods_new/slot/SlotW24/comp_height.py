@@ -23,4 +23,4 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
 
     """
 
-    return self.comp_height_active()
+    return self.comp_height_active(lam=lam)

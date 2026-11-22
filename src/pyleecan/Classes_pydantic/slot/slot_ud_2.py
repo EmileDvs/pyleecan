@@ -134,7 +134,7 @@ class SlotUD2(Slot):
             and key in self.split_active_surf_dict
         ):
             surf_list = [surf.copy() for surf in self.split_active_surf_dict[key]]
-            self.set_label(surf_list, Nrad, Ntan, self.get_name_lam())
+            self.set_label(surf_list, Nrad, Ntan, self.get_name_lam(lam=lam))
             return surf_list
         else:
             return Slot.build_geometry_active(
@@ -200,7 +200,7 @@ class SlotUD2(Slot):
         surf_wind: Surface
             Surface corresponding to the Winding Area
         """
-        st = self.get_name_lam()
+        st = self.get_name_lam(lam=lam)
         surface = self.active_surf.copy()
 
         surface.label = "Wind_" + st + "_R0_T0_S0"

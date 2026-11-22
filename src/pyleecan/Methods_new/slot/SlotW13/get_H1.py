@@ -1,13 +1,20 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def get_H1(self) -> float:
+def get_H1(self, lam: Lamination | Notch | None = None) -> float:
     """Return H1 in [m]
 
     Parameters
     ----------
     self : SlotW13
         A SlotW13 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------

@@ -22,7 +22,7 @@ def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
         Height of the winding area [m]
 
     """
-    H1 = self.get_H1()
+    H1 = self.get_H1(lam=lam)
     Rbo = self.get_Rbo(lam=lam)
 
     # alpha is the angle to rotate P0 so ||P1,P10|| = W0

@@ -23,4 +23,4 @@ def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
         Height of the active area [m]
 
     """
-    return self.comp_height()
+    return self.comp_height(lam=lam)

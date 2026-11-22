@@ -1,13 +1,20 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : SlotW23
         A SlotW23 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -17,9 +24,9 @@ def _comp_point_coordinate(self) -> dict:
 
     if self.is_cstt_tooth:
         # Compute W1 and W2 to match W3 tooth constraint
-        self._comp_W()
+        self._comp_W(lam=lam)
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # alpha is the angle to rotate Z0 so ||Z1,Z8|| = W0
     alpha = float(np.arcsin(self.W0 / (2 * Rbo)))
@@ -28,15 +35,15 @@ def _comp_point_coordinate(self) -> dict:
     Z0 = Rbo * np.exp(1j * 0)
     Z1 = Z0 * np.exp(-1j * alpha)
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Z2 = (Rbo + self.H0) * np.exp(-1j * alpha)
-        Z3 = Z2.real + self.get_H1() - 1j * self.W1 / 2
+        Z3 = Z2.real + self.get_H1(lam=lam) - 1j * self.W1 / 2
 
         H2 = np.sqrt(self.H2**2 - ((self.W2 - self.W1) / 2.0) ** 2)
         Z4 = Z3.real + H2 - 1j * self.W2 / 2
     else:  # inward slot
         Z2 = (Rbo - self.H0) * np.exp(-1j * alpha)
-        Z3 = Z2.real - self.get_H1() - 1j * self.W1 / 2
+        Z3 = Z2.real - self.get_H1(lam=lam) - 1j * self.W1 / 2
 
         H2 = np.sqrt(self.H2**2 - ((self.W2 - self.W1) / 2.0) ** 2)
         Z4 = Z3.real - H2 - 1j * self.W2 / 2

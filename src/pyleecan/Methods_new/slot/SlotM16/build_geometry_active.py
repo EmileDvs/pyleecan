@@ -37,9 +37,9 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
     """
 
     # get the name of the lamination
-    st = self.get_name_lam()
+    st = self.get_name_lam(lam=lam)
 
-    [Z12, Z11, Z10, Z9, Z8, Z7, Z6, Z5, Z4, Z3, Z2, Z1] = self._comp_point_coordinate()
+    [Z12, Z11, Z10, Z9, Z8, Z7, Z6, Z5, Z4, Z3, Z2, Z1] = self._comp_point_coordinate(lam=lam)
 
     X = np.linspace(Z8, Z7, Nrad + 1)
 

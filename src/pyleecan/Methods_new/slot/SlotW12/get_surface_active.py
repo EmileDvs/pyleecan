@@ -31,7 +31,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     """
     lam = container_or_parent(self, lam, "lam")
     # get the name of the lamination
-    line_dict = self._comp_line_dict()
+    line_dict = self._comp_line_dict(lam=lam)
     curve_list: list[Line] = [
         line_dict["3-4"],
         line_dict["4-5"],

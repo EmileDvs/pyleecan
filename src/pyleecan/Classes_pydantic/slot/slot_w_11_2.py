@@ -113,7 +113,7 @@ class SlotW11_2(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW11_2._comp_line_dict
-    def _comp_line_dict(self) -> dict:
+    def _comp_line_dict(self, lam: Lamination | Notch | None = None) -> dict:
         """Define a dictionnary of the lines to draw the slot
         If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
 
@@ -121,6 +121,8 @@ class SlotW11_2(Slot):
         ----------
         self : SlotW11_2
             A SlotW11_2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -128,7 +130,7 @@ class SlotW11_2(Slot):
             Dictionnary of the slot lines (key: line name, value: line object)
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -140,7 +142,7 @@ class SlotW11_2(Slot):
         Z9 = point_dict["Z9"]
         Z10 = point_dict["Z10"]
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             rot_sign = 1  # Rotation direction for Arc1
         else:  # inward slot
             rot_sign = -1  # Rotation direction for Arc1
@@ -152,7 +154,7 @@ class SlotW11_2(Slot):
         else:
             line_dict["1-2"] = None
 
-        H1 = self.get_H1()
+        H1 = self.get_H1(lam=lam)
         if H1 == 0 and self.W1 == self.W0:
             line_dict["2-3"] = None
         else:
@@ -164,19 +166,19 @@ class SlotW11_2(Slot):
                 begin=Z4,
                 end=Z5,
                 radius=rot_sign * self.R1,
-                is_trigo_direction=self.is_outwards(),
+                is_trigo_direction=self.is_outwards(lam=lam),
             )
             line_dict["5-6"] = Segment(begin=Z5, end=Z6)
             line_dict["6-7"] = Arc1(
                 begin=Z6,
                 end=Z7,
                 radius=rot_sign * self.R1,
-                is_trigo_direction=self.is_outwards(),
+                is_trigo_direction=self.is_outwards(lam=lam),
             )
         else:
             line_dict["4-5"] = None
             line_dict["5-6"] = Arc3(
-                begin=Z4, end=Z7, is_trigo_direction=self.is_outwards()
+                begin=Z4, end=Z7, is_trigo_direction=self.is_outwards(lam=lam)
             )
             line_dict["6-7"] = None
 
@@ -193,7 +195,7 @@ class SlotW11_2(Slot):
 
         # Closing Arc
         line_dict["10-1"] = Arc1(
-            begin=Z10, end=Z1, radius=-self.get_Rbo(), is_trigo_direction=False
+            begin=Z10, end=Z1, radius=-self.get_Rbo(lam=lam), is_trigo_direction=False
         )
 
         # Closing Active part
@@ -204,13 +206,15 @@ class SlotW11_2(Slot):
         return line_dict
 
     # Inlined from Methods.Slot.SlotW11_2._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotW11_2
             A SlotW11_2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -220,11 +224,11 @@ class SlotW11_2(Slot):
 
         if self.is_cstt_tooth and (self.W1 is None or self.W2 is None):
             # Compute W1 and W2 to match W3 tooth constraint
-            self._comp_W()
+            self._comp_W(lam=lam)
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
-        H1 = self.get_H1()
+        H1 = self.get_H1(lam=lam)
 
         # alpha is the angle to rotate Z0 so ||Z1,Z8|| = W0
         alpha = float(np.arcsin(self.W0 / (2 * Rbo)))
@@ -233,7 +237,7 @@ class SlotW11_2(Slot):
         Z0 = Rbo * np.exp(1j * 0)
         Z1 = Z0 * np.exp(-1j * alpha)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Z2 = Z1 + self.H0
             Z3 = Z2.real + H1 + -1j * self.W1 / 2.0
             Z4 = Z3.real + (self.H2 - self.R1) - 1j * self.W2 / 2.0
@@ -298,20 +302,22 @@ class SlotW11_2(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotW11_2._comp_W
-    def _comp_W(self) -> None:
+    def _comp_W(self, lam: Lamination | Notch | None = None) -> None:
         """Compute W1 and W2 method (cste tooth compatibility)
 
         Parameters
         ----------
         self : SlotW11_2
             A SlotW11_2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         None
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # alpha is the angle to rotate Z0 so ||Z1,Z10|| = W0
         alpha = float(np.abs(self.W0 / (2 * Rbo)))
@@ -327,17 +333,17 @@ class SlotW11_2(Slot):
         slot_pitch = 2 * np.pi / self.Zs
 
         # H0 and H1 are radial
-        if self.is_outwards():
-            radius = Rbo + self.get_H1() + self.H0
+        if self.is_outwards(lam=lam):
+            radius = Rbo + self.get_H1(lam=lam) + self.H0
         else:
-            radius = Rbo - self.get_H1() - self.H0
+            radius = Rbo - self.get_H1(lam=lam) - self.H0
 
         alpha_T1 = float(np.abs(self.W3 / (2 * radius)))
         alpha_S1 = slot_pitch - 2 * alpha_T1
         self.W1 = 2 * np.tan(alpha_S1 / 2) * radius
 
         # define W2
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             self.W2 = (
                 2
                 * np.tan(slot_pitch / 2)
@@ -345,7 +351,7 @@ class SlotW11_2(Slot):
                     Rbo
                     - Harc
                     + self.H0
-                    + self.get_H1()
+                    + self.get_H1(lam=lam)
                     + self.H2
                     - self.R1
                     - self.W3 / (2 * np.tan(slot_pitch / 2) * np.cos(slot_pitch / 2))
@@ -360,7 +366,7 @@ class SlotW11_2(Slot):
                     Rbo
                     - Harc
                     - self.H0
-                    - self.get_H1()
+                    - self.get_H1(lam=lam)
                     - self.H2
                     + self.R1
                     - self.W3 / (2 * np.tan(slot_pitch / 2) * np.cos(slot_pitch / 2))
@@ -368,7 +374,7 @@ class SlotW11_2(Slot):
             )
 
     # Inlined from Methods.Slot.SlotW11_2._set_W3
-    def _set_W3(self, value: float) -> None:
+    def _set_W3(self, value: float, lam: Lamination | Notch | None = None) -> None:
         """setter of W3
 
         Parameters
@@ -377,6 +383,8 @@ class SlotW11_2(Slot):
             A SlotW11_2 object
         value : float
             value of W3
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
         """
 
         check_var("W3", value, "float", Vmin=0)
@@ -384,7 +392,7 @@ class SlotW11_2(Slot):
 
         # Compute W1 and W2 to match W3 tooth constraint
         try:
-            self._comp_W()
+            self._comp_W(lam=lam)
         except Exception:
             pass
 
@@ -408,7 +416,7 @@ class SlotW11_2(Slot):
 
         """
 
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
 
         curve_list = [
             line_dict["1-2"],
@@ -490,13 +498,15 @@ class SlotW11_2(Slot):
             raise S11_2_H1rCheckError("With H1 in radian, you must have H1 < pi/2")
 
     # Inlined from Methods.Slot.SlotW11_2.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotW11_2
             A SlotW11_2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -505,7 +515,7 @@ class SlotW11_2(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
@@ -529,19 +539,19 @@ class SlotW11_2(Slot):
         """
         if self.is_cstt_tooth and (self.W1 is None or self.W2 is None):
             # Compute W1 and W2 to match W3 tooth constraint
-            self._comp_W()
+            self._comp_W(lam=lam)
 
         Rbo = self.get_Rbo(lam=lam)
 
         if self.is_outwards(lam=lam):
             if self.R1 * 2 == self.W2:
                 # Computation of the arc height
-                alpha = self.comp_angle_opening() / 2
+                alpha = self.comp_angle_opening(lam=lam) / 2
                 Harc = float(Rbo * (1 - np.cos(alpha)))
-                return self.H0 + self.get_H1() + self.H2 - Harc
+                return self.H0 + self.get_H1(lam=lam) + self.H2 - Harc
 
             else:
-                line_dict = self._comp_line_dict()
+                line_dict = self._comp_line_dict(lam=lam)
                 Arc = line_dict["6-7"]
                 Ndisc = 200
                 point_list = Arc.discretize(Ndisc)
@@ -550,10 +560,10 @@ class SlotW11_2(Slot):
 
         else:
             # Computation of the arc height
-            alpha = self.comp_angle_opening() / 2
+            alpha = self.comp_angle_opening(lam=lam) / 2
             Harc = float(Rbo * (1 - np.cos(alpha)))
 
-            return self.H0 + self.get_H1() + self.H2 + Harc
+            return self.H0 + self.get_H1(lam=lam) + self.H2 + Harc
 
     # Inlined from Methods.Slot.SlotW11_2.comp_height_active
     def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
@@ -593,10 +603,10 @@ class SlotW11_2(Slot):
             Slot total surface [m**2]
 
         """
-        return self.comp_surface_active(lam=lam) + self.comp_surface_opening()
+        return self.comp_surface_active(lam=lam) + self.comp_surface_opening(lam=lam)
 
     # Inlined from Methods.Slot.SlotW11_2.comp_surface_opening
-    def comp_surface_opening(self) -> float:
+    def comp_surface_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot opening surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -604,6 +614,8 @@ class SlotW11_2(Slot):
         ----------
         self : SlotW11_2
             A SlotW11_2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -613,33 +625,35 @@ class SlotW11_2(Slot):
         """
         if self.is_cstt_tooth and (self.W1 is None or self.W2 is None):
             # Compute W1 and W2 to match W3 tooth constraint
-            self._comp_W()
+            self._comp_W(lam=lam)
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         S1 = self.H0 * self.W0
-        H1 = self.get_H1()
+        H1 = self.get_H1(lam=lam)
 
         S2 = 0.5 * (self.W0 + self.W1) * H1
 
         # The bottom is an arc
-        alpha = self.comp_angle_opening()
+        alpha = self.comp_angle_opening(lam=lam)
         Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         # Because Slamination = S - Zs * Sslot
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return S1 + S2 - Sarc
         else:
             return S1 + S2 + Sarc
 
     # Inlined from Methods.Slot.SlotW11_2.get_H1
-    def get_H1(self) -> float:
+    def get_H1(self, lam: Lamination | Notch | None = None) -> float:
         """Return H1 in [m]
 
         Parameters
         ----------
         self : SlotW11_2
             A SlotW11_2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -648,12 +662,12 @@ class SlotW11_2(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # alpha is the angle to rotate Z0 so ||Z1,Z8|| = W0
         alpha = float(np.arcsin(self.W0 / (2 * Rbo)))
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Z2 = (Rbo + self.H0) * np.exp(-1j * alpha)
 
         else:  # inward slot
@@ -704,7 +718,7 @@ class SlotW11_2(Slot):
         lam = container_or_parent(self, lam, "lam")
 
         # Create curve list
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
         if self.H1 != 0:
             curve_list: list[Line] = [
                 line_dict["3-4"],
@@ -736,7 +750,7 @@ class SlotW11_2(Slot):
             curve.prop_dict.update({DRAW_PROP_LAB: False})
 
         # Create surface
-        H1 = self.get_H1()
+        H1 = self.get_H1(lam=lam)
         if self.is_outwards(lam=lam):
             Zmid = self.get_Rbo(lam=lam) + self.H0 + H1 + self.H2 / 2
         else:
@@ -778,12 +792,12 @@ class SlotW11_2(Slot):
         lam = container_or_parent(self, lam, "lam")
 
         # H0=H1=0 no opening
-        H1 = self.get_H1()
+        H1 = self.get_H1(lam=lam)
         if self.H0 == 0 and H1 == 0:
             return []
 
         # Create curve list
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
         curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-3"],
@@ -907,7 +921,7 @@ class SlotW11_2(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             if self.is_outwards(lam=lam):
                 sign = 1
             else:
@@ -986,18 +1000,18 @@ class SlotW11_2(Slot):
                     label="H1 [m]",
                     color=ARROW_COLOR,
                     linewidth=ARROW_WIDTH,
-                    offset_label=1j * self.W0 * 0.15 - self.get_H1() / 2,
+                    offset_label=1j * self.W0 * 0.15 - self.get_H1(lam=lam) / 2,
                     is_arrow=True,
                     fontsize=SC_FONT_SIZE,
                 )
                 # H1 [rad]
                 line = Arc1(
                     begin=(point_dict["Z2"] + point_dict["Z3"]) / 2
-                    - self.get_H1() / 2
+                    - self.get_H1(lam=lam) / 2
                     - 0.007j,
                     end=(((point_dict["Z2"] + point_dict["Z3"]) / 2) + point_dict["Z3"])
                     / 2,
-                    radius=(self.get_H1() / 2),
+                    radius=(self.get_H1(lam=lam) / 2),
                     is_trigo_direction=True,
                 )
                 line.plot(
@@ -1006,7 +1020,7 @@ class SlotW11_2(Slot):
                     color=ARROW_COLOR,
                     linewidth=ARROW_WIDTH,
                     label="H1 [rad]",
-                    offset_label=-1j * sign * self.get_H1() * 0.5,
+                    offset_label=-1j * sign * self.get_H1(lam=lam) * 0.5,
                     fontsize=SC_FONT_SIZE,
                 )
                 # H2
@@ -1104,7 +1118,11 @@ class SlotW11_2(Slot):
             if type_add_active in [1, 3]:  # Wind and Wedge
                 is_add_wedge = type_add_active == 3
                 self.plot_active(
-                    fig=fig, ax=ax, is_show_fig=False, is_add_wedge=is_add_wedge
+                    fig=fig,
+                    ax=ax,
+                    is_show_fig=False,
+                    is_add_wedge=is_add_wedge,
+                    lam=lam,
                 )
             elif type_add_active == 2:  # Magnet
                 self.plot_active(
@@ -1112,6 +1130,7 @@ class SlotW11_2(Slot):
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning
@@ -1232,7 +1251,7 @@ class SlotW11_2(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             if self.is_outwards(lam=lam):
                 sign = 1
             else:
@@ -1274,7 +1293,7 @@ class SlotW11_2(Slot):
                     color=ARROW_COLOR,
                     linewidth=ARROW_WIDTH,
                     label="W3",
-                    offset_label=self.get_H1() * 0.2 - 0.001j,
+                    offset_label=self.get_H1(lam=lam) * 0.2 - 0.001j,
                     is_arrow=True,
                     fontsize=SC_FONT_SIZE,
                 )
@@ -1305,11 +1324,11 @@ class SlotW11_2(Slot):
                 # H1 [rad]
                 line = Arc1(
                     begin=(point_dict["Z2"] + point_dict["Z3"]) / 2
-                    - self.get_H1() / 2
+                    - self.get_H1(lam=lam) / 2
                     - 0.007j,
                     end=(((point_dict["Z2"] + point_dict["Z3"]) / 2) + point_dict["Z3"])
                     / 2,
-                    radius=(self.get_H1() / 2),
+                    radius=(self.get_H1(lam=lam) / 2),
                     is_trigo_direction=True,
                 )
                 line.plot(
@@ -1318,7 +1337,7 @@ class SlotW11_2(Slot):
                     color=ARROW_COLOR,
                     linewidth=ARROW_WIDTH,
                     label="H1 [rad]",
-                    offset_label=-1j * sign * self.get_H1() * 0.5,
+                    offset_label=-1j * sign * self.get_H1(lam=lam) * 0.5,
                     fontsize=SC_FONT_SIZE,
                 )
                 # H2
@@ -1483,7 +1502,11 @@ class SlotW11_2(Slot):
             if type_add_active in [1, 3]:  # Wind and Wedge
                 is_add_wedge = type_add_active == 3
                 self.plot_active(
-                    fig=fig, ax=ax, is_show_fig=False, is_add_wedge=is_add_wedge
+                    fig=fig,
+                    ax=ax,
+                    is_show_fig=False,
+                    is_add_wedge=is_add_wedge,
+                    lam=lam,
                 )
             elif type_add_active == 2:  # Magnet
                 self.plot_active(
@@ -1491,6 +1514,7 @@ class SlotW11_2(Slot):
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning

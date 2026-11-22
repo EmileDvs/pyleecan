@@ -26,19 +26,19 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
     """
     if self.is_cstt_tooth and (self.W1 is None or self.W2 is None):
         # Compute W1 and W2 to match W3 tooth constraint
-        self._comp_W()
+        self._comp_W(lam=lam)
 
     Rbo = self.get_Rbo(lam=lam)
 
     if self.is_outwards(lam=lam):
         if self.R1 * 2 == self.W2:
             # Computation of the arc height
-            alpha = self.comp_angle_opening() / 2
+            alpha = self.comp_angle_opening(lam=lam) / 2
             Harc = float(Rbo * (1 - np.cos(alpha)))
-            return self.H0 + self.get_H1() + self.H2 - Harc
+            return self.H0 + self.get_H1(lam=lam) + self.H2 - Harc
 
         else:
-            line_dict = self._comp_line_dict()
+            line_dict = self._comp_line_dict(lam=lam)
             Arc = line_dict["6-7"]
             Ndisc = 200
             point_list = Arc.discretize(Ndisc)
@@ -47,6 +47,6 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
 
     else:
         # Computation of the arc height
-        alpha = self.comp_angle_opening() / 2
+        alpha = self.comp_angle_opening(lam=lam) / 2
         Harc = float(Rbo * (1 - np.cos(alpha)))
-        return self.H0 + self.get_H1() + self.H2 + Harc
+        return self.H0 + self.get_H1(lam=lam) + self.H2 + Harc

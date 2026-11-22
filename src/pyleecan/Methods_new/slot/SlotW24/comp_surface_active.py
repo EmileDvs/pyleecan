@@ -24,7 +24,7 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
     """
 
     Rbo = self.get_Rbo(lam=lam)
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
 
     if self.is_outwards(lam=lam):
         Rint = Rbo

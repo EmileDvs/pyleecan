@@ -31,7 +31,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0, lam: Laminat
     lam = container_or_parent(self, lam, "lam")
 
     # Create curve list
-    line_dict = self._comp_line_dict()
+    line_dict = self._comp_line_dict(lam=lam)
     if self.W2 != 0:
         if self.H2 != 0:
             curve_list: list[Line] = [
@@ -78,7 +78,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0, lam: Laminat
         curve.prop_dict.update({DRAW_PROP_LAB: False})
 
     # Create surface
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z2 = point_dict["Z2"]
     Z8 = point_dict["Z8"]
 

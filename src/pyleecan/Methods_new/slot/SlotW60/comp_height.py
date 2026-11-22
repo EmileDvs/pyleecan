@@ -25,7 +25,7 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
 
     Rbo = self.get_Rbo(lam=lam)
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z5 = point_dict["Z5"]
 
     return Rbo - abs(Z5)

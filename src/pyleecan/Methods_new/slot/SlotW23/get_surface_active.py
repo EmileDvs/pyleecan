@@ -32,7 +32,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     lam = container_or_parent(self, lam, "lam")
 
     # Create curve list
-    line_dict = self._comp_line_dict()
+    line_dict = self._comp_line_dict(lam=lam)
     if self.H1 != 0:
         curve_list: list[Line] = [
             line_dict["3-4"],
@@ -61,9 +61,9 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
 
     # Create surface
     if self.is_outwards(lam=lam):
-        Zmid = self.get_Rbo(lam=lam) + self.H0 + self.get_H1() + self.H2 / 2
+        Zmid = self.get_Rbo(lam=lam) + self.H0 + self.get_H1(lam=lam) + self.H2 / 2
     else:
-        Zmid = self.get_Rbo(lam=lam) - self.H0 - self.get_H1() - self.H2 / 2
+        Zmid = self.get_Rbo(lam=lam) - self.H0 - self.get_H1(lam=lam) - self.H2 / 2
     label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
     surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 

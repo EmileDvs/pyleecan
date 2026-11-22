@@ -26,7 +26,7 @@ def build_geometry(self, lam: Lamination | Notch | None = None) -> list:
         A list of 4 Segment and 3 Arc1
 
     """
-    line_dict = self._comp_line_dict()
+    line_dict = self._comp_line_dict(lam=lam)
 
     curve_list = [
         line_dict["1-2"],

@@ -3,9 +3,14 @@ import numpy as np
 
 from ....Classes_new.geometry.arc_1 import Arc1
 from ....Functions_new.utils.labels import BORE_LAB, BOUNDARY_PROP_LAB
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_half_tooth(self, is_top: bool = False, alpha: float = 0, delta: complex = 0) -> list:
+def build_geometry_half_tooth(self, is_top: bool = False, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None) -> list:
     """Build the geometry of a Half Tooth
 
     Parameters
@@ -18,6 +23,8 @@ def build_geometry_half_tooth(self, is_top: bool = False, alpha: float = 0, delt
         Angle for rotation [rad]
     delta : complex
         Complex value for translation
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -28,9 +35,9 @@ def build_geometry_half_tooth(self, is_top: bool = False, alpha: float = 0, delt
 
     # getting Number of Slot
     Zs = self.Zs
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
-    slot_list = self.build_geometry()
+    slot_list = self.build_geometry(lam=lam)
     top_list = list()
     bot_list = list()
 

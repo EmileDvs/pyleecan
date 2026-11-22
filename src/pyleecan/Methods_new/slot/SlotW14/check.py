@@ -30,7 +30,7 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
     """
 
     Rbo = self.get_Rbo(lam=lam)
-    H1 = self.get_H1()
+    H1 = self.get_H1(lam=lam)
 
     if self.W0 * 0.5 / Rbo >= 1:
         raise S14_Rbo0CheckError("You must have W0/2 < Rbo")

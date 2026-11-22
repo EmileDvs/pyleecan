@@ -76,13 +76,15 @@ class SlotWLSRPM(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotWLSRPM._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotWLSRPM
             A SlotWLSRPM object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -90,7 +92,7 @@ class SlotWLSRPM(Slot):
             A dict of the slot coordinates
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         hsp = np.pi / self.Zs  # Half slot pitch
 
@@ -197,7 +199,7 @@ class SlotWLSRPM(Slot):
 
         Rbo = self.get_Rbo(lam=lam)
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -265,7 +267,7 @@ class SlotWLSRPM(Slot):
         lam_label = lam.get_label()
         Rbo = self.get_Rbo(lam=lam)
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -427,17 +429,19 @@ class SlotWLSRPM(Slot):
 
         """
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             raise SLSRPMOutterError("Slot Type LSRPM can’t be used on outer lamination")
 
     # Inlined from Methods.Slot.SlotWLSRPM.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotWLSRPM：
             A SlotWLSRPM： object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -445,7 +449,7 @@ class SlotWLSRPM(Slot):
             Average opening angle of the slot [rad]
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         return 2 * (np.pi / self.Zs - np.arcsin(self.W3 / 2 / Rbo))
 
     # Inlined from Methods.Slot.SlotWLSRPM.comp_height
@@ -532,7 +536,7 @@ class SlotWLSRPM(Slot):
         """
 
         # get the name of the lamination
-        st = self.get_name_lam()
+        st = self.get_name_lam(lam=lam)
 
         # Create curve list
         curve_list = self.build_geometry(lam=lam)
@@ -654,7 +658,7 @@ class SlotWLSRPM(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             if self.is_outwards(lam=lam):
                 sign = 1
             else:
@@ -772,10 +776,13 @@ class SlotWLSRPM(Slot):
                 )
 
             if type_add_active == 1:
-                self.plot_active(fig=fig, is_show_fig=False)
+                self.plot_active(fig=fig, is_show_fig=False, lam=lam)
             elif type_add_active == 2:
                 self.plot_active(
-                    fig=fig, is_show_fig=False, enforced_default_color=self.MAGNET_COLOR
+                    fig=fig,
+                    is_show_fig=False,
+                    enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning

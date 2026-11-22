@@ -22,7 +22,7 @@ def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
 
     """
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Zw1 = point_dict["Zw1"]
     Zw2 = point_dict["Zw2"]
 

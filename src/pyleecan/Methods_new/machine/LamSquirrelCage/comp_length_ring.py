@@ -17,6 +17,6 @@ def comp_length_ring(self) -> float:
     """
 
     # calculation of the average radius of the center of the end-ring (distance to z-axis of the electrical machine)
-    Rmw = self.slot.comp_radius_mid_active()
+    Rmw = self.slot.comp_radius_mid_active(lam=self)
 
     return 2 * np.pi * Rmw

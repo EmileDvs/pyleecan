@@ -25,7 +25,7 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
     Rbo = self.get_Rbo(lam=lam)
     surface = self.comp_surface(lam=lam)
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Zw1 = point_dict["Zw1"]
     Zw2 = point_dict["Zw2"]
     Z1 = point_dict["Z1"]

@@ -67,13 +67,15 @@ class SlotM18_2(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM18_2._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotM18_2
             A SlotM18_2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -81,13 +83,13 @@ class SlotM18_2(Slot):
             A dict of the slot coordinates
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         sp = 2 * np.pi / self.Zs
         Z1 = Rbo * np.exp(-1j * sp / 2)
         ZM1 = Rbo * np.exp(-1j * sp / 2)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             ZM2 = (Rbo - self.H0_bore) * np.exp(-1j * sp / 2)
             ZM3 = (Rbo - self.H0_bore - self.H0_gap) * np.exp(-1j * sp / 2)
         else:  # inward slot
@@ -127,7 +129,7 @@ class SlotM18_2(Slot):
 
         """
         Rbo = self.get_Rbo(lam=lam)
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
 
@@ -179,7 +181,7 @@ class SlotM18_2(Slot):
             surf_list = [self.get_surface_active(lam=lam)]
             surf_list[0].label = lam_label + "_" + WIND_LAB + "_R0-T0-S0"
         elif Nrad == 2 and Ntan == 1:
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             ZM1 = point_dict["ZM1"]
             ZM2 = point_dict["ZM2"]
             ZM3 = point_dict["ZM3"]
@@ -331,13 +333,15 @@ class SlotM18_2(Slot):
         pass
 
     # Inlined from Methods.Slot.SlotM18_2.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotM18_2
             A SlotM18_2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -427,7 +431,7 @@ class SlotM18_2(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         ZM1 = point_dict["ZM1"]
         ZM3 = point_dict["ZM3"]
 
@@ -466,10 +470,10 @@ class SlotM18_2(Slot):
         """
 
         # get the name of the lamination
-        st = self.get_name_lam()
+        st = self.get_name_lam(lam=lam)
         Rbo = self.get_Rbo(lam=lam)
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         ZM1 = point_dict["ZM1"]
         ZM2 = point_dict["ZM3"]
         ZM3 = point_dict["ZM4"]
@@ -525,13 +529,15 @@ class SlotM18_2(Slot):
         return surface
 
     # Inlined from Methods.Slot.SlotM18_2.is_airgap_active
-    def is_airgap_active(self) -> bool:
+    def is_airgap_active(self, lam: Lamination | Notch | None = None) -> bool:
         """Return True if a part or the full active surface is in the airgap
 
         Parameters
         ----------
         self : SlotM18_2
             A SlotM18_2 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -645,12 +651,12 @@ class SlotM18_2(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            point_dict = self._comp_point_coordinate(lam=lam)
+            if self.is_outwards(lam=lam):
                 sign = +1
             else:
                 sign = -1
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
 
             # Adding point label
             if is_add_point_label:
@@ -703,18 +709,19 @@ class SlotM18_2(Slot):
                     )
 
             if type_add_active == 1:
-                self.plot_active(fig=fig, ax=ax, is_show_fig=False)
+                self.plot_active(fig=fig, ax=ax, is_show_fig=False, lam=lam)
             elif type_add_active == 2:
                 self.plot_active(
                     fig=fig,
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning
             W = point_dict["ZM3"].imag * 3
-            Rint, Rext = self.comp_radius()
+            Rint, Rext = self.comp_radius(lam=lam)
 
             ax.axis("equal")
             ax.set_xlim(Rint, Rext)

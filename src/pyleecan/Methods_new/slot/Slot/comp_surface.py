@@ -24,5 +24,5 @@ def comp_surface(self, Ndisc: int = 200, lam: Lamination | Notch | None = None) 
         Slot total surface [m**2]
     """
 
-    surf = self.get_surface()
+    surf = self.get_surface(lam=lam)
     return surf.comp_surface(Ndisc=Ndisc)

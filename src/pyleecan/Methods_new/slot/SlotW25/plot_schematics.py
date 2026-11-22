@@ -102,7 +102,7 @@ def plot_schematics(
         fig, ax = lam.plot(
             alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         if self.is_outwards(lam=lam):
             sign = 1
         else:
@@ -248,14 +248,14 @@ def plot_schematics(
         if type_add_active in [1, 3]:  # Wind and Wedge
             is_add_wedge = type_add_active == 3
             self.plot_active(
-                fig=fig, ax=ax, is_show_fig=False, is_add_wedge=is_add_wedge
+                fig=fig, ax=ax, is_show_fig=False, is_add_wedge=is_add_wedge, lam=lam
             )
         elif type_add_active == 2:  # Magnet
             self.plot_active(
                 fig=fig,
                 ax=ax,
                 is_show_fig=False,
-                enforced_default_color=MAGNET_COLOR,
+                enforced_default_color=MAGNET_COLOR, lam=lam,
             )
 
         # Zooming and cleaning

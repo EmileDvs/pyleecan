@@ -61,13 +61,15 @@ class SlotM18(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM18._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotM18
             A SlotM18 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -75,13 +77,13 @@ class SlotM18(Slot):
             A dict of the slot coordinates
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         sp = 2 * np.pi / self.Zs
         Z1 = Rbo * np.exp(-1j * sp / 2)
         ZM1 = Rbo * np.exp(-1j * sp / 2)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             ZM2 = (Rbo - self.H0) * np.exp(-1j * sp / 2)
         else:  # inward slot
             ZM2 = (Rbo + self.H0) * np.exp(-1j * sp / 2)
@@ -117,7 +119,7 @@ class SlotM18(Slot):
 
         """
         Rbo = self.get_Rbo(lam=lam)
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
 
@@ -145,13 +147,15 @@ class SlotM18(Slot):
         pass
 
     # Inlined from Methods.Slot.SlotM18.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotM18
             A SlotM18 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -242,7 +246,7 @@ class SlotM18(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         ZM1 = point_dict["ZM1"]
         ZM2 = point_dict["ZM2"]
 
@@ -284,7 +288,7 @@ class SlotM18(Slot):
         st = self.get_name_lam(lam=lam)
         Rbo = self.get_Rbo(lam=lam)
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         ZM1 = point_dict["ZM1"]
         ZM2 = point_dict["ZM2"]
         ZM3 = point_dict["ZM3"]
@@ -336,13 +340,15 @@ class SlotM18(Slot):
         return surface
 
     # Inlined from Methods.Slot.SlotM18.is_airgap_active
-    def is_airgap_active(self) -> bool:
+    def is_airgap_active(self, lam: Lamination | Notch | None = None) -> bool:
         """Return True if a part or the full active surface is in the airgap
 
         Parameters
         ----------
         self : SlotM18
             A SlotM18 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -456,7 +462,7 @@ class SlotM18(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             if self.is_outwards(lam=lam):
                 sign = +1
             else:
@@ -514,18 +520,19 @@ class SlotM18(Slot):
                     )
 
             if type_add_active == 1:
-                self.plot_active(fig=fig, ax=ax, is_show_fig=False)
+                self.plot_active(fig=fig, ax=ax, is_show_fig=False, lam=lam)
             elif type_add_active == 2:
                 self.plot_active(
                     fig=fig,
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning
             W = point_dict["ZM3"].imag * 3
-            Rint, Rext = self.comp_radius()
+            Rint, Rext = self.comp_radius(lam=lam)
 
             ax.axis("equal")
             ax.set_xlim(Rint, Rext)

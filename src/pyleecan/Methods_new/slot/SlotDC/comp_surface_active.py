@@ -39,7 +39,7 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
         _,
         _,
         _,
-    ] = self._comp_point_coordinate()
+    ] = self._comp_point_coordinate(lam=lam)
 
     # Half circle R3
     S1 = self.R3**2 * np.pi / 2

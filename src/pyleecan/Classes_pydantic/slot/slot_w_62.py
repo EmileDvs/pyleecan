@@ -101,7 +101,7 @@ class SlotW62(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW62._comp_line_dict
-    def _comp_line_dict(self) -> dict:
+    def _comp_line_dict(self, lam: Lamination | Notch | None = None) -> dict:
         """Define a dictionnary of the lines to draw the slot
         If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
 
@@ -109,6 +109,8 @@ class SlotW62(Slot):
         ----------
         self : SlotW62
             A SlotW62 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -116,8 +118,8 @@ class SlotW62(Slot):
             Dictionnary of the slot lines (key: line name, value: line object)
         """
 
-        Rbo = self.get_Rbo()
-        point_dict = self._comp_point_coordinate()
+        Rbo = self.get_Rbo(lam=lam)
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -169,13 +171,15 @@ class SlotW62(Slot):
         return line_dict
 
     # Inlined from Methods.Slot.SlotW62._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinate needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotW62
             A SlotW62 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -184,7 +188,7 @@ class SlotW62(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         hsp = np.pi / self.Zs  # Half slot pitch
 
         alpha2 = np.arcsin(self.W1 / (2 * Rbo))
@@ -266,7 +270,7 @@ class SlotW62(Slot):
 
         """
 
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
 
         # Creation of curve
         curve_list = [
@@ -322,12 +326,12 @@ class SlotW62(Slot):
             raise S62_WindError(
                 "Slot 62 can use only for winding with Nrad=1 and Ntan=2"
             )
-        self.check()
+        self.check(lam=lam)
 
         # get the name of the lamination
         lam_label = lam.get_label()
 
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
 
         Ref1 = (line_dict["w3-w4"].get_begin() + line_dict["w1-w2"].get_begin()) / 2
         Ref2 = (line_dict["w3s-w4s"].get_begin() + line_dict["w1s-w2s"].get_begin()) / 2
@@ -412,13 +416,15 @@ class SlotW62(Slot):
             raise S62_H2Error("You must have H2 > 0")
 
     # Inlined from Methods.Slot.SlotW62.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotW62
             A SlotW62 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -427,7 +433,7 @@ class SlotW62(Slot):
 
         """
         slot_pitch = 2 * np.pi / self.Zs
-        tooth_angle = 2 * np.arcsin(self.W1 / (2 * self.get_Rbo()))
+        tooth_angle = 2 * np.arcsin(self.W1 / (2 * self.get_Rbo(lam=lam)))
 
         return slot_pitch - tooth_angle
 
@@ -451,7 +457,7 @@ class SlotW62(Slot):
         """
 
         Rbo = self.get_Rbo(lam=lam)
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z4 = point_dict["Z4"]
 
         return Rbo - abs(Z4)
@@ -474,7 +480,7 @@ class SlotW62(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Zw1 = point_dict["Zw1"]
         Zw2 = point_dict["Zw2"]
 
@@ -499,7 +505,7 @@ class SlotW62(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z5 = point_dict["Z5"]
         Rext = self.get_Rbo(lam=lam)
         Rint = abs(Z5)
@@ -594,7 +600,7 @@ class SlotW62(Slot):
         lam = container_or_parent(self, lam, "lam")
 
         # Create curve list
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
         curve_list: list[Line] = [
             line_dict["1-2"],
             line_dict["2-3"],
@@ -725,7 +731,7 @@ class SlotW62(Slot):
                 is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = {}
-            point_dict_temp = self._comp_point_coordinate()
+            point_dict_temp = self._comp_point_coordinate(lam=lam)
             for key in point_dict_temp:
                 point_dict[key] = point_dict_temp[key] * np.exp(
                     1j * (np.pi / self.Zs + 4 * np.pi / self.Zs)
@@ -908,6 +914,7 @@ class SlotW62(Slot):
                     is_add_wedge=is_add_wedge,
                     wind_mat=np.ones((1, 2, self.Zs, 1)),
                     alpha=np.pi / self.Zs + 2 * np.pi / self.Zs,
+                    lam=lam,
                 )
                 self.plot_active(
                     fig=fig,
@@ -916,6 +923,7 @@ class SlotW62(Slot):
                     is_add_wedge=is_add_wedge,
                     wind_mat=np.ones((1, 2, self.Zs, 1)),
                     alpha=np.pi / self.Zs + 4 * np.pi / self.Zs,
+                    lam=lam,
                 )
                 self.plot_active(
                     fig=fig,
@@ -924,6 +932,7 @@ class SlotW62(Slot):
                     is_add_wedge=is_add_wedge,
                     wind_mat=np.ones((1, 2, self.Zs, 1)),
                     alpha=np.pi / self.Zs + 6 * np.pi / self.Zs,
+                    lam=lam,
                 )
                 self.plot_active(
                     fig=fig,
@@ -932,6 +941,7 @@ class SlotW62(Slot):
                     is_add_wedge=is_add_wedge,
                     wind_mat=np.ones((1, 2, self.Zs, 1)),
                     alpha=np.pi / self.Zs + 8 * np.pi / self.Zs,
+                    lam=lam,
                 )
             elif type_add_active == 2:  # Magnet
                 self.plot_active(
@@ -939,6 +949,7 @@ class SlotW62(Slot):
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning

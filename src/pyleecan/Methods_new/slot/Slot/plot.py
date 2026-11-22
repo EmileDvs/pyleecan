@@ -5,12 +5,14 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from matplotlib.axes import Axes
     from matplotlib.figure import Figure
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 ROTOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["ROTOR_COLOR"]
 STATOR_COLOR = config_dict["PLOT"]["COLOR_DICT"]["STATOR_COLOR"]
 
 
-def plot(self, fig: Figure | None = None, ax: Axes | None = None, is_show_fig: bool = True) -> tuple[Figure, Axes]:
+def plot(self, fig: Figure | None = None, ax: Axes | None = None, is_show_fig: bool = True, lam: Lamination | Notch | None = None) -> tuple[Figure, Axes]:
     """Plot the Slot in a matplotlib fig
 
     Parameters
@@ -20,6 +22,8 @@ def plot(self, fig: Figure | None = None, ax: Axes | None = None, is_show_fig: b
     fig :
         if None, open a new fig and plot, else add to the current
         one (Default value = None)
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -28,7 +32,7 @@ def plot(self, fig: Figure | None = None, ax: Axes | None = None, is_show_fig: b
     ax : Matplotlib.axes.Axes object
         Axis containing the plot
     """
-    surf = self.get_surface()
+    surf = self.get_surface(lam=lam)
 
     # Display the result
     (fig, ax, patch_leg, label_leg) = init_fig(fig, ax)

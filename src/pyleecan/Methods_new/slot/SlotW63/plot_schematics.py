@@ -112,7 +112,7 @@ def plot_schematics(
             raise ParentMissingError("Error: The slot is not inside a Lamination")
         fig, ax = lam.plot(is_show_fig=False, fig=fig, ax=ax)  # center slot on Ox axis
         point_dict = dict()
-        point_dict_temp = self._comp_point_coordinate()
+        point_dict_temp = self._comp_point_coordinate(lam=lam)
         for key in point_dict_temp:
             point_dict[key] = point_dict_temp[key] * np.exp(
                 1j * (np.pi / self.Zs + 4 * np.pi / self.Zs)
@@ -280,7 +280,7 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=np.pi / self.Zs + 2 * np.pi / self.Zs,
+                alpha=np.pi / self.Zs + 2 * np.pi / self.Zs, lam=lam,
             )
             self.plot_active(
                 fig=fig,
@@ -288,7 +288,7 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=np.pi / self.Zs + 4 * np.pi / self.Zs,
+                alpha=np.pi / self.Zs + 4 * np.pi / self.Zs, lam=lam,
             )
             self.plot_active(
                 fig=fig,
@@ -296,7 +296,7 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=np.pi / self.Zs + 6 * np.pi / self.Zs,
+                alpha=np.pi / self.Zs + 6 * np.pi / self.Zs, lam=lam,
             )
             self.plot_active(
                 fig=fig,
@@ -304,14 +304,14 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=np.pi / self.Zs + 8 * np.pi / self.Zs,
+                alpha=np.pi / self.Zs + 8 * np.pi / self.Zs, lam=lam,
             )
         elif type_add_active == 2:  # Magnet
             self.plot_active(
                 fig=fig,
                 ax=ax,
                 is_show_fig=False,
-                enforced_default_color=MAGNET_COLOR,
+                enforced_default_color=MAGNET_COLOR, lam=lam,
             )
 
         # Zooming and cleaning

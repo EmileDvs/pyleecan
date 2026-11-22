@@ -66,7 +66,7 @@ class SlotCirc(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotCirc._comp_line_dict
-    def _comp_line_dict(self) -> dict:
+    def _comp_line_dict(self, lam: Lamination | Notch | None = None) -> dict:
         """Define a dictionnary of the lines to draw the slot
         If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
 
@@ -74,6 +74,8 @@ class SlotCirc(Slot):
         ----------
         self : SlotCirc
             A SlotCirc object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -81,15 +83,15 @@ class SlotCirc(Slot):
             Dictionnary of the slot lines (key: line name, value: line object)
         """
 
-        point_dict = self._comp_point_coordinate()
-        R0 = self._comp_R0()
+        point_dict = self._comp_point_coordinate(lam=lam)
+        R0 = self._comp_R0(lam=lam)
 
         if self.H0 < self.W0 / 2:
             sign = -1
         else:
             sign = 1
         # Creation of curve
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             full_arc = Arc1(
                 begin=point_dict["Z1"],
                 end=point_dict["Z2"],
@@ -115,20 +117,22 @@ class SlotCirc(Slot):
         line_dict["2-1"] = Arc1(
             begin=point_dict["Z2"],
             end=point_dict["Z1"],
-            radius=-self.get_Rbo(),
+            radius=-self.get_Rbo(lam=lam),
             is_trigo_direction=False,
         )
 
         return line_dict
 
     # Inlined from Methods.Slot.SlotCirc._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotCirc
             A SlotCirc object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -138,20 +142,20 @@ class SlotCirc(Slot):
 
         if self.is_H0_bore is None:
             self.is_H0_bore = True  # Set default value
-        Rbo = self.get_Rbo()
-        alpha = self.comp_angle_opening()
+        Rbo = self.get_Rbo(lam=lam)
+        alpha = self.comp_angle_opening(lam=lam)
 
         Z1 = Rbo * np.exp(-1j * alpha / 2)
         Z2 = Rbo * np.exp(1j * alpha / 2)
         if self.is_H0_bore:
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 ZM = Rbo + self.H0
             else:
                 ZM = Rbo - self.H0
             R0, _ = circle_from_3_points(Z1, Z2, ZM)
             ZH = Rbo
         else:
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 ZM = (Z1 + Z2) / 2 + self.H0
             else:
                 ZM = (Z1 + Z2) / 2 - self.H0
@@ -170,13 +174,15 @@ class SlotCirc(Slot):
         return point_dict
 
     # Inlined from Methods.Slot.SlotCirc._comp_R0
-    def _comp_R0(self) -> float:
+    def _comp_R0(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the radius of the circle
 
         Parameters
         ----------
         self : SlotCirc
             A SlotCirc object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -188,7 +194,7 @@ class SlotCirc(Slot):
             self.is_H0_bore = True  # Set default value
 
         if self.is_H0_bore:
-            return self._comp_point_coordinate()["R0"]
+            return self._comp_point_coordinate(lam=lam)["R0"]
         else:
             # R0 is the radius of the circle
             # Pythagore in Triangle: Center, Z2, middle(Z1,Z2)
@@ -215,7 +221,7 @@ class SlotCirc(Slot):
             A list of one Arc
         """
 
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
 
         curve_list = [
             line_dict["1-M"],
@@ -241,13 +247,15 @@ class SlotCirc(Slot):
         pass
 
     # Inlined from Methods.Slot.SlotCirc.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotCirc
             A SlotCirc object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -255,7 +263,7 @@ class SlotCirc(Slot):
             Average opening angle of the slot [rad]
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
@@ -277,7 +285,7 @@ class SlotCirc(Slot):
             Height of the slot [m]
         """
 
-        return self.comp_height_active()
+        return self.comp_height_active(lam=lam)
 
     # Inlined from Methods.Slot.SlotCirc.comp_height_active
     def comp_height_active(self, lam: Lamination | Notch | None = None) -> float:
@@ -302,7 +310,7 @@ class SlotCirc(Slot):
         if self.is_H0_bore:
             return self.H0
         else:
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             ZM = point_dict["ZM"]
             Rbo = self.get_Rbo(lam=lam)
             return abs(Rbo - abs(ZM))
@@ -345,14 +353,14 @@ class SlotCirc(Slot):
             Slot inner surface for winding [m**2]
         """
 
-        R0 = self._comp_R0()
+        R0 = self._comp_R0(lam=lam)
         alpha = float(2 * np.arcsin(self.W0 / (2 * R0)))
         # Area of the full circle
         S1 = np.pi * (R0**2)
         # Area of the top Arc
         S2 = (R0**2.0) / 2.0 * (alpha - np.sin(alpha))
         # Arc of the bore
-        alpha_op = self.comp_angle_opening()
+        alpha_op = self.comp_angle_opening(lam=lam)
         S3 = (self.get_Rbo(lam=lam) ** 2.0) / 2.0 * (alpha_op - np.sin(alpha_op))
 
         if self.H0 < self.W0 / 2:
@@ -368,7 +376,7 @@ class SlotCirc(Slot):
                 return S1 - S2 + S3
 
     # Inlined from Methods.Slot.SlotCirc.comp_surface_opening
-    def comp_surface_opening(self) -> float:
+    def comp_surface_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot opening surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -376,6 +384,8 @@ class SlotCirc(Slot):
         ----------
         self : SlotCirc
             A SlotCirc object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -387,8 +397,13 @@ class SlotCirc(Slot):
         return 0
 
     # Inlined from Methods.Slot.SlotCirc.convert_to_H0_bore
-    def convert_to_H0_bore(self) -> None:
+    def convert_to_H0_bore(self, lam: Lamination | Notch | None = None) -> None:
         """Convert the slot to the other definition of H0
+
+        Parameters
+        ----------
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Parameters:
         -----------
@@ -399,7 +414,7 @@ class SlotCirc(Slot):
         if self.is_H0_bore:
             raise Exception("Error, slot is already H0 bore type!")
 
-        self.H0 = self.comp_height()
+        self.H0 = self.comp_height(lam=lam)
         self.is_H0_bore = True
 
     # Inlined from Methods.Slot.SlotCirc.get_surface_active
@@ -430,7 +445,7 @@ class SlotCirc(Slot):
         lam = container_or_parent(self, lam, "lam")
 
         # Create curve list
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
         curve_list: list[Line] = [
             line_dict["1-M"],
             line_dict["M-2"],
@@ -581,7 +596,7 @@ class SlotCirc(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
 
             # Adding point label
             if is_add_point_label:
@@ -643,7 +658,7 @@ class SlotCirc(Slot):
 
             # Zooming and cleaning
             W = self.W0 / 2 * 1.4
-            Rint, Rext = self.comp_radius()
+            Rint, Rext = self.comp_radius(lam=lam)
 
             ax.axis("equal")
             ax.set_xlim(Rint, Rext)

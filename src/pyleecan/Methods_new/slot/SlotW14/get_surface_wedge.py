@@ -29,13 +29,13 @@ def get_surface_wedge(self, alpha: float = 0, delta: complex = 0, lam: Laminatio
         list of surfaces objects
     """
     lam = container_or_parent(self, lam, "lam")
-    H1 = self.get_H1()
+    H1 = self.get_H1(lam=lam)
     # H0=H1=0 no opening
     if self.H0 == 0 and H1 == 0:
         return []
 
     # Create curve list
-    line_dict = self._comp_line_dict()
+    line_dict = self._comp_line_dict(lam=lam)
     curve_list: list[Line] = [
         line_dict["2-3"],
         line_dict["3-7"],

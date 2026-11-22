@@ -28,7 +28,7 @@ def get_slot_desc_list(self, sym: int = 1, is_bore: bool = True) -> list:
         return list()
 
     slot_list = list()
-    op = self.slot.comp_angle_opening()
+    op = self.slot.comp_angle_opening(lam=self)
     Zs = self.slot.Zs
 
     for ii in range(Zs // sym):

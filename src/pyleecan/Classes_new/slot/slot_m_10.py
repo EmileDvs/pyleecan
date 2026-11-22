@@ -73,13 +73,15 @@ class SlotM10(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotM10._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotM10
             A SlotM10 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -87,7 +89,7 @@ class SlotM10(Slot):
             A dict of the slot coordinates
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         point_dict = {}
         # alpha is the angle to rotate Z0 so ||Z1,Z10|| = W0
@@ -95,12 +97,12 @@ class SlotM10(Slot):
 
         Z1 = Rbo * np.exp(-1j * alpha)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Z2 = Z1 + self.H0
         else:  # inward slot
             Z2 = Z1 - self.H0
         ZM1 = Z2.real - 1j * self.W1 / 2
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             ZM2 = ZM1 - self.H1
         else:  # inward slot
             ZM2 = ZM1 + self.H1
@@ -137,7 +139,7 @@ class SlotM10(Slot):
             A list of 3 Segments
 
         """
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -173,13 +175,15 @@ class SlotM10(Slot):
             raise SlotCheckError("You must have W1 <= W0")
 
     # Inlined from Methods.Slot.SlotM10.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotM10
             A SlotM10 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -188,7 +192,7 @@ class SlotM10(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
@@ -211,7 +215,7 @@ class SlotM10(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -242,7 +246,7 @@ class SlotM10(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         ZM1 = point_dict["ZM1"]
         ZM2 = point_dict["ZM2"]
         ZM3 = point_dict["ZM3"]
@@ -281,7 +285,7 @@ class SlotM10(Slot):
         S1 = self.H0 * self.W0
 
         # The bottom is an arc
-        alpha = self.comp_angle_opening()
+        alpha = self.comp_angle_opening(lam=lam)
         Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         # Because Slamination = S - Zs * Sslot
@@ -339,7 +343,7 @@ class SlotM10(Slot):
         # get the name of the lamination
         st = self.get_name_lam(lam=lam)
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         ZM1 = point_dict["ZM1"]
         ZM2 = point_dict["ZM2"]
         ZM3 = point_dict["ZM3"]
@@ -378,13 +382,15 @@ class SlotM10(Slot):
         return surface
 
     # Inlined from Methods.Slot.SlotM10.is_airgap_active
-    def is_airgap_active(self) -> bool:
+    def is_airgap_active(self, lam: Lamination | Notch | None = None) -> bool:
         """Return True if a part or the full active surface is in the airgap
 
         Parameters
         ----------
         self : SlotM10
             A SlotM10 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -392,7 +398,7 @@ class SlotM10(Slot):
             True if a part or the full active surface is in the airgap
         """
 
-        return self.comp_height_active() > self.H0
+        return self.comp_height_active(lam=lam) > self.H0
 
     # Inlined from Methods.Slot.SlotM10.plot_schematics
     def plot_schematics(
@@ -486,7 +492,7 @@ class SlotM10(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             if self.is_outwards(lam=lam):
                 sign = +1
             else:
@@ -581,13 +587,14 @@ class SlotM10(Slot):
                 )
 
             if type_add_active == 1:
-                self.plot_active(fig=fig, ax=ax, is_show_fig=False)
+                self.plot_active(fig=fig, ax=ax, is_show_fig=False, lam=lam)
             elif type_add_active == 2:
                 self.plot_active(
                     fig=fig,
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
             elif type_add_active == 5:
                 self.plot_active(
@@ -595,11 +602,12 @@ class SlotM10(Slot):
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.KEY_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning
             W = self.W0 / 2 * 1.4
-            Rint, Rext = self.comp_radius()
+            Rint, Rext = self.comp_radius(lam=lam)
 
             ax.axis("equal")
             ax.set_xlim(Rint, Rext)

@@ -13,10 +13,10 @@ def comp_radius_mec(self) -> float:
     """
 
     Rmec = self.get_Rbo()
-    if self.slot.is_airgap_active():
+    if self.slot.is_airgap_active(lam=self):
         # Part of the active surface is in the airgap
         # => Reduce mechanical airgap
-        (Rmin, Rmax) = self.slot.comp_radius()
+        (Rmin, Rmax) = self.slot.comp_radius(lam=self)
         if self.is_internal:  # inward Slot
             # Top radius of the magnet
             Rmec = max(Rmec, Rmax)

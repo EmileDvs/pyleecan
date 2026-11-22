@@ -1,15 +1,22 @@
 import numpy as np
 
 from ....Functions_new.utils.geometry import inter_line_line
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def get_H1(self) -> float:
+def get_H1(self, lam: Lamination | Notch | None = None) -> float:
     """Return H1 in [m]
 
     Parameters
     ----------
     self : SlotW11
         A SlotW11 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -18,12 +25,12 @@ def get_H1(self) -> float:
 
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # alpha is the angle to rotate Z0 so ||Z1,Z8|| = W0
     alpha = float(np.arcsin(self.W0 / (2 * Rbo)))
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Z2 = (Rbo + self.H0) * np.exp(-1j * alpha)
 
     else:  # inward slot

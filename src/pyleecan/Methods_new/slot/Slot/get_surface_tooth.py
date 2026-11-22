@@ -38,8 +38,8 @@ def get_surface_tooth(self, lam: Lamination | None = None) -> SurfLine:
 
     curve_list: list[Line] = list()
     # tooth lines
-    top_list = self.build_geometry_half_tooth(is_top=True)
-    bot_list = self.build_geometry_half_tooth(is_top=False)
+    top_list = self.build_geometry_half_tooth(is_top=True, lam=lam)
+    bot_list = self.build_geometry_half_tooth(is_top=False, lam=lam)
     # Yoke lines
     Z1 = Ryoke * np.exp(1j * np.pi / self.Zs)
     Z2 = Ryoke * np.exp(-1j * np.pi / self.Zs)

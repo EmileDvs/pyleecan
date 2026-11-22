@@ -35,7 +35,7 @@ def get_surface_opening(self, alpha: float = 0, delta: complex = 0, lam: Laminat
         return []
 
     # Create curve list
-    line_dict = self._comp_line_dict()
+    line_dict = self._comp_line_dict(lam=lam)
     # Selection type Wedge
     if self.wedge_type == 0:
         # Create curve list

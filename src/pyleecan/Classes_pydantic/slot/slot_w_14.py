@@ -91,7 +91,7 @@ class SlotW14(Slot):
     """Name of the package of the legacy class module"""
 
     # Inlined from Methods.Slot.SlotW14._comp_line_dict
-    def _comp_line_dict(self) -> dict:
+    def _comp_line_dict(self, lam: Lamination | Notch | None = None) -> dict:
         """Define a dictionnary of the lines to draw the slot
         If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
 
@@ -99,6 +99,8 @@ class SlotW14(Slot):
         ----------
         self : SlotW14
             A SlotW14 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -106,7 +108,7 @@ class SlotW14(Slot):
             Dictionnary of the slot lines (key: line name, value: line object)
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
         Z3 = point_dict["Z3"]
@@ -137,7 +139,7 @@ class SlotW14(Slot):
 
         # Closing Arc (Rbo)
         line_dict["9-1"] = Arc1(
-            begin=Z9, end=Z1, radius=-self.get_Rbo(), is_trigo_direction=False
+            begin=Z9, end=Z1, radius=-self.get_Rbo(lam=lam), is_trigo_direction=False
         )
 
         # Closing Active part
@@ -152,29 +154,31 @@ class SlotW14(Slot):
         return line_dict
 
     # Inlined from Methods.Slot.SlotW14._comp_point_coordinate
-    def _comp_point_coordinate(self) -> dict:
+    def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
         """Compute the point coordinates needed to plot the Slot.
 
         Parameters
         ----------
         self : SlotW14
             A SlotW14 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
         point_dict: dict
             A dict of the slot point coordinates
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         hssp = np.pi / self.Zs
 
         # alpha is the angle to rotate P0 so ||P1,P9|| = W0
         alpha = np.arcsin(self.W0 / (2 * Rbo))
         Harc = float(Rbo * (1 - np.cos(alpha)))
-        H1 = self.get_H1()
+        H1 = self.get_H1(lam=lam)
 
         Z1 = Rbo * np.exp(-1j * alpha)
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             R1 = Rbo - Harc + self.H0 + H1
             Z2 = Z1 + self.H0
         else:
@@ -188,7 +192,7 @@ class SlotW14(Slot):
 
         # Z3t is Z3 in tooth ref
         Z3t = Z3 * np.exp(1j * hssp)
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Z4t = Z3t + self.H3
         else:
             Z4t = Z3t - self.H3
@@ -234,7 +238,7 @@ class SlotW14(Slot):
 
         """
 
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
 
         curve_list = [
             line_dict["1-2"],
@@ -272,7 +276,7 @@ class SlotW14(Slot):
         """
 
         Rbo = self.get_Rbo(lam=lam)
-        H1 = self.get_H1()
+        H1 = self.get_H1(lam=lam)
 
         if self.W0 * 0.5 / Rbo >= 1:
             raise S14_Rbo0CheckError("You must have W0/2 < Rbo")
@@ -288,13 +292,15 @@ class SlotW14(Slot):
             )
 
     # Inlined from Methods.Slot.SlotW14.comp_angle_opening
-    def comp_angle_opening(self) -> float:
+    def comp_angle_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the average opening angle of the Slot
 
         Parameters
         ----------
         self : SlotW14
             A SlotW14 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -303,7 +309,7 @@ class SlotW14(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         return float(2 * np.arcsin(self.W0 / (2 * Rbo)))
 
@@ -328,7 +334,7 @@ class SlotW14(Slot):
 
         Rbo = self.get_Rbo(lam=lam)
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z4 = point_dict["Z4"]
         Z5 = point_dict["Z5"]
 
@@ -354,7 +360,7 @@ class SlotW14(Slot):
             Height of the winding area [m]
 
         """
-        H1 = self.get_H1()
+        H1 = self.get_H1(lam=lam)
         Rbo = self.get_Rbo(lam=lam)
 
         # alpha is the angle to rotate P0 so ||P1,P10|| = W0
@@ -420,11 +426,11 @@ class SlotW14(Slot):
         if self.wedge_type == 1:
             return (
                 self.comp_surface_active(lam=lam)
-                + self.comp_surface_opening()
-                + self.comp_surface_wedge()
+                + self.comp_surface_opening(lam=lam)
+                + self.comp_surface_wedge(lam=lam)
             )
 
-        return self.comp_surface_active(lam=lam) + self.comp_surface_opening()
+        return self.comp_surface_active(lam=lam) + self.comp_surface_opening(lam=lam)
 
     # Inlined from Methods.Slot.SlotW14.comp_surface_active
     def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
@@ -444,7 +450,7 @@ class SlotW14(Slot):
 
         """
 
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z4 = point_dict["Z4"]
         Z5 = point_dict["Z5"]
         Z6 = point_dict["Z6"]
@@ -460,7 +466,7 @@ class SlotW14(Slot):
             return (S2 - S1) * 2
 
     # Inlined from Methods.Slot.SlotW14.comp_surface_opening
-    def comp_surface_opening(self) -> float:
+    def comp_surface_opening(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot opening surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -468,6 +474,8 @@ class SlotW14(Slot):
         ----------
         self : SlotW14
             A SlotW14 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -475,9 +483,9 @@ class SlotW14(Slot):
             Slot opening surface [m**2]
 
         """
-        H1 = self.get_H1()
-        Rbo = self.get_Rbo()
-        point_dict = self._comp_point_coordinate()
+        H1 = self.get_H1(lam=lam)
+        Rbo = self.get_Rbo(lam=lam)
+        point_dict = self._comp_point_coordinate(lam=lam)
         Z7 = point_dict["Z7"]
         W1 = abs(Z7.imag) * 2
 
@@ -485,18 +493,18 @@ class SlotW14(Slot):
         S0 = self.W0 * self.H0
 
         # The bottom is an arc
-        alpha = self.comp_angle_opening()
+        alpha = self.comp_angle_opening(lam=lam)
         Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         # Selection type Wedge
         if self.wedge_type == 0:
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 return S1 + S0 - Sarc
             else:
                 return S1 + S0 + Sarc
 
         if self.wedge_type == 1:
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 return S0 - Sarc
             else:
                 return S0 + Sarc
@@ -506,7 +514,7 @@ class SlotW14(Slot):
         )
 
     # Inlined from Methods.Slot.SlotW14.comp_surface_wedge
-    def comp_surface_wedge(self) -> float:
+    def comp_surface_wedge(self, lam: Lamination | Notch | None = None) -> float:
         """Compute the Slot wedge surface (by analytical computation).
         Caution, the bottom of the Slot is an Arc
 
@@ -514,6 +522,8 @@ class SlotW14(Slot):
         ----------
         self : SlotW14
             A SlotW14 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -523,11 +533,11 @@ class SlotW14(Slot):
         """
         # Selection type Wedge
         if self.wedge_type == 0:
-            return self.comp_surface_opening()
+            return self.comp_surface_opening(lam=lam)
 
         if self.wedge_type == 1:
-            H1 = self.get_H1()
-            point_dict = self._comp_point_coordinate()
+            H1 = self.get_H1(lam=lam)
+            point_dict = self._comp_point_coordinate(lam=lam)
             Z7 = point_dict["Z7"]
             W1 = abs(Z7.imag) * 2
 
@@ -538,13 +548,15 @@ class SlotW14(Slot):
         )
 
     # Inlined from Methods.Slot.SlotW14.get_H1
-    def get_H1(self) -> float:
+    def get_H1(self, lam: Lamination | Notch | None = None) -> float:
         """Return H1 in [m]
 
         Parameters
         ----------
         self : SlotW14
             A SlotW14 object
+        lam : Lamination or Notch, optional
+            Lamination (or notch) holding the slot (default: the parent)
 
         Returns
         -------
@@ -555,7 +567,7 @@ class SlotW14(Slot):
 
         # H1 in rad
         if self.H1_is_rad:
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             hssp = np.pi / self.Zs
 
             # alpha is the angle to rotate P0 so ||P1,P9|| = W0
@@ -563,7 +575,7 @@ class SlotW14(Slot):
             Harc = float(Rbo * (1 - np.cos(alpha)))
 
             Z1 = Rbo * np.exp(-1j * alpha)
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 R1 = Rbo - Harc + self.H0
                 Z2 = Z1 + self.H0
             else:
@@ -574,7 +586,7 @@ class SlotW14(Slot):
 
             # Z3t is Z3 in tooth ref
             Z3t = Z3 * np.exp(1j * hssp)
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 Z4t = Z3t + self.H3
             else:
                 Z4t = Z3t - self.H3
@@ -584,7 +596,7 @@ class SlotW14(Slot):
 
             Zop = 0.5 * np.tan(self.H1)
 
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 Zc2 = Z2 - 0.5 * 1j + Zop
             else:
                 Zc2 = Z2 - 0.5 * 1j - Zop
@@ -592,7 +604,7 @@ class SlotW14(Slot):
             ZiH = inter_line_line(Z3, Z4, Z2, Zc2)
             ZiH = ZiH[0]
 
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 H1 = abs(ZiH - Z3)
             else:
                 H1 = abs(Z3 - ZiH)
@@ -628,8 +640,8 @@ class SlotW14(Slot):
         """
         lam = container_or_parent(self, lam, "lam")
         # Create curve list
-        line_dict = self._comp_line_dict()
-        H1 = self.get_H1()
+        line_dict = self._comp_line_dict(lam=lam)
+        H1 = self.get_H1(lam=lam)
         if H1 > 1e-6:
             curve_list: list[Line] = [
                 line_dict["3-4"],
@@ -699,12 +711,12 @@ class SlotW14(Slot):
         """
         lam = container_or_parent(self, lam, "lam")
 
-        H1 = self.get_H1()
+        H1 = self.get_H1(lam=lam)
         # H0=H1=0 no opening
         if self.H0 == 0 and H1 == 0:
             return []
 
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
 
         # Selection type Wedge
         if self.wedge_type == 0:
@@ -781,13 +793,13 @@ class SlotW14(Slot):
             list of surfaces objects
         """
         lam = container_or_parent(self, lam, "lam")
-        H1 = self.get_H1()
+        H1 = self.get_H1(lam=lam)
         # H0=H1=0 no opening
         if self.H0 == 0 and H1 == 0:
             return []
 
         # Create curve list
-        line_dict = self._comp_line_dict()
+        line_dict = self._comp_line_dict(lam=lam)
         curve_list: list[Line] = [
             line_dict["2-3"],
             line_dict["3-7"],
@@ -935,7 +947,7 @@ class SlotW14(Slot):
             fig, ax = lam.plot(
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
-            point_dict = self._comp_point_coordinate()
+            point_dict = self._comp_point_coordinate(lam=lam)
             if self.is_outwards(lam=lam):
                 sign = 1
             else:
@@ -1018,11 +1030,11 @@ class SlotW14(Slot):
                 # H1 [rad]
                 line = Arc1(
                     begin=(point_dict["Z2"] + point_dict["Z3"]) / 2
-                    - self.get_H1() / 2
+                    - self.get_H1(lam=lam) / 2
                     - 0.007j,
                     end=(((point_dict["Z2"] + point_dict["Z3"]) / 2) + point_dict["Z3"])
                     / 2,
-                    radius=(self.get_H1() / 2),
+                    radius=(self.get_H1(lam=lam) / 2),
                     is_trigo_direction=True,
                 )
                 line.plot(
@@ -1031,7 +1043,8 @@ class SlotW14(Slot):
                     color=ARROW_COLOR,
                     linewidth=ARROW_WIDTH,
                     label="H1 [rad]",
-                    offset_label=-1j * sign * self.get_H1() * 0.5 - 3 * self.get_H1(),
+                    offset_label=-1j * sign * self.get_H1(lam=lam) * 0.5
+                    - 3 * self.get_H1(lam=lam),
                     fontsize=SC_FONT_SIZE,
                 )
                 # H3
@@ -1108,7 +1121,11 @@ class SlotW14(Slot):
             if type_add_active in [1, 3]:  # Wind and Wedge
                 is_add_wedge = type_add_active == 3
                 self.plot_active(
-                    fig=fig, ax=ax, is_show_fig=False, is_add_wedge=is_add_wedge
+                    fig=fig,
+                    ax=ax,
+                    is_show_fig=False,
+                    is_add_wedge=is_add_wedge,
+                    lam=lam,
                 )
             elif type_add_active == 2:  # Magnet
                 self.plot_active(
@@ -1116,6 +1133,7 @@ class SlotW14(Slot):
                     ax=ax,
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
+                    lam=lam,
                 )
 
             # Zooming and cleaning

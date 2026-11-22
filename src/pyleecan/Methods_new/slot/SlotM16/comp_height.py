@@ -23,7 +23,7 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         Height of the slot [m]
 
     """
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z4 = point_dict["Z4"]
     Z5 = point_dict["Z5"]
 

@@ -109,7 +109,7 @@ def plot_schematics(
         fig, ax = lam.plot(
             alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
         if self.is_outwards(lam=lam):
             sign = 1
         else:
@@ -226,10 +226,10 @@ def plot_schematics(
             )
 
         if type_add_active == 1:
-            self.plot_active(fig=fig, is_show_fig=False)
+            self.plot_active(fig=fig, is_show_fig=False, lam=lam)
         elif type_add_active == 2:
             self.plot_active(
-                fig=fig, is_show_fig=False, enforced_default_color=MAGNET_COLOR
+                fig=fig, is_show_fig=False, enforced_default_color=MAGNET_COLOR, lam=lam
             )
 
         # Zooming and cleaning

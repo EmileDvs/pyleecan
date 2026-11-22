@@ -132,10 +132,10 @@ class LamSlot(Lamination):
         """
 
         Rmec = self.get_Rbo()
-        if self.slot.is_airgap_active():
+        if self.slot.is_airgap_active(lam=self):
             # Part of the active surface is in the airgap
             # => Reduce mechanical airgap
-            (Rmin, Rmax) = self.slot.comp_radius()
+            (Rmin, Rmax) = self.slot.comp_radius(lam=self)
             if self.is_internal:  # inward Slot
                 # Top radius of the magnet
                 Rmec = max(Rmec, Rmax)
@@ -237,7 +237,7 @@ class LamSlot(Lamination):
             return []
 
         slot_list = []
-        op = self.slot.comp_angle_opening()
+        op = self.slot.comp_angle_opening(lam=self)
         Zs = self.slot.Zs
 
         for ii in range(Zs // sym):

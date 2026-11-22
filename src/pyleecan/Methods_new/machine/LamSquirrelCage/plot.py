@@ -86,7 +86,7 @@ def plot(
     patches = list()
     if not is_lam_only:
         try:
-            Rmw = self.slot.comp_radius_mid_active()
+            Rmw = self.slot.comp_radius_mid_active(lam=self)
             patches.append(
                 Wedge(
                     (0, 0),

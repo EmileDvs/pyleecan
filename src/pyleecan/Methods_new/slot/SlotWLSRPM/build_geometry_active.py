@@ -45,7 +45,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
     lam_label = lam.get_label()
     Rbo = self.get_Rbo(lam=lam)
 
-    point_dict = self._comp_point_coordinate()
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z1 = point_dict["Z1"]
     Z2 = point_dict["Z2"]
     Z3 = point_dict["Z3"]

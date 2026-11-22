@@ -1,13 +1,20 @@
 import numpy as np
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def _comp_point_coordinate(self) -> dict:
+def _comp_point_coordinate(self, lam: Lamination | Notch | None = None) -> dict:
     """Compute the point coordinates needed to plot the Slot.
 
     Parameters
     ----------
     self : SlotM13
         A SlotM13 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -15,7 +22,7 @@ def _comp_point_coordinate(self) -> dict:
         A dict of the slot coordinates
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # alpha is the angle to rotate Z0 so ||Z1,Z10|| = W0
     alpha = float(np.arcsin(self.W0 / (2 * Rbo)))
@@ -24,12 +31,12 @@ def _comp_point_coordinate(self) -> dict:
 
     alpha_lim = 2 * np.arcsin(self.W1 * 0.5 / self.Rtopm)  # Angle of the top arc
     H_top_arc = self.Rtopm * (1 - np.cos(alpha_lim / 2))  # Heiht of the top arc
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Z2 = Z1 + self.H0
     else:  # inward slot
         Z2 = Z1 - self.H0
     ZM1 = Z2.real - 1j * self.W1 / 2
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         ZM0 = Z2.real - self.H1
         Zc = ZM0 + self.Rtopm
         ZM2 = ZM1 - self.H1 + H_top_arc

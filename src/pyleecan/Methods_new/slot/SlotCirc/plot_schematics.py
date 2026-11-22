@@ -113,7 +113,7 @@ def plot_schematics(
         fig, ax = lam.plot(
             alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
-        point_dict = self._comp_point_coordinate()
+        point_dict = self._comp_point_coordinate(lam=lam)
 
         # Adding point label
         if is_add_point_label:
@@ -175,7 +175,7 @@ def plot_schematics(
 
         # Zooming and cleaning
         W = self.W0 / 2 * 1.4
-        Rint, Rext = self.comp_radius()
+        Rint, Rext = self.comp_radius(lam=lam)
 
         ax.axis("equal")
         ax.set_xlim(Rint, Rext)

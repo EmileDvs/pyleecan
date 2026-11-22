@@ -1,8 +1,13 @@
 from ....Classes_new.geometry.segment import Segment
 from ....Classes_new.geometry.arc_1 import Arc1
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from ....Classes_new.machine.lamination import Lamination
+    from ....Classes_new.machine.notch import Notch
 
 
-def _comp_line_dict(self) -> dict:
+def _comp_line_dict(self, lam: Lamination | Notch | None = None) -> dict:
     """Define a dictionnary of the lines to draw the slot
     If a line has begin==end, it is replaced by "None" (dict has always the same number of keys)
 
@@ -10,6 +15,8 @@ def _comp_line_dict(self) -> dict:
     ----------
     self : SlotW62
         A SlotW62 object
+    lam : Lamination or Notch, optional
+        Lamination (or notch) holding the slot (default: the parent)
 
     Returns
     -------
@@ -17,8 +24,8 @@ def _comp_line_dict(self) -> dict:
         Dictionnary of the slot lines (key: line name, value: line object)
     """
 
-    Rbo = self.get_Rbo()
-    point_dict = self._comp_point_coordinate()
+    Rbo = self.get_Rbo(lam=lam)
+    point_dict = self._comp_point_coordinate(lam=lam)
     Z1 = point_dict["Z1"]
     Z2 = point_dict["Z2"]
     Z3 = point_dict["Z3"]
