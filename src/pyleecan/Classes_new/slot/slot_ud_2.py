@@ -144,9 +144,9 @@ class SlotUD2(Slot):
                 self,
                 Nrad=Nrad,
                 Ntan=Ntan,
-                is_simplified=is_simplified,
                 alpha=alpha,
                 delta=delta,
+                lam=lam,
             )
 
     # Inlined from Methods.Slot.SlotUD2.check

@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
@@ -29,6 +30,8 @@ def comp_axes(self, output: Output, meshsol: MeshSolution | None = None) -> dict
 
     if meshsol is None:
         meshsol = output.mag.get_meshsolution()
+        if meshsol is None:
+            raise FieldMissingError("OutMag.meshsolution is None: the magnetic simulation stored no mesh solution")
 
     axes_list = meshsol.get_solution().field.get_axes()
     Time = axes_list[0]

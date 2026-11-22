@@ -578,7 +578,7 @@ class LamSlotMultiWind(LamSlotMulti):
         save_path: str | None = None,
         is_show_fig: bool = True,
         machine: Machine | None = None,
-    ) -> None:
+    ) -> Figure:
         """Plot the winding unit mmf as a function of space
         Parameters
         ----------
@@ -593,11 +593,21 @@ class LamSlotMultiWind(LamSlotMulti):
             To call show at the end of the method
         machine : Machine, optional
             Machine holding the lamination (default: the parent)
+
+        Returns
+        -------
+        fig : Matplotlib.figure.Figure
+            Figure of the plot
+
+        Notes
+        -----
+        r_max and fig are not used: LamSlotWind.plot_mmf_unit draws on its own
+        figure (the legacy call passed them and raised a TypeError)
         """
 
         # Local import: avoids circular imports
         from .lam_slot_wind import LamSlotWind
 
-        LamSlotWind.plot_mmf_unit(
-            self, r_max=r_max, fig=fig, save_path=save_path, is_show_fig=is_show_fig
+        return LamSlotWind.plot_mmf_unit(
+            self, save_path=save_path, is_show_fig=is_show_fig, machine=machine
         )

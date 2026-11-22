@@ -1277,6 +1277,15 @@ Review list by package (behaviour or class definition to decide):
         without check;
   - [x] (2026-11-22) implicit `None` returns: `Frame.plot`, `LamSquirrelCage.plot_schematics_scr`,
         `LamSlotMag.get_magnet_by_label`;
+  - [x] (2026-11-22) legacy bugs found by `ty` (`TypeError` when run):
+        `LamSlotMultiWind.plot_mmf_unit` passed `r_max` / `fig` to
+        `LamSlotWind.plot_mmf_unit`, which takes neither (now: passes
+        `save_path`, `is_show_fig`, `machine`, returns the figure);
+        `SlotUD2.build_geometry_active` passed `is_simplified` to
+        `Slot.build_geometry_active` (dropped, `lam` passed on);
+        `Machine.get_color_legend_from_surface` hinted `tuple[str | None,
+        str | None]`; `WindingSC.comp_periodicity` with a `None`
+        periodicity. `ty` on `Methods_new`: 439 -> 397.
   - [ ] `LamSlotWind.comp_mmf_unit`: lists given to ndarray fields of `Data1D`;
         `LamSlotWind.plot`: lists for `FancyArrowPatch` positions (tuple);
         `Machine.plot_anim_rotor`: `Patch.xy`.
@@ -1289,15 +1298,19 @@ Review list by package (behaviour or class definition to decide):
         `VarSimu.set_reused_data` (`output.mag.internal`,
         `output.simu.elec`): explicit errors; `generate_simulation_list`:
         `ref_simu` required;
-  - [ ] `Input.comp_axis_*`: `int | None` periodicities compared;
+  - [x] (2026-11-22) `Input.comp_axis_angle` / `comp_axis_time`: a `None`
+        periodicity means none (`per = 1`, `is_antiper = False`) instead of
+        a `TypeError` on `None > 1`;
   - [ ] `InputCurrent.gen_input`: lists given to ndarray fields;
-        `get_ref_simu_index`: `int | None` returned.
+        `get_ref_simu_index`: `int | None` returned (hint fixed
+        2026-11-22, `VarLoad` and `VarSimu`).
 - Loss:
   - [ ] optional fields used without check: `LossModelBertotti` /
-        `LossModelSteinmetz.comp_coeff` (`mat_type.mag.LossData.get_data`),
-        `Loss.comp_axes` (`output.mag.get_meshsolution()` returns
-        `MeshSolution | None`), `Loss.comp_all_losses` (`axes_dict=None`
-        parameter; `MeshSolution.group` checked since 2026-11-22);
+        `LossModelSteinmetz.comp_coeff` (`mat_type.mag.LossData.get_data`);
+        done 2026-11-22: `Loss.comp_axes` and `Loss.comp_all_losses`
+        (`FieldMissingError` when `get_meshsolution()` gives None;
+        `comp_all_losses(axes_dict=None)` reads `OutLoss.axes_dict`, which
+        it subscripted as None before);
   - [ ] private matplotlib `Axes._get_lines` (`comp_coeff` plots);
   - [ ] `LossFEA.run`: ty narrows `self.model_dict` to the type of the dict
         literal assigned, then rejects `LossModelMagnet` (ty quirk, field typed

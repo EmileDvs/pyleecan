@@ -79,7 +79,9 @@ def comp_axis_time(self, p: int, per_t: int | None = None, is_antiper_t: bool | 
             include_endpoint=False,
             normalizations=norm_time,
         )
-        # Add time (anti-)periodicity
+        # Add time (anti-)periodicity (None: no periodicity)
+        per_t = 1 if per_t is None else per_t
+        is_antiper_t = bool(is_antiper_t)
         if per_t > 1 or is_antiper_t:
             Time = Time.get_axis_periodic(per_t, is_antiper_t)
     else:
@@ -91,7 +93,7 @@ def comp_axis_time(self, p: int, per_t: int | None = None, is_antiper_t: bool | 
         sym_t = dict()
         if is_antiper_t:
             sym_t["antiperiod"] = per_t
-        elif per_t > 1:
+        elif per_t is not None and per_t > 1:
             sym_t["period"] = per_t
         Time.symmetries = sym_t
         Time = Time.to_linspace()

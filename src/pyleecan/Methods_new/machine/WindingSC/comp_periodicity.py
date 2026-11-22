@@ -29,7 +29,7 @@ def comp_periodicity(self, lam: Lamination | None = None) -> tuple[int | None, b
         # depends on lamination properties: number of pole pairs and number of slots
         per_a, is_aper_a = Lamination.comp_periodicity_spatial(lamination)
 
-        if is_aper_a:
+        if is_aper_a and per_a is not None:
             # Multiply periodicity by 2 to be compliant with Winding.comp_periodicity()
             per_a = int(2 * per_a)
 

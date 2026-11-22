@@ -59,7 +59,9 @@ def comp_axis_angle(self, p: int, Rag: float, per_a: int | None = None, is_antip
             include_endpoint=False,
             normalizations=norm_angle,
         )
-        # Add angle (anti-)periodicity
+        # Add angle (anti-)periodicity (None: no periodicity)
+        per_a = 1 if per_a is None else per_a
+        is_antiper_a = bool(is_antiper_a)
         if per_a > 1 or is_antiper_a:
             Angle = Angle.get_axis_periodic(per_a, is_antiper_a)
 
@@ -74,7 +76,7 @@ def comp_axis_angle(self, p: int, Rag: float, per_a: int | None = None, is_antip
         sym_a = dict()
         if is_antiper_a:
             sym_a["antiperiod"] = per_a
-        elif per_a > 1:
+        elif per_a is not None and per_a > 1:
             sym_a["period"] = per_a
         Angle.symmetries = sym_a
         Angle = Angle.to_linspace()

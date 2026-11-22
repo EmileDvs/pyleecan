@@ -97,7 +97,7 @@ class VarLoad(VarSimu):
         return self.OP_matrix.get_OP_array(*arg_list)
 
     # Inlined from Methods.Simulation.VarLoad.get_ref_simu_index
-    def get_ref_simu_index(self, ref_simu: Simulation, simu_dict: dict) -> int:
+    def get_ref_simu_index(self, ref_simu: Simulation, simu_dict: dict) -> int | None:
         """Get the index of the reference simulation (None if must be computed)
 
         Parameters

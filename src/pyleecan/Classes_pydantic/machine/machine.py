@@ -1330,7 +1330,7 @@ class Machine(LegacyModel):
     @staticmethod
     def get_color_legend_from_surface(
         surf: Surface, is_lam_only: bool = False
-    ) -> tuple[str, str]:
+    ) -> tuple[str | None, str | None]:
         """Return the color and legend to use for plot the surface
 
         Parameters
@@ -1342,10 +1342,10 @@ class Machine(LegacyModel):
 
         Returns
         -------
-        color : str
-            Color to use on the patch
-        legend : str
-            Legend to display for the surface
+        color : str or None
+            Color to use on the patch (None: not plotted)
+        legend : str or None
+            Legend to display for the surface (None: no legend)
         """
         # The colors of the configuration when called (the defaults of the
         # wedges and keys added once)

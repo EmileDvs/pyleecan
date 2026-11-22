@@ -435,7 +435,7 @@ class VarSimu(LegacyModel):
         return dk_list
 
     # Inlined from Methods.Simulation.VarSimu.get_ref_simu_index
-    def get_ref_simu_index(self, ref_simu: Simulation, simu_dict: dict) -> int:
+    def get_ref_simu_index(self, ref_simu: Simulation, simu_dict: dict) -> int | None:
         """Get the index of the reference simulation (None if must be computed)
 
         Parameters

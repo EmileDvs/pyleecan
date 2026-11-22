@@ -48,7 +48,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
             self,
             Nrad=Nrad,
             Ntan=Ntan,
-            is_simplified=is_simplified,
             alpha=alpha,
             delta=delta,
+            lam=lam,
         )

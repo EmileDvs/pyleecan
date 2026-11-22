@@ -34,9 +34,15 @@ def comp_all_losses(
     # Store dict of axes
     if axes_dict is not None:
         out_loss.axes_dict = axes_dict
+    else:  # The axes stored before (Loss.run)
+        axes_dict = out_loss.axes_dict
+        if axes_dict is None:
+            raise FieldMissingError("OutLoss.axes_dict is None: the loss axes are not computed")
 
     if meshsol is None:
         meshsol = output.mag.get_meshsolution()
+        if meshsol is None:
+            raise FieldMissingError("OutMag.meshsolution is None: the magnetic simulation stored no mesh solution")
     group = meshsol.group
     if group is None:
         raise FieldMissingError("MeshSolution.group is None: the mesh solution has no element groups")
