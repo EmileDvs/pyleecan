@@ -259,6 +259,12 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   argument a `TypeError`, an unknown attribute an `AttributeError`. The
   target base `PyleecanModel` keeps the pydantic `ValidationError`.
 
+### Deprecated
+
+- `LUTdq.comp_MTPA` (and the legacy path `Functions.Electrical.comp_MTPA`):
+  written for an older equivalent circuit API, it does not run with the
+  current one; it warns and is removed in Phase 2.
+
 ### Fixed
 
 - **Legacy method bugs fixed in `Methods_new`** (`legacy_fixes.py`, applied

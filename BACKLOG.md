@@ -1333,12 +1333,14 @@ generator; this step finishes by hand what the generator could not do.
 
 - [ ] Finish the module targets of Step 8 that need hand changes.
   - [x] (2026-11-22) rule functions: `self` -> `rule` (Step 8 item).
-  - [ ] `LUTdq.comp_MTPA` (Step 8 item): written for an old vectorized EEC
-        API (`comp_parameters(machine, OP, Tsta, Trot, Id_array, Iq_array)`
-        returning the parameters, `solve(eec_param)`); the current
-        `EEC_PMSM.comp_parameters()` / `solve()` take one operating point
-        from the EEC fields. A rewrite of the algorithm (no caller, no
-        parity): decision of the maintainer (rewrite or deprecate).
+  - [x] (2026-11-22) `LUTdq.comp_MTPA` (Step 8 item): written for an old
+        vectorized EEC API (`comp_parameters(machine, OP, Tsta, Trot,
+        Id_array, Iq_array)` returning the parameters, `solve(eec_param)`);
+        the current `EEC_PMSM.comp_parameters()` / `solve()` take one
+        operating point from the EEC fields. Deprecated (decided): the
+        method warns (`DeprecationWarning`), removed in Phase 2 with its
+        alias `Functions.Electrical.comp_MTPA`. Test:
+        `Tests/New/test_comp_mtpa_deprecated.py`.
   - [ ] `path_tools.rel_file_path` (Step 8 item): decision of the maintainer.
 - [ ] Complete the type hints of the utility functions (from the Step 8 draft).
       `ty` on `Functions_new`: 510 (2026-11-22) -> 357 (SciDataTool plot
@@ -1535,6 +1537,7 @@ Deprecated function aliases (already warn in Phase 1, removed in Phase 2):
 | `init_fig` (module) | `utils.init_fig` | Step 8 group 9 |
 | `Plot.set_plot_gui_icon` (module) | `Tools.set_plot_gui_icon` of the GUI package | Step 8 group 9 |
 | `Plot.get_color_legend_from_surface` | `Machine.get_color_legend_from_surface` | Step 8 group 9 |
+| `LUTdq.comp_MTPA` (and its alias `Electrical.comp_MTPA`) | none (older EEC API, does not run) | Step 15 |
 
 - [ ] Decide which other legacy behaviours removed with the legacy layer need
       a deprecation period (`-1` default, `None` everywhere, `as_dict` /

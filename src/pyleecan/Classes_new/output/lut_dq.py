@@ -3,6 +3,7 @@
 
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar
+from warnings import warn
 
 import numpy as np
 import scipy.interpolate as scp_int
@@ -643,6 +644,10 @@ class LUTdq(LUT):
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Return the Air Gap Surface Force
 
+        Deprecated (removed in Phase 2): written for an older EEC API
+        (comp_parameters on arrays of currents), it does not run with the
+        current one.
+
         Parameters
         ----------
         machine : machine
@@ -676,6 +681,12 @@ class LUTdq(LUT):
             Output current [Arms]
 
         """
+        warn(
+            "LUTdq.comp_MTPA is deprecated: written for an older EEC API, it does "
+            "not run with the current one (removed in Phase 2)",
+            DeprecationWarning,
+            stacklevel=2,
+        )
 
         # Speed vector
         # Local import: circular import with the class module

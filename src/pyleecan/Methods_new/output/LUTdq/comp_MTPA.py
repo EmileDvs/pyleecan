@@ -1,4 +1,6 @@
 from ....classes_common.errors import FieldMissingError
+from warnings import warn
+
 import numpy as np
 
 from ....Functions_new.SciDataTool.Plot.plot_3d import plot_3D
@@ -24,6 +26,10 @@ def comp_MTPA(
     is_plot: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Return the Air Gap Surface Force
+
+    Deprecated (removed in Phase 2): written for an older EEC API
+    (comp_parameters on arrays of currents), it does not run with the
+    current one.
 
     Parameters
     ----------
@@ -58,6 +64,12 @@ def comp_MTPA(
         Output current [Arms]
 
     """
+    warn(
+        "LUTdq.comp_MTPA is deprecated: written for an older EEC API, it does "
+        "not run with the current one (removed in Phase 2)",
+        DeprecationWarning,
+        stacklevel=2,
+    )
 
     # Speed vector
     # Local import: circular import with the class module
