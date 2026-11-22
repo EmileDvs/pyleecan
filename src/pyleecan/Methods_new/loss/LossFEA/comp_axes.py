@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 from ....Classes_new.scidatatool.data_1d import Data1D
 from typing import TYPE_CHECKING
 
@@ -26,6 +27,8 @@ def comp_axes(self, output: Output) -> tuple[dict[str, Data], bool]:
 
     # Load axes dict from Outmag
     axes_dict_mag = output.mag.axes_dict
+    if axes_dict_mag is None:
+        raise FieldMissingError("OutMag.axes_dict is None: the magnetic axes are not computed")
 
     # Load Time axes depending on stator and rotor periodicities
     # Check if Magnetic mesh data is calculated in rotor and stator frames with different time periodicities

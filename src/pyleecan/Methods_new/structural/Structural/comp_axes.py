@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 from ...simulation.Input import InputError
 from ....Classes_new.output.out_struct import OutStruct
 from typing import TYPE_CHECKING
@@ -27,5 +28,7 @@ def comp_axes(self, output: Output) -> None:
 
     output.struct.axes_dict = dict()
 
+    if output.geo.axes_dict is None:
+        raise FieldMissingError("OutGeo.axes_dict is None: the geometry axes are not computed")
     for key, val in output.geo.axes_dict.items():
         output.struct.axes_dict[key] = val

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import FieldMissingError
 from ...classes_common.parents import container_or_parent
 from .loss_model import LossModel
 
@@ -86,6 +87,14 @@ class LossModelWindagePyrhonen(LossModel):
 
         # Get surface elements for windings
         ms = meshsol if meshsol is not None else output.mag.meshsolution
+        if ms is None:
+            raise FieldMissingError(
+                "OutMag.meshsolution is None: the magnetic model stored no mesh solution"
+            )
+        if ms.group is None:
+            raise FieldMissingError(
+                "MeshSolution.group is None: the mesh solution has no element groups"
+            )
         Se = ms.mesh.get_element_area()[ms.group["rotor core"]]
 
         # Constant component and twice the electrical frequency have same joule density values

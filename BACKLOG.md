@@ -1177,9 +1177,26 @@ Recurring causes, to solve once where possible:
 - [x] (2026-11-22) Optional fields, first part: a field whose default is an
       object or a container (empty CSV value) is no longer annotated
       `X | None` (`machine: Machine`); the legacy layers still accept None.
-- [ ] Optional fields used without check, the rest (fields defaulting to
-      None): add the check (explicit error), or type the field as not
-      optional (see "Nullable fields" in PLAN.md).
+- [x] (2026-11-22) Optional fields used without check, the rest (fields
+      defaulting to None): explicit check raising the new shared
+      `FieldMissingError` (`classes_common/errors.py`, written by the class
+      generator next to `ParentMissingError`; message "`<Class>.<field>` is
+      None: <what is missing>") instead of the `AttributeError` /
+      `TypeError` on None. Only the error type changes, nothing that worked
+      breaks. 29 methods: `OutMag.Phi_wind` / `B` / `meshsolution` /
+      `axes_dict` / `internal`, `OutElec.Us` / `OP` / `PWM` / `axes_dict`,
+      `OutForce.AGSF` / `Rag`, `OutGeo.stator` / `rotor` / `axes_dict`,
+      `OutGeoLam.BH_curve`, `Simulation.mag` / `elec`, `MeshSolution.group`
+      (loss models), `OutLossModel.coeff_dict`, `LUT.simu.var_simu`,
+      `LUT.get_eec()` (`EEC_SCIM.update_from_ref`); `LUTdq.comp_MTPA` reads
+      the equivalent circuit once. The `ref_simu=None` parameter of the
+      `generate_simulation_list` methods (VarParamSweep, VarLoadCurrent,
+      VarLoadVoltage) raises a `ValueError` (a parameter, not a field;
+      signature kept). Existing checks (`ValueError` / `Exception` of the
+      loss models) kept. Left: fields of objects built just before
+      (`ElementMat.indice` in `get_FEMM_mesh_results`, `DataND.axes` of a
+      `dqh2n` result), local variables and matplotlib returns (review list).
+      Test: `Tests/New/test_field_missing_error.py`.
 - `ty` on `Methods_new` (2026-11-22): 989 at the start of Step 14 -> 758
       (annotations) -> 620 (base class declarations). By rule:
       unresolved-attribute 190, invalid-argument-type 175, not-subscriptable
@@ -1188,7 +1205,8 @@ Recurring causes, to solve once where possible:
       the VarSimu / VarLoad methods) -> 548 (`OutLossModel` operators).
       Largest groups left: `DataND` (49, mostly the too narrow hints of the
       SciDataTool plot functions), `EEC_SCIM` (30), `MagElmer` (27),
-      `OptiGenAlgNsga2Deap` (26), `MagFEMM` (26), `LUTdq` (22).
+      `OptiGenAlgNsga2Deap` (26), `MagFEMM` (26), `LUTdq` (22). Then -> 465
+      (`FieldMissingError` checks).
 - [ ] Implicit `None` returns (a missing case: raise an error or return a value).
 
 Review list by package (behaviour or class definition to decide):
@@ -1225,16 +1243,19 @@ Review list by package (behaviour or class definition to decide):
         given to callable fields (Step 13);
   - [ ] `VarParamSweep.generate_simulation_list`: `init_dict=` constructor
         argument (legacy layer only);
-  - [ ] optional fields used without check: `VarSimu.set_reused_data`
-        (`simu.mag`, `simu.elec`, `output.mag.internal`),
-        `generate_simulation_list` (`ref_simu.copy`), `Input.comp_axis_*`
-        (`int | None` compared);
+  - [x] (2026-11-22) optional fields used without check:
+        `VarSimu.set_reused_data` (`output.mag.internal`,
+        `output.simu.elec`), `generate_simulation_list` (`ref_simu`):
+        explicit errors;
+  - [ ] `Input.comp_axis_*`: `int | None` periodicities compared;
   - [ ] `InputCurrent.gen_input`: lists given to ndarray fields;
         `get_ref_simu_index`: `int | None` returned.
 - Loss:
   - [ ] optional fields used without check: `LossModelBertotti` /
         `LossModelSteinmetz.comp_coeff` (`mat_type.mag.LossData.get_data`),
-        `Loss.comp_axes` (`output.mag.meshsolution`), `Loss.comp_all_losses`;
+        `Loss.comp_axes` (`output.mag.get_meshsolution()` returns
+        `MeshSolution | None`), `Loss.comp_all_losses` (`axes_dict=None`
+        parameter; `MeshSolution.group` checked since 2026-11-22);
   - [ ] private matplotlib `Axes._get_lines` (`comp_coeff` plots);
   - [ ] `LossFEA.run`: ty narrows `self.model_dict` to the type of the dict
         literal assigned, then rejects `LossModelMagnet` (ty quirk, field typed

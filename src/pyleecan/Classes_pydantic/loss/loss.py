@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import InputError
+from ...classes_common.errors import FieldMissingError, InputError
 from ...classes_common.logger_context import get_logger
 from ...classes_common.parents import container_or_parent
 from .._legacy_model import LegacyModel
@@ -88,6 +88,10 @@ class Loss(LegacyModel):
         if meshsol is None:
             meshsol = output.mag.get_meshsolution()
         group = meshsol.group
+        if group is None:
+            raise FieldMissingError(
+                "MeshSolution.group is None: the mesh solution has no element groups"
+            )
         freqs = axes_dict["freqs"].get_values()
         Nelem = meshsol.mesh.element_dict["triangle"].nb_element
 

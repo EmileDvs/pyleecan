@@ -42,6 +42,11 @@ class VarLoadVoltage(VarLoad):
             dictionary containing the simulation and paramexplorer list
         """
 
+        if ref_simu is None:
+            raise ValueError(
+                "generate_simulation_list needs the reference simulation (ref_simu)"
+            )
+
         # Get InputCurrent list
         list_input = self.get_input_list()
 

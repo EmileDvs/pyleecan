@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import FieldMissingError
 from ...classes_common.parents import container_or_parent
 from ..machine.lam_hole import LamHole
 from ..machine.lam_slot_mag import LamSlotMag
@@ -216,6 +217,10 @@ class LossModelMagnet(LossModel):
             # Merge stator and rotor frame solutions on the same Time axis
             meshsol = output.mag.get_meshsolution()
 
+        if meshsol.group is None:
+            raise FieldMissingError(
+                "MeshSolution.group is None: the mesh solution has no element groups"
+            )
         group_list = list(meshsol.group.keys())
 
         if self.group not in group_list:

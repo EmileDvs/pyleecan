@@ -7,6 +7,7 @@ import numpy as np
 import scipy.interpolate as scp_int
 from pydantic import Field
 
+from ...classes_common.errors import FieldMissingError
 from ...Functions_pydantic.SciDataTool.Plot.plot_3d import plot_3D
 from .._pyleecan_model import NDArray
 from ..electrical.eec_pmsm import EEC_PMSM
@@ -724,9 +725,14 @@ class LUTdq(LUT):
         # Stator winding resistance [Ohm]
         ecc = EEC_PMSM(R1=Rs)  # If Rs None => Compute
         simu_MTPA.elec = Electrical(LUT_enforced=self, eec=ecc, Tsta=Tsta)
+        eec = simu_MTPA.elec.eec
+        if eec is None:
+            raise FieldMissingError(
+                "Electrical.eec is None: the MTPA simulation has no equivalent circuit"
+            )
 
         # Interpolate stator winding flux in dqh frame for all Id/Iq
-        eec_param = simu_MTPA.elec.eec.comp_parameters(
+        eec_param = eec.comp_parameters(
             machine=machine,
             OP=OP_ref,
             Tsta=simu_MTPA.elec.Tsta,
@@ -735,7 +741,7 @@ class LUTdq(LUT):
         )
 
         # Compute torque
-        Tem_sync, Tem_rel = simu_MTPA.elec.eec.comp_torque_sync_rel(eec_param, qs, p)
+        Tem_sync, Tem_rel = eec.comp_torque_sync_rel(eec_param, qs, p)
         Tem_interp = Tem_sync + Tem_rel
 
         # Init OP_matrix
@@ -750,7 +756,7 @@ class LUTdq(LUT):
             OP_ref.N0 = N0
             OP_ref.felec = None
 
-            eec_param = simu_MTPA.elec.eec.comp_parameters(
+            eec_param = eec.comp_parameters(
                 machine,
                 OP=OP_ref,
                 Tsta=simu_MTPA.elec.Tsta,
@@ -760,7 +766,7 @@ class LUTdq(LUT):
             )
 
             # Calculate voltage
-            out_dict = simu_MTPA.elec.eec.solve(eec_param)
+            out_dict = eec.solve(eec_param)
             U_max_interp = np.sqrt(out_dict["Ud"] ** 2 + out_dict["Uq"] ** 2)
 
             # Finding indices of operating points satisfying Vmax and I_max voltage and torque limitations

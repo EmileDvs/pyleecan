@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 from ....classes_common.logger_context import get_logger
 from multiprocessing import cpu_count
 from multiprocessing.dummy import Pool
@@ -202,6 +203,8 @@ def solve_FEMM_parallel(
     ]
 
     # append femm_handler to handler_list
+    if output.mag.internal is None:
+        raise FieldMissingError("OutMag.internal is None: the FEMM handlers are stored in OutMagFEMM")
     output.mag.internal.handler_list.extend(femm_handler)
     # Creating threads pool
     with Pool(nb_worker) as p:

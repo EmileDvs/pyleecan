@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...classes_common.errors import InputError
+from ...classes_common.errors import FieldMissingError, InputError
 from ...classes_common.logger_context import get_logger
 from ...classes_common.parents import container_or_parent
 from .._legacy_class import LegacyClass
@@ -139,6 +139,12 @@ class Electrical(LegacyClass):
 
         # Get PWM object
         PWM = output.elec.PWM
+        if PWM is None:
+            raise FieldMissingError("OutElec.PWM is None: the output has no PWM drive")
+        if output.elec.axes_dict is None:
+            raise FieldMissingError(
+                "OutElec.axes_dict is None: the electrical axes are not computed"
+            )
 
         if PWM.U0 in [0, None]:
             raise Exception("Cannot calculate PWM voltage if PWM.U0 is None or 0")

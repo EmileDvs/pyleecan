@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
+from ...classes_common.errors import FieldMissingError
 from ..mesh.mesh_solution import MeshSolution
 from ..mesh.solution_vector import SolutionVector
 from ..scidatatool.data_1d import Data1D
@@ -96,6 +97,10 @@ class ForceTensor(Force):
         Nt_tot = Time.get_length()  # Number of time step
 
         meshsolution_mag = output.mag.meshsolution  # Comes from FEMM simulation
+        if meshsolution_mag is None:
+            raise FieldMissingError(
+                "OutMag.meshsolution is None: the magnetic model stored no mesh solution"
+            )
 
         # Select the target group (stator, rotor ...) or all the domain
         if self.group is None:

@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...classes_common.errors import NotImplementedYetError
+from ...classes_common.errors import FieldMissingError, NotImplementedYetError
 from .force import Force
 
 if TYPE_CHECKING:
@@ -81,6 +81,10 @@ class ForceMT(Force):
         )
 
         # Load magnetic flux
+        if output.mag.B is None:
+            raise FieldMissingError(
+                "OutMag.B is None: the magnetic flux density is not computed"
+            )
         Brphiz = output.mag.B.get_rphiz_along(
             "time=axis_data",
             "angle=axis_data",

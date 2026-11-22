@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -23,6 +24,8 @@ def update_from_ref(self, LUT_ref: LUTslip) -> None:
     self.comp_K21()
 
     eec_ref = LUT_ref.get_eec()
+    if eec_ref is None:
+        raise FieldMissingError("The reference LUT has no equivalent circuit (LUT.simu.elec.eec)")
     Tsta_ref, Trot_ref = eec_ref.Tsta, eec_ref.Trot
     Xkr_skinS_ref, Xke_skinS_ref = eec_ref.Xkr_skinS, eec_ref.Xke_skinS
     Xkr_skinR_ref, Xke_skinR_ref = eec_ref.Xkr_skinR, eec_ref.Xke_skinS

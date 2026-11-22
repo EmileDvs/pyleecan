@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 from ....classes_common.parents import container_or_parent
 from ....classes_common.logger_context import get_logger
 import numpy as np
@@ -206,6 +207,8 @@ def run(self, output: Output | None = None) -> None:
     # Add overall OutLossModel by adding all losses sources
     coeff_dict_all = {}
     for group_name, model in loss_dict.items():
+        if model.coeff_dict is None:
+            raise FieldMissingError(f"OutLossModel.coeff_dict is None: the loss model {group_name!r} has no coefficients")
         for key, value in model.coeff_dict.items():
             if key in coeff_dict_all:
                 coeff_dict_all[key] += value

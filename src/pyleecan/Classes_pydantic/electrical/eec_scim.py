@@ -8,6 +8,7 @@ import numpy as np
 import scipy.interpolate as scp_int
 from pydantic import Field
 
+from ...classes_common.errors import FieldMissingError
 from ...classes_common.logger_context import get_logger
 from ...Functions_pydantic.SciDataTool.dqh_transformation import abc2n, n2abc
 from ...Functions_pydantic.utils.labels import ROTOR_LAB, STATOR_LAB
@@ -138,6 +139,14 @@ class EEC_SCIM(EEC):
         sym, is_anti_per = machine.comp_periodicity_spatial()
 
         # get the fluxlinkages
+        if out.mag.Phi_wind is None:
+            raise FieldMissingError(
+                "OutMag.Phi_wind is None: the simulation stored no winding flux linkage"
+            )
+        if out.simu.mag is None:
+            raise FieldMissingError(
+                "Simulation.mag is None: the simulation has no magnetic model"
+            )
         Phi = out.mag.Phi_wind[ROTOR_LAB + "-0"].get_along("time", "phase")[
             "Phi_{wind}"
         ]
@@ -739,6 +748,10 @@ class EEC_SCIM(EEC):
         self.comp_K21()
 
         eec_ref = LUT_ref.get_eec()
+        if eec_ref is None:
+            raise FieldMissingError(
+                "The reference LUT has no equivalent circuit (LUT.simu.elec.eec)"
+            )
         Tsta_ref, Trot_ref = eec_ref.Tsta, eec_ref.Trot
         Xkr_skinS_ref, Xke_skinS_ref = eec_ref.Xkr_skinS, eec_ref.Xke_skinS
         Xkr_skinR_ref, Xke_skinR_ref = eec_ref.Xkr_skinR, eec_ref.Xke_skinS

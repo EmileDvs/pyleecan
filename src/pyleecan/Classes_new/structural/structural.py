@@ -4,7 +4,7 @@
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, ClassVar
 
-from ...classes_common.errors import InputError
+from ...classes_common.errors import FieldMissingError, InputError
 from ...classes_common.parents import container_or_parent
 from .._legacy_class import LegacyClass
 from ..output.out_struct import OutStruct
@@ -54,6 +54,10 @@ class Structural(LegacyClass):
 
         output.struct.axes_dict = {}
 
+        if output.geo.axes_dict is None:
+            raise FieldMissingError(
+                "OutGeo.axes_dict is None: the geometry axes are not computed"
+            )
         for key, val in output.geo.axes_dict.items():
             output.struct.axes_dict[key] = val
 

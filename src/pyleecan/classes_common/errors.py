@@ -95,6 +95,10 @@ class AxisError(FTError):
     """Raised when the axis requested is not available (Data Object)"""
 
 
+class FieldMissingError(Exception):
+    """A field needed by a method is None"""
+
+
 class FileError(Exception):
     """Raised when the file does not exists"""
 

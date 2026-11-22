@@ -4,6 +4,7 @@
 import os
 from typing import TYPE_CHECKING, ClassVar
 
+from ...classes_common.errors import FieldMissingError
 from ...classes_common.logger_context import get_logger
 from .post_method import PostMethod
 
@@ -45,6 +46,10 @@ class PostLUT(PostMethod):
             LUT object coming from LUT calculation workflow to cleanup
         """
 
+        if LUT.simu is None or LUT.simu.var_simu is None:
+            raise FieldMissingError(
+                "LUT.simu.var_simu is None: the LUT has no multi-simulation"
+            )
         assert LUT.simu.var_simu.is_keep_all_output is True
 
         # Clean all reference Output (only use output_list)

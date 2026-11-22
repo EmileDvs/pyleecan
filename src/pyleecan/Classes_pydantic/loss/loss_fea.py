@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 import numpy as np
 from pydantic import Field
 
-from ...classes_common.errors import InputError
+from ...classes_common.errors import FieldMissingError, InputError
 from ...classes_common.logger_context import get_logger
 from ...classes_common.parents import container_or_parent
 from ..output.out_loss_model import OutLossModel
@@ -121,6 +121,10 @@ class LossFEA(Loss):
 
         # Load axes dict from Outmag
         axes_dict_mag = output.mag.axes_dict
+        if axes_dict_mag is None:
+            raise FieldMissingError(
+                "OutMag.axes_dict is None: the magnetic axes are not computed"
+            )
 
         # Load Time axes depending on stator and rotor periodicities
         # Check if Magnetic mesh data is calculated in rotor and stator frames with different time periodicities
@@ -370,6 +374,10 @@ class LossFEA(Loss):
         # Add overall OutLossModel by adding all losses sources
         coeff_dict_all = {}
         for group_name, model in loss_dict.items():
+            if model.coeff_dict is None:
+                raise FieldMissingError(
+                    f"OutLossModel.coeff_dict is None: the loss model {group_name!r} has no coefficients"
+                )
             for key, value in model.coeff_dict.items():
                 if key in coeff_dict_all:
                     coeff_dict_all[key] += value

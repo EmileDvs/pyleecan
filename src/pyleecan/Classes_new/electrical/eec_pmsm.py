@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from pylab import False_
 
+from ...classes_common.errors import FieldMissingError
 from ...classes_common.logger_context import get_logger
 from ..scidatatool.data_1d import Data1D
 from ..scidatatool.data_freq import DataFreq
@@ -553,6 +554,10 @@ class EEC_PMSM(EEC):
         qs = output.simu.machine.stator.winding.qs
 
         # Get PWM frequencies in abc frame
+        if output.elec.Us is None:
+            raise FieldMissingError(
+                "OutElec.Us is None: the PWM voltage is not computed"
+            )
         freqs_n = output.elec.Us.get_axes("freqs")[0].values
 
         # Get stator voltage harmonics in dqh frame
@@ -638,6 +643,10 @@ class EEC_PMSM(EEC):
         Idqh_val[:, 1] = (-c * Udqh_val[:, 0] + a * Udqh_val[:, 1]) / det
 
         # Create frequency axis
+        if Us_PWM.axes is None:
+            raise FieldMissingError(
+                "DataFreq.axes is None: the PWM voltage has no axes"
+            )
         Freqs_PWM = Us_PWM.axes[0]
 
         norm_freq: dict[str, Normalization] = {}
@@ -666,6 +675,10 @@ class EEC_PMSM(EEC):
         # Is_PWM_dqh.plot_2D_Data("freqs=[0,20000]", "phase[]")
 
         # Convert I_dqh spectrum back to stator frame
+        if output.elec.OP is None:
+            raise FieldMissingError(
+                "OutElec.OP is None: the output has no operating point"
+            )
         Is_PWM_n = Is_PWM_dqh.dqh2n(
             n=qs,
             phase_dir=output.elec.phase_dir,

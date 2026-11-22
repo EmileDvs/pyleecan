@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 from ....classes_common.logger_context import get_logger
 import os
 
@@ -99,6 +100,8 @@ def solve_FEMM(
 
     logger = get_logger(self)
     is_sliding_band = self.is_sliding_band
+    if output.mag.internal is None:
+        raise FieldMissingError("OutMag.internal is None: the FEMM handlers are stored in OutMagFEMM")
 
     if filename is not None:
         # Open FEMM instance if filename is not None (parallel case)

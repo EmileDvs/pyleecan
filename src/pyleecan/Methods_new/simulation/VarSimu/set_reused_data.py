@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 from ....classes_common.logger_context import get_logger
 from ....Classes_new.magnetics.mag_femm import MagFEMM
 from ....Classes_new.electrical.elec_lut_dq import ElecLUTdq
@@ -31,6 +32,8 @@ def set_reused_data(self, simu: Simulation, output: Output, is_log: bool = True,
         TAB = ""
 
     if self.is_reuse_femm_file and isinstance(simu.mag, MagFEMM):
+        if output.mag.internal is None:
+            raise FieldMissingError("OutMag.internal is None: the reference output has no FEMM file to reuse")
         if is_log:
             get_logger(self).info(
                 TAB
@@ -47,4 +50,6 @@ def set_reused_data(self, simu: Simulation, output: Output, is_log: bool = True,
             get_logger(self).info(
                 TAB + simu_type + ": Using same LUT for all simulations"
             )
+        if output.simu.elec is None:
+            raise FieldMissingError("Simulation.elec is None: the reference simulation has no electrical model")
         simu.elec.LUT_enforced = output.simu.elec.LUT_enforced

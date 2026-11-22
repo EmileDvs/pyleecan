@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 import numpy as np
 from typing import TYPE_CHECKING
 
@@ -63,6 +64,8 @@ def comp_force(self, output: Output, axes_dict: dict[str, Data]) -> dict:
     )
 
     # Load magnetic flux
+    if output.mag.B is None:
+        raise FieldMissingError("OutMag.B is None: the magnetic flux density is not computed")
     Brphiz = output.mag.B.get_rphiz_along(
         "time=axis_data",
         "angle=axis_data",

@@ -5,7 +5,7 @@ import os
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, ClassVar
 
-from ...classes_common.errors import AbstractClassError
+from ...classes_common.errors import AbstractClassError, FieldMissingError
 from ...classes_common.logger_context import get_logger
 from .._legacy_class import LegacyClass
 from ..magnetics.magnetics import Magnetics
@@ -161,6 +161,10 @@ class EEC(LegacyClass):
         # Post-Process
         stator_label = machine.stator.get_label()
 
+        if out.mag.Phi_wind is None:
+            raise FieldMissingError(
+                "OutMag.Phi_wind is None: the simulation stored no winding flux linkage"
+            )
         Phi_wind = out.mag.Phi_wind[stator_label]
 
         Phidqh = Phi_wind.n2dqh(phase_dir=out.elec.phase_dir)

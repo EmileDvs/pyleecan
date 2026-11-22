@@ -8,6 +8,7 @@ import numpy as np
 from pydantic import Field
 from scipy.optimize import curve_fit
 
+from ...classes_common.errors import FieldMissingError
 from ...classes_common.parents import container_or_parent
 from .loss_model import LossModel
 
@@ -233,6 +234,10 @@ class LossModelSteinmetz(LossModel):
             # Merge stator and rotor frame solutions on the same Time axis
             meshsol = output.mag.get_meshsolution()
 
+        if meshsol.group is None:
+            raise FieldMissingError(
+                "MeshSolution.group is None: the mesh solution has no element groups"
+            )
         group_list = list(meshsol.group.keys())
 
         if self.group not in group_list:

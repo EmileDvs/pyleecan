@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
@@ -38,6 +39,10 @@ def comp_AGSF_transfer(self, output: Output, rnoise=None) -> None:
         Rsbo = self.Rsbo_enforced_transfer
 
     AGSF = output.force.AGSF
+    if AGSF is None:
+        raise FieldMissingError("OutForce.AGSF is None: the air-gap surface force is not computed")
+    if Rag is None:
+        raise FieldMissingError("OutForce.Rag is None: the air-gap radius of the force is not set")
 
     arg_list = ["freqs", "wavenumber"]
     result_freq = AGSF.get_rphiz_along(*arg_list)

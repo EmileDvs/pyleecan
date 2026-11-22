@@ -10,7 +10,7 @@ from meshio import read
 from pydantic import Field
 
 from ... import __version__
-from ...classes_common.errors import NotImplementedYetError
+from ...classes_common.errors import FieldMissingError, NotImplementedYetError
 from ...classes_common.logger_context import get_logger
 from ...Functions_pydantic.utils.get_path_binary import get_path_binary
 from ...Functions_pydantic.utils.labels import (
@@ -580,8 +580,20 @@ class MagElmer(Magnetics):
         boundaries = {}
         bodies = {}
         machine = output.simu.machine
+        if output.geo.stator is None or output.geo.rotor is None:
+            raise FieldMissingError(
+                "OutGeo.stator / OutGeo.rotor is None: the geometry of the laminations is not computed"
+            )
         BHs = output.geo.stator.BH_curve  # Stator B(H) curve
         BHr = output.geo.rotor.BH_curve  # Rotor B(H) curve
+        if BHs is None or BHr is None:
+            raise FieldMissingError(
+                "OutGeoLam.BH_curve is None: the B(H) curves of the laminations are not computed"
+            )
+        if output.elec.OP is None:
+            raise FieldMissingError(
+                "OutElec.OP is None: the output has no operating point"
+            )
         # Is = output.elec.Is  # Stator currents waveforms
         # Ir = output.elec.Ir  # Rotor currents waveforms
         Speed = output.elec.OP.get_N0()

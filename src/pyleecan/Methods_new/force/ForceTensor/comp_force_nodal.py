@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 import numpy as np
 
 from ....Classes_new.scidatatool.data_1d import Data1D
@@ -33,6 +34,8 @@ def comp_force_nodal(self, output: Output, axes_dict):
     Nt_tot = Time.get_length()  # Number of time step
 
     meshsolution_mag = output.mag.meshsolution  # Comes from FEMM simulation
+    if meshsolution_mag is None:
+        raise FieldMissingError("OutMag.meshsolution is None: the magnetic model stored no mesh solution")
 
     # Select the target group (stator, rotor ...) or all the domain
     if self.group is None:

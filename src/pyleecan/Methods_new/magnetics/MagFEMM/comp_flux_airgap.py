@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 from ....classes_common.logger_context import get_logger
 import numpy as np
 
@@ -127,6 +128,8 @@ def comp_flux_airgap(self, output: Output, axes_dict: dict[str, Data], Is_val=No
     machine = output.simu.machine
     out_dict["Phi_wind"] = {}
     axes_dict_elec = output.elec.axes_dict
+    if axes_dict_elec is None:
+        raise FieldMissingError("OutElec.axes_dict is None: the electrical axes are not computed")
     for label in machine.get_lam_list_label():
         if "phase_" + label in axes_dict_elec:
             qs = axes_dict_elec["phase_" + label].get_length(is_smallestperiod=True)

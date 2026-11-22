@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
-from ...classes_common.errors import InputError
+from ...classes_common.errors import FieldMissingError, InputError
 from ...classes_common.logger_context import get_logger
 from ...classes_common.parents import container_or_parent
 from .._legacy_class import LegacyClass
@@ -90,6 +90,14 @@ class Force(LegacyClass):
             Rsbo = self.Rsbo_enforced_transfer
 
         AGSF = output.force.AGSF
+        if AGSF is None:
+            raise FieldMissingError(
+                "OutForce.AGSF is None: the air-gap surface force is not computed"
+            )
+        if Rag is None:
+            raise FieldMissingError(
+                "OutForce.Rag is None: the air-gap radius of the force is not set"
+            )
 
         arg_list = ["freqs", "wavenumber"]
         result_freq = AGSF.get_rphiz_along(*arg_list)

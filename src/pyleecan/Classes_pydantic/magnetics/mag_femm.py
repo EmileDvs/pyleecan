@@ -10,6 +10,7 @@ from typing import TYPE_CHECKING, Any, ClassVar
 import numpy as np
 from pydantic import Field
 
+from ...classes_common.errors import FieldMissingError
 from ...classes_common.logger_context import get_logger
 from ...definitions import MAIN_DIR
 from ...Functions_pydantic.FEMM import FEMM_GROUPS
@@ -628,6 +629,10 @@ class MagFEMM(Magnetics):
         machine = output.simu.machine
         out_dict["Phi_wind"] = {}
         axes_dict_elec = output.elec.axes_dict
+        if axes_dict_elec is None:
+            raise FieldMissingError(
+                "OutElec.axes_dict is None: the electrical axes are not computed"
+            )
         for label in machine.get_lam_list_label():
             if "phase_" + label in axes_dict_elec:
                 qs = axes_dict_elec["phase_" + label].get_length(is_smallestperiod=True)
@@ -1043,6 +1048,10 @@ class MagFEMM(Magnetics):
 
         logger = get_logger(self)
         is_sliding_band = self.is_sliding_band
+        if output.mag.internal is None:
+            raise FieldMissingError(
+                "OutMag.internal is None: the FEMM handlers are stored in OutMagFEMM"
+            )
 
         if filename is not None:
             # Open FEMM instance if filename is not None (parallel case)
@@ -1470,6 +1479,10 @@ class MagFEMM(Magnetics):
         ]
 
         # append femm_handler to handler_list
+        if output.mag.internal is None:
+            raise FieldMissingError(
+                "OutMag.internal is None: the FEMM handlers are stored in OutMagFEMM"
+            )
         output.mag.internal.handler_list.extend(femm_handler)
         # Creating threads pool
         with Pool(nb_worker) as p:

@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 from ....classes_common.logger_context import get_logger
 import numpy as np
 
@@ -38,6 +39,10 @@ def _comp_flux_mean(self, out: Output) -> tuple[float, float]:
     sym, is_anti_per = machine.comp_periodicity_spatial()
 
     # get the fluxlinkages
+    if out.mag.Phi_wind is None:
+        raise FieldMissingError("OutMag.Phi_wind is None: the simulation stored no winding flux linkage")
+    if out.simu.mag is None:
+        raise FieldMissingError("Simulation.mag is None: the simulation has no magnetic model")
     Phi = out.mag.Phi_wind[ROTOR_LAB + "-0"].get_along("time", "phase")["Phi_{wind}"]
 
     # reconstruct fluxlinkage in case of (anti) periodicity

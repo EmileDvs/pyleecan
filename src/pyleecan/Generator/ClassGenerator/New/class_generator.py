@@ -33,7 +33,7 @@ from ....Generator.read_fct import (
     is_dict_pyleecan_type,
     is_list_pyleecan_type,
 )
-CLASS_ERROR_NAMES = {"NotImplementedYetError", "ParentMissingError"}
+CLASS_ERROR_NAMES = {"FieldMissingError", "NotImplementedYetError", "ParentMissingError"}
 VENDORED_CLASS_PACKAGES = {"_smoot", "_swat_em"}
 MISSING_METHOD_REASONS = {"method source file is missing", "method function is missing"}
 
@@ -984,6 +984,9 @@ def _write_shared_errors(path_to_gen, definitions, source_path=None):
         dependencies[origin] = bases
 
     all_definitions = ast.parse(
+        # Step 14: a field defaulting to None that a method needs
+        'class FieldMissingError(Exception):\n'
+        '    """A field needed by a method is None"""\n\n'
         'class NotImplementedYetError(Exception):\n'
         '    """NotImplementedYetError"""\n\n'
         'class ParentMissingError(Exception):\n'

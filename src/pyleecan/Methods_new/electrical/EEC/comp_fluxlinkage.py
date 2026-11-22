@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 from ....classes_common.logger_context import get_logger
 import os
 from typing import TYPE_CHECKING
@@ -80,6 +81,8 @@ def comp_fluxlinkage(self, machine: Machine | None = None, OP: OP | None = None,
     # Post-Process
     stator_label = machine.stator.get_label()
 
+    if out.mag.Phi_wind is None:
+        raise FieldMissingError("OutMag.Phi_wind is None: the simulation stored no winding flux linkage")
     Phi_wind = out.mag.Phi_wind[stator_label]
 
     Phidqh = Phi_wind.n2dqh(phase_dir=out.elec.phase_dir)

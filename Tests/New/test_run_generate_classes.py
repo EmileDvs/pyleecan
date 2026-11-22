@@ -173,6 +173,7 @@ def test_experimental_package_bookkeeping(
     assert (class_dir / "_parent_types.py").read_text(encoding="utf-8") == original
     assert issubclass(error_module.NotImplementedYetError, Exception)
     assert issubclass(error_module.ParentMissingError, Exception)
+    assert issubclass(error_module.FieldMissingError, Exception)
     with pytest.raises(error_module.ParentMissingError):
         raise error_module.ParentMissingError("missing parent")
 

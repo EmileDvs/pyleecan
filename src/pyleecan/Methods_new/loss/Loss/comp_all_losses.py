@@ -1,3 +1,4 @@
+from ....classes_common.errors import FieldMissingError
 import numpy as np
 
 from ....Classes_new.output.out_loss_model import OutLossModel
@@ -33,6 +34,8 @@ def comp_all_losses(
     if meshsol is None:
         meshsol = output.mag.get_meshsolution()
     group = meshsol.group
+    if group is None:
+        raise FieldMissingError("MeshSolution.group is None: the mesh solution has no element groups")
     freqs = axes_dict["freqs"].get_values()
     Nelem = meshsol.mesh.element_dict["triangle"].nb_element
 

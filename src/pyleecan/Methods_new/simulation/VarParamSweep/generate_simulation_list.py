@@ -23,6 +23,9 @@ def generate_simulation_list(self, ref_simu: Simulation | None = None) -> dict:
         dictionary containing the simulation and paramexplorer list
     """
 
+    if ref_simu is None:
+        raise ValueError("generate_simulation_list needs the reference simulation (ref_simu)")
+
     # Build the list
     setter_list = []  # Store ParamExplorer setters
     params_value_dict = {}  # Store parameter value list per ParamExplorer
