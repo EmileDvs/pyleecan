@@ -493,6 +493,10 @@ class SlotW14(Slot):
             else:
                 return S0 + Sarc
 
+        raise NotImplementedError(
+            f"SlotW14.wedge_type must be 0 or 1, got {self.wedge_type!r}"
+        )
+
     # Inlined from Methods.Slot.SlotW14.comp_surface_wedge
     def comp_surface_wedge(self) -> float:
         """Compute the Slot wedge surface (by analytical computation).
@@ -520,6 +524,10 @@ class SlotW14(Slot):
             W1 = abs(Z7.imag) * 2
 
             return (W1 + self.W0) * H1 / 2
+
+        raise NotImplementedError(
+            f"SlotW14.wedge_type must be 0 or 1, got {self.wedge_type!r}"
+        )
 
     # Inlined from Methods.Slot.SlotW14.get_H1
     def get_H1(self) -> float:

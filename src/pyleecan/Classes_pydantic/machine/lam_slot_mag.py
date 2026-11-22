@@ -365,7 +365,7 @@ class LamSlotMag(LamSlotM):
             ]
             mur_list = [mag.mat_type.mag.mur_lin for mag in mag_list]
             return mag_list[mur_list.index(mur)]
-        elif self.Brm20_matrix is not None:
+        else:  # Brm20_matrix is not None (both None returned above)
             Brm20 = self.Brm20_matrix[
                 label_dict["R_id"], label_dict["T_id"], label_dict["S_id"]
             ]

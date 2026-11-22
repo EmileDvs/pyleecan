@@ -381,8 +381,9 @@ class SlotW15(Slot):
         S1 = (self.H0 + Harc) * self.W0
 
         # Because Slamination = S - Zs * Sslot
-        if self.is_outwards():
-            return S1 - Sarc
+        if not self.is_outwards():
+            raise S15InnerError("Slot Type 15 can't be used on inner lamination")
+        return S1 - Sarc
 
     # Inlined from Methods.Slot.SlotW15.get_surface_active
     def get_surface_active(

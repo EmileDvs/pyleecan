@@ -1,5 +1,7 @@
 import numpy as np
 
+from . import S15InnerError
+
 
 def comp_surface_opening(self) -> float:
     """Compute the Slot opening surface (by analytical computation).
@@ -26,5 +28,6 @@ def comp_surface_opening(self) -> float:
     S1 = (self.H0 + Harc) * self.W0
 
     # Because Slamination = S - Zs * Sslot
-    if self.is_outwards():
-        return S1 - Sarc
+    if not self.is_outwards():
+        raise S15InnerError("Slot Type 15 can't be used on inner lamination")
+    return S1 - Sarc

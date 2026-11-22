@@ -530,19 +530,19 @@ class SlotW23(Slot):
         else:  # inward slot
             Z2 = (Rbo - self.H0) * np.exp(-1j * alpha)
 
-        if self.H1_is_rad:  # H1 in rad
-            if self.is_cstt_tooth:
-                Z2t = Z2 * np.exp(1j * np.pi / self.Zs)
-                Zangle = np.exp(-1j * ((np.pi / 2) - self.H1)) + Z2t
+        # H1 in rad
+        if self.is_cstt_tooth:
+            Z2t = Z2 * np.exp(1j * np.pi / self.Zs)
+            Zangle = np.exp(-1j * ((np.pi / 2) - self.H1)) + Z2t
 
-                Zt1 = 1j * (self.W3 / 2)
-                Zt2 = 1 + (1j * self.W3) / 2
-                L = inter_line_line(Zt1, Zt2, Z2t, Zangle)
-                Z3 = L[0]
-                return abs(Z3.real - Z2.real)
+            Zt1 = 1j * (self.W3 / 2)
+            Zt2 = 1 + (1j * self.W3) / 2
+            L = inter_line_line(Zt1, Zt2, Z2t, Zangle)
+            Z3 = L[0]
+            return abs(Z3.real - Z2.real)
 
-            else:
-                return (self.W1 - self.W0) * np.tan(self.H1) / 2.0  # convertion to m
+        else:
+            return (self.W1 - self.W0) * np.tan(self.H1) / 2.0  # convertion to m
 
     # Inlined from Methods.Slot.SlotW23.get_surface_active
     def get_surface_active(

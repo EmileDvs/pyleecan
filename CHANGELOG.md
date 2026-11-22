@@ -290,6 +290,13 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   legacy classes stored as is; the new classes store a copy of an assigned
   dict (`ParentDict`), so the local name lacked it (`KeyError: 'overall'`).
   The local name is rebound to the stored dict (`legacy_fixes.py`).
+- **Missing cases returning None** (Step 14, by hand in `Methods_new`):
+  `LamSquirrelCage.plot_schematics_scr(is_default=True)` and
+  `HoleM52R.plot_schematics` return `(fig, ax)` (the value of the plot was
+  lost); `SlotW14` / `SlotW29` surfaces with a `wedge_type` other than 0
+  and 1 raise `NotImplementedError`, `SlotW15.comp_surface_opening` on an
+  inward slot raises `S15InnerError`, `HoleUD.comp_surface_magnet_id` on an
+  index without magnet raises `ValueError` (all returned None).
 - Generation of the phase axis.
 - **Upstream fixes carried to the new code** (#748, #749, #752): MagFEMM
   mesh extraction without a hardcoded Windows separator; MagElmer

@@ -151,6 +151,9 @@ class HoleUD(HoleMag):
                     elif HOLEM_LAB in surf.label:
                         mag_id += 1
                 return 0
+        raise ValueError(
+            f"HoleUD has no magnet of index {index} (no {label!r} in magnet_dict)"
+        )
 
     # Inlined from Methods.Slot.HoleUD.has_magnet
     def has_magnet(self) -> bool:

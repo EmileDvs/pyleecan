@@ -41,3 +41,5 @@ def comp_surface_opening(self) -> float:
             return S0 - Sarc
         else:
             return S0 + Sarc
+
+    raise NotImplementedError(f"SlotW14.wedge_type must be 0 or 1, got {self.wedge_type!r}")

@@ -71,7 +71,7 @@ def plot_schematics(
         if is_return_default:
             return lam
         else:
-            hole.plot_schematics(
+            return hole.plot_schematics(
                 is_default=False,
                 is_return_default=False,
                 is_add_point_label=is_add_point_label,
@@ -85,7 +85,7 @@ def plot_schematics(
         # Remove magnets
         lam = self.parent.copy()
         lam.hole[0].remove_magnet()
-        lam.hole[0].plot_schematics(
+        return lam.hole[0].plot_schematics(
             is_default=False,
             is_add_point_label=is_add_point_label,
             is_add_schematics=is_add_schematics,
@@ -364,3 +364,4 @@ def plot_schematics(
 
         if is_show_fig:
             fig.show()
+        return fig, ax

@@ -1206,18 +1206,37 @@ Recurring causes, to solve once where possible:
       Largest groups left: `DataND` (49, mostly the too narrow hints of the
       SciDataTool plot functions), `EEC_SCIM` (30), `MagElmer` (27),
       `OptiGenAlgNsga2Deap` (26), `MagFEMM` (26), `LUTdq` (22). Then -> 465
-      (`FieldMissingError` checks) -> 464 (required `ref_simu`).
-- [ ] Implicit `None` returns (a missing case: raise an error or return a value).
+      (`FieldMissingError` checks) -> 464 (required `ref_simu`) -> 452
+      (implicit `None` returns).
+- [x] (2026-11-22) Implicit `None` returns (12, none left), by case:
+      - unreachable last case written as `else` (no behaviour change):
+        `Segment.intersect_line` (`inter_line_line` returns 0, 1 or 2
+        points), `LamSlotMag.get_magnet_by_label` (both matrices None
+        returned first), `SlotW23.get_H1` (second `H1_is_rad` test dropped);
+      - missing `return` of the legacy (fixed, the value was lost):
+        `LamSquirrelCage.plot_schematics_scr` (`is_default`),
+        `HoleM52R.plot_schematics` (the two recursive calls, and
+        `return fig, ax` at the end, as `HoleM52`);
+      - unsupported case, explicit error instead of None:
+        `SlotW14` / `SlotW29.comp_surface_opening` / `comp_surface_wedge`
+        (`wedge_type` other than 0 and 1: `NotImplementedError`, as
+        `Slot.get_surface_wedges`), `SlotW15.comp_surface_opening` (inward
+        slot: `S15InnerError`, as `SlotW15.check`),
+        `HoleUD.comp_surface_magnet_id` (index without `magnet_<i>` key:
+        `ValueError`);
+      - None kept, typed: `Frame.plot` returns `tuple[Figure, Axes] | None`
+        (a frame without height is not plotted).
+      Test: `Tests/New/test_implicit_none_returns.py`.
 
 Review list by package (behaviour or class definition to decide):
 
 - Geometry:
   - [ ] `get_patches` uses `"--" in linestyle` with a None default (PolarArc,
         SurfLine, Trapeze: `replace`/`in` on an optional style);
-  - [ ] `Segment.intersect_line` can return None; a `Polygon` returned for
-        `list[Polygon]`; one implicit `None` return.
+  - [x] (2026-11-22) `Segment.intersect_line` implicit `None` return;
+  - [ ] a `Polygon` returned for `list[Polygon]`.
 - Slot:
-  - [ ] implicit `None` returns: `SlotW14`/`SlotW15`/`SlotW29.comp_surface_opening`,
+  - [x] (2026-11-22) implicit `None` returns: `SlotW14`/`SlotW15`/`SlotW29.comp_surface_opening`,
         `SlotW14`/`SlotW29.comp_surface_wedge` (`wedge_type` other than 0 and 1),
         `SlotW23.get_H1` (second `if self.H1_is_rad` always true),
         `HoleUD.comp_surface_magnet_id` (unknown label), `HoleM52R.plot_schematics`;
@@ -1233,7 +1252,7 @@ Review list by package (behaviour or class definition to decide):
         when no label matches, `ax` may be `None`;
   - [ ] `LamSlotMag.get_all_mag_obj`: optional `mat_type`/`mag` fields assigned
         without check;
-  - [ ] implicit `None` returns: `Frame.plot`, `LamSquirrelCage.plot_schematics_scr`,
+  - [x] (2026-11-22) implicit `None` returns: `Frame.plot`, `LamSquirrelCage.plot_schematics_scr`,
         `LamSlotMag.get_magnet_by_label`;
   - [ ] `LamSlotWind.comp_mmf_unit`: lists given to ndarray fields of `Data1D`;
         `LamSlotWind.plot`: lists for `FancyArrowPatch` positions (tuple);

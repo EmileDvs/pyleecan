@@ -246,7 +246,7 @@ class Frame(LegacyModel):
         is_edge_only: bool = False,
         edgecolor: str | None = None,
         is_show_fig: bool = True,
-    ) -> tuple[Figure, Axes]:
+    ) -> tuple[Figure, Axes] | None:
         """Plot the Frame in a matplotlib fig
 
         Parameters
@@ -276,6 +276,7 @@ class Frame(LegacyModel):
             Figure containing the plot
         ax : Matplotlib.axes.Axes object
             Axis containing the plot
+        (None when the frame has no height: nothing is plotted)
         """
 
         # plot only if the frame has a height >0
@@ -313,3 +314,4 @@ class Frame(LegacyModel):
             if is_show_fig:
                 fig.show()
             return fig, ax
+        return None

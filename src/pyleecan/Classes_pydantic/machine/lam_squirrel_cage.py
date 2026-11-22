@@ -532,7 +532,7 @@ class LamSquirrelCage(LamSlotWind):
             )
             lam.slot = SlotW22(Zs=12, H0=0.02, H2=0.05)
             lam.winding.Lewout = 0.1
-            lam.plot_schematics_scr(
+            return lam.plot_schematics_scr(
                 is_default=False,
                 is_add_schematics=is_add_schematics,
                 is_add_main_line=is_add_main_line,

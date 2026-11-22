@@ -37,6 +37,6 @@ def intersect_line(self, Z1, Z2) -> list:
             return [Z_int]
         else:
             return []
-    elif len(Z_list) == 2:
-        # The segment is on the line
+    else:
+        # The segment is on the line (inter_line_line returns 2 points)
         return [Z3, Z4]
