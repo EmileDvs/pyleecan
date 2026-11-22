@@ -25,6 +25,6 @@ def comp_surface_active(self, Ndisc: int = 200, lam: Lamination | Notch | None =
 
     """
 
-    surf = self.get_surface_active()
+    surf = self.get_surface_active(lam=lam)
 
     return surf.comp_surface(Ndisc=Ndisc)

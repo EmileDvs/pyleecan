@@ -74,7 +74,7 @@ class Test_SlotW24_meth(object):
     def test_build_geometry_active(self, test_dict):
         """Check that the active geometry is correctly split"""
         test_obj = test_dict["test_obj"]
-        surf_list = test_obj.slot.build_geometry_active(Nrad=3, Ntan=2)
+        surf_list = test_obj.slot.build_geometry_active(Nrad=3, Ntan=2, lam=test_obj)
 
         # Check label
         assert surf_list[0].label == "Stator_Winding_R0-T0-S0"
@@ -201,7 +201,7 @@ class Test_SlotW24_meth(object):
         """Check that the get_surface_X works when stator = false"""
         lam = LamSlot(is_internal=True, Rext=0.1325, is_stator=False)
         lam.slot = SlotW24(Zs=6, H2=30e-3, W3=12e-3)
-        result = lam.slot.get_surface_active()
+        result = lam.slot.get_surface_active(lam=lam)
         assert result.label == "Rotor_Winding_R0-T0-S0"
         assert len(result.get_lines()) == 4
         assert result.is_inside(result.point_ref)

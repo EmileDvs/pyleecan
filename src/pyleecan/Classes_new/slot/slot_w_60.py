@@ -428,13 +428,13 @@ class SlotW60(Slot):
 
         """
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             raise S60_InnerCheckError("Slot 60 is for inner lamination only")
 
         if self.W1 <= self.W2:
             raise S60_W21CheckError("You must have W2 < W1")
 
-        if self.R1 > self.get_Rbo():
+        if self.R1 > self.get_Rbo(lam=lam):
             raise S60_RCheckError("You must have R1 <= Rbo")
 
         if self.H3 + self.H4 >= self.H2:
@@ -480,7 +480,7 @@ class SlotW60(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         point_dict = self._comp_point_coordinate()
         Z5 = point_dict["Z5"]
@@ -540,7 +540,7 @@ class SlotW60(Slot):
         Z6 = point_dict["Z6"]
         Z7 = point_dict["Z7"]
 
-        Rext = self.get_Rbo()
+        Rext = self.get_Rbo(lam=lam)
         Rint = abs(Z5)
 
         # Surface of a slot pitch
@@ -803,7 +803,7 @@ class SlotW60(Slot):
                     1j * (2 * np.pi / self.Zs)
                 )
 
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -977,9 +977,9 @@ class SlotW60(Slot):
                 )
                 # Top arc
                 line = Arc1(
-                    begin=self.get_Rbo(),
-                    end=-self.get_Rbo(),
-                    radius=self.get_Rbo(),
+                    begin=self.get_Rbo(lam=lam),
+                    end=-self.get_Rbo(lam=lam),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

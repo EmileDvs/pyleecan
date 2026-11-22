@@ -271,13 +271,13 @@ class SlotW14(Slot):
             W3 is too high comparing to the lamination bore radius (Rbo)
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         H1 = self.get_H1()
 
         if self.W0 * 0.5 / Rbo >= 1:
             raise S14_Rbo0CheckError("You must have W0/2 < Rbo")
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             R1 = Rbo + self.H0 + H1
         else:
             R1 = Rbo - self.H0 - H1
@@ -326,13 +326,13 @@ class SlotW14(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         point_dict = self._comp_point_coordinate()
         Z4 = point_dict["Z4"]
         Z5 = point_dict["Z5"]
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return abs(Z5) - Rbo
         else:
             return Rbo - abs(Z4)
@@ -454,7 +454,7 @@ class SlotW14(Slot):
         S1 = abs(Z6.imag) * abs(Z5.real - Z4.real) / 2
         S2 = (abs(Z6.imag) + abs(Z7.imag)) * abs(Z7.real - Z6.real) / 2
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return (S1 + S2) * 2
         else:
             return (S2 - S1) * 2
@@ -936,13 +936,13 @@ class SlotW14(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
             hsp = np.pi / self.Zs
             sp = 2 * np.pi / self.Zs
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             # Adding point label
             if is_add_point_label:
                 for name, Z in point_dict.items():

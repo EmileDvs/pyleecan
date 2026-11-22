@@ -28,9 +28,9 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         # Compute W1 and W2 to match W3 tooth constraint
         self._comp_W()
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         if self.R1 * 2 == self.W2:
             # Computation of the arc height
             alpha = self.comp_angle_opening() / 2

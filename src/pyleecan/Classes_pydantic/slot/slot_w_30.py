@@ -560,7 +560,7 @@ class SlotW30(Slot):
         S30_R2Error
             wrong definition of R2
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         if self.W0 == 0:
             raise S30_W0Error("You must have W0 > 0")
@@ -568,7 +568,7 @@ class SlotW30(Slot):
         if self.W0 * 0.5 / Rbo >= 1:
             raise S30_W0Error("You must have W0/2 < Rbo")
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             R1 = Rbo + self.H0 + self.R1
         else:
             R1 = Rbo - self.H0 - self.R1
@@ -653,13 +653,13 @@ class SlotW30(Slot):
             Z7 = point_dict["Z60"]
             Z6 = point_dict["Z80"]
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # The bottom is an arc
         alpha = self.comp_angle_opening()
         Harc = float(Rbo * (1 - np.cos(alpha / 2)))
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return abs(Z7) - Rbo
 
         else:
@@ -991,11 +991,11 @@ class SlotW30(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             sp = 2 * np.pi / self.Zs
             # Adding point label
             if is_add_point_label:

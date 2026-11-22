@@ -358,7 +358,7 @@ class femm_pyleecan:
 
         # Add all mesh size for all Laminations
         for lam in machine.get_lam_list():
-            label = lam.get_label()
+            label = lam.get_label(machine=machine)
             # Recompute because machine may has been modified
             Hsy = lam.comp_height_yoke()
             Hs = lam.Rext - lam.Rint
@@ -462,9 +462,9 @@ class femm_pyleecan:
             grp0 = FEMM_dict["groups"]["GROUP_RM"] * 10**ndigit
             list_mag = [grp0 + ii for ii in range(nb_mag)]
             FEMM_dict["groups"]["GROUP_RM"] = list_mag
-            FEMM_dict["groups"]["lam_group_list"][machine.rotor.get_label()].extend(
-                list_mag
-            )
+            FEMM_dict["groups"]["lam_group_list"][
+                machine.rotor.get_label(machine=machine)
+            ].extend(list_mag)
 
         # Init empty list
         FEMM_dict["materials"] = []
@@ -1280,6 +1280,7 @@ class femm_pyleecan:
                 type_BH_stator,
                 type_BH_rotor,
                 is_fast_draw,
+                lam_machine=machine_edit,
             )
 
         # List of the Non lamination related surfaces
@@ -1287,7 +1288,7 @@ class femm_pyleecan:
 
         # Adding no_mesh for shaft if needed
         if lam_list[0].Rint > 0 and sym == 1:
-            label_int = lam_list[0].get_label()
+            label_int = lam_list[0].get_label(machine=machine_edit)
             other_surf_list.append(
                 Circle(
                     point_ref=0,
@@ -1301,7 +1302,10 @@ class femm_pyleecan:
             if is_sliding_band:
                 other_surf_list.extend(
                     self.get_sliding_band(
-                        sym=sym, lam_int=lam_list[ii], lam_ext=lam_list[ii + 1]
+                        sym=sym,
+                        lam_int=lam_list[ii],
+                        lam_ext=lam_list[ii + 1],
+                        machine=machine_edit,
                     )
                 )
             else:
@@ -1363,6 +1367,7 @@ class femm_pyleecan:
         type_BH_stator: int = 0,
         type_BH_rotor: int = 0,
         is_fast_draw: bool = False,
+        lam_machine: Machine | None = None,
     ) -> dict:
         """Draw a Lamination in FEMM
 
@@ -1398,6 +1403,9 @@ class femm_pyleecan:
             2 Infinite permeability, 1 to use linear B(H) curve according to mur_lin, 0 to use the B(H) curve
         is_fast_draw: bool
             True to draw the lamination using the highest periodicity
+        lam_machine: Machine, optional
+            Machine holding lam, for its label (default: machine; draw_FEMM
+            draws the laminations of an edited copy of the machine)
         Returns
         -------
         FEMM_dict : dict
@@ -1464,7 +1472,9 @@ class femm_pyleecan:
         # Duplicate periodic parts if sym_draw > sym
         if sym != sym_draw:
             self.handler.mi_seteditmode("group")
-            lam_label = lam.get_label()
+            lam_label = lam.get_label(
+                machine=machine if lam_machine is None else lam_machine
+            )
             for val in FEMM_dict["groups"]["lam_group_list"][lam_label]:
                 self.handler.mi_selectgroup(val)
             Ncopy = int(round(sym_draw / sym))
@@ -1821,7 +1831,12 @@ class femm_pyleecan:
         return mesh_dict
 
     @staticmethod
-    def get_sliding_band(sym: int, lam_int: Lamination, lam_ext: Lamination) -> list:
+    def get_sliding_band(
+        sym: int,
+        lam_int: Lamination,
+        lam_ext: Lamination,
+        machine: Machine | None = None,
+    ) -> list:
         """Returns  a list of surface in the airgap including the sliding band surface
 
         Parameters
@@ -1832,6 +1847,9 @@ class femm_pyleecan:
             Internal lamination mechanic radius
         Rgap_mec_ext: float
             External lamination mechanic radius
+        machine: Machine, optional
+            Machine holding the laminations (for their labels; default: their
+            parent)
 
         Returns
         -------
@@ -1849,8 +1867,8 @@ class femm_pyleecan:
         Wgap_mec = Rgap_mec_ext - Rgap_mec_int
         W_sb = Wgap_mec / 3  # Width sliding band
         surf_list = []
-        label_int = lam_int.get_label()
-        label_ext = lam_ext.get_label()
+        label_int = lam_int.get_label(machine=machine)
+        label_ext = lam_ext.get_label(machine=machine)
 
         if sym == 1:  # Complete machine
             # Bottom sliding band

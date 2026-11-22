@@ -47,7 +47,7 @@ class Test_Slot_28_plot(object):
             Zs=42, W0=3.5e-3, H0=0.45e-3, R1=3.5e-3, H3=14e-3, W3=5e-3
         )
         test_obj.rotor.winding = WindingUD(qs=3, p=3)
-        test_obj.rotor.winding.init_as_CW2LT()
+        test_obj.rotor.winding.init_as_CW2LT(lam=test_obj.rotor)
         test_obj.rotor.mat_type.mag = MatMagnetics(Wlam=0.5e-3)
         test_obj.shaft = Shaft(Drsh=test_obj.rotor.Rint * 2, Lshaft=1)
 
@@ -67,13 +67,13 @@ class Test_Slot_28_plot(object):
         test_obj.stator.mat_type.mag = MatMagnetics(Wlam=0.5e-3)
         test_obj.frame = Frame(Rint=0.2, Rext=0.25, Lfra=1)
 
-        test_obj.rotor.plot(is_show_fig=False)
+        test_obj.rotor.plot(is_show_fig=False, machine=test_obj)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s28_2-Rotor.png"))
         # 2 for lam + 42*2 for wind + 6 vent
         assert len(fig.axes[0].patches) == 92
 
-        test_obj.stator.plot(is_show_fig=False)
+        test_obj.stator.plot(is_show_fig=False, machine=test_obj)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s28_3-Stator.png"))
         # 2 for lam, 2*18 for wind
@@ -127,24 +127,24 @@ class Test_Slot_28_plot(object):
         # Rotor + stator + 0 for frame + 1 for shaft
         assert len(fig.axes[0].patches) == 59
 
-        test_obj.rotor.plot(is_show_fig=False)
+        test_obj.rotor.plot(is_show_fig=False, machine=test_obj)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s28_5-Rotor.png"))
         # 2 for lam + 6*4 for wind
         assert len(fig.axes[0].patches) == 26
 
-        test_obj.stator.plot(is_show_fig=False)
+        test_obj.stator.plot(is_show_fig=False, machine=test_obj)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s28_6-Stator.png"))
         # 2 for lam, 4*6 for wind + 6 vents
         assert len(fig.axes[0].patches) == 32
 
-        tooth = test_obj.rotor.slot.get_surface_tooth()
+        tooth = test_obj.rotor.slot.get_surface_tooth(lam=test_obj.rotor)
         tooth.plot(color="r", is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s28_Tooth_in.png"))
 
-        tooth = test_obj.stator.slot.get_surface_tooth()
+        tooth = test_obj.stator.slot.get_surface_tooth(lam=test_obj.stator)
         tooth.plot(color="r", is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s28_Tooth_out.png"))

@@ -1591,9 +1591,49 @@ Same signature rule as Step 11 (optional container argument, fallback through
         the library at 608 call sites of `Classes_new` (the `Methods_new`
         calls not passing the container they hold), 11 of `Functions_new`
         (FEMM, GMSH) and 10 of `GUI_new`.
-  - [ ] The library calls pass the containers they hold.
-  - [ ] The tests pass the containers; `Tests/New` turns the warning into
-        an error (except the tests of the fallback itself).
+  - [x] (2026-11-22) The tests pass the containers: 268 calls rewritten by
+        a tool from the recorded call sites (the receiver chain gives the
+        container: `test_obj.slot.get_Rbo(lam=test_obj)`,
+        `machine.rotor.plot(machine=machine)`, depth 2:
+        `end_winding.comp_inductance(lam=..., winding=...)`), 13 by hand
+        (ventilation fixtures giving the lamination, `gen_input(simu=...,
+        output=...)`, `set_OP_array(..., simu=simu)`, `simu.run(output=out)`).
+        `Tests/New/conftest.py` turns the warning into an error when the
+        caller is a `Tests.New` module (`CONTAINER_FALLBACK_FILTER`, filter
+        on the module of the warning: the fallbacks inside the library are
+        not concerned); test `Tests/New/test_container_fallback_filter.py`.
+  - [x] (2026-11-22) The library calls that hold the container pass it
+        (from the recorded sites, mapped back to `Methods_new`): 206 calls
+        in 114 modules (`self.get_Rbo(lam=lam)`, `self.is_outwards(lam=lam)`
+        in the slot methods, `get_label(machine=machine)`,
+        `get_loss_scalar(..., output=output)`); `femm_pyleecan` (labels:
+        `get_label(machine=...)`, `get_sliding_band(..., machine=None)`);
+        `gmsh_pyleecan` through `FUNCTION_LEGACY_FIXES`, now applied to the
+        legacy modules of the interface objects too (`femm_modules`); the
+        GUI pages pass their machine to the lamination plots and mmf, and
+        `SSkew` its lamination and machine to `comp_angle`.
+        Not by this pass: the calls inside a notch slot (`lam` is the
+        Notch: `lam.get_Rbo()` needs the notch's lamination).
+        Found on the way: `draw_FEMM` draws the laminations of an edited
+        copy of the machine (`machine_edit`) but gave the original machine
+        to `draw_FEMM_lamination`; the legacy label read the copy through
+        the parent: new `lam_machine` argument. `test_ICEM_2020` and
+        `test_lamination_label` still imported the legacy classes
+        (`pyleecan.Classes.import_all`): backend imports, which fixes the 3
+        `test_ICEM_2020` failures known before Step 16.
+        Checks: `Tests/New` Classes / Methods / Plot / Functions /
+        Simulation / GUI, 5391 passed with each backend, the known failures
+        only (`test_save_OPM_retro`, `test_load_opti`, `test_post_var_simu`).
+  - [ ] The helpers without the container argument that call the container
+        methods on `self` (slot `_comp_point_coordinate`, `_comp_line_dict`,
+        `comp_surface_opening`, `comp_angle_opening`, `comp_radius`,
+        `get_H1`, ...: 23 methods in 137 modules, fixed point of the calls):
+        a pass-through `lam` argument, the Step 11 pass run as a tool.
+  - [ ] The machine down to the slot geometry: the slot labels read
+        `lam.get_label()`, which needs the machine (the index of the
+        lamination): `build_geometry`, `build_geometry_active`,
+        `get_surface_active` / `_opening` of the Slot family get a `machine`
+        argument too, or the lamination passes its label (to decide).
 - [x] (2026-11-22) No parent read left in `Methods_new` and `Functions_new`
       outside `container_or_parent` (and `ancestor_with`, its walk of an
       unknown depth); the parent links stay only in the legacy layer.

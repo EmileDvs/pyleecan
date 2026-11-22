@@ -173,7 +173,7 @@ class Test_SlotW60_meth(object):
 
         test_obj = test_dict["test_obj"]
 
-        result = test_obj.slot.build_geometry_active(Nrad=1, Ntan=2)
+        result = test_obj.slot.build_geometry_active(Nrad=1, Ntan=2, lam=test_obj)
         a = result
         assert "Stator_Winding_R0-T0-S0" == a[0].label
 
@@ -181,9 +181,9 @@ class Test_SlotW60_meth(object):
     def test_get_surfaces(self, test_dict):
         """Checks that the surfaces are correct"""
         test_obj = test_dict["test_obj"]
-        Sact = test_obj.slot.build_geometry_active(Nrad=1, Ntan=2)
+        Sact = test_obj.slot.build_geometry_active(Nrad=1, Ntan=2, lam=test_obj)
         Sfull = test_obj.slot.get_surface()
-        Sop = test_obj.slot.get_surface_opening()
+        Sop = test_obj.slot.get_surface_opening(lam=test_obj)
 
         # Sop[0].plot()
         assert len(Sact) == 2
@@ -201,7 +201,7 @@ class Test_SlotW60_meth(object):
         test_obj = test_dict["test_obj"]
 
         with pytest.raises(S60_WindError) as context:
-            test_obj.slot.build_geometry_active(Nrad=0, Ntan=0)
+            test_obj.slot.build_geometry_active(Nrad=0, Ntan=0, lam=test_obj)
 
     def test_check(self):
         """Check that the check methods is correctly working"""

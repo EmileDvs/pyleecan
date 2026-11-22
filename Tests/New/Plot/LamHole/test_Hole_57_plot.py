@@ -56,7 +56,7 @@ class Test_Hole_57_plot(object):
 
     def test_Lam_Hole_57_W01(self):
         """Test machine plot hole 57 with W1 > 0 and both magnets"""
-        self.test_obj.rotor.plot(is_show_fig=False)
+        self.test_obj.rotor.plot(is_show_fig=False, machine=self.test_obj)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_57_s57_Rotor_W01.png"))
         # 2 for lam + (3*2)*8 for holes + 16 vents
@@ -67,7 +67,7 @@ class Test_Hole_57_plot(object):
         self.test_obj.rotor.hole[0].W1 = 0
         self.test_obj.rotor.hole[0].magnet_0 = Magnet()
         self.test_obj.rotor.hole[0].magnet_1 = Magnet()
-        self.test_obj.rotor.plot(is_show_fig=False)
+        self.test_obj.rotor.plot(is_show_fig=False, machine=self.test_obj)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_57_s57_RotorN01.png"))
         # 2 for lam + (3*2)*8 for holes + 16 vents

@@ -434,6 +434,7 @@ class LamSquirrelCage(LamSlotWind):
             delta=delta,
             is_edge_only=is_edge_only,
             is_show_fig=is_show_fig,
+            machine=machine,
         )
 
         # init figure again to get updated label_leg and patch_leg

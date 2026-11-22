@@ -131,7 +131,7 @@ class Test_HoleM50_meth(object):
                 magnet_1=None,
             )
         )
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
 
         assert len(result) == 2
         for surf in result:
@@ -165,7 +165,7 @@ class Test_HoleM50_meth(object):
             )
         )
 
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
         assert len(result) == 1
         for surf in result:
             assert type(surf) is SurfLine
@@ -194,7 +194,7 @@ class Test_HoleM50_meth(object):
             )
         )
 
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
         assert len(result) == 5
         for surf in result:
             assert type(surf) is SurfLine
@@ -234,7 +234,7 @@ class Test_HoleM50_meth(object):
                 magnet_0=Magnet(),
             )
         )
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
         assert len(result) == 6
         for surf in result:
             assert type(surf) is SurfLine
@@ -277,7 +277,7 @@ class Test_HoleM50_meth(object):
                 magnet_0=Magnet(),
             )
         )
-        result = test_obj.hole[0].build_geometry(is_simplified=True)
+        result = test_obj.hole[0].build_geometry(is_simplified=True, lam=test_obj)
         assert len(result) == 6
         for surf in result:
             assert type(surf) is SurfLine

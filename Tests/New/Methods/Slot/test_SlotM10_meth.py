@@ -126,7 +126,7 @@ class Test_Magnet_Type_10_meth(object):
     def test_comp_width_opening(self, test_dict):
         """Check that the computation of the average opening width is correct"""
         test_obj = test_dict["test_obj"]
-        a = test_obj.slot.comp_width_opening()
+        a = test_obj.slot.comp_width_opening(lam=test_obj)
         assert a == test_obj.slot.W0
 
     @pytest.mark.parametrize("test_dict", Mag10_test)

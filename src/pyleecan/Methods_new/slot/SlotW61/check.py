@@ -32,7 +32,7 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
         You must have W3 < (W1-W2)/2
     """
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         raise S61_InnerCheckError("Slot 61 is for inner lamination only")
 
     if self.W1 <= self.W2:

@@ -6,7 +6,30 @@ import matplotlib.pyplot as plt
 import pytest
 from numpy import array, linspace, ones, pi, zeros
 
-from pyleecan.Classes.import_all import *
+from backend_classes.machine.bore_flower import BoreFlower
+from backend_classes.machine.frame import Frame
+from backend_classes.slot.hole_m_50 import HoleM50
+from backend_classes.machine.lam_hole import LamHole
+from backend_classes.machine.lam_slot import LamSlot
+from backend_classes.machine.lam_slot_multi import LamSlotMulti
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_dfim import MachineDFIM
+from backend_classes.machine.machine_srm import MachineSRM
+from backend_classes.machine.machine_ud import MachineUD
+from backend_classes.material.mat_magnetics import MatMagnetics
+from backend_classes.machine.notch_even_dist import NotchEvenDist
+from backend_classes.simulation.op_dq import OPdq
+from backend_classes.machine.shaft import Shaft
+from backend_classes.slot.slot_ud import SlotUD
+from backend_classes.slot.slot_w_10 import SlotW10
+from backend_classes.slot.slot_w_11 import SlotW11
+from backend_classes.slot.slot_w_12 import SlotW12
+from backend_classes.slot.slot_w_21 import SlotW21
+from backend_classes.slot.slot_w_22 import SlotW22
+from backend_classes.slot.ventilation_circ import VentilationCirc
+from backend_classes.slot.ventilation_polar import VentilationPolar
+from backend_classes.slot.ventilation_trap import VentilationTrap
+from backend_classes.machine.winding_ud import WindingUD
 
 try:
     from backend_functions.GMSH.gen_3d_mesh import gen_3D_mesh
@@ -83,7 +106,7 @@ def test_FEMM_sym():
     simu.struct = None
     # Run simulation
     out = Output(simu=simu)
-    simu.run()
+    simu.run(output=out)
 
     # FEMM files (mesh and results) are available in Results folder
     copyfile(
@@ -236,7 +259,7 @@ def test_MachineUD():
         Zs=12, W0=2 * pi / 12 * 0.75, W2=2 * pi / 12 * 0.75, H0=0, H2=W1 * 0.65
     )
     lam1.winding = WindingUD(qs=3, p=3)
-    lam1.winding.init_as_CW2LT()
+    lam1.winding.init_as_CW2LT(lam=lam1)
     # External Rotor
     lam2 = LamSlot(
         Rext=lam1.Rint - A1, Rint=lam1.Rint - A1 - W2, is_internal=True, is_stator=False
@@ -258,7 +281,7 @@ def test_MachineUD():
     )
     lam4.slot = SlotW10(Zs=12, W0=25e-3, W1=25e-3, W2=1e-3, H0=0, H1=0, H2=W4 * 0.75)
     lam4.winding = WindingUD(qs=3, p=3)
-    lam4.winding.init_as_CW2LT()
+    lam4.winding.init_as_CW2LT(lam=lam4)
     # Machine definition
     machine.lam_list = [lam1, lam2, lam3, lam4]
     machine.shaft = Shaft(Drsh=lam4.Rint * 2)
@@ -365,7 +388,7 @@ def test_SlotUD():
         Zs=36, W0=7e-3, H0=10e-3, H1=0, H2=70e-3, W1=30e-3, W2=0.1e-3
     )
     machine.stator.winding = WindingUD(qs=3, p=3, coil_pitch=5)
-    machine.stator.winding.init_as_DWL(nlay=2)
+    machine.stator.winding.init_as_DWL(nlay=2, lam=machine.stator)
 
     # Rotor definition
     machine.rotor = LamSlot(Rint=0.02, Rext=Rrotor, is_internal=True, is_stator=False)
@@ -434,7 +457,7 @@ def test_WindingUD():
     machine.stator.slot = SlotW12(Zs=18, R2=25e-3, H0=30e-3, R1=0, H1=150e-3)
     machine.stator.winding.Lewout = 60e-3
     machine.stator.winding = WindingUD(qs=3, p=3, coil_pitch=1)
-    machine.stator.winding.init_as_DWL(nlay=2)
+    machine.stator.winding.init_as_DWL(nlay=2, lam=machine.stator)
     machine.stator.mat_type.mag = MatMagnetics(Wlam=0.5e-3)
 
     # Shaft & frame
@@ -586,7 +609,7 @@ def test_ecc_FEMM():
 
     # Run the simulation
     out = Output(simu=simu)
-    simu.run()
+    simu.run(output=out)
 
     # FEMM files (mesh and results) are available in Results folder
     copyfile(

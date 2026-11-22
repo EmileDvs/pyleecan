@@ -532,9 +532,9 @@ class SlotW11_2(Slot):
             # Compute W1 and W2 to match W3 tooth constraint
             self._comp_W()
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             if self.R1 * 2 == self.W2:
                 # Computation of the arc height
                 alpha = self.comp_angle_opening() / 2
@@ -909,7 +909,7 @@ class SlotW11_2(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -1049,7 +1049,7 @@ class SlotW11_2(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z10"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(
@@ -1234,7 +1234,7 @@ class SlotW11_2(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -1361,7 +1361,7 @@ class SlotW11_2(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z10"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

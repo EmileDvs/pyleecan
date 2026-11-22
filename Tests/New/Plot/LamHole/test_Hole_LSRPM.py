@@ -57,7 +57,7 @@ def machine():
 def test_Lam_Hole_LSRPM(machine):
     """Test machine plot hole LSRPM with magnet"""
 
-    machine.rotor.plot(is_show_fig=False)
+    machine.rotor.plot(is_show_fig=False, machine=machine)
     fig = plt.gcf()
     fig.savefig(join(save_path, "test_Lam_Hole_sLSRPM_2-Rotor.png"))
 
@@ -67,7 +67,7 @@ def test_Lam_Hole_LSRPM(machine):
 def test_Lam_Hole_LSRPM_no_mag(machine):
     """Test machine plot hole LSRPM without magnet"""
     machine.rotor.hole[0].magnet_0 = None
-    machine.rotor.plot(is_show_fig=False)
+    machine.rotor.plot(is_show_fig=False, machine=machine)
     fig = plt.gcf()
 
     assert len(fig.axes[0].patches) == 10

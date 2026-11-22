@@ -203,9 +203,9 @@ class SlotM19(Slot):
         Z3 = point_dict["Z3"]
         Z4 = point_dict["Z4"]
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return np.abs(np.sqrt(Z2.real**2 + Z2.imag**2)) - np.abs(Rbo)
 
         else:
@@ -249,7 +249,7 @@ class SlotM19(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         point_dict = self._comp_point_coordinate()
         Z1 = point_dict["Z1"]
         Z2 = point_dict["Z2"]
@@ -260,7 +260,7 @@ class SlotM19(Slot):
 
         S1 = abs(Z1.real - Z2.real) * (self.W1 + self.W0) / 2
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return S1 - Sarc
         else:
             return S1 + Sarc
@@ -311,7 +311,7 @@ class SlotM19(Slot):
         """
         Rbo = self.get_Rbo(lam=lam)
         # get the name of the lamination
-        st = self.get_name_lam()
+        st = self.get_name_lam(lam=lam)
 
         point_dict = self._comp_point_coordinate()
         Zmid = point_dict["Zmid"]
@@ -443,7 +443,7 @@ class SlotM19(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = +1
             else:
                 sign = -1

@@ -45,11 +45,13 @@ def test_LamHole_2_notch(is_show_fig=False):
     Toyota_Prius.stator.plot(
         is_show_fig=is_show_fig,
         save_path=join(save_path, "Toyota_2_notch.png"),
+        machine=Toyota_Prius,
     )
     Toyota_Prius.stator.plot(
         sym=4,
         is_show_fig=is_show_fig,
         save_path=join(save_path, "Toyota_2_notch_sym.png"),
+        machine=Toyota_Prius,
     )
 
     # Check surfaces
@@ -136,13 +138,19 @@ def test_Lam_evenly_dist():
     )
 
     test_obj.stator.plot(
-        sym=2, is_show_fig=False, save_path=join(save_path, "test_Lam_notch_sym_2.png")
+        sym=2,
+        is_show_fig=False,
+        save_path=join(save_path, "test_Lam_notch_sym_2.png"),
+        machine=test_obj,
     )
 
     test_obj.rotor.notch[0].alpha = 0.5 * pi / 6
     test_obj.rotor.notch[1].alpha = 0.5 * pi / 6
     test_obj.rotor.plot(
-        sym=2, is_show_fig=False, save_path=join(save_path, "test_Lam_notch_sym_3.png")
+        sym=2,
+        is_show_fig=False,
+        save_path=join(save_path, "test_Lam_notch_sym_3.png"),
+        machine=test_obj,
     )
 
 

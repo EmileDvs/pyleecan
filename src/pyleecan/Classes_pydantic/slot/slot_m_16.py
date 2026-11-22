@@ -221,9 +221,9 @@ class SlotM16(Slot):
         Z4 = point_dict["Z4"]
         Z5 = point_dict["Z5"]
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return abs(Z4) - Rbo
         else:
             return Rbo - abs((Z4 + Z5) / 2)
@@ -278,7 +278,7 @@ class SlotM16(Slot):
             Slot total surface [m**2]
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         S0 = self.H0 * self.W0
         S1 = self.H1 * self.W1
@@ -288,7 +288,7 @@ class SlotM16(Slot):
         Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         # Because Slamination = S - Zs * Sslot
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return S0 + S1 - Sarc
         else:
             return S0 + S1 + Sarc
@@ -340,7 +340,7 @@ class SlotM16(Slot):
         """
 
         # get the name of the lamination
-        st = self.get_name_lam()
+        st = self.get_name_lam(lam=lam)
 
         # Create curve list
         curve_list = self.build_geometry(lam=lam)[1:-1]
@@ -449,7 +449,7 @@ class SlotM16(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = +1
             else:
                 sign = -1
@@ -529,7 +529,7 @@ class SlotM16(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z8"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

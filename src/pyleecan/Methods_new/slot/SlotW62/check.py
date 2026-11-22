@@ -25,7 +25,7 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
         Slot 62 is for inner lamination only
 
     """
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         raise S62_InnerCheckError("Slot 62 is for inner lamination only")
 
     if self.H3 + self.H2 > self.H0:

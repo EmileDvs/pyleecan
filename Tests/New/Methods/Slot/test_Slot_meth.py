@@ -26,7 +26,7 @@ class TestSlot(object):
 
         test_obj = LamSlotWind(Rint=0.1, Rext=0.2)
         test_obj.slot = setup
-        assert test_obj.slot.is_outwards() == False
+        assert test_obj.slot.is_outwards(lam=test_obj) == False
         setup.check()
 
     def test_get_is_stator(self, setup):
@@ -37,7 +37,7 @@ class TestSlot(object):
 
         test_obj = LamSlotWind(Rint=0.1, Rext=0.2)
         test_obj.slot = setup
-        assert test_obj.slot.get_is_stator() == True
+        assert test_obj.slot.get_is_stator(lam=test_obj) == True
 
     def test_get_Rbo(self, setup):
         """Check that the get_rbo function can raise an error"""
@@ -47,4 +47,4 @@ class TestSlot(object):
 
         test_obj = LamSlotWind(Rint=0.1, Rext=0.2)
         test_obj.slot = setup
-        assert test_obj.slot.get_Rbo() == 0.2
+        assert test_obj.slot.get_Rbo(lam=test_obj) == 0.2

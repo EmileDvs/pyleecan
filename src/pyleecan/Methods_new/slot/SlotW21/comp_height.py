@@ -23,7 +23,7 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         Height of the slot [m]
 
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     H1 = self.get_H1()
 
@@ -31,7 +31,7 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
     alpha = self.comp_angle_opening() / 2
     Harc = float(Rbo * (1 - np.cos(alpha)))
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         return abs(Rbo - Harc + self.H0 + H1 + self.H2 + 1j * self.W2 / 2.0) - Rbo
     else:
         return self.H0 + H1 + self.H2 + Harc

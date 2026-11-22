@@ -579,6 +579,7 @@ class SWinding(Gen_SWinding, QWidget):
                 is_lam_only=is_lam_only,
                 is_add_sign=True,
                 is_legend=True,
+                machine=self.machine,
             )
         except Exception as e:
             if self.obj.is_stator:  # Adapt the text to the current lamination
@@ -630,6 +631,7 @@ class SWinding(Gen_SWinding, QWidget):
                 is_winding_connection=True,
                 is_show_fig=not self.is_test,
                 is_add_sign=True,
+                machine=self.machine,
             )
             set_plot_gui_icon()
             self.fig_radial = fig
@@ -649,7 +651,7 @@ class SWinding(Gen_SWinding, QWidget):
         if self.machine is not None:
             try:
                 self.fig_mmf = self.machine.stator.plot_mmf_unit(
-                    is_show_fig=not self.is_test
+                    is_show_fig=not self.is_test, machine=self.machine
                 )
             except Exception as e:
                 if self.obj.is_stator:  # Adapt the text to the current lamination

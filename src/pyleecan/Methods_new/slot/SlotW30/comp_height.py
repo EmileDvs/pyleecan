@@ -31,13 +31,13 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         Z7 = point_dict["Z60"]
         Z6 = point_dict["Z80"]
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # The bottom is an arc
     alpha = self.comp_angle_opening()
     Harc = float(Rbo * (1 - np.cos(alpha / 2)))
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         return abs(Z7) - Rbo
 
     else:

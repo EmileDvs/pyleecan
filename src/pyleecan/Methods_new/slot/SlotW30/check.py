@@ -34,7 +34,7 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
     S30_R2Error
         wrong definition of R2
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     if self.W0 == 0:
         raise S30_W0Error("You must have W0 > 0")
@@ -42,7 +42,7 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
     if self.W0 * 0.5 / Rbo >= 1:
         raise S30_W0Error("You must have W0/2 < Rbo")
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         R1 = Rbo + self.H0 + self.R1
     else:
         R1 = Rbo - self.H0 - self.R1

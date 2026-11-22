@@ -130,7 +130,7 @@ def plot_schematics(
         if is_add_schematics:
             # W0
             line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 offset_label = -1 * self.H0 * 0.9 + 1j * 0.3 * self.W0
             else:
                 offset_label = self.H0 * 0.3 + 1j * 0.3 * self.W0
@@ -162,7 +162,7 @@ def plot_schematics(
             line = Arc1(
                 begin=point_dict["Z1"],
                 end=point_dict["Z2"],
-                radius=self.get_Rbo(),
+                radius=self.get_Rbo(lam=lam),
                 is_trigo_direction=True,
             )
             line.plot(

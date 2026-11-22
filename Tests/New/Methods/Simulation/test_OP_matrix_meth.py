@@ -94,7 +94,7 @@ class Test_OP_matrix_meth(object):
 
         simu.var_simu = VarLoadCurrent()
         OP_matrix = [[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]]
-        simu.var_simu.set_OP_array(OP_matrix, "N0", "Id", "Iq", "T")
+        simu.var_simu.set_OP_array(OP_matrix, "N0", "Id", "Iq", "T", simu=simu)
         OP_2 = simu.get_OP_array("N0", "Id", "Iq", "T")
         assert_array_almost_equal(OP_2, OP_matrix)
         # Check input update by set_OP_array

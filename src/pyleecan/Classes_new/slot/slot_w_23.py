@@ -367,11 +367,11 @@ class SlotW23(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         point_dict = self._comp_point_coordinate()
         Z4 = point_dict["Z4"]
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return abs(Z4) - Rbo
         else:
             return Rbo - abs(Z4)
@@ -446,14 +446,14 @@ class SlotW23(Slot):
             # Compute W1 and W2 to match W3 tooth constraint
             self._comp_W()
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # By Pythagore
         # self.H2 projection
         H2 = np.sqrt(self.H2**2 - ((self.W2 - self.W1) / 2.0) ** 2)
         S2 = 0.5 * (self.W1 + self.W2) * H2
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Rslot = Rbo + self.comp_height(lam=lam)  # External radius of the slot
             alpha = float(2 * np.arcsin(self.W2 / (2 * Rslot)))  # W2 in rad
             S3 = (Rslot**2.0) / 2.0 * (alpha - np.sin(alpha))
@@ -773,7 +773,7 @@ class SlotW23(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -902,7 +902,7 @@ class SlotW23(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z8"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(
@@ -1085,7 +1085,7 @@ class SlotW23(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -1205,7 +1205,7 @@ class SlotW23(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z8"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

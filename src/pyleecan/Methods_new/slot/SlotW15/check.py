@@ -26,5 +26,5 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
         Slot Type 15 can't be used on inner lamination
     """
 
-    if not self.is_outwards():
+    if not self.is_outwards(lam=lam):
         raise S15InnerError("Slot Type 15 can't be used on inner lamination")

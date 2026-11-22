@@ -56,6 +56,7 @@ def test_skew_pattern():
     Toyota_Prius.rotor.skew.plot(
         save_path=join(save_path, "test_IPMSM_plot_rotor_skew1"),
         is_show_fig=is_show_fig,
+        lam=Toyota_Prius.rotor,
     )
 
     # %% 3-Stepped linear skew, one stator slot pitch
@@ -91,6 +92,7 @@ def test_skew_pattern():
     Toyota_Prius.rotor.skew.plot(
         save_path=join(save_path, "test_IPMSM_plot_rotor_skew2"),
         is_show_fig=is_show_fig,
+        lam=Toyota_Prius.rotor,
     )
 
     # %% 4-Stepped V-shape skew, one stator slot pitch
@@ -121,6 +123,7 @@ def test_skew_pattern():
     Toyota_Prius.rotor.skew.plot(
         save_path=join(save_path, "test_IPMSM_plot_rotor_skew3"),
         is_show_fig=is_show_fig,
+        lam=Toyota_Prius.rotor,
     )
 
     # %% 3-Stepped V-shape skew, one stator slot pitch
@@ -156,6 +159,7 @@ def test_skew_pattern():
     Toyota_Prius.rotor.skew.plot(
         save_path=join(save_path, "test_IPMSM_plot_rotor_skew4"),
         is_show_fig=is_show_fig,
+        lam=Toyota_Prius.rotor,
     )
 
     # %% 5-Stepped alternate skew, one stator slot pitch
@@ -201,6 +205,7 @@ def test_skew_pattern():
     Toyota_Prius.rotor.skew.plot(
         save_path=join(save_path, "test_IPMSM_plot_rotor_skew5"),
         is_show_fig=is_show_fig,
+        lam=Toyota_Prius.rotor,
     )
 
     # %% 2-Stepped UD skew
@@ -225,6 +230,7 @@ def test_skew_pattern():
     Toyota_Prius.rotor.skew.plot(
         save_path=join(save_path, "test_IPMSM_plot_rotor_skew6"),
         is_show_fig=is_show_fig,
+        lam=Toyota_Prius.rotor,
     )
 
     # %% Continuous linear skew, one rotor slot pitch
@@ -246,6 +252,7 @@ def test_skew_pattern():
     Audi_eTron.rotor.skew.plot(
         save_path=join(save_path, "test_SCIM_plot_rotor_skew1"),
         is_show_fig=is_show_fig,
+        lam=Audi_eTron.rotor,
     )
 
 

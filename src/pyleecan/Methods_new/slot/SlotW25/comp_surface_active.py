@@ -27,7 +27,7 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
     Z2 = point_dict["Z2"]
     Z4 = point_dict["Z4"]
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Rint = abs(Z2)
         Rext = abs(Z4)
     else:

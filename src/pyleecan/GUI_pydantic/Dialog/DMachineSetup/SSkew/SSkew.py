@@ -389,12 +389,13 @@ class SSkew(Ui_SSkew, QWidget):
         )
 
         if self.is_stator:
-            self.machine.stator.skew = self.skew_object
+            lam = self.machine.stator
         else:
-            self.machine.rotor.skew = self.skew_object
+            lam = self.machine.rotor
+        lam.skew = self.skew_object
 
         try:
-            self.skew_object.comp_angle()
+            self.skew_object.comp_angle(lam=lam, machine=self.machine)
         except Exception as e:
             QMessageBox().critical(
                 self,

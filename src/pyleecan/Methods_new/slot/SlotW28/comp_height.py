@@ -22,11 +22,11 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         Height of the slot [m]
 
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     point_dict = self._comp_point_coordinate()
     Z5 = point_dict["Z5"]
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Ztan2 = Z5 + Z5.imag * (1 - 1j)
         return Ztan2.real - Rbo
     else:

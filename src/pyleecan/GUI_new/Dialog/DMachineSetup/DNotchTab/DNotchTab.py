@@ -151,7 +151,7 @@ class DNotchTab(Ui_DNotchTab, QDialog):
             QMessageBox().critical(self, self.tr("Error"), self.err_msg)
         else:  # No error => Plot the lamination
             try:
-                self.obj.plot(is_show_fig=True)
+                self.obj.plot(is_show_fig=True, machine=self.machine)
                 set_plot_gui_icon()
             except Exception as e:
                 self.err_msg = (

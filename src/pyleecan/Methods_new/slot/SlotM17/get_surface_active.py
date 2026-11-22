@@ -34,9 +34,9 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     """
     lam = container_or_parent(self, lam, "lam")
 
-    self.check()
+    self.check(lam=lam)
     # get the name of the lamination
-    st = self.get_name_lam()
+    st = self.get_name_lam(lam=lam)
     Rext = lam.Rext
     Rint = lam.Rint
 

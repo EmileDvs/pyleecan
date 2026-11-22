@@ -151,7 +151,7 @@ class Test_HoleM53_meth(object):
         test_obj = test_dict["test_obj"]
         test_obj.hole[0].magnet_0 = Magnet(type_magnetization=1)
         test_obj.hole[0].magnet_1 = Magnet(type_magnetization=1)
-        a = test_obj.hole[0].build_geometry(is_simplified=True)
+        a = test_obj.hole[0].build_geometry(is_simplified=True, lam=test_obj)
 
         assert a[1].label == "Stator_HoleMag_R0-T0-S0"
         assert a[1].line_list[0] is not None
@@ -193,7 +193,7 @@ class Test_HoleM53_meth(object):
         # Z11
 
         with pytest.raises(Slot53InterError) as context:
-            test_obj.hole[0].build_geometry()
+            test_obj.hole[0].build_geometry(lam=test_obj)
 
         test_obj.hole[0] = HoleM53(
             Zh=8,
@@ -209,7 +209,7 @@ class Test_HoleM53_meth(object):
 
         # Z1
         with pytest.raises(Slot53InterError) as context:
-            test_obj.hole[0].build_geometry()
+            test_obj.hole[0].build_geometry(lam=test_obj)
 
     @pytest.mark.parametrize("test_dict", HoleM53_test_error)
     def test_build_geometry_Z11_Z1(self, test_dict):
@@ -219,7 +219,7 @@ class Test_HoleM53_meth(object):
         test_obj.hole[0] = HoleM53(
             Zh=8, H0=0.02, H1=0.001, H2=0.01, H3=0.003, W1=0.005, W2=0, W3=0.01, W4=0.78
         )
-        lst_pattern = test_obj.hole[0].build_geometry()
+        lst_pattern = test_obj.hole[0].build_geometry(lam=test_obj)
 
         # Z11 = Zlist[0]
         test_obj.hole[0] = HoleM53(
@@ -233,7 +233,7 @@ class Test_HoleM53_meth(object):
             W3=0.01,
             W4=2.28,
         )
-        lst1 = test_obj.hole[0].build_geometry()
+        lst1 = test_obj.hole[0].build_geometry(lam=test_obj)
 
         # Z1 = Zlist[0]
         test_obj.hole[0] = HoleM53(
@@ -247,7 +247,7 @@ class Test_HoleM53_meth(object):
             W3=0.01,
             W4=4.78,
         )
-        lst2 = test_obj.hole[0].build_geometry()
+        lst2 = test_obj.hole[0].build_geometry(lam=test_obj)
 
         assert len(lst1) != len(lst_pattern)
         assert len(lst2) != len(lst_pattern)

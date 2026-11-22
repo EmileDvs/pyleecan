@@ -101,7 +101,7 @@ class WMachineTable(Ui_WMachineTable, QWidget):
         try:
             if self.machine is not None:
                 self.fig_mmf = self.machine.stator.plot_mmf_unit(
-                    is_show_fig=not self.is_test
+                    is_show_fig=not self.is_test, machine=self.machine
                 )
         except Exception as e:
             err_msg = "Error while plotting Stator mmf unit:\n" + str(e)

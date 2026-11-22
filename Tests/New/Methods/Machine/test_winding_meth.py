@@ -144,12 +144,14 @@ def test_import_periodicity():
     lam.winding = WindingUD()
     # With Header (Zs=12 instead of 36 to trigger periodicity)
     lam.winding.import_from_csv(
-        join(TEST_DATA_DIR, "Load_GUI", "Winding", "Wind_2_1_Head_Empty_per.csv")
+        join(TEST_DATA_DIR, "Load_GUI", "Winding", "Wind_2_1_Head_Empty_per.csv"),
+        lam=lam,
     )
     assert array_equal(wind_per, lam.winding.get_connection_mat())
     # Without Header
     lam.winding.import_from_csv(
-        join(TEST_DATA_DIR, "Load_GUI", "Winding", "Wind_2_1_Data_Empty_per.csv")
+        join(TEST_DATA_DIR, "Load_GUI", "Winding", "Wind_2_1_Data_Empty_per.csv"),
+        lam=lam,
     )
     assert array_equal(wind_per, lam.winding.get_connection_mat())
 

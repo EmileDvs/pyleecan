@@ -182,3 +182,19 @@ def test_redirect_calls_in_class_methods():
         "except Exception as e:\n"
     ) in result
     assert "        return femm.draw(output.surf, size=femm_pyleecan.mesh(2))\n" in result
+
+
+def test_femm_modules_apply_legacy_fixes(tmp_path):
+    """The legacy modules of an interface object get their FUNCTION_LEGACY_FIXES."""
+    from pyleecan.Generator.ClassGenerator.New.femm_object import GMSH, femm_modules
+    from pyleecan.Generator.ClassGenerator.New.legacy_fixes import LegacyFix
+
+    folder = tmp_path.joinpath(*GMSH.package.split("."))
+    folder.mkdir(parents=True)
+    (folder / "draw.py").write_text("def draw(lam):\n    return lam.get_label()\n")
+    (folder / "other.py").write_text("def other(lam):\n    return lam.get_label()\n")
+    key = "/".join([*GMSH.package.split("."), "draw.py"])
+    fix = LegacyFix(old="lam.get_label()", new="lam.get_label(machine=None)")
+    modules = femm_modules(tmp_path, GMSH, fixes={key: (fix,)})
+    assert "lam.get_label(machine=None)" in modules["draw"]
+    assert "lam.get_label()" in modules["other"]

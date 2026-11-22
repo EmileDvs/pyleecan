@@ -23,7 +23,7 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
         Height of the slot [m]
 
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # Computation of the arc height (P1,0,P8)
     alpha = self.comp_angle_opening() / 2
@@ -32,7 +32,7 @@ def comp_height(self, lam: Lamination | Notch | None = None) -> float:
     # Height of the arc (P2,C1,P7)
     Hwind = self.comp_height_active()
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         return self.H0 + Hwind - Harc
     else:
         return self.H0 + Hwind + Harc

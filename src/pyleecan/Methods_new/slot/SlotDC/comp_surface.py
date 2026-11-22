@@ -42,7 +42,7 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
         _,
     ] = self._comp_point_coordinate()
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     Swind = self.comp_surface_active(lam=lam)
     # Rectangle Z12,Z11,Z2,Z1
@@ -51,7 +51,7 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
     alpha = self.comp_angle_opening()
     Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         return Swind + S6 - Sarc
     else:
         return Swind + S6 + Sarc

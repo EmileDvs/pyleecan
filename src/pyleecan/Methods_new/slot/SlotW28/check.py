@@ -33,7 +33,7 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
         There are too many slots to match W3 and R1
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     #    if self.R1 * 2 <= self.W0:
     #        raise S28_WCheckError("You must have W0 < 2*R1")
@@ -41,7 +41,7 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
     if self.W0 * 0.5 / Rbo >= 1:
         raise S28_RboW0CheckError("You must have W0/2 < Rbo")
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         R1 = Rbo + self.H0 + self.R1
     else:
         R1 = Rbo - self.H0

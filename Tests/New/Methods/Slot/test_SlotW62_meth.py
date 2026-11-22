@@ -248,7 +248,7 @@ class Test_SlotW62_meth(object):
     def test_build_geometry_active_is_stator_true(self, test_dict):
         """Check that the computation of the average angle is correct"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.slot.build_geometry_active(Nrad=1, Ntan=2)
+        result = test_obj.slot.build_geometry_active(Nrad=1, Ntan=2, lam=test_obj)
         a = result
         assert "Rotor_Winding_R0-T0-S0" == a[0].label
 
@@ -259,7 +259,7 @@ class Test_SlotW62_meth(object):
         test_obj = test_dict["test_obj"]
 
         with pytest.raises(S62_WindError) as context:
-            test_obj.slot.build_geometry_active(Nrad=0, Ntan=0)
+            test_obj.slot.build_geometry_active(Nrad=0, Ntan=0, lam=test_obj)
 
     @pytest.mark.parametrize("test_dict", slotW62_test)
     def test_check_Inner_error(self, test_dict):

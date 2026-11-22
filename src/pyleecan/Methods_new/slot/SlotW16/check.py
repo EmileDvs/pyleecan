@@ -26,11 +26,11 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
     S16OutterError
         Slot 16 must be on internal lamination only
     """
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         raise S16OutterError("Slot 16 must be on internal lamination only")
 
     # Check W3 at min radius
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
     sp = 2 * np.pi / self.Zs  # slot pitch
     alphaT = 2 * np.arcsin(self.W3 * 0.5 / (Rbo - self.H0 - self.H2))
 

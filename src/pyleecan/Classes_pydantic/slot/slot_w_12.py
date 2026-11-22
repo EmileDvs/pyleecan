@@ -257,7 +257,7 @@ class SlotW12(Slot):
             You must have R2 < Rbo
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         if self.R2 <= 0:
             raise S12_R20CheckError("You must have R2 > 0")
@@ -304,13 +304,13 @@ class SlotW12(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # Computation of the arc height
         alpha = self.comp_angle_opening() / 2
         Harc = float(Rbo * (1 - np.cos(alpha)))
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return self.H0 - Harc + self.R1 * 2 + self.H1 + self.R2
         else:
             return self.H0 + Harc + self.R1 * 2 + self.H1 + self.R2
@@ -615,7 +615,7 @@ class SlotW12(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -709,7 +709,7 @@ class SlotW12(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z8"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

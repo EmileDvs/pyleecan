@@ -14,21 +14,23 @@ from backend_classes.slot.hole import Hole
 
 class Test_VentilationPolar(object):
     @pytest.fixture
-    def vent(self):
+    def lam(self):
         """Run at the begining of every test to setup the VentilationPolar"""
         test_obj = VentilationPolar(Zh=8, H0=0.08, D0=0.01, W1=pi / 8, Alpha0=pi / 8)
-        lam = Lamination(is_stator=True, axial_vent=[test_obj])
+        return Lamination(is_stator=True, axial_vent=[test_obj])
 
-        return test_obj
+    @pytest.fixture
+    def vent(self, lam):
+        return lam.axial_vent[0]
 
-    def test_build_geometry_errors(self, vent):
+    def test_build_geometry_errors(self, vent, lam):
         """Test that build_geometry can raise some errors"""
         with pytest.raises(PolarArcBuildGeometryError) as context:
-            vent.build_geometry(alpha="dz")
+            vent.build_geometry(alpha="dz", lam=lam)
         with pytest.raises(PolarArcBuildGeometryError) as context:
-            vent.build_geometry(alpha=1, delta="dz")
+            vent.build_geometry(alpha=1, delta="dz", lam=lam)
 
-    def test_comp_surface(self, vent):
+    def test_comp_surface(self, vent, lam):
         """Check that the computation of the surface is correct"""
         # Check that the analytical method returns the same result as the numerical one
         a = vent.comp_surface()

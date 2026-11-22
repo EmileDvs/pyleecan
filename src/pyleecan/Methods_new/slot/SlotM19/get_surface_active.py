@@ -35,7 +35,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     """
     Rbo = self.get_Rbo(lam=lam)
     # get the name of the lamination
-    st = self.get_name_lam()
+    st = self.get_name_lam(lam=lam)
 
     point_dict = self._comp_point_coordinate()
     Zmid = point_dict["Zmid"]

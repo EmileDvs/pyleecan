@@ -24,7 +24,7 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
 
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
     point_dict = self._comp_point_coordinate()
     Z1 = point_dict["Z1"]
     Z2 = point_dict["Z2"]
@@ -35,7 +35,7 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
 
     S1 = abs(Z1.real - Z2.real) * (self.W1 + self.W0) / 2
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         return S1 - Sarc
     else:
         return S1 + Sarc

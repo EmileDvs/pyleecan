@@ -434,7 +434,7 @@ class SlotW10(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         H1 = self.get_H1()
 
@@ -442,7 +442,7 @@ class SlotW10(Slot):
         alpha = self.comp_angle_opening() / 2
         Harc = float(Rbo * (1 - np.cos(alpha)))
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return abs(Rbo - Harc + self.H0 + H1 + self.H2 + 1j * self.W2 / 2.0) - Rbo
         else:
             return self.H0 + H1 + self.H2 + Harc
@@ -772,7 +772,7 @@ class SlotW10(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -878,7 +878,7 @@ class SlotW10(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z10"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

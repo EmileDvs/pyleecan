@@ -215,7 +215,7 @@ class Test_SlotW14_meth(object):
     def test_build_geometry_active(self, test_dict):
         """Check that the active geometry is correctly split"""
         test_obj = test_dict["test_obj"].copy()
-        surf_list = test_obj.slot.build_geometry_active(Nrad=3, Ntan=2)
+        surf_list = test_obj.slot.build_geometry_active(Nrad=3, Ntan=2, lam=test_obj)
 
         # Check label
         assert surf_list[0].label == "Stator_Winding_R0-T0-S0"

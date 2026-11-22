@@ -29,7 +29,9 @@ def test_resistance_inductance():
     assert_almost_equal(Ks, 0.46, decimal=2)
 
     Toyota_Prius.stator.winding.end_winding = EndWindingCirc()
-    Lw_circ = Toyota_Prius.stator.winding.end_winding.comp_inductance()
+    Lw_circ = Toyota_Prius.stator.winding.end_winding.comp_inductance(
+        lam=Toyota_Prius.stator, winding=Toyota_Prius.stator.winding
+    )
     Rs = Toyota_Prius.stator.comp_resistance_wind()
     assert_almost_equal(Rs, 0.06, decimal=2)
 
@@ -40,7 +42,9 @@ def test_resistance_inductance():
     Toyota_Prius.stator.winding.end_winding = EndWindingRect(
         lambda_length=lambda_length, lambda_width=lambda_width
     )
-    Lw_rect = Toyota_Prius.stator.winding.end_winding.comp_inductance()
+    Lw_rect = Toyota_Prius.stator.winding.end_winding.comp_inductance(
+        winding=Toyota_Prius.stator.winding
+    )
     Rs = Toyota_Prius.stator.comp_resistance_wind()
     assert_almost_equal(Rs, 0.05, decimal=2)
 

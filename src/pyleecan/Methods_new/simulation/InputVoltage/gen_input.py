@@ -98,7 +98,7 @@ def gen_input(self, simu: Simulation | None = None, output: Output | None = None
     outgeo.axes_dict = self.comp_axes(
         axes_list=["time", "angle"],
         is_periodicity_a=False,
-        is_periodicity_t=False,
+        is_periodicity_t=False, output=output, simu=simu,
     )
 
     # Create time axis for electrical model including periodicity
@@ -106,7 +106,7 @@ def gen_input(self, simu: Simulation | None = None, output: Output | None = None
         axes_list=["time", "phase_S", "phase_R"],
         axes_dict_in=outgeo.axes_dict,
         is_periodicity_a=self.is_periodicity_a,
-        is_periodicity_t=self.is_periodicity_t,
+        is_periodicity_t=self.is_periodicity_t, output=output, simu=simu,
     )
 
     if (

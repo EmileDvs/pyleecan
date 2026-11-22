@@ -347,7 +347,7 @@ class SlotM14(Slot):
         """
 
         # get the name of the lamination
-        st = self.get_name_lam()
+        st = self.get_name_lam(lam=lam)
         Rbo = self.get_Rbo(lam=lam)
 
         point_dict = self._comp_point_coordinate()
@@ -532,11 +532,11 @@ class SlotM14(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = +1
             else:
                 sign = -1
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
 
             # Adding point label
             if is_add_point_label:
@@ -570,7 +570,7 @@ class SlotM14(Slot):
                     fontsize=SC_FONT_SIZE,
                 )
                 # W1
-                R = self.get_Rbo() + sign * (self.H0 - self.H1 * 1.5)
+                R = self.get_Rbo(lam=lam) + sign * (self.H0 - self.H1 * 1.5)
                 line = Arc1(
                     begin=R * np.exp(-1j * self.W1 / 2),
                     end=R * np.exp(1j * self.W1 / 2),
@@ -674,7 +674,7 @@ class SlotM14(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z4"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

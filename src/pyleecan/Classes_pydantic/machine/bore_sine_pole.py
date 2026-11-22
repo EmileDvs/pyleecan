@@ -336,6 +336,7 @@ class BoreSinePole(Bore):
                 is_show_fig=is_show_fig,
                 fig=fig,
                 ax=ax,
+                lam=lam,
             )
         else:
             # Getting the main plot

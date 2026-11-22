@@ -22,7 +22,7 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
         Slot inner surface for winding [m**2]
 
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
     surface = self.comp_surface(lam=lam)
 
     point_dict = self._comp_point_coordinate()

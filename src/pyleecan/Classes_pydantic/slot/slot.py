@@ -376,13 +376,13 @@ class Slot(LegacyModel):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         surf = self.get_surface()
 
         point_list = surf.discretize(Ndisc)
         point_list = np.array(point_list)
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return max(abs(point_list)) - Rbo
         else:
             return Rbo - min(abs(point_list))
@@ -540,7 +540,7 @@ class Slot(LegacyModel):
 
         """
 
-        surf = self.get_surface_active()
+        surf = self.get_surface_active(lam=lam)
 
         return surf.comp_surface(Ndisc=Ndisc)
 

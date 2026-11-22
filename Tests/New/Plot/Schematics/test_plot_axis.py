@@ -24,7 +24,7 @@ CURVE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["CURVE_COLORS"]
 def test_axis_LamSlotMag():
     """Axis convention for LamSlot with magnet"""
     SIPMSM_001 = load(join(DATA_DIR, "Machine", "SIPMSM_001.json"))
-    SIPMSM_001.rotor.plot(is_show_fig=False)
+    SIPMSM_001.rotor.plot(is_show_fig=False, machine=SIPMSM_001)
     R1 = SIPMSM_001.rotor.Rext * 1.1
     R2 = SIPMSM_001.rotor.Rext * 1.2
     R3 = SIPMSM_001.rotor.Rext * 1.4
@@ -71,7 +71,7 @@ def test_axis_LamSlotMag():
 def test_axis_LamHoleMag():
     """Axis convention for LamHole with magnet"""
     Toyota_Prius = load(join(DATA_DIR, "Machine", "Toyota_Prius.json"))
-    Toyota_Prius.rotor.plot(is_show_fig=False)
+    Toyota_Prius.rotor.plot(is_show_fig=False, machine=Toyota_Prius)
     R1 = Toyota_Prius.rotor.Rext * 1.1
     R2 = Toyota_Prius.rotor.Rext * 1.2
     R3 = Toyota_Prius.rotor.Rext * 1.4
@@ -118,7 +118,7 @@ def test_axis_LamHoleMag():
 def test_axis_LamHole():
     """Axis convention for LamHole"""
     SynRM_001 = load(join(DATA_DIR, "Machine", "SynRM_001.json"))
-    SynRM_001.rotor.plot(is_show_fig=False)
+    SynRM_001.rotor.plot(is_show_fig=False, machine=SynRM_001)
     R1 = SynRM_001.rotor.Rext * 1.1
     R2 = SynRM_001.rotor.Rext * 1.2
     R3 = SynRM_001.rotor.Rext * 1.4
@@ -171,7 +171,7 @@ def test_axis_LamHole():
 def test_axis_LamWind():
     """Axis convention for LamWind"""
     SCIM_001 = load(join(DATA_DIR, "Machine", "Railway_Traction.json"))
-    SCIM_001.stator.plot(is_show_fig=False)
+    SCIM_001.stator.plot(is_show_fig=False, machine=SCIM_001)
     R1 = SCIM_001.stator.Rext * 1.1
     R2 = SCIM_001.stator.Rext * 1.2
     R3 = SCIM_001.stator.Rext * 1.4
@@ -213,11 +213,11 @@ def test_axis_LamWind():
     fig.savefig(join(save_path, "test_axis_LamWind.png"))
 
     SCIM_001.stator.plot_mmf_unit(
-        save_path=join(save_path, "test_axis_LamWind_mmf.png")
+        save_path=join(save_path, "test_axis_LamWind_mmf.png"), machine=SCIM_001
     )
 
     # Plot maximum of the fundamental of the mmf
-    MMF = SCIM_001.stator.comp_mmf_unit(Na=600, Nt=1)[0]
+    MMF = SCIM_001.stator.comp_mmf_unit(Na=600, Nt=1, machine=SCIM_001)[0]
     p = SCIM_001.stator.get_pole_pair_number()
     results = MMF.get_along("angle")
     angle_rotor = results["angle"]
@@ -278,7 +278,7 @@ def test_axis_LamWind():
     simu.struct = None
 
     out = Output(simu=simu)
-    simu.run()
+    simu.run(output=out)
 
     plt.close("all")
     out.mag.B.plot_2D_Data("angle{rad}", is_show_fig=False, **dict_2D)

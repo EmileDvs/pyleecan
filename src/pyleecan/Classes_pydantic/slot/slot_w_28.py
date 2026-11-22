@@ -300,7 +300,7 @@ class SlotW28(Slot):
             There are too many slots to match W3 and R1
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         #    if self.R1 * 2 <= self.W0:
         #        raise S28_WCheckError("You must have W0 < 2*R1")
@@ -308,7 +308,7 @@ class SlotW28(Slot):
         if self.W0 * 0.5 / Rbo >= 1:
             raise S28_RboW0CheckError("You must have W0/2 < Rbo")
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             R1 = Rbo + self.H0 + self.R1
         else:
             R1 = Rbo - self.H0
@@ -365,11 +365,11 @@ class SlotW28(Slot):
             Height of the slot [m]
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         point_dict = self._comp_point_coordinate()
         Z5 = point_dict["Z5"]
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Ztan2 = Z5 + Z5.imag * (1 - 1j)
             return Ztan2.real - Rbo
         else:
@@ -661,11 +661,11 @@ class SlotW28(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
-            Rbo = self.get_Rbo()
+            Rbo = self.get_Rbo(lam=lam)
             sp = 2 * np.pi / self.Zs  # Slot pitch
             # Adding point label
             if is_add_point_label:
@@ -765,7 +765,7 @@ class SlotW28(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z8"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

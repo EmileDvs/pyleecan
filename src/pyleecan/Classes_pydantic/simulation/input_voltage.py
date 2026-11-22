@@ -157,6 +157,8 @@ class InputVoltage(Input):
             axes_list=["time", "angle"],
             is_periodicity_a=False,
             is_periodicity_t=False,
+            output=output,
+            simu=simu,
         )
 
         # Create time axis for electrical model including periodicity
@@ -165,6 +167,8 @@ class InputVoltage(Input):
             axes_dict_in=outgeo.axes_dict,
             is_periodicity_a=self.is_periodicity_a,
             is_periodicity_t=self.is_periodicity_t,
+            output=output,
+            simu=simu,
         )
 
         if (

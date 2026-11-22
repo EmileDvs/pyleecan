@@ -58,7 +58,7 @@ class Test_Slot_16_plot(object):
         """Test lamination plot with Slot 16 and winding rad=1, tan=2"""
         lamination = self.test_obj
         lamination.winding = WindingUD(qs=3, p=3)
-        lamination.winding.init_as_CW2LT()
+        lamination.winding.init_as_CW2LT(lam=lamination)
         lamination.plot(is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s16_2-tan-wind.png"))
@@ -78,7 +78,7 @@ class Test_Slot_16_plot(object):
     def test_Lam_Wind_16_tooth(self):
         """Test the Slot 16 tooth plot"""
         lamination = self.test_obj
-        tooth = lamination.slot.get_surface_tooth()
+        tooth = lamination.slot.get_surface_tooth(lam=lamination)
         tooth.plot(color="r", is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s16_Tooth_in.png"))

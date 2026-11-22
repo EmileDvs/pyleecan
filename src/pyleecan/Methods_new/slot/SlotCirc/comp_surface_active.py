@@ -30,16 +30,16 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
     S2 = (R0**2.0) / 2.0 * (alpha - np.sin(alpha))
     # Arc of the bore
     alpha_op = self.comp_angle_opening()
-    S3 = (self.get_Rbo() ** 2.0) / 2.0 * (alpha_op - np.sin(alpha_op))
+    S3 = (self.get_Rbo(lam=lam) ** 2.0) / 2.0 * (alpha_op - np.sin(alpha_op))
 
     if self.H0 < self.W0 / 2:
         # Center is in airgap
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return S2 - S3
         else:
             return S2 + S3
     else:  # Center is in the Lamination
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return S1 - S2 - S3
         else:
             return S1 - S2 + S3

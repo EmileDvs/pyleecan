@@ -23,7 +23,7 @@ mach_path = join(DATA_DIR, "Machine", "Toyota_Prius.json")
 if isfile(mach_path):
     Toyota_Prius = load(mach_path)
 
-    surf_list = Toyota_Prius.rotor.hole[0].build_geometry()
+    surf_list = Toyota_Prius.rotor.hole[0].build_geometry(lam=Toyota_Prius.rotor)
     magnet_dict = {
         "magnet_0": Toyota_Prius.rotor.hole[0].magnet_0,
         "magnet_1": Toyota_Prius.rotor.hole[0].magnet_1,
@@ -34,7 +34,7 @@ if isfile(mach_path):
     IPMSM_B = Toyota_Prius.copy()
     IPMSM_B.rotor.hole[0] = HUD
 
-    surf_list = Toyota_Prius.rotor.hole[0].build_geometry()
+    surf_list = Toyota_Prius.rotor.hole[0].build_geometry(lam=Toyota_Prius.rotor)
     magnet_dict = {
         "magnet_0": Toyota_Prius.rotor.hole[0].magnet_0,
         "magnet_1": Toyota_Prius.rotor.hole[0].magnet_1,
@@ -71,7 +71,7 @@ class Test_HoleUD_meth(object):
         IPMSM_C.rotor.hole[0].magnet_dict["magnet_0"].type_magnetization = 1
         IPMSM_C.rotor.hole[0].magnet_dict["magnet_1"].type_magnetization = 1
 
-        surf_list = IPMSM_C.rotor.hole[0].build_geometry()
+        surf_list = IPMSM_C.rotor.hole[0].build_geometry(lam=IPMSM_C.rotor)
         assert len(surf_list) == 5
 
         assert surf_list[0].label == "Stator-0_HoleVoid_R0-T0-S0"
@@ -91,14 +91,14 @@ class Test_HoleUD_meth(object):
         assert IPMSM_B.rotor.hole[0].magnet_dict["magnet_0"] is None
         assert IPMSM_B.rotor.hole[0].magnet_dict["magnet_1"] is None
 
-        surf_list = IPMSM_B.rotor.hole[0].build_geometry()
+        surf_list = IPMSM_B.rotor.hole[0].build_geometry(lam=IPMSM_B.rotor)
 
         assert len(surf_list) == 5
         for ii, surf in enumerate(surf_list):
             assert type(surf) is SurfLine
             assert surf.label == "Rotor-0_HoleVoid_R0-T" + str(ii) + "-S0"
 
-        surf_list = IPMSM_C.rotor.hole[0].build_geometry()
+        surf_list = IPMSM_C.rotor.hole[0].build_geometry(lam=IPMSM_C.rotor)
         assert len(surf_list) == 5
         assert surf_list[0].label == "Stator-0_HoleVoid_R0-T0-S0"
         assert surf_list[1].label == "Stator-0_HoleMag_R0-T0-S0"

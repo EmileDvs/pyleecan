@@ -313,7 +313,7 @@ class SlotW26(Slot):
             Height of the slot [m]
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # Computation of the arc height (P1,0,P8)
         alpha = self.comp_angle_opening() / 2
@@ -322,7 +322,7 @@ class SlotW26(Slot):
         # Height of the arc (P2,C1,P7)
         Hwind = self.comp_height_active()
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return self.H0 + Hwind - Harc
         else:
             return self.H0 + Hwind + Harc
@@ -639,7 +639,7 @@ class SlotW26(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -732,7 +732,7 @@ class SlotW26(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z8"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

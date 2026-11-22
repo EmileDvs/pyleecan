@@ -198,8 +198,8 @@ class gmsh_pyleecan:
         lam_list = machine.get_lam_list()
         lam_int = lam_list[0]
         lam_ext = lam_list[1]
-        lab_int = lam_int.get_label()
-        lab_ext = lam_ext.get_label()
+        lab_int = lam_int.get_label(machine=machine)
+        lab_ext = lam_ext.get_label(machine=machine)
 
         # For readibility
         model = gmsh.model
@@ -1394,7 +1394,7 @@ class gmsh_pyleecan:
         """
         # The defaut symmetry is Zs => We draw only one tooth
         if sym == -1:
-            tooth_surf = lamination.slot.get_surface_tooth()
+            tooth_surf = lamination.slot.get_surface_tooth(lam=lamination)
             Zs = lamination.get_Zs()
         else:
             tooth_surf = lamination.build_geometry(sym=sym)[0]
@@ -1625,8 +1625,8 @@ class gmsh_pyleecan:
         lam_list = machine.get_lam_list()
         lam_int = lam_list[0]
         lam_ext = lam_list[1]
-        lab_int = lam_int.get_label()
-        lab_ext = lam_ext.get_label()
+        lab_int = lam_int.get_label(machine=machine)
+        lab_ext = lam_ext.get_label(machine=machine)
 
         Rgap_mec_int = lam_int.comp_radius_mec()
         Rgap_mec_ext = lam_ext.comp_radius_mec()

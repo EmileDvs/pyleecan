@@ -299,6 +299,7 @@ class SWSlot(Gen_SWSlot, QWidget):
                 self.obj.plot(
                     is_lam_only=not (type(self.obj) is LamSlotWind),
                     is_show_fig=not self.is_test,
+                    machine=self.machine,
                 )
                 set_plot_gui_icon()
             except Exception as e:

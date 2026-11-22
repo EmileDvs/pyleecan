@@ -49,7 +49,7 @@ class Test_Hole_53_plot(object):
 
     def test_Lam_Hole_53_W01(self, machine):
         """Test machine plot hole 53 with W1 > 0 and both magnets"""
-        machine.rotor.plot(is_show_fig=False)
+        machine.rotor.plot(is_show_fig=False, machine=machine)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_s53_Rotor_W01.png"))
         # 2 for lam + 3*2*8 for the holes
@@ -60,7 +60,7 @@ class Test_Hole_53_plot(object):
         machine.rotor.hole[0].W1 = 0
         machine.rotor.hole[0].magnet_0 = Magnet()
         machine.rotor.hole[0].magnet_1 = Magnet()
-        machine.rotor.plot(is_show_fig=False)
+        machine.rotor.plot(is_show_fig=False, machine=machine)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_s53_RotorN01.png"))
         # 2 lam + 5*8 for the holes
@@ -71,7 +71,7 @@ class Test_Hole_53_plot(object):
         machine.rotor.hole[0].W1 = 2e-3
         machine.rotor.hole[0].magnet_0 = None
         machine.rotor.hole[0].magnet_1 = Magnet()
-        machine.rotor.plot(is_show_fig=False)
+        machine.rotor.plot(is_show_fig=False, machine=machine)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_s53_RotorWN1.png"))
         # 2 for lam + (1+3)*8 for holes
@@ -82,7 +82,7 @@ class Test_Hole_53_plot(object):
         machine.rotor.hole[0].W1 = 0
         machine.rotor.hole[0].magnet_0 = None
         machine.rotor.hole[0].magnet_1 = Magnet()
-        machine.rotor.plot(is_show_fig=False)
+        machine.rotor.plot(is_show_fig=False, machine=machine)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_s53_RotorNN1.png"))
         # 2 for lam + 3*8 for holes
@@ -93,7 +93,7 @@ class Test_Hole_53_plot(object):
         machine.rotor.hole[0].W1 = 2e-3
         machine.rotor.hole[0].magnet_0 = Magnet()
         machine.rotor.hole[0].magnet_1 = None
-        machine.rotor.plot(is_show_fig=False)
+        machine.rotor.plot(is_show_fig=False, machine=machine)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_s53_RotorW0N.png"))
         # 2 for lam + (3+1)*8
@@ -104,7 +104,7 @@ class Test_Hole_53_plot(object):
         machine.rotor.hole[0].W1 = 0
         machine.rotor.hole[0].magnet_0 = Magnet()
         machine.rotor.hole[0].magnet_1 = None
-        machine.rotor.plot(is_show_fig=False)
+        machine.rotor.plot(is_show_fig=False, machine=machine)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_s53_RotorN0N.png"))
         # 2 for lam + 3*8 for holes
@@ -115,7 +115,7 @@ class Test_Hole_53_plot(object):
         machine.rotor.hole[0].W1 = 2e-3
         machine.rotor.hole[0].magnet_0 = None
         machine.rotor.hole[0].magnet_1 = None
-        machine.rotor.plot(is_show_fig=False)
+        machine.rotor.plot(is_show_fig=False, machine=machine)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_s53_RotorWNN.png"))
         # 2 for lam + 2*8 for holes
@@ -126,7 +126,7 @@ class Test_Hole_53_plot(object):
         machine.rotor.hole[0].W1 = 0
         machine.rotor.hole[0].magnet_0 = None
         machine.rotor.hole[0].magnet_1 = None
-        machine.rotor.plot(is_show_fig=False)
+        machine.rotor.plot(is_show_fig=False, machine=machine)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Hole_s53_RotorNNN.png"))
         # 2 for lam + 8 for holes

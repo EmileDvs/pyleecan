@@ -266,7 +266,12 @@ class OutLoss(LegacyModel):
         p = output.simu.machine.get_pole_pair_number()
 
         array_list = [
-            np.array([out_loss.get_loss_scalar(speed / 60 * p) for speed in N0_array])
+            np.array(
+                [
+                    out_loss.get_loss_scalar(speed / 60 * p, output=output)
+                    for speed in N0_array
+                ]
+            )
             for out_loss in self.loss_dict.values()
         ]
 

@@ -365,7 +365,7 @@ class SlotW25(Slot):
             The teeth are too wide, reduce Zs, H2 or W3
 
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         if self.H1 == 0:
             raise S25_W4CheckError("You must have H1>0 (use Slot 24 for H1=0)")
@@ -378,7 +378,7 @@ class SlotW25(Slot):
             raise S25_W4CheckError("The teeth are too wide, reduce Zs or W4")
 
         if (
-            not self.is_outwards()
+            not self.is_outwards(lam=lam)
             and 2 * np.arcsin(self.W3 / (2 * Rbo - self.H2 - self.H1))
             > 2 * np.pi / self.Zs
         ):
@@ -426,9 +426,9 @@ class SlotW25(Slot):
         """
         point_dict = self._comp_point_coordinate()
         Z4 = point_dict["Z4"]
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return abs(Z4) - Rbo
         else:  # inward slot
             return Rbo - abs(Z4)
@@ -495,7 +495,7 @@ class SlotW25(Slot):
         Z2 = point_dict["Z2"]
         Z4 = point_dict["Z4"]
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Rint = abs(Z2)
             Rext = abs(Z4)
         else:
@@ -764,7 +764,7 @@ class SlotW25(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -850,7 +850,7 @@ class SlotW25(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z8"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

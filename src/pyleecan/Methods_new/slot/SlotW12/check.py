@@ -29,7 +29,7 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
         You must have R2 < Rbo
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     if self.R2 <= 0:
         raise S12_R20CheckError("You must have R2 > 0")

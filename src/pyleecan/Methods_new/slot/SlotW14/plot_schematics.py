@@ -142,13 +142,13 @@ def plot_schematics(
             alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
         point_dict = self._comp_point_coordinate()
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             sign = 1
         else:
             sign = -1
         hsp = np.pi / self.Zs
         sp = 2 * np.pi / self.Zs
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         # Adding point label
         if is_add_point_label:
             for name, Z in point_dict.items():

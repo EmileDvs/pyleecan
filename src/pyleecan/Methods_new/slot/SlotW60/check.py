@@ -36,13 +36,13 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
 
     """
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         raise S60_InnerCheckError("Slot 60 is for inner lamination only")
 
     if self.W1 <= self.W2:
         raise S60_W21CheckError("You must have W2 < W1")
 
-    if self.R1 > self.get_Rbo():
+    if self.R1 > self.get_Rbo(lam=lam):
         raise S60_RCheckError("You must have R1 <= Rbo")
 
     if self.H3 + self.H4 >= self.H2:

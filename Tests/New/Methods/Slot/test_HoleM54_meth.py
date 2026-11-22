@@ -65,7 +65,7 @@ class Test_HoleM54_meth(object):
     def test_build_geometry(self, test_dict):
         """Check that the surf list is correct"""
         test_obj = LamHole(init_dict=test_dict["test_obj"].as_dict())
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
         assert len(result) == 1
         for surf in result:
             assert type(surf) == SurfLine
@@ -80,7 +80,7 @@ class Test_HoleM54_meth(object):
         # is_stator to True
 
         test_obj.is_stator = True
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
         assert result[0].label == "Stator_HoleVoid_R0-T0-S0"
 
     def test_check(self):

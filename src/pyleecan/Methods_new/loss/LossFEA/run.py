@@ -226,7 +226,7 @@ def run(self, output: Output | None = None) -> None:
     output.loss.P_in = output.mag.Pem_av + loss_dict["stator joule"].scalar_value
 
     # Store output power
-    loss_overall = loss_dict["overall"].get_loss_scalar(felec)
+    loss_overall = loss_dict["overall"].get_loss_scalar(felec, output=output)
     output.loss.P_out = output.loss.P_in - loss_overall
 
     # Store efficiency

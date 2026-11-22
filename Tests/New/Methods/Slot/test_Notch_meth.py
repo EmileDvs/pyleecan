@@ -35,7 +35,7 @@ class TestNotch(object):
             Wrvd=0.05,
         )
         test_obj.notch = [setup]
-        assert test_obj.slot.is_outwards() == False
+        assert test_obj.slot.is_outwards(lam=test_obj) == False
 
     def test_get_Rbo(self, setup):
         """Check that the get_rbo function can raise an error"""
@@ -53,4 +53,4 @@ class TestNotch(object):
             Wrvd=0.05,
         )
         test_obj.notch = [setup]
-        assert test_obj.notch[0].get_Rbo() == 0.5
+        assert test_obj.notch[0].get_Rbo(lam=test_obj) == 0.5

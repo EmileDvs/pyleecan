@@ -103,11 +103,11 @@ def plot_schematics(
             alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
         )  # center slot on Ox axis
         point_dict = self._comp_point_coordinate()
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             sign = +1
         else:
             sign = -1
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         # Adding point label
         if is_add_point_label:
@@ -219,7 +219,7 @@ def plot_schematics(
             line = Arc1(
                 begin=point_dict["Z1"],
                 end=point_dict["Z4"],
-                radius=self.get_Rbo(),
+                radius=self.get_Rbo(lam=lam),
                 is_trigo_direction=True,
             )
             line.plot(

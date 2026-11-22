@@ -261,10 +261,35 @@ FUNCTION_LEGACY_FIXES = {
             ),
         ),
     ),
+    # Step 16: the calls pass the container they hold (no parent fallback,
+    # ContainerFallbackWarning)
+    "GMSH/draw_GMSH.py": (
+        LegacyFix(
+            old="    lab_int = lam_int.get_label()\n"
+            "    lab_ext = lam_ext.get_label()\n",
+            new="    lab_int = lam_int.get_label(machine=machine)\n"
+            "    lab_ext = lam_ext.get_label(machine=machine)\n",
+        ),
+    ),
+    "GMSH/get_sliding_band.py": (
+        LegacyFix(
+            old="    lab_int = lam_int.get_label()\n"
+            "    lab_ext = lam_ext.get_label()\n",
+            new="    lab_int = lam_int.get_label(machine=machine)\n"
+            "    lab_ext = lam_ext.get_label(machine=machine)\n",
+        ),
+    ),
+    "GMSH/gen_3D_mesh.py": (
+        LegacyFix(
+            old="        tooth_surf = lamination.slot.get_surface_tooth()\n",
+            new="        tooth_surf = lamination.slot.get_surface_tooth(lam=lamination)\n",
+        ),
+    ),
 }
 """Fixes of the legacy Functions modules, applied by the functions generator
 (Step 15): {module path in Functions (posix): fixes}. Only lines that raise
-when they run change."""
+when they run change, and the calls that pass the container they hold (Step
+16: no parent fallback)."""
 
 LEGACY_FIXES = {
     # The loss density of a model on the whole mesh: the "indice" axis no

@@ -172,7 +172,7 @@ class Test_Hole52_meth(object):
     def test_build_geometry_with_magnet(self, test_dict):
         """Check that the surf list is correct with magnet"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
         assert len(result) == 3
         for surf in result:
             assert type(surf) == SurfLine
@@ -191,7 +191,7 @@ class Test_Hole52_meth(object):
         """Check that the surf list is correct without magnet"""
         test_obj = LamHole(init_dict=test_dict["test_obj"].as_dict())
         test_obj.hole[0].magnet_0 = None
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
         assert len(result) == 1
         for surf in result:
             assert type(surf) == SurfLine
@@ -207,7 +207,7 @@ class Test_Hole52_meth(object):
 
         test_obj = test_dict["test_obj"]
         test_obj.hole[0].magnet_0 = Magnet(type_magnetization=1)
-        a = test_obj.hole[0].build_geometry(is_simplified=True)
+        a = test_obj.hole[0].build_geometry(is_simplified=True, lam=test_obj)
 
         assert a[1].label == "Stator_HoleMag_R0-T0-S0"
         assert a[1].line_list[0] is not None

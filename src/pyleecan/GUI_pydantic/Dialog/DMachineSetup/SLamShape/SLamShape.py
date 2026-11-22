@@ -448,6 +448,7 @@ class SLamShape(Gen_SLamShape, QWidget):
                 ax=self.w_viewer.axes,
                 is_show_fig=False,
                 is_lam_only=is_lam_only,
+                machine=self.machine,
             )
             self.w_viewer.axes.set_axis_off()
             self.w_viewer.axes.axis("equal")

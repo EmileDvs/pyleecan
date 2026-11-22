@@ -154,7 +154,7 @@ class Test_InCurrent_meth(object):
         """Check that the input current raises the correct errors"""
         output = Output(simu=test_dict["test_obj"])
         with pytest.raises(InputError) as context:
-            output.simu.input.gen_input()
+            output.simu.input.gen_input(output=output, simu=output.simu)
             assert test_dict["exp"] == str(context.exception)
 
     @pytest.mark.parametrize("test_dict", idq_test)
@@ -218,7 +218,7 @@ class Test_InCurrent_meth(object):
         )
 
         # Generate Is according to Id/Iq
-        test_obj.input.gen_input()
+        test_obj.input.gen_input(simu=test_obj, output=output)
         assert_array_almost_equal(
             output.geo.axes_dict["time"].get_values(is_oneperiod=False),
             time_exp,
@@ -227,7 +227,7 @@ class Test_InCurrent_meth(object):
             output.geo.axes_dict["angle"].get_values(is_oneperiod=False),
             linspace(0, 2 * pi, Na_tot, endpoint=False),
         )
-        assert_array_almost_equal(output.elec.get_Is().values, Is_exp.T)
+        assert_array_almost_equal(output.elec.get_Is(output=output).values, Is_exp.T)
         assert_array_almost_equal(output.get_angle_rotor(), angle_rotor_exp)
         assert_array_almost_equal(output.elec.OP.get_N0(), N0)
         assert_array_almost_equal(output.geo.rot_dir, -mmf_dir)
@@ -241,13 +241,13 @@ class Test_InCurrent_meth(object):
             Ir=None,
         )
         out = Output(simu=test_obj)
-        test_obj.input.gen_input()
+        test_obj.input.gen_input(simu=test_obj, output=out)
         assert out.elec.OP.get_Id_Iq()["Id"] == pytest.approx(test_dict["Id"], abs=0.01)
         assert out.elec.OP.get_Id_Iq()["Iq"] == pytest.approx(test_dict["Iq"], abs=0.01)
 
         # Plot 3-phase current function of time
         # out.plot_2D_Data("elec.Is", "time", "phase", is_show_fig=False)
-        out.elec.get_Is().plot_2D_Data("time", "phase[]", is_show_fig=False, **dict_2D)
+        out.elec.get_Is(output=out).plot_2D_Data("time", "phase[]", is_show_fig=False, **dict_2D)
 
         # Save picture
         title = "Id=" + str(test_dict["Id"]) + " Iq=" + str(test_dict["Iq"])

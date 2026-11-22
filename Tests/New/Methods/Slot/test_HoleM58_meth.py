@@ -55,7 +55,7 @@ class Test_HoleM58_meth(object):
         test_obj = test_dict["test_obj"]
 
         point_dict = test_obj.hole[0]._comp_point_coordinate()
-        Rbo = test_obj.hole[0].get_Rbo()
+        Rbo = test_obj.hole[0].get_Rbo(lam=test_obj)
 
         # W0
         assert abs(point_dict["Z2"] - point_dict["Z11"]) == pytest.approx(
@@ -118,7 +118,7 @@ class Test_HoleM58_meth(object):
         """Magnet None"""
 
         test_obj.hole[0].magnet_0 = None
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
         assert result[0].label == "Rotor_HoleVoid_R0-T0-S0"
 
     @pytest.mark.parametrize("test_dict", HoleM58_test)
@@ -126,7 +126,7 @@ class Test_HoleM58_meth(object):
         """Type Magnetization Parallel"""
 
         test_obj.hole[0].magnet_0 = Magnet(type_magnetization=1)
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
         assert result[1].label == "Rotor_HoleMag_R0-T0-S0"
 
     @pytest.mark.parametrize("test_dict", HoleM58_test)

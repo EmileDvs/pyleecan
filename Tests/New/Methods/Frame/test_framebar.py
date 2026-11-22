@@ -22,7 +22,7 @@ DELTA = 1e-4
 
 def test_comp_height_gap():
     """Test computation of gap height of FrameBar"""
-    gap_height = frame.comp_height_gap() * 1000
+    gap_height = frame.comp_height_gap(machine=machine) * 1000
     assert gap_height == pytest.approx(5.38)
 
 

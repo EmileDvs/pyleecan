@@ -13,27 +13,29 @@ from backend_classes.slot.hole import Hole
 
 class Test_VentilationCirc(object):
     @pytest.fixture
-    def vent(self):
+    def lam(self):
         """Run at the begining of every test to setup the VentilationCirc"""
         test_obj = VentilationCirc(Zh=8, Alpha0=0, D0=5e-3, H0=40e-3)
-        lam = Lamination(is_stator=True, axial_vent=[test_obj])
+        return Lamination(is_stator=True, axial_vent=[test_obj])
 
-        return test_obj
+    @pytest.fixture
+    def vent(self, lam):
+        return lam.axial_vent[0]
 
-    def test_build_geometry_errors(self, vent):
+    def test_build_geometry_errors(self, vent, lam):
         """Test that build_geometry can raise some errors"""
         with pytest.raises(CircleBuildGeometryError) as context:
-            vent.build_geometry(alpha="dz")
+            vent.build_geometry(alpha="dz", lam=lam)
         with pytest.raises(CircleBuildGeometryError) as context:
-            vent.build_geometry(alpha=1, delta="dz")
+            vent.build_geometry(alpha=1, delta="dz", lam=lam)
 
-    def test_build_geometry(self, vent):
+    def test_build_geometry(self, vent, lam):
         """Test that build_geometry works"""
-        result = vent.build_geometry()
+        result = vent.build_geometry(lam=lam)
 
         assert len(result) == 1
 
-    def test_comp_surface(self, vent):
+    def test_comp_surface(self, vent, lam):
         """Check that the computation of the surface is correct"""
         # Check that the analytical method returns the same result as the numerical one
         a = vent.comp_surface()

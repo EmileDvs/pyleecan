@@ -26,9 +26,20 @@ def pytest_addoption(parser):
     )
 
 
+CONTAINER_FALLBACK_FILTER = (
+    r"error::pyleecan.classes_common.parents.ContainerFallbackWarning:Tests\.New\."
+)
+"""The hand-maintained tests pass the containers of the methods they call
+(PLAN.md Step 16): a method called from a test module without its container
+argument, which then reads it from the parent links, is an error. The
+fallback of the library itself is not concerned (the warning is attributed
+to the caller of the method)"""
+
+
 def pytest_configure(config):
     # Before the collection: the test modules import the alias packages
     _backend.install(config.getoption("backend"))
+    config.addinivalue_line("filterwarnings", CONTAINER_FALLBACK_FILTER)
 
 
 def pytest_sessionstart(session):

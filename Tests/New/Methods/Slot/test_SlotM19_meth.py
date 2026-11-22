@@ -134,7 +134,7 @@ class Test_Magnet_Type_19_meth(object):
         W0 = test_obj.slot.W0
         W1 = test_obj.slot.W1
         H0 = test_obj.slot.H0
-        Rbo = test_obj.slot.get_Rbo()
+        Rbo = test_obj.slot.get_Rbo(lam=test_obj)
 
         msg = "Return " + str(Rbo - (Z2 + Z3) / 2) + "expected " + str(H0)
         assert abs(Rbo - (Z2 + Z3) / 2) == pytest.approx(H0, rel=DELTA), msg

@@ -72,7 +72,7 @@ def plot_schematics(
             save_path=save_path,
             is_show_fig=is_show_fig,
             fig=fig,
-            ax=ax,
+            ax=ax, lam=lam,
         )
     else:
         # Getting the main plot

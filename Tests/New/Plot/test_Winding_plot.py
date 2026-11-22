@@ -30,7 +30,7 @@ class Test_Winding_plot(object):
         test_obj = LamSlotWind(Rint=0.5, Rext=0.9, is_internal=False)
         test_obj.slot = SlotW22(Zs=6, H0=20e-3, H2=0.2, W0=pi / 10, W2=pi / 6)
         test_obj.winding = WindingUD(p=2, qs=3)
-        test_obj.winding.init_as_CW2LT()
+        test_obj.winding.init_as_CW2LT(lam=test_obj)
 
         test_obj.plot(is_show_fig=False)
         fig = plt.gcf()
@@ -41,13 +41,13 @@ class Test_Winding_plot(object):
         fig.savefig(join(save_path, "test_Wind_CW2LT_wind.png"))
 
         test_obj.slot = SlotW22(Zs=12, H0=20e-3, H2=0.2, W0=pi / 12, W2=pi / 8)
-        test_obj.winding.init_as_CW2LT()
+        test_obj.winding.init_as_CW2LT(lam=test_obj)
         test_obj.plot(is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Wind_CW2LT_lam_ms=0,25.png"))
 
         test_obj.winding.p = 4
-        test_obj.winding.init_as_CW2LT()
+        test_obj.winding.init_as_CW2LT(lam=test_obj)
         test_obj.plot(is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Wind_CW2LT_lam_p=4.png"))
@@ -55,7 +55,7 @@ class Test_Winding_plot(object):
         test_obj = LamSlotWind(Rint=0.5, Rext=0.9, is_internal=False, is_stator=False)
         test_obj.slot = SlotW22(Zs=6, H0=20e-3, H2=0.2, W0=pi / 10, W2=pi / 6)
         test_obj.winding = WindingUD(p=2, qs=3)
-        test_obj.winding.init_as_CW2LT()
+        test_obj.winding.init_as_CW2LT(lam=test_obj)
         test_obj.plot_winding(all_slot=True, is_show_fig=False)
 
     def test_type_wind_CW1L(self):
@@ -68,7 +68,7 @@ class Test_Winding_plot(object):
             Zs=36, H0=20e-3, H1=0, H1_is_rad=False, H2=0.2, W0=30e-3, W1=0.06, W2=0.06
         )
         test_obj.winding = WindingUD(p=3, qs=3)
-        test_obj.winding.init_as_CW1L()
+        test_obj.winding.init_as_CW1L(lam=test_obj)
 
         test_obj.plot(
             is_show_fig=False, save_path=join(save_path, "test_Wind_CW1L_lam.png")
@@ -81,7 +81,7 @@ class Test_Winding_plot(object):
         test_obj.slot.Zs = 20
         test_obj.winding.qs = 5
 
-        test_obj.winding.init_as_CW1L()
+        test_obj.winding.init_as_CW1L(lam=test_obj)
         test_obj.plot(
             is_show_fig=False, save_path=join(save_path, "test_Wind_CW1L_lam2.png")
         )
@@ -100,7 +100,7 @@ class Test_Winding_plot(object):
             Zs=36, H0=20e-3, H1=0, H1_is_rad=False, H2=0.2, W0=30e-3, W1=0.06, W2=0.06
         )
         test_obj.winding = WindingUD(p=3, qs=3, coil_pitch=5)
-        test_obj.winding.init_as_DWL(nlay=2)
+        test_obj.winding.init_as_DWL(nlay=2, lam=test_obj)
 
         test_obj.plot(is_show_fig=False)
         fig = plt.gcf()
@@ -112,7 +112,7 @@ class Test_Winding_plot(object):
 
         test_obj.slot.Zs = 24
         test_obj.winding = WindingUD(p=1, qs=3, coil_pitch=10)
-        test_obj.winding.init_as_DWL(nlay=2)
+        test_obj.winding.init_as_DWL(nlay=2, lam=test_obj)
         test_obj.plot(is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Wind_DW2L_lam2.png"))
@@ -131,7 +131,7 @@ class Test_Winding_plot(object):
             Zs=24, H0=20e-3, H1=0, H1_is_rad=False, H2=0.2, W0=30e-3, W1=0.06, W2=0.06
         )
         test_obj.winding = WindingUD(p=1, qs=3)
-        test_obj.winding.init_as_DWL(nlay=1)
+        test_obj.winding.init_as_DWL(nlay=1, lam=test_obj)
 
         test_obj.plot(is_show_fig=False)
         fig = plt.gcf()
@@ -143,7 +143,7 @@ class Test_Winding_plot(object):
 
         test_obj.slot.Zs = 36
         test_obj.winding = WindingUD(p=2, qs=3)
-        test_obj.winding.init_as_DWL(nlay=1)
+        test_obj.winding.init_as_DWL(nlay=1, lam=test_obj)
         test_obj.plot(is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Wind_DW1L_lam2.png"))
@@ -162,7 +162,7 @@ class Test_Winding_plot(object):
             Zs=12, H0=20e-3, H1=0, H1_is_rad=False, H2=0.2, W0=30e-3, W1=0.06, W2=0.06
         )
         test_obj.winding = WindingUD(p=5, qs=3)
-        test_obj.winding.init_as_CW2LR()
+        test_obj.winding.init_as_CW2LR(lam=test_obj)
 
         test_obj.plot(is_show_fig=False)
         fig = plt.gcf()
@@ -173,7 +173,7 @@ class Test_Winding_plot(object):
         fig.savefig(join(save_path, "test_Wind_CW2LR_wind.png"))
 
         test_obj.slot.Zs = 36
-        test_obj.winding.init_as_CW2LR()
+        test_obj.winding.init_as_CW2LR(lam=test_obj)
         test_obj.plot(is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Wind_CW2LR_lam2.png"))
@@ -186,7 +186,7 @@ class Test_Winding_plot(object):
         """Test plot unit mmf"""
         Toyota_Prius = load(join(DATA_DIR, "Machine", "Toyota_Prius.json"))
         Toyota_Prius.stator.plot_mmf_unit(
-            save_path=join(save_path, "test_unit_mmf.png")
+            save_path=join(save_path, "test_unit_mmf.png"), machine=Toyota_Prius
         )
 
     def test_plot_radial(self):
@@ -205,6 +205,7 @@ class Test_Winding_plot(object):
                 is_winding_connection=True,
                 save_path=join(save_path, "test_plot_radial_" + machine_name + ".png"),
                 is_show_fig=False,
+                machine=machine,
             )
 
     def test_plot_radial_transformation(self):
@@ -226,6 +227,7 @@ class Test_Winding_plot(object):
                     save_path, "test_plot_radial_" + machine_reverse_wind.name + ".png"
                 ),
                 is_show_fig=False,
+                machine=machine_reverse_wind,
             )
 
             # Plotting the machine with its winding after applying the slot shift transformation
@@ -239,6 +241,7 @@ class Test_Winding_plot(object):
                     "test_plot_radial_" + machine_Nslot_shift_wind.name + ".png",
                 ),
                 is_show_fig=False,
+                machine=machine_Nslot_shift_wind,
             )
 
             # Plotting the machine with its winding after applying the reverse layer transformation
@@ -252,6 +255,7 @@ class Test_Winding_plot(object):
                     "test_plot_radial_" + machine_is_reverse_layer.name + ".png",
                 ),
                 is_show_fig=False,
+                machine=machine_is_reverse_layer,
             )
 
             # Plotting the machine with its winding after applying the change layer transformation
@@ -265,6 +269,7 @@ class Test_Winding_plot(object):
                     "test_plot_radial_" + machine_is_change_layer.name + ".png",
                 ),
                 is_show_fig=False,
+                machine=machine_is_change_layer,
             )
 
             # Plotting the machine with its winding after applying the permute B-C transformation
@@ -278,6 +283,7 @@ class Test_Winding_plot(object):
                     "test_plot_radial_" + machine_is_permute_B_C.name + ".png",
                 ),
                 is_show_fig=False,
+                machine=machine_is_permute_B_C,
             )
 
             print(machine_name + " done")
@@ -300,11 +306,15 @@ class Test_Winding_plot(object):
                     save_path, "test_plot_linear_" + machine_name + "_max_sym_.png"
                 ),
                 is_show_fig=False,
+                lam=machine.stator,
+                machine=machine,
             )
             machine.stator.winding.plot_linear(
                 is_max_sym=False,
                 save_path=join(save_path, "test_plot_linear_" + machine_name + ".png"),
                 is_show_fig=False,
+                lam=machine.stator,
+                machine=machine,
             )
             print(machine_name + " done")
 
@@ -326,6 +336,8 @@ class Test_Winding_plot(object):
                     save_path, "test_plot_linear_" + machine_reverse_wind.name + ".png"
                 ),
                 is_show_fig=False,
+                lam=machine_reverse_wind.stator,
+                machine=machine_reverse_wind,
             )
 
             # Plotting the machine with its winding after applying the slot shift transformation
@@ -339,6 +351,8 @@ class Test_Winding_plot(object):
                     "test_plot_linear_" + machine_Nslot_shift_wind.name + ".png",
                 ),
                 is_show_fig=False,
+                lam=machine_Nslot_shift_wind.stator,
+                machine=machine_Nslot_shift_wind,
             )
 
             # Plotting the machine with its winding after applying the reverse layer transformation
@@ -352,6 +366,8 @@ class Test_Winding_plot(object):
                     "test_plot_linear_" + machine_is_reverse_layer.name + ".png",
                 ),
                 is_show_fig=False,
+                lam=machine_is_reverse_layer.stator,
+                machine=machine_is_reverse_layer,
             )
 
             # Plotting the machine with its winding after applying the permute B-C transformation
@@ -365,6 +381,8 @@ class Test_Winding_plot(object):
                     "test_plot_linear_" + machine_is_permute_B_C.name + ".png",
                 ),
                 is_show_fig=False,
+                lam=machine_is_permute_B_C.stator,
+                machine=machine_is_permute_B_C,
             )
 
             print(machine_name + " done")

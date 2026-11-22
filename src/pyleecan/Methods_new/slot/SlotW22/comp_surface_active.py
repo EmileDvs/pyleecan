@@ -22,9 +22,9 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
         Slot inner surface for winding [m**2]
 
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         # Surface of the external disk
         Sext = ((self.H2 + self.H0 + Rbo) ** 2) * np.pi
 

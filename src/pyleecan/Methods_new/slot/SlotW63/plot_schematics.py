@@ -122,7 +122,7 @@ def plot_schematics(
                 1j * (2 * np.pi / self.Zs)
             )
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             sign = 1
         else:
             sign = -1
@@ -259,9 +259,9 @@ def plot_schematics(
             )
             # Top arc
             line = Arc1(
-                begin=self.get_Rbo(),
-                end=-self.get_Rbo(),
-                radius=self.get_Rbo(),
+                begin=self.get_Rbo(lam=lam),
+                end=-self.get_Rbo(lam=lam),
+                radius=self.get_Rbo(lam=lam),
                 is_trigo_direction=True,
             )
             line.plot(

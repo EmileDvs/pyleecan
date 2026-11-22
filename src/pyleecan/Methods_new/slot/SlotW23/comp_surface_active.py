@@ -26,14 +26,14 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
         # Compute W1 and W2 to match W3 tooth constraint
         self._comp_W()
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # By Pythagore
     # self.H2 projection
     H2 = np.sqrt(self.H2**2 - ((self.W2 - self.W1) / 2.0) ** 2)
     S2 = 0.5 * (self.W1 + self.W2) * H2
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         Rslot = Rbo + self.comp_height(lam=lam)  # External radius of the slot
         alpha = float(2 * np.arcsin(self.W2 / (2 * Rslot)))  # W2 in rad
         S3 = (Rslot**2.0) / 2.0 * (alpha - np.sin(alpha))

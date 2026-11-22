@@ -175,7 +175,7 @@ class Test_HoleM60_meth(object):
         )
 
         assert abs(point_dict["Z3"]) == pytest.approx(
-            test_obj.hole[0].get_Rbo() - test_obj.hole[0].H1
+            test_obj.hole[0].get_Rbo(lam=test_obj) - test_obj.hole[0].H1
         )
 
         # Compute P

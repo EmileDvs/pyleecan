@@ -3,7 +3,12 @@ from os.path import isfile, join
 
 import matplotlib.pyplot as plt
 from numpy import exp, pi
-from pyleecan.Classes.import_all import *
+from backend_classes.machine.lam_slot import LamSlot
+from backend_classes.machine.lam_slot_wind import LamSlotWind
+from backend_classes.machine.machine_ud import MachineUD
+from backend_classes.slot.slot_w_10 import SlotW10
+from backend_classes.slot.slot_w_22 import SlotW22
+from backend_classes.machine.winding import Winding
 
 from backend_functions.Plot import P_FONT_SIZE, TEXT_BOX
 from Tests.New._test_paths import SCHEMATICS_PATH
@@ -68,7 +73,7 @@ def test_MachineUD():
     assert label_list[2] == "Rotor-1"
     assert label_list[3] == "Stator-1"
     for ii, lam in enumerate(lam_list):
-        assert lam.get_label() == label_list[ii]
+        assert lam.get_label(machine=machine) == label_list[ii]
 
     machine.plot(is_show_fig=False)
     fig = plt.gcf()

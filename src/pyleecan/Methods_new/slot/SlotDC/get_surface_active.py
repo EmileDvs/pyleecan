@@ -33,7 +33,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     """
 
     # get the name of the lamination
-    st = self.get_name_lam()
+    st = self.get_name_lam(lam=lam)
 
     # Create curve list
     curve_list = self.build_geometry(lam=lam)[1:-1]

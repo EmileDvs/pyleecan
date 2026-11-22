@@ -167,7 +167,7 @@ class Test_SlotW29_meth(object):
     def test_build_geometry_active(self, test_dict):
         """Check that the computation of the average angle is correct"""
         test_obj = test_dict["test_obj"].copy()
-        surf_list = test_obj.slot.build_geometry_active(Nrad=3, Ntan=2)
+        surf_list = test_obj.slot.build_geometry_active(Nrad=3, Ntan=2, lam=test_obj)
 
         # Check label
         assert surf_list[0].label == "Stator_Winding_R0-T0-S0"
@@ -399,12 +399,12 @@ class Test_SlotW29_meth(object):
         """Check that the get_surface_X works when stator = false"""
         lam = LamSlot(is_internal=True, Rext=0.1325, is_stator=False)
         lam.slot = SlotW29(H0=1e-3, H1=1.5e-3, H2=30e-3, W0=12e-3, W1=14e-3, W2=20e-3)
-        result = lam.slot.get_surface_active()
+        result = lam.slot.get_surface_active(lam=lam)
         assert result.label == "Rotor_Winding_R0-T0-S0"
         assert len(result.get_lines()) == 6
         assert result.is_inside(result.point_ref)
 
-        result = lam.slot.get_surface_opening()
+        result = lam.slot.get_surface_opening(lam=lam)
         assert len(result) == 1
         assert result[0].label == "Rotor_SlotOpening_R0-T0-S0"
         assert len(result[0].get_lines()) == 8

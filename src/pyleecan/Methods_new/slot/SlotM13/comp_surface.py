@@ -24,7 +24,7 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
 
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     S1 = self.H0 * self.W0
 
@@ -33,7 +33,7 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
     Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
     # Because Slamination = S - Zs * Sslot
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         return S1 - Sarc
     else:
         return S1 + Sarc

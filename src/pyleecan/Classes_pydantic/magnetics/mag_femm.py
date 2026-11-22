@@ -1207,7 +1207,7 @@ class MagFEMM(Magnetics):
 
             # Compute the torque
             if self.is_calc_torque_energy:
-                label_rot = machine.rotor.get_label()
+                label_rot = machine.rotor.get_label(machine=machine)
                 rotor_groups = FEMM_dict["groups"]["lam_group_list"][label_rot]
                 out_dict["Tem"][ii] = femm.comp_FEMM_torque(
                     rotor_groups=rotor_groups, sym=sym

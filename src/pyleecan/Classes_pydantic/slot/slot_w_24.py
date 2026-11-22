@@ -305,13 +305,13 @@ class SlotW24(Slot):
         S24_HWCheckError
             The teeth are too wide, reduce Zs, H2 or W3
         """
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         if 2 * np.arcsin(self.W3 / (2 * Rbo)) > 2 * np.pi / self.Zs:
             raise S24_W3CheckError("The teeth are too wide, reduce Zs or W3")
 
         if (
-            not self.is_outwards()
+            not self.is_outwards(lam=lam)
             and 2 * np.arcsin(self.W3 / (2 * Rbo - self.H2)) > 2 * np.pi / self.Zs
         ):
             raise S24_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")
@@ -417,10 +417,10 @@ class SlotW24(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
         point_dict = self._comp_point_coordinate()
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             Rint = Rbo
             Rext = abs(point_dict["Z2"])
         else:
@@ -439,7 +439,7 @@ class SlotW24(Slot):
         alpha_yoke = 2 * np.arcsin(self.W3 / (2 * Rext))
         Sarc_yoke = (Rext**2.0) / 2.0 * (alpha_yoke - np.sin(alpha_yoke))
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return Sring - (St + Sarc_yoke - Sarc_bore)
         else:
             return Sring - (St + Sarc_yoke - Sarc_bore)
@@ -635,7 +635,7 @@ class SlotW24(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -695,7 +695,7 @@ class SlotW24(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z4"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

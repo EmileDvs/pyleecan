@@ -32,7 +32,7 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
     S1 = abs(Z6.imag) * abs(Z5.real - Z4.real) / 2
     S2 = (abs(Z6.imag) + abs(Z7.imag)) * abs(Z7.real - Z6.real) / 2
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         return (S1 + S2) * 2
     else:
         return (S2 - S1) * 2

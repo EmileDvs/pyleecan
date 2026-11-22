@@ -31,7 +31,7 @@ def comp_surface_active(self, lam: Lamination | Notch | None = None) -> float:
     Sarc = (abs(ZM0) ** 2.0) / 2.0 * (alpha - np.sin(alpha))
 
     S1 = abs(ZM1 - ZM2) * self.W1
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         return S1 - Sarc
     else:
         return S1 + Sarc

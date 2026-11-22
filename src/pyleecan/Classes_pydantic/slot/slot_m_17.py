@@ -220,9 +220,9 @@ class SlotM17(Slot):
         """
         lam = container_or_parent(self, lam, "lam")
 
-        self.check()
+        self.check(lam=lam)
         # get the name of the lamination
-        st = self.get_name_lam()
+        st = self.get_name_lam(lam=lam)
         Rext = lam.Rext
         Rint = lam.Rint
 

@@ -29,7 +29,7 @@ def comp_surface(self, lam: Lamination | Notch | None = None) -> float:
     Z6 = point_dict["Z6"]
     Z7 = point_dict["Z7"]
 
-    Rext = self.get_Rbo()
+    Rext = self.get_Rbo(lam=lam)
     Rint = abs(Z5)
 
     # Surface of a slot pitch

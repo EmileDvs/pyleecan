@@ -215,9 +215,9 @@ class SlotM12(Slot):
         Z3 = point_dict["Z3"]
         Z4 = point_dict["Z4"]
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return abs(Z2) - Rbo
         else:
             return Rbo - abs((Z2 + Z3) / 2)
@@ -274,7 +274,7 @@ class SlotM12(Slot):
 
         """
 
-        Rbo = self.get_Rbo()
+        Rbo = self.get_Rbo(lam=lam)
 
         S1 = self.H0 * self.W0
 
@@ -283,7 +283,7 @@ class SlotM12(Slot):
         Sarc = (Rbo**2.0) / 2.0 * (alpha - np.sin(alpha))
 
         # Because Slamination = S - Zs * Sslot
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return S1 - Sarc
         else:
             return S1 + Sarc
@@ -314,7 +314,7 @@ class SlotM12(Slot):
         Sarc = (abs(ZM0) ** 2.0) / 2.0 * (alpha - np.sin(alpha))
 
         S1 = abs(ZM1 - ZM2) * self.W1
-        if self.is_outwards():
+        if self.is_outwards(lam=lam):
             return S1 - Sarc
         else:
             return S1 + Sarc
@@ -346,7 +346,7 @@ class SlotM12(Slot):
         """
 
         # get the name of the lamination
-        st = self.get_name_lam()
+        st = self.get_name_lam(lam=lam)
 
         point_dict = self._comp_point_coordinate()
         ZM0 = point_dict["ZM0"]
@@ -489,7 +489,7 @@ class SlotM12(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = +1
             else:
                 sign = -1
@@ -572,7 +572,7 @@ class SlotM12(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z4"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

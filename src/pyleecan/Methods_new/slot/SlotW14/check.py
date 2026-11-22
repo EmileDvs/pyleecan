@@ -29,13 +29,13 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
         W3 is too high comparing to the lamination bore radius (Rbo)
     """
 
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
     H1 = self.get_H1()
 
     if self.W0 * 0.5 / Rbo >= 1:
         raise S14_Rbo0CheckError("You must have W0/2 < Rbo")
 
-    if self.is_outwards():
+    if self.is_outwards(lam=lam):
         R1 = Rbo + self.H0 + H1
     else:
         R1 = Rbo - self.H0 - H1

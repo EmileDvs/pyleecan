@@ -30,13 +30,13 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
     S24_HWCheckError
         The teeth are too wide, reduce Zs, H2 or W3
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     if 2 * np.arcsin(self.W3 / (2 * Rbo)) > 2 * np.pi / self.Zs:
         raise S24_W3CheckError("The teeth are too wide, reduce Zs or W3")
 
     if (
-        not self.is_outwards()
+        not self.is_outwards(lam=lam)
         and 2 * np.arcsin(self.W3 / (2 * Rbo - self.H2)) > 2 * np.pi / self.Zs
     ):
         raise S24_HWCheckError("The teeth are too wide, reduce Zs, H2 or W3")

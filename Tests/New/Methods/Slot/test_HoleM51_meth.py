@@ -115,7 +115,7 @@ class Test_HoleM51_meth(object):
     def test_build_geometry_with_magnet(self, test_dict):
         """Check that the surf list is correct with magnet"""
         test_obj = test_dict["test_obj"]
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
 
         assert len(result) == 7
         for surf in result:
@@ -149,7 +149,7 @@ class Test_HoleM51_meth(object):
         test_obj.hole[0].magnet_0 = None
         test_obj.hole[0].magnet_1 = None
         test_obj.hole[0].magnet_2 = None
-        result = test_obj.hole[0].build_geometry()
+        result = test_obj.hole[0].build_geometry(lam=test_obj)
 
         assert len(result) == 1
         for surf in result:
@@ -168,7 +168,7 @@ class Test_HoleM51_meth(object):
         test_obj.hole[0].magnet_0 = Magnet(type_magnetization=1)
         test_obj.hole[0].magnet_1 = Magnet(type_magnetization=1)
         test_obj.hole[0].magnet_2 = Magnet(type_magnetization=1)
-        a = test_obj.hole[0].build_geometry(is_simplified=True)
+        a = test_obj.hole[0].build_geometry(is_simplified=True, lam=test_obj)
 
         assert a[1].label == "Rotor_HoleMag_R0-T0-S0"
         assert a[1].line_list[0] is not None
@@ -209,7 +209,7 @@ class Test_HoleM51_meth(object):
             H1=0.0015,
             H2=0.1055,
         )
-        lst = test_obj.hole[0].build_geometry()
+        lst = test_obj.hole[0].build_geometry(lam=test_obj)
 
         # Zint[0].real > 0
         test_obj.hole[0] = HoleM51(
@@ -226,7 +226,7 @@ class Test_HoleM51_meth(object):
             H1=0.0015,
             H2=0.0055,
         )
-        lst2 = test_obj.hole[0].build_geometry()
+        lst2 = test_obj.hole[0].build_geometry(lam=test_obj)
 
         assert len(lst) == 7
         assert lst[0].line_list[1].begin != lst2[0].line_list[1].begin

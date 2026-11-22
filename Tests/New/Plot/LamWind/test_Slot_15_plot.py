@@ -50,7 +50,7 @@ class Test_Slot_15_plot(object):
         # 2 for lam + 6*4 for wind
         assert len(fig.axes[0].patches) == 26
 
-        tooth = test_obj.slot.get_surface_tooth()
+        tooth = test_obj.slot.get_surface_tooth(lam=test_obj)
         tooth.plot(color="r", is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s15_Tooth_out.png"))

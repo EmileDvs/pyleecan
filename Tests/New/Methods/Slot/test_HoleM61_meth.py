@@ -239,7 +239,7 @@ class Test_HoleM61_meth(object):
         test_obj = test_dict["test_obj"]
 
         point_dict = test_obj.hole[0]._comp_point_coordinate()
-        Rbo = test_obj.hole[0].get_Rbo()
+        Rbo = test_obj.hole[0].get_Rbo(lam=test_obj)
 
         # Check height
         assert abs(point_dict["Z2"] - point_dict["Z1"]) == pytest.approx(

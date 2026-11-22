@@ -117,20 +117,33 @@ def _up(spec):
     return "." * (len(spec.package.split(".")) + 2)
 
 
-def femm_modules(functions_dir, spec=FEMM):
+def femm_modules(functions_dir, spec=FEMM, fixes=None):
     """{module name: source} of the legacy FEMM modules (the deprecated modules
-    of moved_functions.DEPRECATED_MODULES excluded: they stay at their path)."""
+    of moved_functions.DEPRECATED_MODULES excluded: they stay at their path).
+
+    The fixes of the legacy modules (``legacy_fixes.FUNCTION_LEGACY_FIXES`` by
+    default, {module path in Functions (posix): fixes}) are applied to their
+    source, as for the other Functions modules."""
+    from .legacy_fixes import FUNCTION_LEGACY_FIXES, apply_fixes
     from .moved_functions import DEPRECATED_MODULES
 
+    fixes = FUNCTION_LEGACY_FIXES if fixes is None else fixes
     FEMM_PACKAGE, FEMM_CLASS, FEMM_MODULE, HANDLER, HANDLER_CLASS = spec[:5]
     folder = Path(functions_dir).joinpath(*FEMM_PACKAGE.split("."))
-    return {
-        path.stem: path.read_text(encoding="utf-8")
-        for path in sorted(folder.glob("*.py"))
-        if path.name != "__init__.py"
-        and path.stem != FEMM_MODULE
-        and f"{FEMM_PACKAGE}.{path.stem}" not in DEPRECATED_MODULES
-    }
+    modules = {}
+    for path in sorted(folder.glob("*.py")):
+        if (
+            path.name == "__init__.py"
+            or path.stem == FEMM_MODULE
+            or f"{FEMM_PACKAGE}.{path.stem}" in DEPRECATED_MODULES
+        ):
+            continue
+        source = path.read_text(encoding="utf-8")
+        key = "/".join([*FEMM_PACKAGE.split("."), path.name])
+        if key in fixes:
+            source = apply_fixes(source.replace("\r\n", "\n"), fixes[key], key)
+        modules[path.stem] = source
+    return modules
 
 
 _SIGNATURES = {}

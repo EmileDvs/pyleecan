@@ -184,7 +184,7 @@ class SMHoleMag(Ui_SMHoleMag, QWidget):
             QMessageBox().critical(self, self.tr("Error"), self.test_err_msg)
         else:  # No error => Plot the lamination
             try:
-                self.obj.plot(is_show_fig=not self.is_test)
+                self.obj.plot(is_show_fig=not self.is_test, machine=self.machine)
                 set_plot_gui_icon()
             except Exception as e:
                 self.test_err_msg = (

@@ -238,7 +238,7 @@ class Input(LegacyModel):
 
         if "phase_S" in axes_list:
             # Check if Phase is already in input dict of axes
-            stator_label = "phase_" + machine.stator.get_label()
+            stator_label = "phase_" + machine.stator.get_label(machine=machine)
             if axes_dict_in is not None and stator_label in axes_dict_in:
                 Phase_in = axes_dict_in[stator_label]
             else:
@@ -253,7 +253,7 @@ class Input(LegacyModel):
 
         if "phase_R" in axes_list:
             # Check if Phase is already in input dict of axes
-            rotor_label = "phase_" + machine.rotor.get_label()
+            rotor_label = "phase_" + machine.rotor.get_label(machine=machine)
             if axes_dict_in is not None and rotor_label in axes_dict_in:
                 Phase_in = axes_dict_in[rotor_label]
             else:

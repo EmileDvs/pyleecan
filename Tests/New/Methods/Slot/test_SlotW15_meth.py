@@ -60,10 +60,10 @@ class Test_SlotW15_meth(object):
         )
         # Check height
         assert abs(
-            test_obj.slot.get_Rbo() * exp(1j * 0) - point_dict["Z2"].real
+            test_obj.slot.get_Rbo(lam=test_obj) * exp(1j * 0) - point_dict["Z2"].real
         ) == pytest.approx(test_obj.slot.H0)
         assert abs(
-            test_obj.slot.get_Rbo() * exp(1j * 0) - point_dict["Z12"].real
+            test_obj.slot.get_Rbo(lam=test_obj) * exp(1j * 0) - point_dict["Z12"].real
         ) == pytest.approx(test_obj.slot.H0)
 
         assert abs(point_dict["Z2"].real - point_dict["Zc1"].real) == pytest.approx(
@@ -129,7 +129,7 @@ class Test_SlotW15_meth(object):
     def test_build_geometry_active(self, test_dict):
         """Check that the active geometry is correctly split"""
         test_obj = test_dict["test_obj"]
-        surf_list = test_obj.slot.build_geometry_active(Nrad=3, Ntan=2)
+        surf_list = test_obj.slot.build_geometry_active(Nrad=3, Ntan=2, lam=test_obj)
 
         # Check label
         assert surf_list[0].label == "Stator_Winding_R0-T0-S0"
@@ -250,11 +250,11 @@ class Test_SlotW15_meth(object):
         lam.slot = SlotW15(
             H0=0.1584, H1=5e-3, H2=20e-3, R1=0.15648, R2=4e-3, W0=5e-3, W3=10e-3
         )
-        result = lam.slot.get_surface_active()
+        result = lam.slot.get_surface_active(lam=lam)
         assert result.label == "Rotor_Winding_R0-T0-S0"
         assert len(result.get_lines()) == 10
 
-        result = lam.slot.get_surface_opening()
+        result = lam.slot.get_surface_opening(lam=lam)
         assert len(result) == 1
         assert result[0].label == "Rotor_SlotOpening_R0-T0-S0"
         assert len(result[0].get_lines()) == 4

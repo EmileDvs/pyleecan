@@ -654,7 +654,7 @@ class SlotWLSRPM(Slot):
                 alpha=np.pi / self.Zs, is_show_fig=False, fig=fig, ax=ax
             )  # center slot on Ox axis
             point_dict = self._comp_point_coordinate()
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 sign = 1
             else:
                 sign = -1
@@ -759,7 +759,7 @@ class SlotWLSRPM(Slot):
                 line = Arc1(
                     begin=point_dict["Z9"],
                     end=point_dict["Z10"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

@@ -87,16 +87,23 @@ class Test_Slot_10_plot(object):
         # Rotor + Stator + 2 for frame + 1 for Shaft
         assert len(fig.axes[0].patches) == 55
 
-        test_obj.rotor.plot(is_show_fig=False)
+        test_obj.rotor.plot(is_show_fig=False, machine=test_obj)
         fig = plt.gcf()
         assert len(fig.axes[0].patches) == 26
         fig.savefig(join(save_path, "test_Lam_Wind_s10_2-Rotor.png"))
         # 2 for lam + 6*4 for wind
         assert len(fig.axes[0].patches) == 26
         # Don't display the plot
-        assert len(test_obj.rotor.plot(is_display=False, is_show_fig=False)) == 26
+        assert (
+            len(
+                test_obj.rotor.plot(
+                    is_display=False, is_show_fig=False, machine=test_obj
+                )
+            )
+            == 26
+        )
 
-        test_obj.stator.plot(is_show_fig=False)
+        test_obj.stator.plot(is_show_fig=False, machine=test_obj)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s10_3-Stator.png"))
         # 2 for lam + 6*4 for wind
@@ -126,12 +133,12 @@ class Test_Slot_10_plot(object):
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s10_Tooth_top_in.png"))
 
-        tooth = test_obj.rotor.slot.get_surface_tooth()
+        tooth = test_obj.rotor.slot.get_surface_tooth(lam=test_obj.rotor)
         tooth.plot(color="r", is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s10_Tooth_in.png"))
 
-        tooth = test_obj.stator.slot.get_surface_tooth()
+        tooth = test_obj.stator.slot.get_surface_tooth(lam=test_obj.stator)
         tooth.plot(color="r", is_show_fig=False)
         fig = plt.gcf()
         mesh_dict = tooth.comp_mesh_dict(5e-3)
@@ -203,14 +210,14 @@ class Test_Slot_10_plot(object):
         test_obj.frame = Frame(Rint=0.8, Rext=0.9, Lfra=1)
         test_obj.frame.mat_type.name = "M330_35A"
 
-        test_obj.stator.plot(is_show_fig=False)
+        test_obj.stator.plot(is_show_fig=False, machine=test_obj)
 
         # The rotor will be blue
 
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s10_Stator.png"))
 
-        result = test_obj.stator.plot(is_display=False)
+        result = test_obj.stator.plot(is_display=False, machine=test_obj)
         # 2 lam + 4*6 wind
         assert len(result) == 26
 

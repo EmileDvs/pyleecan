@@ -353,16 +353,16 @@ class SlotCirc(Slot):
         S2 = (R0**2.0) / 2.0 * (alpha - np.sin(alpha))
         # Arc of the bore
         alpha_op = self.comp_angle_opening()
-        S3 = (self.get_Rbo() ** 2.0) / 2.0 * (alpha_op - np.sin(alpha_op))
+        S3 = (self.get_Rbo(lam=lam) ** 2.0) / 2.0 * (alpha_op - np.sin(alpha_op))
 
         if self.H0 < self.W0 / 2:
             # Center is in airgap
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 return S2 - S3
             else:
                 return S2 + S3
         else:  # Center is in the Lamination
-            if self.is_outwards():
+            if self.is_outwards(lam=lam):
                 return S1 - S2 - S3
             else:
                 return S1 - S2 + S3
@@ -598,7 +598,7 @@ class SlotCirc(Slot):
             if is_add_schematics:
                 # W0
                 line = Segment(begin=point_dict["Z1"], end=point_dict["Z2"])
-                if self.is_outwards():
+                if self.is_outwards(lam=lam):
                     offset_label = -1 * self.H0 * 0.9 + 1j * 0.3 * self.W0
                 else:
                     offset_label = self.H0 * 0.3 + 1j * 0.3 * self.W0
@@ -630,7 +630,7 @@ class SlotCirc(Slot):
                 line = Arc1(
                     begin=point_dict["Z1"],
                     end=point_dict["Z2"],
-                    radius=self.get_Rbo(),
+                    radius=self.get_Rbo(lam=lam),
                     is_trigo_direction=True,
                 )
                 line.plot(

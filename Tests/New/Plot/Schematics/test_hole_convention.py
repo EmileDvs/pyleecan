@@ -26,7 +26,7 @@ def test_plot_radius():
     for surf in BMW.rotor.hole[0].surf_list:
         surf.translate(-5e-3)
 
-    fig, ax = BMW.rotor.plot(is_show_fig=False, edgecolor="k")
+    fig, ax = BMW.rotor.plot(is_show_fig=False, edgecolor="k", machine=BMW)
     # Top and Bottom arc
     (Rint, Rext) = BMW.rotor.hole[0].comp_radius()
     line = Arc1(
@@ -116,7 +116,7 @@ def test_plot_magnet_id():
     fig, ax = rotor.plot(is_show_fig=False, edgecolor="k")
 
     # Adding label
-    surf_list = rotor.hole[0].build_geometry()
+    surf_list = rotor.hole[0].build_geometry(lam=rotor)
     for surf in surf_list:
         label_dict = decode_label(surf.label)
         if HOLEM_LAB in label_dict["surf_type"]:
@@ -189,8 +189,8 @@ def test_plot_hole_RTS():
     fig, ax = rotor.plot(is_show_fig=False, edgecolor="k")
 
     # Adding label
-    surf_list = rotor.hole[0].build_geometry()
-    surf_list.extend(rotor.hole[1].build_geometry())
+    surf_list = rotor.hole[0].build_geometry(lam=rotor)
+    surf_list.extend(rotor.hole[1].build_geometry(lam=rotor))
     for surf in surf_list:
         Zref = surf.point_ref * exp(1j * pi / 2)
         ax.plot(Zref.real, Zref.imag, "xr")

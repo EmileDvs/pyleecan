@@ -22,7 +22,7 @@ def check(self, lam: Lamination | Notch | None = None) -> None:
     -------
     None
     """
-    Rbo = self.get_Rbo()
+    Rbo = self.get_Rbo(lam=lam)
 
     # conversion W0 rad -> m
     W0_m = 2 * (Rbo - self.H0) * np.sin(self.W0 / 2)

@@ -37,7 +37,7 @@ class TestHole(object):
 
         test_obj = LamHole(is_internal=True, Rext=0.075)
         test_obj.hole = [setup]
-        assert test_obj.hole[0].get_is_stator() == True
+        assert test_obj.hole[0].get_is_stator(lam=test_obj) == True
 
     def test_get_Rbo(self, setup):
         """Check that the get_rbo function can raise an error"""
@@ -47,4 +47,4 @@ class TestHole(object):
 
         test_obj = LamHole(is_internal=True, Rext=0.075)
         test_obj.hole = [setup]
-        assert test_obj.hole[0].get_Rbo() == 0.075
+        assert test_obj.hole[0].get_Rbo(lam=test_obj) == 0.075

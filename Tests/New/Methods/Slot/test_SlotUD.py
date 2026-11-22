@@ -26,13 +26,13 @@ class TestSlotUD_meth(object):
         assert self.slot_dxf.wind_end_index == 6
 
         # Active Surface
-        Dxf_act = self.slot_dxf.get_surface_active()
+        Dxf_act = self.slot_dxf.get_surface_active(lam=self.Prius_Dxf.stator)
         assert Dxf_act.label == "Stator-0_Winding_R0-T0-S0"
         assert len(Dxf_act.get_lines()) == 6
         assert Dxf_act.is_inside(Dxf_act.point_ref)
 
         # Opening Surface
-        Dxf_op = self.slot_dxf.get_surface_opening()
+        Dxf_op = self.slot_dxf.get_surface_opening(lam=self.Prius_Dxf.stator)
         assert len(Dxf_op) == 1
         assert Dxf_op[0].label == "Stator-0_SlotOpening_R0-T0-S0"
         assert len(Dxf_op[0].get_lines()) == 4

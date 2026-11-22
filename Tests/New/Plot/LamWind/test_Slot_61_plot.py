@@ -47,10 +47,10 @@ class Test_Slot_61_plot(object):
             W3=3e-3,
         )
         test_obj.rotor.winding = WindingUD(qs=3, p=3, Lewout=60e-3)
-        test_obj.rotor.winding.init_as_CW2LT()
+        test_obj.rotor.winding.init_as_CW2LT(lam=test_obj.rotor)
         plt.close("all")
 
-        test_obj.rotor.plot(is_show_fig=False)
+        test_obj.rotor.plot(is_show_fig=False, machine=test_obj)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s61_1-Rotor.png"))
         # 1 for Lam, Zs*2 for wind
@@ -59,13 +59,13 @@ class Test_Slot_61_plot(object):
         test_obj.rotor.slot.W3 = 0
         test_obj.rotor.slot.H3 = 0
         test_obj.rotor.slot.H4 = 0
-        test_obj.rotor.plot(is_show_fig=False)
+        test_obj.rotor.plot(is_show_fig=False, machine=test_obj)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s61_2-Rotor Wind.png"))
         # 1 for Lam, Zs*2 for wind
         assert len(fig.axes[0].patches) == 25
 
-        tooth = test_obj.rotor.slot.get_surface_tooth()
+        tooth = test_obj.rotor.slot.get_surface_tooth(lam=test_obj.rotor)
         tooth.plot(color="r", is_show_fig=False)
         fig = plt.gcf()
         fig.savefig(join(save_path, "test_Lam_Wind_s61_Tooth_in.png"))
