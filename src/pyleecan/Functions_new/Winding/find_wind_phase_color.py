@@ -12,7 +12,7 @@ def find_wind_phase_color(*args, **kwargs):
         DeprecationWarning,
         stacklevel=2,
     )
-    return Winding.find_wind_phase_color(*args, **kwargs)
+    return Winding._find_wind_phase_color(*args, **kwargs)
 
 
 def get_phase_id(*args, **kwargs):

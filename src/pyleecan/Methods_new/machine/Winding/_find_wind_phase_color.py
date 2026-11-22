@@ -9,8 +9,9 @@ PHASE_COLORS = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"]
 
 
 @staticmethod
-def find_wind_phase_color(label: str, wind_mat: np.ndarray | None) -> tuple[str | list, str | None]:
-    """Returns Color phase of the Winding surface
+def _find_wind_phase_color(label: str, wind_mat: np.ndarray | None) -> tuple[str | list, str | None]:
+    """Returns Color phase of the Winding surface (first phase color without
+    winding matrix: no winding, WindingSC)
 
     Parameters
     ----------

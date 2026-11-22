@@ -1413,12 +1413,13 @@ class Winding(LegacyModel):
 
         return np.roll(wind_mat, shift=Nshift, axis=2)
 
-    # Inlined from Methods.Machine.Winding.find_wind_phase_color
+    # Inlined from Methods.Machine.Winding._find_wind_phase_color
     @staticmethod
-    def find_wind_phase_color(
+    def _find_wind_phase_color(
         label: str, wind_mat: np.ndarray | None
     ) -> tuple[str | list, str | None]:
-        """Returns Color phase of the Winding surface
+        """Returns Color phase of the Winding surface (first phase color without
+        winding matrix: no winding, WindingSC)
 
         Parameters
         ----------
@@ -1458,6 +1459,33 @@ class Winding(LegacyModel):
             sign = None
 
         return color, sign
+
+    # Inlined from Methods.Machine.Winding.find_wind_phase_color
+    def find_wind_phase_color(
+        self, label: str, wind_mat: np.ndarray | None = None
+    ) -> tuple[str | list, str | None]:
+        """Returns Color phase of the Winding surface
+
+        Parameters
+        ----------
+        self : Winding
+            A Winding object
+        label : str
+            the label of the surface
+        wind_mat : numpy.ndarray
+            A matrix [Nrad,Ntan,Zs,qs] representing the winding
+            (default: self.get_connection_mat())
+
+        Returns
+        -------
+        color: str
+            Color of the zone
+        sign: str
+            "+" or "-" (None without phase)
+        """
+        if wind_mat is None:
+            wind_mat = self.get_connection_mat()
+        return self._find_wind_phase_color(label, wind_mat)
 
     # Inlined from Methods.Machine.Winding._get_phase_id
     @staticmethod

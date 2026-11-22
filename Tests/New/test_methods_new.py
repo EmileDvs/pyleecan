@@ -298,11 +298,11 @@ def test_static_method_reads_hoisted_constants_on_the_class(package):
     module = importlib.import_module(f"pyleecan.{package}.machine.winding")
     tree = ast.parse(Path(module.__file__).read_text(encoding="utf-8"))
     cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "Winding")
-    method = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == "find_wind_phase_color")
+    method = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == "_find_wind_phase_color")
     source = ast.unparse(method)
     assert "Winding.PHASE_COLORS[" in source
     assert "label.PHASE_COLORS" not in source
-    color, sign = module.Winding.find_wind_phase_color(label="Stator-0_Winding_R0-T0-S0", wind_mat=None)
+    color, sign = module.Winding._find_wind_phase_color(label="Stator-0_Winding_R0-T0-S0", wind_mat=None)
     assert color == module.Winding.PHASE_COLORS[0] and sign is None
 
 

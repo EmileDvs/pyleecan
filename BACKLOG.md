@@ -1575,11 +1575,16 @@ Same signature rule as Step 11 (optional container argument, fallback through
       0 (AST count of the `.parent` attributes).
 - [ ] The `GUI_new` calls of each refactored package updated in the same
       increment.
-- [ ] `Winding.find_wind_phase_color` as a regular method reading the
-      connection matrix (like `get_phase_id`): `LamSlotWind.plot` and
-      `LamSlotMultiWind.plot` call it on the winding when there is one,
-      and keep the first phase color without winding / for `WindingSC`
-      (Step 8 group 2).
+- [x] (2026-11-22) `Winding.find_wind_phase_color` as a regular method reading
+      the connection matrix (like `get_phase_id`): `find_wind_phase_color(
+      self, label, wind_mat=None)` (default `self.get_connection_mat()`),
+      the legacy body static as `_find_wind_phase_color(label, wind_mat)`
+      (the deprecated alias at the old path calls it; spec `bound` in
+      `moved_functions.py`, the methods by hand). `LamSlotWind.plot` and
+      `LamSlotMultiWind.plot` call it on the winding when they have its
+      matrix, and keep the first phase color otherwise (no winding,
+      `WindingSC`: `_find_wind_phase_color(label, None)`). Checks: Machine
+      method and plot tests, winding GUI tests with each backend.
 
 ## Step 17: GUI, second pass
 

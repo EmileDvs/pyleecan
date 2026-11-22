@@ -1125,9 +1125,12 @@ class LamSlotWind(LamSlot):
                 or BAR_LAB in label_dict["surf_type"]
             ):
                 if not is_lam_only:
-                    color, sign = Winding.find_wind_phase_color(
-                        wind_mat=wind_mat, label=surf.label
-                    )
+                    if wind_mat is None:  # No winding, WindingSC: first phase color
+                        color, sign = Winding._find_wind_phase_color(surf.label, None)
+                    else:
+                        color, sign = self.winding.find_wind_phase_color(
+                            label=surf.label, wind_mat=wind_mat
+                        )
                     if sign == "+" and is_add_sign:
                         hatch = self.PLUS_HATCH
                     elif sign == "-" and is_add_sign:

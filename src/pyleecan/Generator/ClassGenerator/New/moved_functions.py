@@ -148,11 +148,15 @@ MOVED_FUNCTIONS = {
         MovedFunction("Winding", "permute_B_C", static=True),
     ),
     "Winding.shift_wind_mat": MovedFunction("Winding", "shift_wind_mat", static=True),
-    # get_phase_id reads the connection matrix of the winding (regular method,
-    # wind_mat optional); find_wind_phase_color stays static: the plots call
-    # it without matrix on purpose (no winding, WindingSC: first phase color)
+    # get_phase_id and find_wind_phase_color read the connection matrix of the
+    # winding (regular methods, wind_mat optional; Step 16 for
+    # find_wind_phase_color, by hand in the frozen Methods_new): the plots
+    # call _find_wind_phase_color without matrix (no winding, WindingSC:
+    # first phase color)
     "Winding.find_wind_phase_color": (
-        MovedFunction("Winding", "find_wind_phase_color", static=True),
+        MovedFunction(
+            "Winding", "find_wind_phase_color", bound=("wind_mat", "get_connection_mat")
+        ),
         MovedFunction(
             "Winding", "get_phase_id", bound=("wind_mat", "get_connection_mat")
         ),
