@@ -1,12 +1,20 @@
 import ast
 from pathlib import Path
 
+import pytest
+
 from pyleecan.Generator.ClassGenerator.New import generate_test_new_classes
 from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import (
     TEST_FOLDERS,
     _rewrite_source,
     generate_tests,
 )
+
+
+@pytest.fixture(autouse=True)
+def no_test_fixes(monkeypatch):
+    """The temporary trees hold none of the legacy tests fixed in their copy."""
+    monkeypatch.setattr(generate_test_new_classes, "TEST_FIXES", {})
 
 
 def test_rewrite_imports_preserves_bindings_and_other_text(tmp_path):
@@ -59,12 +67,12 @@ def test_generation_copies_trees_and_preserves_data_and_results(tmp_path):
     result.parent.mkdir(parents=True)
     result.write_text("result", encoding="utf-8")
 
-    assert generate_tests(tests_dir, class_dir) == []
+    assert generate_tests(tests_dir, class_dir, frozen=False) == []
     copied = tests_dir / "New" / "Methods" / "sample.py"
     assert (
         copied.read_text(encoding="utf-8")
-        == "from pyleecan.Classes_new.arc_1 import Arc1\n"
-        "from pyleecan.Functions_new.load import load\n"
+        == "from backend_classes.arc_1 import Arc1\n"
+        "from backend_functions.load import load\n"
     )
     assert (copied.parent / "reference.jpg").read_bytes() == b"\x00\xff"
     assert (
@@ -75,11 +83,11 @@ def test_generation_copies_trees_and_preserves_data_and_results(tmp_path):
     assert (tests_dir / "Data" / "fixture.json").read_text(encoding="utf-8") == "data"
     assert result.read_text(encoding="utf-8") == "result"
     copied.write_text("edited", encoding="utf-8")
-    generate_tests(tests_dir, class_dir)
+    generate_tests(tests_dir, class_dir, frozen=False)
     assert (
         copied.read_text(encoding="utf-8")
-        == "from pyleecan.Classes_new.arc_1 import Arc1\n"
-        "from pyleecan.Functions_new.load import load\n"
+        == "from backend_classes.arc_1 import Arc1\n"
+        "from backend_functions.load import load\n"
     )
     assert result.read_text(encoding="utf-8") == "result"
 
@@ -101,7 +109,7 @@ def test_generation_skips_independently_maintained_tests(tmp_path):
         "other = True", encoding="utf-8"
     )
 
-    generate_tests(tests_dir, class_dir)
+    generate_tests(tests_dir, class_dir, frozen=False)
     assert preserved.read_text(encoding="utf-8") == "independent"
     assert not (output / "test_loggers.py").exists()
     assert (tests_dir / "New" / "Methods" / "test_loggers.py").read_text(
@@ -183,10 +191,10 @@ def test_generation_uses_default_repository_paths(tmp_path, monkeypatch):
     )
     monkeypatch.setattr(generate_test_new_classes, "TEST_DIR", str(tests_dir))
 
-    assert generate_tests() == []
+    assert generate_tests(frozen=False) == []
     assert (tests_dir / "New" / "Methods" / "sample.py").read_text(
         encoding="utf-8"
-    ) == "from pyleecan.Functions_new.load import load\n"
+    ) == "from backend_functions.load import load\n"
 
 
 def test_alias_gui_imports():

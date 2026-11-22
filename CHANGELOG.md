@@ -261,6 +261,12 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 
 ### Deprecated
 
+- Reading a container through the parent links: a method called without
+  its container argument (`slot.comp_height()` instead of
+  `slot.comp_height(lam=lam)`) emits a
+  `classes_common.parents.ContainerFallbackWarning`
+  (a `PendingDeprecationWarning`, silent by default) when a parent link
+  provides it; Phase 2 turns it into a `DeprecationWarning`.
 - `LUTdq.comp_MTPA` (and the legacy path `Functions.Electrical.comp_MTPA`):
   written for an older equivalent circuit API, it does not run with the
   current one; it warns and is removed in Phase 2.

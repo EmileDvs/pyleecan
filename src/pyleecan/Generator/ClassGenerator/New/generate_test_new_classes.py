@@ -8,6 +8,11 @@ Unaliased ``import pyleecan.Functions...`` imports require manual review,
 as do legacy-only imports and dynamic loading.
 Running copied tests still imports Tests/__init__.py, which clears Tests/Results.
 
+Frozen since Step 16 (TESTS_NEW_FROZEN, 2026-11-22): the Tests/New tree is
+hand-maintained (the tests pass the containers of the methods, PLAN.md Step
+16) and the full generation leaves it unchanged; a change of a legacy test is
+ported by hand. The generator stays for its unit tests (frozen=False).
+
 The copied tests import the classes and functions from the alias packages
 ``backend_classes``, ``backend_functions`` and ``backend_gui``, mapped by
 ``pytest --backend`` to Classes_new/Functions_new/GUI_new (dataclass) or
@@ -327,8 +332,30 @@ def _rewrite_source(source, path, class_dir):
     return rewritten, unsupported
 
 
-def generate_tests(tests_dir=None, class_dir=None):
-    """Copy the selected test trees and return unresolved legacy imports."""
+TESTS_NEW_FROZEN = True
+"""Step 16 freeze (2026-11-22): Tests/New is edited by hand, the generator
+writes nothing (like FROZEN_PACKAGES for Methods_new)"""
+
+
+def generate_tests(tests_dir=None, class_dir=None, frozen=TESTS_NEW_FROZEN):
+    """Copy the selected test trees and return unresolved legacy imports.
+
+    Parameters
+    ----------
+    tests_dir : str or Path, optional
+        Folder of the legacy tests (default: TEST_DIR)
+    class_dir : str or Path, optional
+        Classes_new folder (default: the one next to tests_dir)
+    frozen : bool
+        Tests/New written by hand: nothing is copied
+
+    Returns
+    -------
+    unsupported : list
+        (test path, line, module) of the legacy imports left to review
+    """
+    if frozen:
+        return []
     tests_dir = Path(tests_dir) if tests_dir is not None else Path(TEST_DIR)
     class_dir = (
         Path(class_dir)
@@ -383,6 +410,9 @@ def generate_tests(tests_dir=None, class_dir=None):
 
 
 def main():
+    if TESTS_NEW_FROZEN:
+        print("Tests/New is frozen (hand-maintained): nothing copied.")
+        return
     issues = generate_tests()
     print(
         "Copied test trees to Tests/New; independently maintained tests were preserved."

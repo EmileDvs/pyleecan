@@ -4,6 +4,7 @@ Parent links are a legacy feature (see PLAN.md): the check is shared by the
 class implementations until it moves to their legacy layer.
 """
 
+import warnings
 from functools import cache
 from importlib import import_module
 
@@ -61,6 +62,26 @@ def _parent_rule(obj_class, lookup):
     return None
 
 
+class ContainerFallbackWarning(PendingDeprecationWarning):
+    """A method read its container through the legacy parent links.
+
+    Emitted by ``container_or_parent`` / ``ancestor_with`` when the container
+    argument is not given and a parent link provides it. Ignored by default
+    in Phase 1 (pending); Phase 2 turns it into a DeprecationWarning, then
+    removes the fallback with the parent links. The hand-maintained tests
+    (Tests/New) turn it into an error: they pass the containers.
+    """
+
+
+def _warn_fallback(obj, name):
+    # stacklevel 4: the caller of the method calling container_or_parent
+    warnings.warn(
+        f"{type(obj).__name__}: the {name or 'container'} argument is not given, "
+        "read from the parent links (deprecated: pass it explicitly)",
+        ContainerFallbackWarning,
+        stacklevel=4,
+    )
+
 
 def container_or_parent(obj, container, name, depth=1):
     """Container of obj: the given one, else the legacy parent (PLAN.md Step 11)
@@ -86,6 +107,11 @@ def container_or_parent(obj, container, name, depth=1):
     container : object or None
         The given container, else the ancestor of obj at depth (None if the
         chain is broken)
+
+    Warns
+    -----
+    ContainerFallbackWarning
+        If the container is read from the parent links
     """
     if container is not None:
         return container
@@ -94,6 +120,7 @@ def container_or_parent(obj, container, name, depth=1):
         container = getattr(container, "parent", None)
         if container is None:
             return None
+    _warn_fallback(obj, name)
     return container
 
 
@@ -128,4 +155,6 @@ def ancestor_with(obj, attribute, container=None, name=None):
     ancestor = getattr(obj, "parent", None)
     while ancestor is not None and not hasattr(ancestor, attribute):
         ancestor = getattr(ancestor, "parent", None)
+    if ancestor is not None:
+        _warn_fallback(obj, name)
     return ancestor

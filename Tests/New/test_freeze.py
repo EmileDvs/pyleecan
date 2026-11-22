@@ -70,3 +70,25 @@ def test_frozen_gui_writes_only_gen_modules_and_pydantic(tmp_path, monkeypatch):
     assert calls == [(root / "GUI", root / "GUI_new")]
     assert (root / "GUI_pydantic" / "Page" / "Page.py").is_file()
     assert written["GUI_pydantic"] == 1
+
+
+def test_frozen_tests_new_tree_is_left_unchanged(tmp_path):
+    """Step 16: Tests/New is hand-maintained, the test generator copies nothing."""
+    from pyleecan.Generator.ClassGenerator.New.generate_test_new_classes import (
+        TEST_FOLDERS,
+        TESTS_NEW_FROZEN,
+        generate_tests,
+    )
+
+    assert TESTS_NEW_FROZEN
+    tests_dir = tmp_path / "Tests"
+    class_dir = tmp_path / "Classes_new"
+    class_dir.mkdir()
+    for folder in TEST_FOLDERS:
+        (tests_dir / folder).mkdir(parents=True)
+    (tests_dir / "Methods" / "test_sample.py").write_text("legacy = 1\n")
+    kept = tests_dir / "New" / "Methods" / "test_sample.py"
+    kept.parent.mkdir(parents=True)
+    kept.write_text("# Hand-maintained\n")
+    assert generate_tests(tests_dir, class_dir) == []
+    assert kept.read_text() == "# Hand-maintained\n"

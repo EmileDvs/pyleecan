@@ -1575,10 +1575,25 @@ Same signature rule as Step 11 (optional container argument, fallback through
         better (Frame and Simulation failures of the baseline fixed by Steps
         13 and 16). The legacy-derived tests still call the methods without
         the containers (the fallback), so they measure the parity.
-  - [ ] Hand-maintained tests: the full generation still rewrites the
-        `Tests/New` tree from the legacy tests (`generate_tests()` in
-        `run_generate_classes`); freezing it (as `FROZEN_PACKAGES`) and
-        passing the containers in the tests is the maintainer's decision.
+  - [x] (2026-11-22) `Tests/New` frozen (decided by the maintainer,
+        2026-11-22): `TESTS_NEW_FROZEN` in `generate_test_new_classes.py`,
+        the full generation copies nothing (`generate_tests(frozen=False)`
+        for the generator unit tests); a change of a legacy test is ported
+        by hand. The generator unit tests fixed on the way (stale
+        expectations: the backend aliases, the `TEST_FIXES` check on the
+        temporary trees).
+  - [x] (2026-11-22) `ContainerFallbackWarning` (`PendingDeprecationWarning`)
+        emitted by `container_or_parent` / `ancestor_with` when a parent
+        link gives the container (stacklevel: the caller of the method).
+        First count, `Tests/New` Classes / Methods / Plot / Functions /
+        Simulation / GUI on dataclass (5388 passed, the 6 known failures):
+        the fallback is used at 281 lines of 86 test modules, and inside
+        the library at 608 call sites of `Classes_new` (the `Methods_new`
+        calls not passing the container they hold), 11 of `Functions_new`
+        (FEMM, GMSH) and 10 of `GUI_new`.
+  - [ ] The library calls pass the containers they hold.
+  - [ ] The tests pass the containers; `Tests/New` turns the warning into
+        an error (except the tests of the fallback itself).
 - [x] (2026-11-22) No parent read left in `Methods_new` and `Functions_new`
       outside `container_or_parent` (and `ancestor_with`, its walk of an
       unknown depth); the parent links stay only in the legacy layer.
