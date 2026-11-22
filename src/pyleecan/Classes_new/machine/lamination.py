@@ -150,6 +150,16 @@ class Lamination(LegacyClass):
     _package: ClassVar[str] = "Machine"
     """Name of the package of the legacy class module"""
 
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+        from .winding import Winding
+
+        @property
+        def winding(self) -> Winding: ...
+        @winding.setter
+        def winding(self, value: Winding) -> None: ...
+
     # Inlined from Methods.Machine.Lamination.build_geometry
     def build_geometry(
         self,

@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Mesh/Mesh.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import ClassVar, Optional
+from typing import TYPE_CHECKING, Any, ClassVar, Optional
 
 import numpy as np
 from pydantic import Field
@@ -24,6 +24,17 @@ class Mesh(LegacyModel):
 
     _package: ClassVar[str] = "Mesh"
     """Name of the package of the legacy class module"""
+
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+
+        def get_element_area(self, *args: Any, **kwargs: Any) -> np.ndarray: ...
+
+        @property
+        def element_dict(self) -> dict[str, Any]: ...
+        @element_dict.setter
+        def element_dict(self, value: dict[str, Any]) -> None: ...
 
     # Inlined from Methods.Mesh.Mesh.get_node_coordinate
     def get_node_coordinate(

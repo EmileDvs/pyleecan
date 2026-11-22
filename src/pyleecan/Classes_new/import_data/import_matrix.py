@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass
-from typing import ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
@@ -25,6 +25,12 @@ class ImportMatrix(Import):
 
     _package: ClassVar[str] = "Import"
     """Name of the package of the legacy class module"""
+
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+
+        def get_data(self, *args: Any, **kwargs: Any) -> np.ndarray: ...
 
     # Inlined from Methods.Import.ImportMatrix.edit_matrix
     def edit_matrix(self, matrix: np.ndarray) -> np.ndarray:

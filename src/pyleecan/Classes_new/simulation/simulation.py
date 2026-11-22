@@ -95,6 +95,40 @@ class Simulation(LegacyClass):
     _package: ClassVar[str] = "Simulation"
     """Name of the package of the legacy class module"""
 
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+        from ..electrical.electrical import Electrical
+        from ..force.force import Force
+        from ..loss.loss import Loss
+        from ..magnetics.magnetics import Magnetics
+        from ..structural.structural import Structural
+
+        @property
+        def elec(self) -> Electrical | None: ...
+        @elec.setter
+        def elec(self, value: Electrical | None) -> None: ...
+
+        @property
+        def mag(self) -> Magnetics | None: ...
+        @mag.setter
+        def mag(self, value: Magnetics | None) -> None: ...
+
+        @property
+        def force(self) -> Force | None: ...
+        @force.setter
+        def force(self, value: Force | None) -> None: ...
+
+        @property
+        def struct(self) -> Structural | None: ...
+        @struct.setter
+        def struct(self, value: Structural | None) -> None: ...
+
+        @property
+        def loss(self) -> Loss | None: ...
+        @loss.setter
+        def loss(self, value: Loss | None) -> None: ...
+
     # Inlined from Methods.Simulation.Simulation.get_OP_array
     def get_OP_array(self, *arg_list) -> np.ndarray:
         """Return the OP matrix of the simulation

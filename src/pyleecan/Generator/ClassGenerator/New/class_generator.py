@@ -4767,6 +4767,63 @@ def _is_none_default(value, prop_type=None):
     return value == "" and prop_type != "str"
 
 
+_ANY_ARGS = "self, *args: Any, **kwargs: Any"
+
+TYPE_CHECKING_MEMBERS = {
+    "Machine": {
+        "classes": ("Lamination",),
+        "lines": ("stator: Lamination", "rotor: Lamination"),
+    },
+    "Lamination": {"classes": ("Winding",), "lines": ("winding: Winding",)},
+    "Data": {
+        "lines": (
+            f"def get_values({_ANY_ARGS}) -> np.ndarray: ...",
+            f"def get_periodicity({_ANY_ARGS}) -> Any: ...",
+            f"def get_length({_ANY_ARGS}) -> int: ...",
+            "symmetries: dict[str, Any]",
+            "is_components: bool",
+        )
+    },
+    "Line": {
+        "lines": (
+            f"def split_line({_ANY_ARGS}) -> Any: ...",
+            f"def is_on_line({_ANY_ARGS}) -> bool: ...",
+            f"def is_arc({_ANY_ARGS}) -> bool: ...",
+            f"def get_begin({_ANY_ARGS}) -> complex: ...",
+            f"def get_end({_ANY_ARGS}) -> complex: ...",
+            f"def get_center({_ANY_ARGS}) -> complex: ...",
+        )
+    },
+    "Solution": {"lines": ("field: Any",)},
+    "Mesh": {
+        "lines": (
+            f"def get_element_area({_ANY_ARGS}) -> np.ndarray: ...",
+            "element_dict: dict[str, Any]",
+        )
+    },
+    "Simulation": {
+        "classes": ("Electrical", "Force", "Loss", "Magnetics", "Structural"),
+        "lines": (
+            "elec: Electrical | None",
+            "mag: Magnetics | None",
+            "force: Force | None",
+            "struct: Structural | None",
+            "loss: Loss | None",
+        ),
+    },
+    "ImportMatrix": {"lines": (f"def get_data({_ANY_ARGS}) -> np.ndarray: ...",)},
+    "OutInternal": {
+        "lines": ("handler_list: list[Any]", "FEMM_dict: dict[str, Any]"),
+    },
+}
+"""Members of the daughter classes declared on their base class for the type
+checkers only (Step 14): in an ``if TYPE_CHECKING:`` block of the class body,
+so neither a field nor a method at runtime (Python 3.14 does not record the
+annotations of a block not run). The code calls them on the base type
+(``simu.machine.stator``, ``axis.get_values()``). "classes": the classes of
+the annotations, imported in the block"""
+
+
 def _has_value_default(value, prop_type, gen_dict):
     """True if an empty CSV value gives a non-None default (_field_default).
 
@@ -5521,6 +5578,11 @@ def _generate_dataclass_class(
         for name in find_import_type(gen_dict, class_dict, [])
         if name in gen_dict and name != class_name
     )
+    if class_name in TYPE_CHECKING_MEMBERS:  # Names of the declarations below
+        imports.add("from typing import TYPE_CHECKING")
+        imports.add("from typing import Any")
+        if any("np." in line for line in TYPE_CHECKING_MEMBERS[class_name]["lines"]):
+            imports.add("import numpy as np")
 
     kind = "pydantic model" if is_pydantic else "dataclass"
     chunks = [
@@ -5628,6 +5690,29 @@ def _generate_dataclass_class(
         if custom_setters
         else []
     )
+    type_checking_source = []
+    if class_name in TYPE_CHECKING_MEMBERS:
+        spec = TYPE_CHECKING_MEMBERS[class_name]
+        block = f"{TAB}if TYPE_CHECKING:\n"
+        block += f"{TAB}{TAB}# Members of the daughter classes, for the type checkers\n"
+        block += f"{TAB}{TAB}# (not defined at runtime: no field, no method)\n"
+        for name in spec.get("classes", ()):
+            block += f"{TAB}{TAB}from {soft_name}.Classes.{name} import {name}\n"
+        for line in spec["lines"]:
+            block += "\n"
+            if line.startswith("def "):
+                block += f"{TAB}{TAB}{line}\n"
+                continue
+            # An attribute as a property: a type checker takes an annotation
+            # of a dataclass body for a field (constructor argument)
+            name, _, annotation = line.partition(": ")
+            block += (
+                f"{TAB}{TAB}@property\n"
+                f"{TAB}{TAB}def {name}(self) -> {annotation}: ...\n"
+                f"{TAB}{TAB}@{name}.setter\n"
+                f"{TAB}{TAB}def {name}(self, value: {annotation}) -> None: ...\n"
+            )
+        type_checking_source = [block]
     attribute_groups = [
         [source for name, source in class_level if not name.startswith("_")],
         [source for name, source in fields_source if not name.startswith("_")],
@@ -5638,6 +5723,7 @@ def _generate_dataclass_class(
             f"{TAB}_package: ClassVar[str] = {class_pack!r}\n"
             f'{TAB}"""Name of the package of the legacy class module"""\n'
         ],
+        type_checking_source,
     ]
     body = ["\n".join("".join(group) for group in attribute_groups if group)]
     for legacy_name, name in legacy_names:

@@ -1,7 +1,7 @@
 # Experimental pydantic model generated from Generator/ClassesRef/Geometry/Line.csv
 """Generated experimental pydantic model; do not edit by hand."""
 
-from typing import Any, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import numpy as np
 
@@ -25,6 +25,22 @@ class Line(LegacyModel):
 
     _package: ClassVar[str] = "Geometry"
     """Name of the package of the legacy class module"""
+
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+
+        def split_line(self, *args: Any, **kwargs: Any) -> Any: ...
+
+        def is_on_line(self, *args: Any, **kwargs: Any) -> bool: ...
+
+        def is_arc(self, *args: Any, **kwargs: Any) -> bool: ...
+
+        def get_begin(self, *args: Any, **kwargs: Any) -> complex: ...
+
+        def get_end(self, *args: Any, **kwargs: Any) -> complex: ...
+
+        def get_center(self, *args: Any, **kwargs: Any) -> complex: ...
 
     # Inlined from Methods.Geometry.Line.comp_normal
     def comp_normal(self) -> float:

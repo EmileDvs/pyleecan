@@ -6,7 +6,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 from glob import glob
-from typing import TYPE_CHECKING, ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 import imageio
 import numpy as np
@@ -54,6 +54,26 @@ class Data(LegacyClass):
     """Fields set by a legacy custom setter (_set_<field>)"""
     _package: ClassVar[str] = "SciDataTool"
     """Name of the package of the legacy class module"""
+
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+
+        def get_values(self, *args: Any, **kwargs: Any) -> np.ndarray: ...
+
+        def get_periodicity(self, *args: Any, **kwargs: Any) -> Any: ...
+
+        def get_length(self, *args: Any, **kwargs: Any) -> int: ...
+
+        @property
+        def symmetries(self) -> dict[str, Any]: ...
+        @symmetries.setter
+        def symmetries(self, value: dict[str, Any]) -> None: ...
+
+        @property
+        def is_components(self) -> bool: ...
+        @is_components.setter
+        def is_components(self, value: bool) -> None: ...
 
     # Inlined from Methods.SciDataTool.Data._set_normalizations
     def _set_normalizations(self, value) -> None:

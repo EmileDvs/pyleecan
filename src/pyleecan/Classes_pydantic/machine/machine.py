@@ -100,6 +100,21 @@ class Machine(LegacyModel):
     _package: ClassVar[str] = "Machine"
     """Name of the package of the legacy class module"""
 
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+        from .lamination import Lamination
+
+        @property
+        def stator(self) -> Lamination: ...
+        @stator.setter
+        def stator(self, value: Lamination) -> None: ...
+
+        @property
+        def rotor(self) -> Lamination: ...
+        @rotor.setter
+        def rotor(self, value: Lamination) -> None: ...
+
     # Inlined from Methods.Machine.Machine.build_geometry
     def build_geometry(
         self, sym: int = 1, alpha: float = 0, delta: complex = 0

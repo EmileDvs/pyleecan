@@ -2,7 +2,7 @@
 """Generated experimental dataclass; do not edit by hand."""
 
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import TYPE_CHECKING, Any, ClassVar
 
 from .._legacy_class import LegacyClass
 
@@ -38,3 +38,12 @@ class Solution(LegacyClass):
 
     _package: ClassVar[str] = "Mesh"
     """Name of the package of the legacy class module"""
+
+    if TYPE_CHECKING:
+        # Members of the daughter classes, for the type checkers
+        # (not defined at runtime: no field, no method)
+
+        @property
+        def field(self) -> Any: ...
+        @field.setter
+        def field(self, value: Any) -> None: ...

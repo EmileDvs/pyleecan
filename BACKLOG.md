@@ -1165,14 +1165,26 @@ simulation, loss, output and magnetics after the #751 merge):
 
 Recurring causes, to solve once where possible:
 
-- [ ] Methods of the daughters not declared on the base class (abstract
-      methods to add): `Line` (`split_line`, `get_begin`, `get_end`,
-      `get_center`, `is_arc`, `is_on_line`, `comp_radius`, about 18
-      diagnostics), `Machine` (`rotor`, `stator`), `Data`
-      (`get_periodicity`, `get_axis_periodic`, `is_components`,
-      `get_length`), `Solution` (`field`).
-- [ ] Optional fields used without check: add the check (explicit error), or
-      type the field as not optional (see "Nullable fields" in PLAN.md).
+- [x] (2026-11-22) Methods of the daughters not declared on the base class:
+      declared for the type checkers only (`TYPE_CHECKING_MEMBERS`, class
+      generator: an `if TYPE_CHECKING:` block of the base class body, methods
+      with generic arguments, attributes as properties so that a checker
+      does not take them for dataclass fields; nothing at runtime, Python
+      3.14 skips the block): `Machine` (`stator`, `rotor`), `Lamination`
+      (`winding`), `Data`, `Line`, `Solution`, `Mesh`, `Simulation` (the
+      models of `Simu1`), `ImportMatrix`, `OutInternal`. Test:
+      `Tests/New/test_type_checking_members.py`.
+- [x] (2026-11-22) Optional fields, first part: a field whose default is an
+      object or a container (empty CSV value) is no longer annotated
+      `X | None` (`machine: Machine`); the legacy layers still accept None.
+- [ ] Optional fields used without check, the rest (fields defaulting to
+      None): add the check (explicit error), or type the field as not
+      optional (see "Nullable fields" in PLAN.md).
+- `ty` on `Methods_new` (2026-11-22): 989 at the start of Step 14 -> 758
+      (annotations) -> 620 (base class declarations). By rule:
+      unresolved-attribute 190, invalid-argument-type 175, not-subscriptable
+      75, invalid-return-type 53, unsupported-operator 36, unknown-argument
+      25, invalid-assignment 24.
 - [ ] Implicit `None` returns (a missing case: raise an error or return a value).
 
 Review list by package (behaviour or class definition to decide):
