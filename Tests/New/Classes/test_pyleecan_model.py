@@ -7,6 +7,7 @@ import numpy as np
 import pytest
 from pydantic import ValidationError
 
+from pyleecan.classes_common.errors import CheckMinError, CheckTypeError
 from pyleecan.Classes_pydantic._pyleecan_model import PyleecanModel
 from pyleecan.Classes_pydantic.geometry.arc_1 import Arc1
 from pyleecan.Classes_pydantic.geometry.polar_arc import PolarArc
@@ -23,12 +24,14 @@ def test_geometry_classes_are_pydantic_models():
 
 
 def test_validation_at_construction_and_assignment():
-    with pytest.raises(ValidationError):
+    # Legacy layer: the legacy errors, the pydantic error chained
+    with pytest.raises(CheckMinError) as info:
         Trapeze(height=-1)  # Minimum 0
+    assert isinstance(info.value.__cause__, ValidationError)
     trapeze = Trapeze()
-    with pytest.raises(ValidationError):
+    with pytest.raises(CheckTypeError):
         trapeze.W1 = "1"  # No silent conversion
-    with pytest.raises(ValidationError):
+    with pytest.raises(AttributeError):
         trapeze.unknown = 1  # No new attribute
     trapeze.W1 = 2  # int accepted for a float
     assert trapeze.W1 == 2.0
@@ -81,7 +84,7 @@ def test_load_ignores_unknown_keys_like_init_dict():
         }
     )
     assert segment.end == 1j
-    with pytest.raises(ValidationError):
+    with pytest.raises(TypeError):
         Segment(begin=0, end=1, label="")  # The constructor rejects them
 
 

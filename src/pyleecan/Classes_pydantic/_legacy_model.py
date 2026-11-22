@@ -21,20 +21,27 @@ Legacy behaviours:
   ``ParentDict``: the legacy getters set it on each read),
 - an existing method can be replaced on an object (e.g. a mock in tests),
 - loading ignores the unknown keys (old files, serialization keys),
+- a rejected value raises the legacy errors (``CheckTypeError``,
+  ``CheckMinError``, ``CheckMaxError``, with the legacy message; the pydantic
+  ``ValidationError`` chained as ``__cause__``) and an unknown constructor
+  argument a ``TypeError``, on construction, assignment, ``from_dict`` and
+  ``model_validate`` (the classes of the target base ``PyleecanModel`` keep
+  the pydantic ``ValidationError``),
 - legacy API: ``as_dict`` (complex as str, ``type_handle_ndarray``),
   ``from_dict``, ``copy``, ``compare`` and ``_set_None``.
 """
 
 from copy import deepcopy
 from inspect import getattr_static
-from types import FunctionType
-from typing import Any, ClassVar
+from types import FunctionType, UnionType
+from typing import Any, ClassVar, Union, get_args, get_origin
 
 import numpy as np
-from pydantic import PrivateAttr, field_validator
+from pydantic import BaseModel, PrivateAttr, ValidationError, field_validator
 
 from ..classes_common.custom_setters import call_custom_setter, in_custom_setter
 from ..classes_common.equality import compare_values
+from ..classes_common.errors import CheckMaxError, CheckMinError, CheckTypeError
 from ..classes_common.functions import SourceFunction, is_function_annotation
 from ..classes_common.legacy_dump import is_complex_annotation, legacy_field
 from ..classes_common.legacy_values import annotation_classes, legacy_object_value
@@ -76,7 +83,10 @@ class LegacyModel(PyleecanModel):
                     f"init_dict must be a dict, not {type(init_dict).__name__}"
                 )
             data.update(type(self)._loaded_values(init_dict))
-        super().__init__(**data)
+        try:
+            super().__init__(**data)
+        except ValidationError as error:
+            raise legacy_check_error(type(self), error, constructor=True) from error
 
     def model_post_init(self, context):
         for name in type(self).model_fields:
@@ -105,7 +115,10 @@ class LegacyModel(PyleecanModel):
             # (e.g. by a mock in tests); it is not a field: not dumped or copied
             object.__setattr__(self, name, value)
             return
-        super().__setattr__(name, value)  # Validated by pydantic
+        try:
+            super().__setattr__(name, value)  # Validated by pydantic
+        except ValidationError as error:
+            raise legacy_check_error(type(self), error) from error
         if name in type(self).model_fields:
             self._store_with_parent(name)
 
@@ -185,7 +198,10 @@ class LegacyModel(PyleecanModel):
         base_path (split JSON files) is not handled: a pydantic class does not
         hold an object saved in a separate file.
         """
-        return cls.model_validate(data)
+        try:
+            return cls.model_validate(data)
+        except ValidationError as error:
+            raise legacy_check_error(cls, error) from error
 
     def as_dict(self, type_handle_ndarray=0, keep_function=False, **kwargs):
         """Serialize the object in the legacy dictionary format.
@@ -247,3 +263,117 @@ class LegacyModel(PyleecanModel):
                 value._set_None()
             else:
                 setattr(self, name, None)
+
+
+_MIN_ERRORS = {"greater_than_equal": ("ge", ">="), "greater_than": ("gt", ">")}
+_MAX_ERRORS = {"less_than_equal": ("le", "<="), "less_than": ("lt", "<")}
+
+
+def legacy_check_error(cls, error, constructor=False):
+    """Legacy error of the first error of a pydantic ValidationError.
+
+    Same errors and messages as the legacy classes and the dataclass backend
+    (``Classes_new/_validation.py``): ``CheckMinError`` / ``CheckMaxError``
+    ("W0 must be >= 0, -1.0 given"), ``CheckTypeError`` ("For W0 : float
+    expected, str given"), named after the field (the last name of the error
+    location, also for a nested object); ``TypeError`` for an unknown
+    constructor argument, ``AttributeError`` for the assignment of an unknown
+    attribute (message of the legacy ``FrozenError``).
+
+    Parameters
+    ----------
+    cls : type
+        Model validated
+    error : ValidationError
+        Error raised by pydantic
+    constructor : bool
+        True when raised by the constructor (unknown arguments)
+
+    Returns
+    -------
+    error : Exception
+        Legacy error (to raise from the ValidationError)
+    """
+    details = error.errors(include_url=False)
+    if not details:
+        return CheckTypeError(str(error))
+    detail = details[0]
+    location = detail["loc"]
+    name, info, in_item = _error_field(cls, location)
+    if name is None:
+        names = [part for part in location if isinstance(part, str)]
+        name = names[-1] if names else cls.__name__
+    value = detail.get("input")
+    context = detail.get("ctx") or {}
+    kind = detail["type"]
+    if kind == "extra_forbidden":
+        if constructor and len(location) == 1:
+            return TypeError(
+                f"{cls.__name__}.__init__() got an unexpected keyword argument {name!r}"
+            )
+        return CheckTypeError(f"{name} is not a property of the object")
+    if kind == "no_such_attribute":  # Legacy FrozenError message
+        return AttributeError(f'{cls.__name__} class has no "{name}" property')
+    for errors, error_class in (
+        (_MIN_ERRORS, CheckMinError),
+        (_MAX_ERRORS, CheckMaxError),
+    ):
+        if kind in errors:
+            key, operator = errors[kind]
+            limit = _field_limit(info, key, context.get(key))
+            return error_class(f"{name} must be {operator} {limit}, {value} given")
+    if info is None:
+        return CheckTypeError(f"For {name} : {detail['msg']}")
+    if in_item:  # Like the dataclass checks: the type of the container given
+        annotation = info.annotation
+        arguments = [item for item in get_args(annotation) if item is not type(None)]
+        if get_origin(annotation) in (Union, UnionType) and len(arguments) == 1:
+            annotation = arguments[0]  # Optional container
+        origin = get_origin(annotation)
+        given = origin.__name__ if isinstance(origin, type) else type(value).__name__
+    else:
+        given = type(value).__name__
+    return CheckTypeError(
+        f"For {name} : {_expected_name(info.annotation)} expected, {given} given"
+    )
+
+
+def _error_field(cls, location):
+    """Field of an error location: (name, FieldInfo, error on an item of it).
+
+    The location goes through the fields of the nested models; the parts
+    after the last field are the indices or keys of a list or a dict field.
+    (None, None, False) when the first part is not a field.
+    """
+    name = info = None
+    in_item = False
+    model = cls
+    for part in location:
+        if model is not None and isinstance(part, str) and part in model.model_fields:
+            name, info, in_item = part, model.model_fields[part], False
+            classes = [
+                item
+                for item in annotation_classes(info.annotation)
+                if isinstance(item, type) and issubclass(item, BaseModel)
+            ]
+            model = classes[0] if len(classes) == 1 else None
+        elif name is None:
+            return None, None, False
+        else:  # Index or key of a container field (or a model inside it)
+            in_item = True
+    return name, info, in_item
+
+
+def _field_limit(info, key, default):
+    """Limit of a field as declared (``ge=0``, not the coerced ``0.0``)."""
+    for item in getattr(info, "metadata", ()):
+        if getattr(item, key, None) is not None:
+            return getattr(item, key)
+    return default
+
+
+def _expected_name(annotation):
+    """Name of the expected type, as in the dataclass messages."""
+    if isinstance(annotation, type):
+        return annotation.__name__
+    return str(annotation).replace("typing.", "")

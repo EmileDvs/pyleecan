@@ -680,11 +680,24 @@ generated first so that the same passes rewrite its calls.
 - [ ] `Gen_*` classes generated from `ClassInfo` (min, max, unit,
       description) instead of the CSV files (`Generator/gui_generator.py`),
       so that they survive the Phase 2 removal of the CSV files.
-- [ ] Validation errors: the GUI catches the shared errors whatever the
-      backend. On assignment, the dataclass backend raises
-      `CheckTypeError`/`CheckMinError`/`CheckMaxError`, pydantic raises
-      `ValidationError`: one base (or a conversion in `LegacyModel`) decided
-      with the contract tests; the error message shown on the field.
+- [x] (2026-11-22) Validation errors: one contract whatever the backend
+      (decided 2026-11-22: conversion in `LegacyModel`). The pydantic legacy
+      layer re-raises the `ValidationError` as the legacy errors
+      (`legacy_check_error`: `CheckMinError` / `CheckMaxError` /
+      `CheckTypeError` with the legacy and dataclass message, named after the
+      field also for a nested object; `TypeError` for an unknown constructor
+      argument; `AttributeError` with the `FrozenError` message for an
+      unknown attribute), the `ValidationError` chained as `__cause__`, on
+      construction, assignment, `from_dict` and `model_validate`. The target
+      base `PyleecanModel` keeps the `ValidationError` (Phase 2). Contract
+      tests: `Tests/New/Cross/test_validation_errors.py` (910 float fields
+      with limits or a wrong type: same error class and message on legacy,
+      dataclass and pydantic). The error shown on the field: Step 17.
+- [ ] Dataclass backend: the assignment of an unknown attribute is accepted
+      silently (`trapeze.unknown = 1`); legacy raises `FrozenError`, pydantic
+      `AttributeError`. To reject in `LegacyClass` (except the replaced
+      methods, as `LegacyModel`), after a check of the code that sets
+      attributes freely.
 - [x] `Tests/New/GUI` generated against `GUI_new` / `GUI_pydantic` (2026-11-21:
       alias `backend_gui` in `Tests/New/_backend.py`, the `pyleecan.GUI` and
       `pyleecan.GUI_new` imports and `mock.patch` strings rewritten by the

@@ -328,9 +328,9 @@ passes rewrite its calls together with the methods.
       `GUI_pydantic` from `GUI_new` by import rewriting.
 - [ ] Widget metadata from `ClassInfo`: the `Gen_*` classes (64, written by
       the legacy GUI generator from the CSV files: min, max, unit, tooltip).
-- [ ] Input validation: one error contract for the GUI whatever the backend
-      (`CheckTypeError` against `ValidationError` on assignment, the `check()`
-      errors), the error shown on the field.
+- [x] Input validation: one error contract for the GUI whatever the backend
+      (the pydantic legacy layer raises the legacy `CheckError`s; the error
+      shown on the field: Step 17).
 - [x] `Tests/New/GUI` run on `GUI_new` with each backend (they mix the legacy
       GUI and the new classes today).
 

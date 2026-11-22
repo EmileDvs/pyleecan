@@ -238,6 +238,13 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 - The class generator no longer imports generated code (it read the legacy
   class names from the generated `Functions_new`).
 
+- **Validation errors of the pydantic classes (legacy layer)**: a rejected
+  value raises the legacy errors (`CheckMinError`, `CheckMaxError`,
+  `CheckTypeError`, same message as the legacy and dataclass classes; the
+  pydantic `ValidationError` chained as `__cause__`), an unknown constructor
+  argument a `TypeError`, an unknown attribute an `AttributeError`. The
+  target base `PyleecanModel` keeps the pydantic `ValidationError`.
+
 ### Fixed
 
 - **Legacy method bugs fixed in `Methods_new`** (`legacy_fixes.py`, applied
