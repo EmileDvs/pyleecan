@@ -34,7 +34,7 @@ class ElmerResults(Elmer):
         Default: False
     """
 
-    data: dict[str, Any] | None = field(default_factory=dict)
+    data: dict[str, Any] = field(default_factory=dict)
     """Dict with simulation results"""
     file: str = ""
     """Filename of the results data file"""

@@ -4767,6 +4767,24 @@ def _is_none_default(value, prop_type=None):
     return value == "" and prop_type != "str"
 
 
+def _has_value_default(value, prop_type, gen_dict):
+    """True if an empty CSV value gives a non-None default (_field_default).
+
+    An object of the class (Pyleecan type), an empty list or dict (list and
+    dict types): the field is not None by default, its annotation is not
+    optional (the legacy layers still accept None, Phase 1).
+    """
+    if value != "":
+        return False
+    return (
+        (gen_dict is not None and prop_type in gen_dict)
+        or is_list_pyleecan_type(prop_type)
+        or is_dict_list_pyleecan_type(prop_type)
+        or is_dict_pyleecan_type(prop_type)
+        or prop_type in ("list", "[]", "[ndarray]", "dict", "{ndarray}")
+    )
+
+
 def _field_type(prop_type, default, gen_dict, soft_name, class_name=None, prop_name=None):
     """Return a Python annotation and imports needed for one CSV property."""
     imports = set()
@@ -4819,7 +4837,11 @@ def _field_type(prop_type, default, gen_dict, soft_name, class_name=None, prop_n
         return "Any"
 
     annotation = resolve_type(prop_type) if prop_type else "Any"
-    if _is_none_default(default, prop_type) and annotation not in ("Any", "None"):
+    if (
+        _is_none_default(default, prop_type)
+        and not _has_value_default(default, prop_type, gen_dict)
+        and annotation not in ("Any", "None")
+    ):
         annotation = f"{annotation} | None"
     return annotation, imports
 

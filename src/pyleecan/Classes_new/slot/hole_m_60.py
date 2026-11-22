@@ -83,11 +83,11 @@ class HoleM60(HoleMag):
     """Magnet height"""
     H1: float | None = field(default=None, metadata={"unit": "m", "min": 0})
     """Distance from the lamination bore"""
-    magnet_0: Magnet | None = field(
+    magnet_0: Magnet = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """First Magnet"""
-    magnet_1: Magnet | None = field(
+    magnet_1: Magnet = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """Second Magnet"""

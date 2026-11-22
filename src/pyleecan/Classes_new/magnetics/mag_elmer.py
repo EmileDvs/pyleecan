@@ -117,7 +117,7 @@ class MagElmer(Magnetics):
     """global coefficient to adjust geometry fineness (1 : default , > 1 : finner , < 1 : less fine)"""
     file_name: str = ""
     """Name of the file to save the Elmer model"""
-    FEA_dict: dict[str, Any] | None = field(default_factory=dict)
+    FEA_dict: dict[str, Any] = field(default_factory=dict)
     """To enforce user-defined values for Elmer main parameters """
     is_get_mesh: bool = False
     """To save FEA mesh for latter post-procesing """

@@ -18,7 +18,7 @@ class ParamExplorerSet(ParamExplorer):
         Default: []
     """
 
-    value: list[Any] | None = field(default_factory=list)
+    value: list[Any] = field(default_factory=list)
     """List containing the different parameter values to explore"""
 
     _package: ClassVar[str] = "Simulation"

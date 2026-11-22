@@ -118,7 +118,7 @@ class Lamination(LegacyClass):
 
     L1: float = field(default=0.35, metadata={"unit": "m", "min": 0})
     """Lamination stack active length without radial ventilation airducts but including insulation layers between lamination sheets"""
-    mat_type: Material | None = field(
+    mat_type: Material = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Lamination's material"""
@@ -136,9 +136,9 @@ class Lamination(LegacyClass):
     """To fill"""
     is_stator: bool = True
     """To fill"""
-    axial_vent: list[Hole] | None = field(default_factory=list)
+    axial_vent: list[Hole] = field(default_factory=list)
     """Axial ventilation ducts"""
-    notch: list[Notch] | None = field(default_factory=list)
+    notch: list[Notch] = field(default_factory=list)
     """Lamination bore notches"""
     skew: Skew | None = field(default=None, metadata={"default_class": "Skew"})
     """Skew object"""

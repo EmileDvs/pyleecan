@@ -33,7 +33,7 @@ class OutStruct(LegacyClass):
     """Dict containing axes data used for Structural"""
     logger_name: str = "Pyleecan.Structural"
     """Name of the logger to use"""
-    meshsolution: MeshSolution | None = field(
+    meshsolution: MeshSolution = field(
         default_factory=lambda: MeshSolution(),
         metadata={"default_class": "MeshSolution"},
     )

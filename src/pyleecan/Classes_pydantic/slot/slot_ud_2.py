@@ -37,11 +37,9 @@ class SlotUD2(Slot):
         Default: ""
     """
 
-    line_list: list[Line] | None = Field(default_factory=list)
+    line_list: list[Line] = Field(default_factory=list)
     """list of line to draw the edges of the slot"""
-    active_surf: Surface | None = Field(
-        default_factory=lambda: import_class("Surface")()
-    )
+    active_surf: Surface = Field(default_factory=lambda: import_class("Surface")())
     """Active surface of the Slot"""
     split_active_surf_dict: dict[str, Any] | None = None
     """Dictionary to enforced the split active surface (key="Nrad=1, Ntan=2"). Labels set according to list order (loop on Nrad then Ntan)"""

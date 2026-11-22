@@ -24,12 +24,12 @@ class MachineLSPM(MachineSync):
         Default: LamSlotWind()
     """
 
-    rotor: LamSquirrelCageMag | None = field(
+    rotor: LamSquirrelCageMag = field(
         default_factory=lambda: LamSquirrelCageMag(),
         metadata={"default_class": "LamSquirrelCageMag"},
     )
     """Machine's Rotor"""
-    stator: LamSlotWind | None = field(
+    stator: LamSlotWind = field(
         default_factory=lambda: LamSlotWind(), metadata={"default_class": "LamSlotWind"}
     )
     """Machine's Stator"""

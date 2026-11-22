@@ -23,11 +23,11 @@ class MachineDFIM(MachineAsync):
         Default: LamSlotWind()
     """
 
-    rotor: LamSlotWind | None = field(
+    rotor: LamSlotWind = field(
         default_factory=lambda: LamSlotWind(), metadata={"default_class": "LamSlotWind"}
     )
     """Machine's Rotor"""
-    stator: LamSlotWind | None = field(
+    stator: LamSlotWind = field(
         default_factory=lambda: LamSlotWind(), metadata={"default_class": "LamSlotWind"}
     )
     """Machine's Stator"""

@@ -69,7 +69,7 @@ class HoleM62(HoleMag):
     """Magnet height"""
     W0_is_rad: bool = False
     """W0  unit, False for m, True for rad"""
-    magnet_0: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_0: Magnet = Field(default_factory=lambda: Magnet())
     """First Magnet"""
 
     _package: ClassVar[str] = "Slot"

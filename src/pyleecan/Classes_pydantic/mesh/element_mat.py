@@ -52,9 +52,7 @@ class ElementMat(LegacyModel):
     """Element indices"""
     ref_element: RefElement | None = None
     gauss_point: GaussPoint | None = None
-    scalar_product: ScalarProductL2 | None = Field(
-        default_factory=lambda: ScalarProductL2()
-    )
+    scalar_product: ScalarProductL2 = Field(default_factory=lambda: ScalarProductL2())
 
     _package: ClassVar[str] = "Mesh"
     """Name of the package of the legacy class module"""

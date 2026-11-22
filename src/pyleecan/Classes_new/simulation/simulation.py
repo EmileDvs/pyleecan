@@ -67,11 +67,11 @@ class Simulation(LegacyClass):
     """Name of the simulation"""
     desc: str = ""
     """Simulation description"""
-    machine: Machine | None = field(
+    machine: Machine = field(
         default_factory=lambda: Machine(), metadata={"default_class": "Machine"}
     )
     """Machine to simulate"""
-    input: Input | None = field(
+    input: Input = field(
         default_factory=lambda: Input(), metadata={"default_class": "Input"}
     )
     """Input of the simulation"""

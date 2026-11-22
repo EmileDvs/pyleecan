@@ -55,7 +55,7 @@ class Hole(LegacyClass):
 
     Zh: int = field(default=36, metadata={"min": 0})
     """Number of Hole around the circumference"""
-    mat_void: Material | None = field(
+    mat_void: Material = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Material of the void part of the hole (Air in general)"""

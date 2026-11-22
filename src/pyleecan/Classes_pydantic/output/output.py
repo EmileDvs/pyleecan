@@ -71,25 +71,25 @@ class Output(LegacyModel):
     COLOR_MAP: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["COLOR_MAP"]
     FONT_FAMILY_PYVISTA: ClassVar = config_dict["PLOT"]["FONT_FAMILY_PYVISTA"]
 
-    simu: Simulation | None = Field(default_factory=lambda: Simulation())
+    simu: Simulation = Field(default_factory=lambda: Simulation())
     """Simulation object that generated the Output"""
     path_result: str = ""
     """Path to the folder to same the results"""
-    geo: OutGeo | None = Field(default_factory=lambda: OutGeo())
+    geo: OutGeo = Field(default_factory=lambda: OutGeo())
     """Geometry output"""
-    elec: OutElec | None = Field(default_factory=lambda: OutElec())
+    elec: OutElec = Field(default_factory=lambda: OutElec())
     """Electrical module output"""
-    mag: OutMag | None = Field(default_factory=lambda: OutMag())
+    mag: OutMag = Field(default_factory=lambda: OutMag())
     """Magnetic module output"""
-    struct: OutStruct | None = Field(default_factory=lambda: OutStruct())
+    struct: OutStruct = Field(default_factory=lambda: OutStruct())
     """Structural module output"""
-    post: OutPost | None = Field(default_factory=lambda: OutPost())
+    post: OutPost = Field(default_factory=lambda: OutPost())
     """Post-Processing settings"""
     logger_name: str = "Pyleecan.Output"
     """Name of the logger to use"""
-    force: OutForce | None = Field(default_factory=lambda: OutForce())
+    force: OutForce = Field(default_factory=lambda: OutForce())
     """Force module output"""
-    loss: OutLoss | None = Field(default_factory=lambda: OutLoss())
+    loss: OutLoss = Field(default_factory=lambda: OutLoss())
     """Loss module output"""
 
     _package: ClassVar[str] = "Output"

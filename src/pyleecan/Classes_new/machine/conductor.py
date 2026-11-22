@@ -28,11 +28,11 @@ class Conductor(LegacyClass):
     COND_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()
     INS_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()
 
-    cond_mat: Material | None = field(
+    cond_mat: Material = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Material of the conductor"""
-    ins_mat: Material | None = field(
+    ins_mat: Material = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Material of the insulation"""

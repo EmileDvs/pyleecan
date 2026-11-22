@@ -56,17 +56,17 @@ class MatMagnetics(LegacyClass):
     """temperature coefficient for remanent flux density"""
     Wlam: float = field(default=0, metadata={"unit": "m", "min": 0})
     """lamination sheet width without insulation [m] (0 == not laminated)"""
-    BH_curve: ImportMatrix | None = field(
+    BH_curve: ImportMatrix = field(
         default_factory=lambda: ImportMatrix(),
         metadata={"default_class": "ImportMatrix"},
     )
     """nonlinear B(H) curve (two columns matrix, H and B(H))"""
-    LossData: ImportMatrix | None = field(
+    LossData: ImportMatrix = field(
         default_factory=lambda: ImportMatrix(),
         metadata={"unit": "W/kg", "default_class": "ImportMatrix"},
     )
     """specific loss data value triplets, i.e. B, f, P"""
-    ModelBH: _field_type_ModelBH | None = field(
+    ModelBH: _field_type_ModelBH = field(
         default_factory=lambda: _field_type_ModelBH(),
         metadata={"default_class": "ModelBH"},
     )

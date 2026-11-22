@@ -19,7 +19,7 @@ class GUIOption(LegacyClass):
         Default: Unit()
     """
 
-    unit: Unit | None = field(
+    unit: Unit = field(
         default_factory=lambda: Unit(), metadata={"default_class": "Unit"}
     )
     """Unit options"""

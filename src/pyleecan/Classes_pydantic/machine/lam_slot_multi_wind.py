@@ -43,7 +43,7 @@ class LamSlotMultiWind(LamSlotMulti):
 
     Ksfill: float | None = Field(default=None, ge=0, le=1)
     """Imposed Slot Fill factor (if None, will be computed according to the winding and the slot)"""
-    winding: Winding | None = Field(default_factory=lambda: Winding())
+    winding: Winding = Field(default_factory=lambda: Winding())
     """Lamination's Winding"""
 
     _package: ClassVar[str] = "Machine"

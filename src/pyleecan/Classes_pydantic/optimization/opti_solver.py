@@ -29,9 +29,9 @@ class OptiSolver(LegacyModel):
         Default: False
     """
 
-    problem: OptiProblem | None = Field(default_factory=lambda: OptiProblem())
+    problem: OptiProblem = Field(default_factory=lambda: OptiProblem())
     """Problem to solve"""
-    xoutput: XOutput | None = Field(default_factory=lambda: XOutput())
+    xoutput: XOutput = Field(default_factory=lambda: XOutput())
     """Optimization results containing every output"""
     logger_name: str = "Pyleecan.OptiSolver"
     """Name of the logger to use"""

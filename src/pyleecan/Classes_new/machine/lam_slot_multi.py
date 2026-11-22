@@ -36,7 +36,7 @@ class LamSlotMulti(Lamination):
         Default: None
     """
 
-    slot_list: list[Slot] | None = field(default_factory=list)
+    slot_list: list[Slot] = field(default_factory=list)
     """List of lamination Slot"""
     alpha: np.ndarray | None = field(default=None, metadata={"unit": "[rad]"})
     """Angular position of the Slots"""

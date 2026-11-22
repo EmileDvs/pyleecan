@@ -39,9 +39,9 @@ class VarOpti(VarParam):
 
     NAME: ClassVar = "Optimization"
 
-    objective_list: list[OptiObjective] | None = field(default_factory=list)
+    objective_list: list[OptiObjective] = field(default_factory=list)
     """List containing OptiObjective objects"""
-    constraint_list: list[OptiConstraint] | None = field(default_factory=list)
+    constraint_list: list[OptiConstraint] = field(default_factory=list)
     """List containing OptiConstraint objects"""
     solver: OptiSolver | None = field(
         default=None, metadata={"default_class": "OptiSolver"}

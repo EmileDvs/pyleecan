@@ -42,7 +42,7 @@ class Circle(Surface):
     """Radius of the circle"""
     center: complex = 0
     """center of the Circle"""
-    prop_dict: dict[str, Any] | None = field(default_factory=dict)
+    prop_dict: dict[str, Any] = field(default_factory=dict)
     """Property dict to apply on the lines"""
 
     _package: ClassVar[str] = "Geometry"

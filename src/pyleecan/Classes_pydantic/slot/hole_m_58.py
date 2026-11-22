@@ -89,7 +89,7 @@ class HoleM58(HoleMag):
     """Tooth angular opening width"""
     R0: float = Field(default=0.01, ge=0, json_schema_extra={"unit": "m"})
     """Notch radius"""
-    magnet_0: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_0: Magnet = Field(default_factory=lambda: Magnet())
     """Magnet"""
 
     _package: ClassVar[str] = "Slot"

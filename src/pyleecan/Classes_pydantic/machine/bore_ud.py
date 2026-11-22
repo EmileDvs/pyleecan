@@ -25,7 +25,7 @@ class BoreUD(Bore):
         Default: ""
     """
 
-    line_list: list[Line] | None = Field(default_factory=list)
+    line_list: list[Line] = Field(default_factory=list)
     """List of line to draw the full bore"""
     sym: int = Field(default=1, ge=1)
     """Symmetry factor (1= full machine, 2= half of the machine...)"""

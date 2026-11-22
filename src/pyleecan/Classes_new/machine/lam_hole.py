@@ -28,7 +28,7 @@ class LamHole(LamH):
         Default: []
     """
 
-    hole: list[Hole] | None = field(default_factory=list)
+    hole: list[Hole] = field(default_factory=list)
     """lamination Hole"""
 
     _package: ClassVar[str] = "Machine"

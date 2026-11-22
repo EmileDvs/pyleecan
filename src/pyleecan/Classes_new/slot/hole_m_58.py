@@ -90,7 +90,7 @@ class HoleM58(HoleMag):
     """Tooth angular opening width"""
     R0: float = field(default=0.01, metadata={"unit": "m", "min": 0})
     """Notch radius"""
-    magnet_0: Magnet | None = field(
+    magnet_0: Magnet = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """Magnet"""

@@ -38,7 +38,7 @@ class LamSlotMag(LamSlotM):
         Default: Magnet()
     """
 
-    magnet: Magnet | None = field(
+    magnet: Magnet = field(
         default_factory=lambda: import_class("Magnet")(),
         metadata={"default_class": "Magnet"},
     )

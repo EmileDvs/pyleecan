@@ -37,9 +37,9 @@ class SlotUD2(Slot):
         Default: ""
     """
 
-    line_list: list[Line] | None = field(default_factory=list)
+    line_list: list[Line] = field(default_factory=list)
     """list of line to draw the edges of the slot"""
-    active_surf: Surface | None = field(
+    active_surf: Surface = field(
         default_factory=lambda: import_class("Surface")(),
         metadata={"default_class": "Surface"},
     )

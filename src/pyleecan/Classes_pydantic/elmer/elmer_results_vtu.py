@@ -44,7 +44,7 @@ class ElmerResultsVTU(Elmer):
     """Label of the resulting meshsolution"""
     file_path: str = ""
     """Filename of the results VTU data file"""
-    store_dict: dict[str, Any] | None = Field(default_factory=dict)
+    store_dict: dict[str, Any] = Field(default_factory=dict)
     """Dict containing the data names to store"""
 
     _package: ClassVar[str] = "Elmer"

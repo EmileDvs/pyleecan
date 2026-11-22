@@ -49,7 +49,7 @@ class Shaft(LegacyModel):
 
     Lshaft: float = Field(default=0.442, ge=0, json_schema_extra={"unit": "m"})
     """length of the rotor shaft [m] (used for weight & cost estimation only)"""
-    mat_type: Material | None = Field(default_factory=lambda: Material())
+    mat_type: Material = Field(default_factory=lambda: Material())
     """Shaft's Material"""
     Drsh: float = Field(default=0.045, ge=0, json_schema_extra={"unit": "m"})
     """diameter of the rotor shaft [m], used to estimate bearing diameter for friction losses"""

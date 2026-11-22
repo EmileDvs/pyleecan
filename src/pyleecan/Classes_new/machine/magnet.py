@@ -28,7 +28,7 @@ class Magnet(LegacyClass):
         Default: 1; Minimum: 1
     """
 
-    mat_type: Material | None = field(
+    mat_type: Material = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """The Magnet material"""

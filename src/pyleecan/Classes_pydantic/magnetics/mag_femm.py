@@ -102,7 +102,7 @@ class MagFEMM(Magnetics):
     """0 no leakage calculation /  1 calculation using single slot """
     file_name: str = ""
     """Name of the file to save the FEMM model"""
-    FEMM_dict_enforced: dict[str, Any] | None = Field(default_factory=dict)
+    FEMM_dict_enforced: dict[str, Any] = Field(default_factory=dict)
     """To enforce user-defined values for FEMM main parameters """
     is_save_meshsolution_as_file: bool = False
     """To save FEA and mesh as h5 files to save memory"""

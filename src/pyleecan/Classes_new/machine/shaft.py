@@ -50,7 +50,7 @@ class Shaft(LegacyClass):
 
     Lshaft: float = field(default=0.442, metadata={"unit": "m", "min": 0})
     """length of the rotor shaft [m] (used for weight & cost estimation only)"""
-    mat_type: Material | None = field(
+    mat_type: Material = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Shaft's Material"""

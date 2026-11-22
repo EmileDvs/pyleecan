@@ -26,9 +26,9 @@ class MachineIPMSM(MachineSync):
         Default: Lamination()
     """
 
-    rotor: LamH | None = Field(default_factory=lambda: LamH())
+    rotor: LamH = Field(default_factory=lambda: LamH())
     """Machine's Rotor"""
-    stator: Lamination | None = Field(default_factory=lambda: Lamination())
+    stator: Lamination = Field(default_factory=lambda: Lamination())
     """Machine's Stator"""
 
     _package: ClassVar[str] = "Machine"

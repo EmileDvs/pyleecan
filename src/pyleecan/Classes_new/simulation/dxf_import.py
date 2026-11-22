@@ -27,7 +27,7 @@ class DXFImport(LegacyClass):
 
     file_path: str = ""
     """Path to the DXF file to import"""
-    surf_dict: dict[str, Any] | None = field(default_factory=dict)
+    surf_dict: dict[str, Any] = field(default_factory=dict)
     """dictionary to assign the surfaces: key=complex reference point coordinate, value=label of the surface"""
     BC_list: list[Any] = field(default_factory=list)
     """List of tuple to apply boundary conditions (complex reference point coordinate, is_arc, label of the BC to apply)"""

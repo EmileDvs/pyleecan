@@ -24,9 +24,9 @@ class MachineSRM(MachineSync):
         Default: LamSlotWind()
     """
 
-    rotor: LamSlot | None = Field(default_factory=lambda: LamSlot())
+    rotor: LamSlot = Field(default_factory=lambda: LamSlot())
     """Machine's Rotor"""
-    stator: LamSlotWind | None = Field(default_factory=lambda: LamSlotWind())
+    stator: LamSlotWind = Field(default_factory=lambda: LamSlotWind())
     """Machine's Stator"""
 
     _package: ClassVar[str] = "Machine"

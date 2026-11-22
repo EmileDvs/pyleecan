@@ -70,7 +70,7 @@ class HoleM63(HoleMag):
     """Magnet height"""
     top_flat: bool = False
     """top flat = True, if curve top_flat = False """
-    magnet_0: Magnet | None = field(
+    magnet_0: Magnet = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """First Magnet"""

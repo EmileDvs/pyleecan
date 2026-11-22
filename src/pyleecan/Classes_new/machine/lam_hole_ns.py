@@ -31,9 +31,9 @@ class LamHoleNS(LamH):
         Default: []
     """
 
-    hole_north: list[Hole] | None = field(default_factory=list)
+    hole_north: list[Hole] = field(default_factory=list)
     """lamination Holes for North pole"""
-    hole_south: list[Hole] | None = field(default_factory=list)
+    hole_south: list[Hole] = field(default_factory=list)
     """lamination Holes for South pole"""
 
     _package: ClassVar[str] = "Machine"

@@ -29,11 +29,11 @@ class SurfRing(Surface):
         Default: Surface()
     """
 
-    out_surf: Surface | None = field(
+    out_surf: Surface = field(
         default_factory=lambda: Surface(), metadata={"default_class": "Surface"}
     )
     """Outter surface"""
-    in_surf: Surface | None = field(
+    in_surf: Surface = field(
         default_factory=lambda: Surface(), metadata={"default_class": "Surface"}
     )
     """Inner surface"""

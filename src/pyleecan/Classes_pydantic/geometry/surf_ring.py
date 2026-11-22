@@ -28,9 +28,9 @@ class SurfRing(Surface):
         Default: Surface()
     """
 
-    out_surf: Surface | None = Field(default_factory=lambda: Surface())
+    out_surf: Surface = Field(default_factory=lambda: Surface())
     """Outter surface"""
-    in_surf: Surface | None = Field(default_factory=lambda: Surface())
+    in_surf: Surface = Field(default_factory=lambda: Surface())
     """Inner surface"""
 
     _package: ClassVar[str] = "Geometry"

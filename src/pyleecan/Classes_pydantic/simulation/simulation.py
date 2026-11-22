@@ -67,9 +67,9 @@ class Simulation(LegacyModel):
     """Name of the simulation"""
     desc: str = ""
     """Simulation description"""
-    machine: Machine | None = Field(default_factory=lambda: Machine())
+    machine: Machine = Field(default_factory=lambda: Machine())
     """Machine to simulate"""
-    input: Input | None = Field(default_factory=lambda: Input())
+    input: Input = Field(default_factory=lambda: Input())
     """Input of the simulation"""
     logger_name: str = "Pyleecan.Simulation"
     """Name of the logger to use"""

@@ -70,7 +70,7 @@ class HoleM62(HoleMag):
     """Magnet height"""
     W0_is_rad: bool = False
     """W0  unit, False for m, True for rad"""
-    magnet_0: Magnet | None = field(
+    magnet_0: Magnet = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """First Magnet"""

@@ -25,7 +25,7 @@ class DriveWave(Drive):
         Default: Import()
     """
 
-    wave: Import | None = Field(default_factory=lambda: Import())
+    wave: Import = Field(default_factory=lambda: Import())
     """Wave generator"""
 
     _package: ClassVar[str] = "Simulation"

@@ -59,9 +59,9 @@ class MeshSolution(LegacyModel):
 
     label: str = ""
     """(Optional) Descriptive name of the mesh"""
-    mesh: Mesh | None = Field(default_factory=lambda: Mesh())
+    mesh: Mesh = Field(default_factory=lambda: Mesh())
     """A Mesh object. """
-    solution_dict: dict[str, Solution] | None = Field(default_factory=dict)
+    solution_dict: dict[str, Solution] = Field(default_factory=dict)
     """A dictionary of Solution objects"""
     group: dict[str, Any] | None = None
     """Dict sorted by groups name with list of elements indices. """

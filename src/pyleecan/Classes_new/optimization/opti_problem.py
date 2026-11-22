@@ -41,21 +41,21 @@ class OptiProblem(LegacyClass):
         Default: []
     """
 
-    simu: Simulation | None = field(
+    simu: Simulation = field(
         default_factory=lambda: Simulation(), metadata={"default_class": "Simulation"}
     )
     """Default simulation"""
-    design_var: list[OptiDesignVar] | None = field(default_factory=list)
+    design_var: list[OptiDesignVar] = field(default_factory=list)
     """List of design variables"""
-    obj_func: list[OptiObjective] | None = field(default_factory=list)
+    obj_func: list[OptiObjective] = field(default_factory=list)
     """List of objective functions"""
     eval_func: Callable[..., Any] | None = None
     """Function to evaluate before computing obj function and constraints"""
-    constraint: list[OptiConstraint] | None = field(default_factory=list)
+    constraint: list[OptiConstraint] = field(default_factory=list)
     """List containing the constraints """
     preprocessing: Callable[..., Any] | None = None
     """Function to execute a preprocessing on the simulation right before it is run."""
-    datakeeper_list: list[DataKeeper] | None = field(default_factory=list)
+    datakeeper_list: list[DataKeeper] = field(default_factory=list)
     """List of DataKeepers to run on every output"""
 
     _package: ClassVar[str] = "Optimization"

@@ -84,9 +84,9 @@ class Machine(LegacyModel):
 
     PATCH_COLOR_ALPHA: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PATCH_COLOR_ALPHA"]
 
-    frame: Frame | None = Field(default_factory=lambda: Frame())
+    frame: Frame = Field(default_factory=lambda: Frame())
     """Machine's Frame"""
-    shaft: Shaft | None = Field(default_factory=lambda: Shaft())
+    shaft: Shaft = Field(default_factory=lambda: Shaft())
     """Machine's Shaft"""
     name: str = "default_machine"
     """Name of the machine"""

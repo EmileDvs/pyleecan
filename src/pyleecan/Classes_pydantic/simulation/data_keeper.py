@@ -50,7 +50,7 @@ class DataKeeper(LegacyModel):
     """Function that takes an Output in argument and return a value"""
     error_keeper: Callable[..., Any] | None = None
     """Function that takes a Simulation in argument and returns a value, this attribute enables to handle errors and to put NaN values in the result matrices"""
-    result: list[Any] | None = Field(default_factory=list)
+    result: list[Any] = Field(default_factory=list)
     """List containing datakeeper results for each simulation"""
     result_ref: Any = None
     """Result for the reference simulation"""

@@ -56,7 +56,7 @@ class ElementMat(LegacyClass):
     gauss_point: GaussPoint | None = field(
         default=None, metadata={"default_class": "GaussPoint"}
     )
-    scalar_product: ScalarProductL2 | None = field(
+    scalar_product: ScalarProductL2 = field(
         default_factory=lambda: ScalarProductL2(),
         metadata={"default_class": "ScalarProductL2"},
     )

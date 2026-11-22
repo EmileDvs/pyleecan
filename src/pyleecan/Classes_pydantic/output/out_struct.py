@@ -33,7 +33,7 @@ class OutStruct(LegacyModel):
     """Dict containing axes data used for Structural"""
     logger_name: str = "Pyleecan.Structural"
     """Name of the logger to use"""
-    meshsolution: MeshSolution | None = Field(default_factory=lambda: MeshSolution())
+    meshsolution: MeshSolution = Field(default_factory=lambda: MeshSolution())
     """FEA software mesh and solution"""
     FEA_dict: dict[str, Any] | None = None
     """dictionary containing the main FEA parameter"""

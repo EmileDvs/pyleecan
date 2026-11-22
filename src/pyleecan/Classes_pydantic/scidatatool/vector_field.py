@@ -52,7 +52,7 @@ class VectorField(LegacyModel):
     """Name of the vector field"""
     symbol: str = ""
     """Symbol of the vector field"""
-    components: dict[str, DataND] | None = Field(default_factory=dict)
+    components: dict[str, DataND] = Field(default_factory=dict)
     """Dict of the components"""
 
     _package: ClassVar[str] = "SciDataTool"

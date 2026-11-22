@@ -52,7 +52,7 @@ class Frame(LegacyClass):
     """frame internal radius"""
     Rext: float = field(default=0.2, metadata={"unit": "m", "min": 0})
     """Frame external radius"""
-    mat_type: Material | None = field(
+    mat_type: Material = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Frame material"""

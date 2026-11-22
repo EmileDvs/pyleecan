@@ -44,15 +44,11 @@ class LamSlotMagNS(LamSlotM):
         Default: Slot()
     """
 
-    magnet_north: Magnet | None = Field(
-        default_factory=lambda: import_class("Magnet")()
-    )
+    magnet_north: Magnet = Field(default_factory=lambda: import_class("Magnet")())
     """North Magnet of the lamination"""
-    magnet_south: Magnet | None = Field(
-        default_factory=lambda: import_class("Magnet")()
-    )
+    magnet_south: Magnet = Field(default_factory=lambda: import_class("Magnet")())
     """South Magnet of the lamination"""
-    slot_south: Slot | None = Field(default_factory=lambda: Slot())
+    slot_south: Slot = Field(default_factory=lambda: Slot())
     """South slot of the lamination"""
 
     _package: ClassVar[str] = "Machine"

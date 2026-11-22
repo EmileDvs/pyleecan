@@ -29,11 +29,11 @@ class OptiSolver(LegacyClass):
         Default: False
     """
 
-    problem: OptiProblem | None = field(
+    problem: OptiProblem = field(
         default_factory=lambda: OptiProblem(), metadata={"default_class": "OptiProblem"}
     )
     """Problem to solve"""
-    xoutput: XOutput | None = field(
+    xoutput: XOutput = field(
         default_factory=lambda: XOutput(), metadata={"default_class": "XOutput"}
     )
     """Optimization results containing every output"""

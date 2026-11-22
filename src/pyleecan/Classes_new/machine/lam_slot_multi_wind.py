@@ -44,7 +44,7 @@ class LamSlotMultiWind(LamSlotMulti):
 
     Ksfill: float | None = field(default=None, metadata={"min": 0, "max": 1})
     """Imposed Slot Fill factor (if None, will be computed according to the winding and the slot)"""
-    winding: Winding | None = field(
+    winding: Winding = field(
         default_factory=lambda: Winding(), metadata={"default_class": "Winding"}
     )
     """Lamination's Winding"""

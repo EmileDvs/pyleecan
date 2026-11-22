@@ -116,7 +116,7 @@ class Winding(LegacyModel):
     """pole pairs number"""
     Lewout: float = Field(default=0.015, ge=0, json_schema_extra={"unit": "m"})
     """straight length of the conductors outside the lamination before the curved part of winding overhang [m] - can be negative to tune the average turn length (only used in voltage driven simulations)"""
-    conductor: Conductor | None = Field(default_factory=lambda: Conductor())
+    conductor: Conductor = Field(default_factory=lambda: Conductor())
     """Winding's conductor"""
     coil_pitch: int = 1
     """Distance (in slot) between a conductor of a certain phase and the corresponding return conductor"""
@@ -128,7 +128,7 @@ class Winding(LegacyModel):
     """Number of spatial periods of the winding"""
     is_aper_a: bool | None = None
     """True if the winding is anti-periodic over space"""
-    end_winding: EndWinding | None = Field(default_factory=lambda: EndWinding())
+    end_winding: EndWinding = Field(default_factory=lambda: EndWinding())
     """End Winding's definition"""
     is_reverse_layer: bool = False
     """True to reverse the layers (rad from False to Nrad-True => Nrad-True to False)"""

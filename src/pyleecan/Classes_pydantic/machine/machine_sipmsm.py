@@ -30,9 +30,9 @@ class MachineSIPMSM(MachineSync):
         Default: Lamination()
     """
 
-    rotor: LamSlotM | None = Field(default_factory=lambda: LamSlotM())
+    rotor: LamSlotM = Field(default_factory=lambda: LamSlotM())
     """Machine's Rotor"""
-    stator: Lamination | None = Field(default_factory=lambda: Lamination())
+    stator: Lamination = Field(default_factory=lambda: Lamination())
     """Machine's Stator"""
 
     _package: ClassVar[str] = "Machine"

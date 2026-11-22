@@ -27,9 +27,9 @@ class Conductor(LegacyModel):
     COND_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][0].copy()
     INS_COLOR: ClassVar = config_dict["PLOT"]["COLOR_DICT"]["PHASE_COLORS"][1].copy()
 
-    cond_mat: Material | None = Field(default_factory=lambda: Material())
+    cond_mat: Material = Field(default_factory=lambda: Material())
     """Material of the conductor"""
-    ins_mat: Material | None = Field(default_factory=lambda: Material())
+    ins_mat: Material = Field(default_factory=lambda: Material())
     """Material of the insulation"""
 
     _package: ClassVar[str] = "Machine"

@@ -117,11 +117,11 @@ class HoleM51(HoleMag):
     """magnet_0 position"""
     W7: float = Field(default=0, ge=0, json_schema_extra={"unit": "m"})
     """magnet_0 width"""
-    magnet_0: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_0: Magnet = Field(default_factory=lambda: Magnet())
     """First Magnet"""
-    magnet_1: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_1: Magnet = Field(default_factory=lambda: Magnet())
     """Second Magnet"""
-    magnet_2: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_2: Magnet = Field(default_factory=lambda: Magnet())
     """Third Magnet"""
 
     _package: ClassVar[str] = "Slot"

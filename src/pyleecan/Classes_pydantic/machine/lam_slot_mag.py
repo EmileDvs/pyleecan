@@ -37,7 +37,7 @@ class LamSlotMag(LamSlotM):
         Default: Magnet()
     """
 
-    magnet: Magnet | None = Field(default_factory=lambda: import_class("Magnet")())
+    magnet: Magnet = Field(default_factory=lambda: import_class("Magnet")())
     """Magnet of the lamination"""
 
     _package: ClassVar[str] = "Machine"

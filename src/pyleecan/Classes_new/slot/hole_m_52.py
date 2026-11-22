@@ -80,7 +80,7 @@ class HoleM52(HoleMag):
     """Tooth width"""
     H2: float = field(default=0.02, metadata={"unit": "m", "min": 0})
     """Additional depth for the magnet"""
-    magnet_0: Magnet | None = field(
+    magnet_0: Magnet = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """Magnet of the hole"""

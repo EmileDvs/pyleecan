@@ -51,26 +51,26 @@ class Material(LegacyClass):
     """name of the material"""
     is_isotropic: bool = False
     """If Isotropic, uniformity in all orientations"""
-    elec: MatElectrical | None = field(
+    elec: MatElectrical = field(
         default_factory=lambda: MatElectrical(),
         metadata={"default_class": "MatElectrical"},
     )
     """Electrical properties of the material"""
-    mag: MatMagnetics | None = field(
+    mag: MatMagnetics = field(
         default_factory=lambda: MatMagnetics(),
         metadata={"default_class": "MatMagnetics"},
     )
     """Magnetic properties of the material"""
-    struct: MatStructural | None = field(
+    struct: MatStructural = field(
         default_factory=lambda: MatStructural(),
         metadata={"default_class": "MatStructural"},
     )
     """Structural properties of the material"""
-    HT: MatHT | None = field(
+    HT: MatHT = field(
         default_factory=lambda: MatHT(), metadata={"default_class": "MatHT"}
     )
     """Heat Transfer properties of the material"""
-    eco: MatEconomical | None = field(
+    eco: MatEconomical = field(
         default_factory=lambda: MatEconomical(),
         metadata={"default_class": "MatEconomical"},
     )

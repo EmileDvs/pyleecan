@@ -19,7 +19,7 @@ class GUIOption(LegacyModel):
         Default: Unit()
     """
 
-    unit: Unit | None = Field(default_factory=lambda: Unit())
+    unit: Unit = Field(default_factory=lambda: Unit())
     """Unit options"""
 
     _package: ClassVar[str] = "GUIOption"

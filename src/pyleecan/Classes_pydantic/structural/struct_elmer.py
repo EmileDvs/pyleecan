@@ -86,7 +86,7 @@ class StructElmer(Structural):
     """global coefficient to adjust mesh fineness in FEMM (1 : default , > 1 : finner , < 1 : less fine)"""
     path_name: str = ""
     """Name of the path to save the FEA model"""
-    FEA_dict_enforced: dict[str, Any] | None = Field(default_factory=dict)
+    FEA_dict_enforced: dict[str, Any] = Field(default_factory=dict)
     """To enforce user-defined values for FEA main parameters """
     is_get_mesh: bool = False
     """To save FEA mesh for latter post-procesing (only possible with is_save_FEA set to True)"""

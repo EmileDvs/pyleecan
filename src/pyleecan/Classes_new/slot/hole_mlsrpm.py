@@ -84,7 +84,7 @@ class HoleMLSRPM(HoleMag):
     """Radius 2"""
     R3: float = field(default=0.0165, metadata={"unit": "m"})
     """Radius 3"""
-    magnet_0: Magnet | None = field(
+    magnet_0: Magnet = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """Magnet of the hole"""

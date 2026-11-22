@@ -60,11 +60,11 @@ class MeshSolution(LegacyClass):
 
     label: str = ""
     """(Optional) Descriptive name of the mesh"""
-    mesh: Mesh | None = field(
+    mesh: Mesh = field(
         default_factory=lambda: Mesh(), metadata={"default_class": "Mesh"}
     )
     """A Mesh object. """
-    solution_dict: dict[str, Solution] | None = field(default_factory=dict)
+    solution_dict: dict[str, Solution] = field(default_factory=dict)
     """A dictionary of Solution objects"""
     group: dict[str, Any] | None = None
     """Dict sorted by groups name with list of elements indices. """

@@ -26,7 +26,7 @@ class DriveWave(Drive):
         Default: Import()
     """
 
-    wave: Import | None = field(
+    wave: Import = field(
         default_factory=lambda: Import(), metadata={"default_class": "Import"}
     )
     """Wave generator"""

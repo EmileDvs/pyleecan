@@ -23,7 +23,7 @@ class OutMagFEMM(OutInternal):
 
     FEMM_dict: dict[str, Any] | None = None
     """dictionary containing the main FEMM parameters"""
-    handler_list: list[Any] | None = Field(default_factory=list)
+    handler_list: list[Any] = Field(default_factory=list)
     """List of FEMM Handler (more than 1 if nb_worker >1)"""
 
     _package: ClassVar[str] = "Output"

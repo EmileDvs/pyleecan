@@ -28,7 +28,7 @@ class Magnet(LegacyModel):
         Default: 1; Minimum: 1
     """
 
-    mat_type: Material | None = Field(default_factory=lambda: Material())
+    mat_type: Material = Field(default_factory=lambda: Material())
     """The Magnet material"""
     type_magnetization: int = Field(default=0, ge=0, le=3)
     """Permanent magnet magnetization type: 0 for radial, 1 for parallel, 2 for Hallbach, 3 Tangential"""

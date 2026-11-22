@@ -69,7 +69,7 @@ class HoleM63(HoleMag):
     """Magnet height"""
     top_flat: bool = False
     """top flat = True, if curve top_flat = False """
-    magnet_0: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_0: Magnet = Field(default_factory=lambda: Magnet())
     """First Magnet"""
 
     _package: ClassVar[str] = "Slot"

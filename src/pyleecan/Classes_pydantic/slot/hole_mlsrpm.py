@@ -83,7 +83,7 @@ class HoleMLSRPM(HoleMag):
     """Radius 2"""
     R3: float = Field(default=0.0165, json_schema_extra={"unit": "m"})
     """Radius 3"""
-    magnet_0: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_0: Magnet = Field(default_factory=lambda: Magnet())
     """Magnet of the hole"""
 
     _package: ClassVar[str] = "Slot"

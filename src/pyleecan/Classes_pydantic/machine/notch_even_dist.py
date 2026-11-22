@@ -27,7 +27,7 @@ class NotchEvenDist(Notch):
 
     alpha: float = Field(default=0, json_schema_extra={"unit": "rad"})
     """angular positon of the first notch (0 is middle of first tooth)"""
-    notch_shape: Slot | None = Field(default_factory=lambda: Slot())
+    notch_shape: Slot = Field(default_factory=lambda: Slot())
     """Shape of the Notch"""
 
     _package: ClassVar[str] = "Machine"

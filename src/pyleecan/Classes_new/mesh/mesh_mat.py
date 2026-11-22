@@ -48,9 +48,9 @@ class MeshMat(Mesh):
         Default: False
     """
 
-    element_dict: dict[str, ElementMat] | None = field(default_factory=dict)
+    element_dict: dict[str, ElementMat] = field(default_factory=dict)
     """Storing connectivity"""
-    node: NodeMat | None = field(
+    node: NodeMat = field(
         default_factory=lambda: NodeMat(), metadata={"default_class": "NodeMat"}
     )
     """Storing nodes"""

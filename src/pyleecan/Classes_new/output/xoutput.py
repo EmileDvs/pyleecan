@@ -62,11 +62,11 @@ class XOutput(Output):
     FONT_SIZE_LABEL = config_dict["PLOT"]["FONT_SIZE_LABEL"]
     FONT_SIZE_LEGEND = config_dict["PLOT"]["FONT_SIZE_LEGEND"]
 
-    paramexplorer_list: list[ParamExplorer] | None = field(default_factory=list)
+    paramexplorer_list: list[ParamExplorer] = field(default_factory=list)
     """List containing ParamExplorer"""
-    output_list: list[Output] | None = field(default_factory=list)
+    output_list: list[Output] = field(default_factory=list)
     """List containing Output (or Xoutput) for each simulation"""
-    xoutput_dict: dict[str, DataKeeper] | None = field(default_factory=dict)
+    xoutput_dict: dict[str, DataKeeper] = field(default_factory=dict)
     """dictionary containing DataKeeper"""
     nb_simu: int = field(default=0, metadata={"min": 0})
     """Number of simulations excluding reference simulation"""

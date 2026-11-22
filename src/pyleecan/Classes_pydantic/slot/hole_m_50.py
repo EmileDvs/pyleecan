@@ -113,9 +113,9 @@ class HoleM50(HoleMag):
     """Slot top height"""
     W4: float = Field(default=0.01, ge=0, json_schema_extra={"unit": "m"})
     """Magnet Width"""
-    magnet_0: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_0: Magnet = Field(default_factory=lambda: Magnet())
     """First Magnet"""
-    magnet_1: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_1: Magnet = Field(default_factory=lambda: Magnet())
     """Second Magnet"""
 
     _package: ClassVar[str] = "Slot"

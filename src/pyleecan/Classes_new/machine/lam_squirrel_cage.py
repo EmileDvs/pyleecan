@@ -58,7 +58,7 @@ class LamSquirrelCage(LamSlotWind):
     """short circuit ring section radial height [m]"""
     Lscr: float = field(default=0.015, metadata={"unit": "m", "min": 0})
     """short circuit ring section axial length"""
-    ring_mat: Material | None = field(
+    ring_mat: Material = field(
         default_factory=lambda: Material(), metadata={"default_class": "Material"}
     )
     """Material of the Rotor short circuit ring"""

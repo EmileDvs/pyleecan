@@ -30,11 +30,11 @@ class MachineSIPMSM(MachineSync):
         Default: Lamination()
     """
 
-    rotor: LamSlotM | None = field(
+    rotor: LamSlotM = field(
         default_factory=lambda: LamSlotM(), metadata={"default_class": "LamSlotM"}
     )
     """Machine's Rotor"""
-    stator: Lamination | None = field(
+    stator: Lamination = field(
         default_factory=lambda: Lamination(), metadata={"default_class": "Lamination"}
     )
     """Machine's Stator"""

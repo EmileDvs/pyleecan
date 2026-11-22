@@ -42,7 +42,7 @@ class SlotUD(Slot):
         Default: ""
     """
 
-    line_list: list[Line] | None = Field(default_factory=list)
+    line_list: list[Line] = Field(default_factory=list)
     """list of line to draw the edges of the slot"""
     wind_begin_index: int | None = None
     """Index of the first line to include in the winding"""

@@ -54,7 +54,7 @@ class Hole(LegacyModel):
 
     Zh: int = Field(default=36, ge=0)
     """Number of Hole around the circumference"""
-    mat_void: Material | None = Field(default_factory=lambda: Material())
+    mat_void: Material = Field(default_factory=lambda: Material())
     """Material of the void part of the hole (Air in general)"""
     magnetization_dict_offset: dict[str, Any] | None = None
     """Dictionary add an offset to the magnetization direction of the magnets (key=magnet_X, value=angle[rad])"""

@@ -84,7 +84,7 @@ class HoleM52R(HoleMag):
     """Void width"""
     H2: float = Field(default=0.02, ge=0, json_schema_extra={"unit": "m"})
     """Additional depth for the magnet"""
-    magnet_0: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_0: Magnet = Field(default_factory=lambda: Magnet())
     """Magnet of the hole"""
     R0: float = Field(default=0, ge=0, json_schema_extra={"unit": "m"})
     """Void corner radius"""

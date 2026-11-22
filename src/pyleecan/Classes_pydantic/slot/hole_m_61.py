@@ -94,13 +94,13 @@ class HoleM61(HoleMag):
     """Magnet height"""
     H2: float | None = Field(default=None, ge=0, json_schema_extra={"unit": "m"})
     """Distance beetween the lamination bore and top of the slot"""
-    magnet_0: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_0: Magnet = Field(default_factory=lambda: Magnet())
     """First Magnet"""
-    magnet_1: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_1: Magnet = Field(default_factory=lambda: Magnet())
     """Second Magnet"""
-    magnet_2: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_2: Magnet = Field(default_factory=lambda: Magnet())
     """Third Magnet"""
-    magnet_3: Magnet | None = Field(default_factory=lambda: Magnet())
+    magnet_3: Magnet = Field(default_factory=lambda: Magnet())
     """Fourth Magnet"""
 
     _package: ClassVar[str] = "Slot"

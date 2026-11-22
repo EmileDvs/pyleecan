@@ -22,7 +22,7 @@ class MachineUD(Machine):
         Default: True
     """
 
-    lam_list: list[Lamination] | None = field(default_factory=list)
+    lam_list: list[Lamination] = field(default_factory=list)
     """List of Lamination"""
     is_sync: bool = True
     """True if the machine should be handled as a Synchronous machine"""

@@ -24,11 +24,11 @@ class MachineSRM(MachineSync):
         Default: LamSlotWind()
     """
 
-    rotor: LamSlot | None = field(
+    rotor: LamSlot = field(
         default_factory=lambda: LamSlot(), metadata={"default_class": "LamSlot"}
     )
     """Machine's Rotor"""
-    stator: LamSlotWind | None = field(
+    stator: LamSlotWind = field(
         default_factory=lambda: LamSlotWind(), metadata={"default_class": "LamSlotWind"}
     )
     """Machine's Stator"""

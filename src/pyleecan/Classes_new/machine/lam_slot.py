@@ -30,7 +30,7 @@ class LamSlot(Lamination):
         Default: Slot()
     """
 
-    slot: Slot | None = field(
+    slot: Slot = field(
         default_factory=lambda: Slot(), metadata={"default_class": "Slot"}
     )
     """lamination Slot"""

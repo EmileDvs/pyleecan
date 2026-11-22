@@ -29,7 +29,7 @@ class LamSlot(Lamination):
         Default: Slot()
     """
 
-    slot: Slot | None = Field(default_factory=lambda: Slot())
+    slot: Slot = Field(default_factory=lambda: Slot())
     """lamination Slot"""
 
     _package: ClassVar[str] = "Machine"

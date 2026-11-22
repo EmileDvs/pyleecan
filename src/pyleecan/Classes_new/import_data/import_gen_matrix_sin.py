@@ -27,7 +27,7 @@ class ImportGenMatrixSin(ImportMatrix):
         Default: []
     """
 
-    sin_list: list[ImportGenVectSin] | None = field(default_factory=list)
+    sin_list: list[ImportGenVectSin] = field(default_factory=list)
     """List of sinus vector to generate the matrix lines"""
 
     _package: ClassVar[str] = "Import"

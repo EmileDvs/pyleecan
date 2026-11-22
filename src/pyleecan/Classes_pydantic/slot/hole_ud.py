@@ -31,9 +31,9 @@ class HoleUD(HoleMag):
 
     IS_SYMMETRICAL: ClassVar = 1
 
-    surf_list: list[Surface] | None = Field(default_factory=list)
+    surf_list: list[Surface] = Field(default_factory=list)
     """List of surface to draw the Hole. Surfaces must be ordered in trigo order, label must contain HoleMagnet for Magnet and Hole for holes"""
-    magnet_dict: dict[str, Magnet] | None = Field(default_factory=dict)
+    magnet_dict: dict[str, Magnet] = Field(default_factory=dict)
     """dictionary with the magnet for the Hole (None to remove magnet, key should be magnet_X)"""
     name: str = ""
     """Name of the hole (for save)"""

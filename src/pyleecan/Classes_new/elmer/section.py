@@ -39,9 +39,9 @@ class Section(Elmer):
     comment: str = ""
     """Section global comment"""
 
-    _statements: dict[str, Any] | None = field(default_factory=dict)
+    _statements: dict[str, Any] = field(default_factory=dict)
     """internal dict to store the sections statements"""
-    _comments: dict[str, Any] | None = field(default_factory=dict)
+    _comments: dict[str, Any] = field(default_factory=dict)
     """internal dict to store comments on single statements"""
     _package: ClassVar[str] = "Elmer"
     """Name of the package of the legacy class module"""

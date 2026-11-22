@@ -101,11 +101,11 @@ class HoleM53(HoleMag):
     """Magnet Width"""
     W4: float = field(default=0.01, metadata={"unit": "rad", "min": 0})
     """Slot angle"""
-    magnet_0: Magnet | None = field(
+    magnet_0: Magnet = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """First Magnet"""
-    magnet_1: Magnet | None = field(
+    magnet_1: Magnet = field(
         default_factory=lambda: Magnet(), metadata={"default_class": "Magnet"}
     )
     """Second Magnet"""

@@ -55,15 +55,13 @@ class MatMagnetics(LegacyModel):
     """temperature coefficient for remanent flux density"""
     Wlam: float = Field(default=0, ge=0, json_schema_extra={"unit": "m"})
     """lamination sheet width without insulation [m] (0 == not laminated)"""
-    BH_curve: ImportMatrix | None = Field(default_factory=lambda: ImportMatrix())
+    BH_curve: ImportMatrix = Field(default_factory=lambda: ImportMatrix())
     """nonlinear B(H) curve (two columns matrix, H and B(H))"""
-    LossData: ImportMatrix | None = Field(
+    LossData: ImportMatrix = Field(
         default_factory=lambda: ImportMatrix(), json_schema_extra={"unit": "W/kg"}
     )
     """specific loss data value triplets, i.e. B, f, P"""
-    ModelBH: _field_type_ModelBH | None = Field(
-        default_factory=lambda: _field_type_ModelBH()
-    )
+    ModelBH: _field_type_ModelBH = Field(default_factory=lambda: _field_type_ModelBH())
     """a model of BH curve with an analytical expression"""
     is_BH_extrapolate: bool = False
     """True to use ModelBH to fit input data and extrapolate BH curve"""

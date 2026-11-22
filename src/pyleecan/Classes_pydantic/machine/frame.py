@@ -51,7 +51,7 @@ class Frame(LegacyModel):
     """frame internal radius"""
     Rext: float = Field(default=0.2, ge=0, json_schema_extra={"unit": "m"})
     """Frame external radius"""
-    mat_type: Material | None = Field(default_factory=lambda: Material())
+    mat_type: Material = Field(default_factory=lambda: Material())
     """Frame material"""
 
     _package: ClassVar[str] = "Machine"

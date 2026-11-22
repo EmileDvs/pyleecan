@@ -47,9 +47,9 @@ class MeshMat(Mesh):
         Default: False
     """
 
-    element_dict: dict[str, ElementMat] | None = Field(default_factory=dict)
+    element_dict: dict[str, ElementMat] = Field(default_factory=dict)
     """Storing connectivity"""
-    node: NodeMat | None = Field(default_factory=lambda: NodeMat())
+    node: NodeMat = Field(default_factory=lambda: NodeMat())
     """Storing nodes"""
     sym: int = 1
     """Spatial symmetry factor"""

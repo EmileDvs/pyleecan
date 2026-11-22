@@ -21,7 +21,7 @@ class VarParam(VarSimu):
 
     NAME: ClassVar = "Parameter Sweep"
 
-    paramexplorer_list: list[ParamExplorer] | None = Field(default_factory=list)
+    paramexplorer_list: list[ParamExplorer] = Field(default_factory=list)
     """List containing ParamSetter to define every simulation"""
 
     _package: ClassVar[str] = "Simulation"
