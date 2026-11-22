@@ -258,9 +258,6 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   pydantic `ValidationError` chained as `__cause__`), an unknown constructor
   argument a `TypeError`, an unknown attribute an `AttributeError`. The
   target base `PyleecanModel` keeps the pydantic `ValidationError`.
-
-### Changed
-
 - **Containers passed explicitly** (Steps 16-17): the methods reading their
   container take it as an optional argument through the class families
   (`lam` for the slot, hole, winding, bore and notch helpers, `machine` for
