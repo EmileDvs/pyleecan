@@ -677,9 +677,16 @@ generated first so that the same passes rewrite its calls.
       Left: `Functions_new/load_switch.py` (`from ..Classes.import_all import
       *`), a legacy registry imported by no new module: to drop from the
       functions generator (the class lookup replaces it).
-- [ ] `Gen_*` classes generated from `ClassInfo` (min, max, unit,
+- [x] (2026-11-22) `Gen_*` classes generated from `ClassInfo` (min, max,
       description) instead of the CSV files (`Generator/gui_generator.py`),
-      so that they survive the Phase 2 removal of the CSV files.
+      so that they survive the Phase 2 removal of the CSV files:
+      `write_gen_classes` (GUI generator) writes the 64 modules from the
+      `gen_list.json` files, the metadata read in a new process
+      (`widget_metadata`: the classes just generated). Checked against the
+      modules of the legacy generator: same limits and help texts, except
+      `Winding.is_reverse_wind` ("True to reverse...", the description of
+      the new class, "1 to reverse..." in the CSV). The units are not used
+      by the `Gen_` classes (set by the pages: `lf_x.unit = "m"`).
 - [x] (2026-11-22) Validation errors: one contract whatever the backend
       (decided 2026-11-22: conversion in `LegacyModel`). The pydantic legacy
       layer re-raises the `ValidationError` as the legacy errors
@@ -764,8 +771,12 @@ generated first so that the same passes rewrite its calls.
       (xdist controller only).
 - [ ] Left: the stator winding flux plot of `SSimu` with one time step
       (`plot_2D_Data` label None, as legacy).
-- [ ] The GUI calls of the logger chain (Step 9) and of the moved functions
-      (Step 6, Step 8) rewritten by the same passes.
+- [x] (2026-11-22, checked) The GUI calls of the logger chain (Step 9) and
+      of the moved functions (Step 6, Step 8) are rewritten by the same
+      passes: the 14 `get_logger(obj)` calls of `GUI_new` (`SSimu`,
+      `DMatSetup`) use `classes_common.logger_context`, and no `GUI_new`
+      module imports one of the 80 deprecated alias modules of
+      `Functions_new`.
 - [x] Decided (2026-11-21): both `GUI_new` (dataclass + dacite) and
       `GUI_pydantic` are kept, for the final backend comparison (Step 18:
       the same GUI scenarios run on each backend).

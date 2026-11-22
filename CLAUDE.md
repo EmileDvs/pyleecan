@@ -82,7 +82,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `moved_functions.py` | Legacy functions moved to a class as methods (`MOVED_FUNCTIONS`), deprecated aliases at the old paths |
 | `generate_function_new_classes.py` | `Functions_new` |
 | `generate_function_pydantic.py` | `Functions_pydantic` from `Functions_new` |
-| `generate_gui_new.py` | `GUI_new` from `GUI` (method pipeline, GUI imports redirected), `GUI_pydantic` from `GUI_new` (imports) |
+| `generate_gui_new.py` | `GUI_new` from `GUI` (method pipeline, GUI imports redirected; `Gen_*` widget setup from `ClassInfo` and the `gen_list.json` files), `GUI_pydantic` from `GUI_new` (imports) |
 | `generate_test_new_classes.py` | `Tests/New` tree from the legacy tests |
 
 Full regeneration:

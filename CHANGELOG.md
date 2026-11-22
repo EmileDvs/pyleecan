@@ -238,6 +238,9 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 - The class generator no longer imports generated code (it read the legacy
   class names from the generated `Functions_new`).
 
+- **GUI widget limits and help from the classes**: the `Gen_*` modules of
+  `GUI_new` / `GUI_pydantic` (spinbox and float edit limits, tooltips) are
+  written from `ClassInfo` instead of the CSV class definitions.
 - **Validation errors of the pydantic classes (legacy layer)**: a rejected
   value raises the legacy errors (`CheckMinError`, `CheckMaxError`,
   `CheckTypeError`, same message as the legacy and dataclass classes; the

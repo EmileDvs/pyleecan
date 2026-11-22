@@ -187,3 +187,41 @@ def test_clear_gui_results(tmp_path):
     assert folder.is_dir() and not any(folder.iterdir())
     clear_gui_results(tmp_path / "New")  # Created when missing
     assert (tmp_path / "New").is_dir()
+
+
+def test_gen_class_source():
+    from pyleecan.Generator.ClassGenerator.New.generate_gui_new import (
+        MAX_SPIN,
+        gen_class_source,
+    )
+
+    gen_list = [
+        {"cls": "Hole", "name": "Zh", "widget": ["in_Zh", "si_Zh"]},
+        {"cls": "VentilationCirc", "name": "D0", "widget": "lf_D0"},
+    ]
+    metadata = {
+        ("Hole", "Zh"): {"min": 0, "max": None, "desc": "Number of 'holes'"},
+        ("VentilationCirc", "D0"): {"min": 0.0, "max": 1e-3, "desc": "Diameter"},
+    }
+    source = gen_class_source("PVent", ".Ui_PVent", gen_list, metadata)
+    assert "from .Ui_PVent import Ui_PVent\n" in source
+    assert "class Gen_PVent(Ui_PVent):" in source
+    assert "        self.si_Zh.setMinimum(0)\n" in source
+    assert f"        self.si_Zh.setMaximum({MAX_SPIN})\n" in source
+    assert "self.in_Zh.setMinimum" not in source  # Label: help only
+    assert "        txt = self.tr(\"Number of 'holes'\")\n" in source
+    assert "        self.lf_D0.validator().setBottom(0)\n" in source
+    assert "        self.lf_D0.validator().setTop(0.001)\n" in source
+    compile(source, "Gen_PVent.py", "exec")
+
+
+def test_widget_metadata_from_class_info():
+    from pyleecan.Generator.ClassGenerator.New.generate_gui_new import widget_metadata
+
+    metadata = widget_metadata([("VentilationCirc", "D0"), ("Hole", "Zh")])
+    assert metadata[("VentilationCirc", "D0")] == {
+        "min": 0,
+        "max": None,
+        "desc": "Hole diameters",
+    }
+    assert metadata[("Hole", "Zh")]["min"] == 0

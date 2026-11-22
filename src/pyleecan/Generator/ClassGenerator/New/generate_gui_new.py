@@ -446,6 +446,9 @@ def generate_gui(root=None, gen_dict=None):
             fixes=GUI_LEGACY_FIXES,
         )
     }
+    # The Gen_ modules (widget limits and help) from ClassInfo, not from the
+    # CSV files of the legacy GUI generator (removed in Phase 2)
+    write_gen_classes(root / LEGACY_GUI_PACKAGE, dataclass_dir)
     # Functions moved to the GUI (moved_functions.MOVED_MODULES)
     for legacy, new in sorted(MOVED_MODULES.items()):
         if not new.startswith(GUI_TARGET):
@@ -464,6 +467,173 @@ def generate_gui(root=None, gen_dict=None):
     written[pydantic_dir.name] = _write_tree(
         dataclass_dir, pydantic_dir, pydantic_gui_source
     )
+    return written
+
+
+GEN_LIST = "gen_list.json"
+"""Widgets of a Qt Designer module set up from the class properties
+(legacy GUI generator: ``Generator/gui_generator.py``)"""
+
+MIN_SPIN = -999999
+MAX_SPIN = 999999
+"""Limits of a spinbox whose property has none (as the legacy GUI generator)"""
+
+_WIDGET_METADATA_SCRIPT = """
+import json, sys
+from pyleecan.Classes_new._class_info import ClassInfo
+class_dict = ClassInfo().get_dict()
+wanted = json.loads(sys.stdin.read())
+result = {}
+for class_name, name in wanted:
+    prop = next(p for p in class_dict[class_name]["properties"] if p["name"] == name)
+    result[class_name + "." + name] = {
+        "min": prop["min"], "max": prop["max"], "desc": prop["desc"]
+    }
+print(json.dumps(result))
+"""
+
+
+def widget_metadata(properties):
+    """Min, max and description of class properties, from ClassInfo.
+
+    Read in a new process: the class modules are the ones just generated,
+    not the ones imported before by the generator.
+
+    Parameters
+    ----------
+    properties : iterable
+        (class name, property name)
+
+    Returns
+    -------
+    metadata : dict
+        {(class name, property name): {"min", "max", "desc"}}
+    """
+    import json
+    import subprocess
+    import sys
+
+    wanted = sorted(set(properties))
+    completed = subprocess.run(
+        [sys.executable, "-c", _WIDGET_METADATA_SCRIPT],
+        input=json.dumps(wanted),
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    result = json.loads(completed.stdout.strip().splitlines()[-1])
+    return {tuple(key.split(".", 1)): value for key, value in result.items()}
+
+
+def _number(value):
+    """Limit as written in the setup code (an integral float as an int)."""
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    return repr(value)
+
+
+def gen_class_source(ui_name, ui_module, gen_list, metadata):
+    """Source of a ``Gen_`` class: widget limits and help texts.
+
+    Same code as the legacy GUI generator (``gen_gui_edit_file``), from the
+    class information (``ClassInfo``) instead of the CSV files.
+
+    Parameters
+    ----------
+    ui_name : str
+        Name of the Qt Designer module, without "Ui_" (e.g. "PVentCirc")
+    ui_module : str
+        Module of the Ui_ class, relative import (e.g. ".Ui_PVentCirc")
+    gen_list : list
+        Content of gen_list.json: {"cls", "name", "widget"}
+    metadata : dict
+        {(class name, property name): {"min", "max", "desc"}}
+
+    Returns
+    -------
+    source : str
+        Source of the Gen_ module
+    """
+    lines = [
+        f'"""File generated according to {ui_name}/gen_list.json and the class',
+        "information (ClassInfo): limits and help of the widgets.",
+        'WARNING! All changes made in this file will be lost!\n"""',
+        f"from {ui_module} import Ui_{ui_name}",
+        "",
+        "",
+        f"class Gen_{ui_name}(Ui_{ui_name}):",
+        f"    def setupUi(self, {ui_name}):",
+        '        """Set the widget limits and help texts (class information)"""',
+        f"        Ui_{ui_name}.setupUi(self, {ui_name})",
+    ]
+    for edit in gen_list:
+        data = metadata[(edit["cls"], edit["name"])]
+        widgets = edit["widget"] if isinstance(edit["widget"], list) else [edit["widget"]]
+        for widget in widgets:
+            lines.append(f"        # Setup of {widget}")
+            kind = widget.split("_")[0]
+            if kind == "si":  # SpinBox
+                vmin = MIN_SPIN if data["min"] is None else data["min"]
+                vmax = MAX_SPIN if data["max"] is None else data["max"]
+                lines.append(f"        self.{widget}.setMinimum({_number(vmin)})")
+                lines.append(f"        self.{widget}.setMaximum({_number(vmax)})")
+            elif kind == "lf":  # FloatEdit
+                if data["min"] is not None:
+                    lines.append(
+                        f"        self.{widget}.validator().setBottom({_number(data['min'])})"
+                    )
+                if data["max"] is not None:
+                    lines.append(
+                        f"        self.{widget}.validator().setTop({_number(data['max'])})"
+                    )
+            lines.append(f"        txt = self.tr({data['desc']!r})")
+            lines.append(f"        self.{widget}.setWhatsThis(txt)")
+            lines.append(f"        self.{widget}.setToolTip(txt)")
+            lines.append("")
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def write_gen_classes(legacy_dir, target_dir, metadata=None):
+    """Write the Gen_ modules of GUI_new from the gen_list.json files.
+
+    Parameters
+    ----------
+    legacy_dir : Path
+        Legacy GUI folder (gen_list.json files, next to the .ui modules)
+    target_dir : Path
+        GUI_new folder
+    metadata : dict, optional
+        Property metadata (default: widget_metadata of the listed properties)
+
+    Returns
+    -------
+    written : list
+        Paths of the written modules
+    """
+    import json
+
+    gen_lists = {
+        path: json.loads(path.read_text(encoding="utf-8"))
+        for path in sorted(Path(legacy_dir).rglob(GEN_LIST))
+    }
+    if metadata is None:
+        metadata = widget_metadata(
+            (edit["cls"], edit["name"])
+            for gen_list in gen_lists.values()
+            for edit in gen_list
+        )
+    written = []
+    for path, gen_list in gen_lists.items():
+        ui_names = [ui.stem[3:] for ui in path.parent.glob("Ui_*.py")]
+        if len(ui_names) != 1:
+            raise ValueError(f"{path}: one Ui_ module expected, {ui_names} found")
+        ui_name = ui_names[0]
+        target = Path(target_dir) / path.parent.relative_to(legacy_dir) / f"Gen_{ui_name}.py"
+        target.write_text(
+            gen_class_source(ui_name, f".Ui_{ui_name}", gen_list, metadata),
+            encoding="utf-8",
+        )
+        written.append(target)
     return written
 
 

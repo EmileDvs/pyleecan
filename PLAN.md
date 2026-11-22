@@ -326,8 +326,8 @@ passes rewrite its calls together with the methods.
       pipeline (class and function imports, keyword constructors, shared
       errors, `-1`/`None` conventions); Qt Designer modules (`Ui_*`) copied;
       `GUI_pydantic` from `GUI_new` by import rewriting.
-- [ ] Widget metadata from `ClassInfo`: the `Gen_*` classes (64, written by
-      the legacy GUI generator from the CSV files: min, max, unit, tooltip).
+- [x] Widget metadata from `ClassInfo`: the `Gen_*` classes (64, written by
+      the legacy GUI generator from the CSV files: min, max, tooltip).
 - [x] Input validation: one error contract for the GUI whatever the backend
       (the pydantic legacy layer raises the legacy `CheckError`s; the error
       shown on the field: Step 17).
