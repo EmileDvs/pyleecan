@@ -131,6 +131,7 @@ class HoleM62(HoleMag):
         delta: complex = 0,
         is_simplified: bool = False,
         lam: Lamination | None = None,
+        lam_label: str | None = None,
     ) -> list:
         """Compute the curve (Segment) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
@@ -148,6 +149,9 @@ class HoleM62(HoleMag):
             True to avoid line superposition
         lam : Lamination
             Lamination of the hole (default: the parent of the hole)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -159,7 +163,8 @@ class HoleM62(HoleMag):
         Rbo = self.get_Rbo(lam=lam)
 
         # Get correct label for surfaces
-        lam_label = lam.get_label()
+        if lam_label is None:
+            lam_label = lam.get_label()
         R_id, surf_type = self.get_R_id(lam=lam)
         mag_label = f"{lam_label}_{HOLEM_LAB}_R{R_id}-"
         vent_label = f"{lam_label}_{surf_type}_R{R_id}-"

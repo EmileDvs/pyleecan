@@ -26,7 +26,7 @@ def get_slot_desc_list(self, sym: int = 1, is_bore: bool = True) -> list:
         if self.slot_list[ii].is_bore == is_bore:
             slot = self.slot_list[ii]
             op = slot.comp_angle_opening()
-            lines = slot.build_geometry()
+            lines = slot.build_geometry(lam=self)
             # Apply rotation
             for line in lines:
                 line.rotate(self.alpha[ii])

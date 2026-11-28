@@ -211,7 +211,7 @@ class LamSlotMulti(Lamination):
             if self.slot_list[ii].is_bore == is_bore:
                 slot = self.slot_list[ii]
                 op = slot.comp_angle_opening()
-                lines = slot.build_geometry()
+                lines = slot.build_geometry(lam=self)
                 # Apply rotation
                 for line in lines:
                     line.rotate(self.alpha[ii])

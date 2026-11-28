@@ -25,7 +25,7 @@ def comp_surface_wedges(self, Ndisc: int = 200, lam: Lamination | Notch | None =
 
     """
 
-    surf_list = self.get_surface_wedges(lam=lam)
+    surf_list = self.get_surface_wedges(lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False))
 
     S = 0
     for surf in surf_list:

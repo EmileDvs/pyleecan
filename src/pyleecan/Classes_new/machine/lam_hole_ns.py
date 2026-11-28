@@ -77,7 +77,9 @@ class LamHoleNS(LamH):
                 mag_id = int(magnet_name.split("_")[-1])
                 mag = hole.get_magnet_by_id(mag_id)
                 if mag is not None:
-                    for surf in hole.build_geometry(lam=self):
+                    for surf in hole.build_geometry(
+                        lam=self, lam_label=self.get_label(is_add_id=False)
+                    ):
                         label_dict = decode_label(surf.label)
                         if (
                             HOLEM_LAB in label_dict["surf_type"]
@@ -120,7 +122,9 @@ class LamHoleNS(LamH):
                 mag_id = int(magnet_name.split("_")[-1])
                 mag = hole.get_magnet_by_id(mag_id)
                 if mag is not None:
-                    for surf in hole.build_geometry(lam=self):
+                    for surf in hole.build_geometry(
+                        lam=self, lam_label=self.get_label(is_add_id=False)
+                    ):
                         label_dict = decode_label(surf.label)
                         if (
                             HOLEM_LAB in label_dict["surf_type"]
@@ -195,13 +199,18 @@ class LamHoleNS(LamH):
             alpha=alpha,
             delta=delta,
             is_circular_radius=is_circular_radius,
+            machine=machine,
         )
 
         # Holes surface(s)
         ii = 0
         for hole in self.hole_north:
             # Create the first hole surface(s)
-            surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh, lam=self)
+            surf_hole = hole.build_geometry(
+                alpha=np.pi / hole.Zh,
+                lam=self,
+                lam_label=self.get_label(machine=machine),
+            )
             surf_list.extend(
                 Hole.transform_hole_surf(
                     hole_surf_list=surf_hole,
@@ -213,7 +222,11 @@ class LamHoleNS(LamH):
             )
         # Holes surface(s)
         for hole in self.hole_south:
-            surf_hole = hole.build_geometry(alpha=2 * np.pi / hole.Zh, lam=self)
+            surf_hole = hole.build_geometry(
+                alpha=2 * np.pi / hole.Zh,
+                lam=self,
+                lam_label=self.get_label(machine=machine),
+            )
             surf_list.extend(
                 Hole.transform_hole_surf(
                     hole_surf_list=surf_hole,

@@ -25,14 +25,14 @@ def get_label(self, is_add_id: bool = True, machine: Machine | None = None) -> s
         Label of the lamination
 
     """
-    machine = container_or_parent(self, machine, "machine")
-
     if self.is_stator:
         label = STATOR_LAB
     else:
         label = ROTOR_LAB
 
     if is_add_id:
+        # Only the index needs the machine
+        machine = container_or_parent(self, machine, "machine")
         if machine is not None:
             try:
                 lam_list = machine.get_lam_list(is_int_to_ext=True, key=label)

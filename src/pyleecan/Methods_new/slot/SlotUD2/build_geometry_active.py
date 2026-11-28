@@ -5,7 +5,7 @@ if TYPE_CHECKING:
     from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None):
+def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None, lam_label: str | None = None):
     """Split the slot active area in several zone
     This method assume that the active area is centered on X axis and symetrical
     Otherwise a dedicated build_geometry_active method must be provided
@@ -26,6 +26,9 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         complex for translation (Default value = 0)
     lam : Lamination or Notch, optional
         Lamination (or notch) holding the slot (default: the parent)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -41,7 +44,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
 
     if self.split_active_surf_dict is not None and key in self.split_active_surf_dict:
         surf_list = [surf.copy() for surf in self.split_active_surf_dict[key]]
-        self.set_label(surf_list, Nrad, Ntan, self.get_name_lam(lam=lam))
+        self.set_label(surf_list, Nrad, Ntan, self.get_name_lam(lam=lam, lam_label=lam_label))
         return surf_list
     else:
         return Slot.build_geometry_active(
@@ -50,5 +53,5 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
             Ntan=Ntan,
             alpha=alpha,
             delta=delta,
-            lam=lam,
+            lam=lam, lam_label=lam_label,
         )

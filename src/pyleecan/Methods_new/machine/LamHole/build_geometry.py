@@ -41,13 +41,13 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
     # getting the Lamination surface
     from ....Classes_new.slot.hole import Hole
     surf_list = Lamination.build_geometry(
-        self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius
+        self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius, machine=machine
     )
 
     # Holes surface(s)
     for hole in self.hole:
         # Create the first hole surface(s)
-        surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh, lam=self)
+        surf_hole = hole.build_geometry(alpha=np.pi / hole.Zh, lam=self, lam_label=self.get_label(machine=machine))
         surf_list.extend(
             Hole.transform_hole_surf(
                 hole_surf_list=surf_hole, Zh=hole.Zh, sym=sym, alpha=0, delta=0

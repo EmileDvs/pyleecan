@@ -278,7 +278,9 @@ class LamSlot(Lamination):
         """
 
         # Get notches closing surfaces
-        close_list = Lamination.get_surfaces_closing(self=self, sym=sym)
+        close_list = Lamination.get_surfaces_closing(
+            self=self, sym=sym, machine=machine
+        )
         if not hasattr(self.slot, "get_surface_opening"):
             return close_list
         else:  # Get slot closing surfaces (no surface if wedges)
@@ -286,7 +288,9 @@ class LamSlot(Lamination):
             # for slot to draw
             for ii in range(self.slot.Zs // sym):
                 slot_surf = self.slot.get_surface_opening(
-                    alpha=slot_pitch * ii + slot_pitch * 0.5, lam=self
+                    alpha=slot_pitch * ii + slot_pitch * 0.5,
+                    lam=self,
+                    lam_label=self.get_label(machine=machine),
                 )
                 for jj, surf in enumerate(slot_surf):
                     # Adapt the label

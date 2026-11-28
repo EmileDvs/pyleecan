@@ -106,6 +106,7 @@ class LamSquirrelCage(LamSlotWind):
             is_circular_radius=is_circular_radius,
             alpha=alpha,
             delta=delta,
+            machine=machine,
         )
 
         # Adapt the label

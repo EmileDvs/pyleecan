@@ -47,6 +47,7 @@ class NotchEvenDist(Notch):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | None = None,
+        lam_label: str | None = None,
     ) -> list:
         """Build the geometry of the keys inside the notch
 
@@ -64,6 +65,9 @@ class NotchEvenDist(Notch):
             Complex value for translation
         lam : Lamination, optional
             Lamination holding the notch (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: the label of the notch, which
+            reads the machine holding the lamination)
 
         Returns
         -------
@@ -75,14 +79,14 @@ class NotchEvenDist(Notch):
         surf_list = []
 
         # Get the original surface
-        Nsurf = self.notch_shape.get_surface_active(lam=self)
-        Nsurf.label = (
-            self.get_label(lam=lam) + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
-        )
+        if lam_label is None:
+            lam_label = self.get_label(lam=lam)
+        Nsurf = self.notch_shape.get_surface_active(lam=self, lam_label=lam_label)
+        Nsurf.label = lam_label + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
         Nsurf.rotate(angle=self.alpha)
         # Label definition
-        BC_prop_right = self.get_label(lam=lam) + "_" + YSNR_LAB
-        BC_prop_left = self.get_label(lam=lam) + "_" + YSNL_LAB
+        BC_prop_right = lam_label + "_" + YSNR_LAB
+        BC_prop_left = lam_label + "_" + YSNL_LAB
         # Generate all the surfaces (handle cut on sym axis)
         surf_list.extend(
             Hole.transform_hole_surf(

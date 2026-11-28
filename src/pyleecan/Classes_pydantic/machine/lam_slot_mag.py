@@ -97,6 +97,7 @@ class LamSlotMag(LamSlotM):
             alpha=alpha,
             delta=delta,
             is_circular_radius=is_circular_radius,
+            machine=machine,
         )
 
         Zs = self.slot.Zs
@@ -112,6 +113,7 @@ class LamSlotMag(LamSlotM):
                 alpha=alpha,
                 delta=delta,
                 lam=self,
+                lam_label=st,
             )
 
             # for each magnet to draw

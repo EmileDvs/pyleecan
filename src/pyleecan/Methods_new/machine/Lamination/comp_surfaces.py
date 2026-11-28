@@ -24,12 +24,12 @@ def comp_surfaces(self) -> dict:
 
     # Surface of the external disk
     if ext_shape is not None:
-        S_ext = ext_shape.comp_surface()
+        S_ext = ext_shape.comp_surface(lam=self)
     else:
         S_ext = (self.Rext**2) * np.pi
     # Surface of the internal disk
     if int_shape is not None:
-        S_int = int_shape.comp_surface()
+        S_int = int_shape.comp_surface(lam=self)
     else:
         S_int = (self.Rint**2) * np.pi
 

@@ -82,6 +82,7 @@ class LamSquirrelCageMag(LamSquirrelCage):
             is_circular_radius=is_circular_radius,
             alpha=alpha,
             delta=delta,
+            machine=machine,
         )
 
         # Holes surface(s)
@@ -97,7 +98,9 @@ class LamSquirrelCageMag(LamSquirrelCage):
             )  # For now only
             angle = 2 * np.pi / Zh
             # Create the first hole surface(s)
-            surf_hole = hole.build_geometry(alpha=np.pi / Zh)
+            surf_hole = hole.build_geometry(
+                alpha=np.pi / Zh, lam=self, lam_label=self.get_label(machine=machine)
+            )
 
             hole_surf_list = []
             # Copy the hole for Zh / sym

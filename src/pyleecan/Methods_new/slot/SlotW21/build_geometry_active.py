@@ -12,7 +12,7 @@ if TYPE_CHECKING:
     from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None):
+def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None, lam_label: str | None = None):
     """Split the slot winding area in several zone
 
     Parameters
@@ -29,6 +29,9 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
         complex for translation (Default value = 0)
     lam : Lamination or Notch, optional
         Lamination (or notch) holding the slot (default: the parent)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -39,7 +42,8 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
     lam = container_or_parent(self, lam, "lam")
 
     # get the name of the lamination
-    lam_label = lam.get_label()
+    if lam_label is None:
+        lam_label = lam.get_label()
 
     point_dict = self._comp_point_coordinate(lam=lam)
     Z2 = point_dict["Z2"]

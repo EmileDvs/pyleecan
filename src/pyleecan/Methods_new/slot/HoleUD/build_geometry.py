@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from ....Classes_new.machine.lamination import Lamination
 
 
-def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False, lam: Lamination | None = None) -> list:
+def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bool = False, lam: Lamination | None = None, lam_label: str | None = None) -> list:
     """Compute the curve (Segment) needed to plot the Hole.
     The ending point of a curve is the starting point of the next curve in
     the list
@@ -24,6 +24,9 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
         True to avoid line superposition (not used)
     lam : Lamination
         Lamination of the hole (default: the parent of the hole)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -36,7 +39,8 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, is_simplified: bo
 
     # Get correct label for surfaces
     if lam is not None:
-        lam_label = lam.get_label()
+        if lam_label is None:
+            lam_label = lam.get_label()
     else:
         lam_label = LAM_LAB
     R_id, surf_type = self.get_R_id(lam=lam)

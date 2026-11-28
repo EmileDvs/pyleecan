@@ -224,6 +224,7 @@ class HoleM61(HoleMag):
         delta: complex = 0,
         is_simplified: bool = False,
         lam: Lamination | None = None,
+        lam_label: str | None = None,
     ) -> list:
         """Compute the curve (Segment) needed to plot the Slot.
         The ending point of a curve is the starting point of the next curve in
@@ -241,6 +242,9 @@ class HoleM61(HoleMag):
             True to avoid line superposition
         lam : Lamination
             Lamination of the hole (default: the parent of the hole)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -252,7 +256,8 @@ class HoleM61(HoleMag):
         Rbo = self.get_Rbo(lam=lam)
 
         # Get correct label for surfaces
-        lam_label = lam.get_label()
+        if lam_label is None:
+            lam_label = lam.get_label()
         R_id, surf_type = self.get_R_id(lam=lam)
         vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
         mag_label = lam_label + "_" + HOLEM_LAB + "_R" + str(R_id) + "-"
@@ -972,7 +977,10 @@ class HoleM61(HoleMag):
             # magnet width only if magnet is visible
             if type_add_active == 2:
                 # Add magnet Id on the corresponding surfaces
-                for surf in self.build_geometry(lam=lam):
+                for surf in self.build_geometry(
+                    lam=lam,
+                    lam_label=None if lam is None else lam.get_label(is_add_id=False),
+                ):
                     label = surf.label
                     label_dict = decode_label(label)
                     point_ref = surf.point_ref

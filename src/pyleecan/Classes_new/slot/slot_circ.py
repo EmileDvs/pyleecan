@@ -424,6 +424,7 @@ class SlotCirc(Slot):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ) -> Surface:
         """Return the full active surface
 
@@ -437,6 +438,9 @@ class SlotCirc(Slot):
             complex number for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -463,7 +467,9 @@ class SlotCirc(Slot):
         # Create surface
         ZM = line_dict["M-2"].get_begin()
         Zmid = (self.get_Rbo(lam=lam) + ZM) / 2
-        label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
+        if lam_label is None:
+            lam_label = lam.get_label()
+        label = lam_label + "_" + WIND_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
         # Apply transformation
@@ -478,6 +484,7 @@ class SlotCirc(Slot):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
@@ -491,6 +498,9 @@ class SlotCirc(Slot):
             complex number for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------

@@ -34,7 +34,7 @@ def build_geometry(self, sym=1, alpha: float = 0, delta: complex = 0, is_circula
 
     # getting the Lamination surface
     surf_lam = LamSlot.build_geometry(
-        self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius
+        self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius, machine=machine
     )
 
     # getting the winding surface
@@ -62,7 +62,7 @@ def build_geometry(self, sym=1, alpha: float = 0, delta: complex = 0, is_circula
                     Nrad=Nrad,
                     Ntan=Ntan,
                     alpha=alpha,
-                    delta=delta,
+                    delta=delta, lam=self, lam_label=self.get_label(machine=machine),
                 )
 
                 # for each part of the winding surface in the slot

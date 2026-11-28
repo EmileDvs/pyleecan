@@ -24,7 +24,7 @@ def comp_radius(self, lam: Lamination | None = None):
 
     Rext = self.get_Rext(lam=lam)
 
-    surf_list = self.build_geometry(lam=lam)
+    surf_list = self.build_geometry(lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False))
     point_list = list()
     for curve in surf_list[0].line_list:
         point_list.extend(curve.discretize())

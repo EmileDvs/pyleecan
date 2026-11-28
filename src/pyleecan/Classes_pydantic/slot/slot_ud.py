@@ -129,6 +129,7 @@ class SlotUD(Slot):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ) -> Surface:
         """Return the full winding surface
 
@@ -142,6 +143,9 @@ class SlotUD(Slot):
             complex number for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -175,7 +179,9 @@ class SlotUD(Slot):
                 )
             )
 
-        label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
+        if lam_label is None:
+            lam_label = lam.get_label()
+        label = lam_label + "_" + WIND_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=line_list, label=label)
         surface.comp_point_ref(is_set=True)
 
@@ -191,6 +197,7 @@ class SlotUD(Slot):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
@@ -204,6 +211,9 @@ class SlotUD(Slot):
             complex number for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -236,7 +246,9 @@ class SlotUD(Slot):
         )
 
         curve_list = curve_list_start + [act_line] + curve_list_end + [bot_line]
-        label = lam.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
+        if lam_label is None:
+            lam_label = lam.get_label()
+        label = lam_label + "_" + SOP_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label)
         surface.comp_point_ref(is_set=True)
 

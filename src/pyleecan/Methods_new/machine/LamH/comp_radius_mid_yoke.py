@@ -20,7 +20,7 @@ def comp_radius_mid_yoke(self) -> float:
     Rmax = self.Rint
     for hole in self.get_hole_list():
         if type(hole) is not Hole:
-            (Rmin_hole, Rmax_hole) = hole.comp_radius()
+            (Rmin_hole, Rmax_hole) = hole.comp_radius(lam=self)
             Rmin = min(Rmin, Rmin_hole)
             Rmax = max(Rmax, Rmax_hole)
     if self.is_internal:

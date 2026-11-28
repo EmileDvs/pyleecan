@@ -89,6 +89,7 @@ class LamSlotMultiWind(LamSlotMulti):
             alpha=alpha,
             delta=delta,
             is_circular_radius=is_circular_radius,
+            machine=machine,
         )
 
         # getting the winding surface
@@ -117,6 +118,8 @@ class LamSlotMultiWind(LamSlotMulti):
                         Ntan=Ntan,
                         alpha=alpha,
                         delta=delta,
+                        lam=self,
+                        lam_label=self.get_label(machine=machine),
                     )
 
                     # for each part of the winding surface in the slot

@@ -139,7 +139,9 @@ class Hole(LegacyClass):
 
         """
 
-        surf_list = self.build_geometry(lam=lam)
+        surf_list = self.build_geometry(
+            lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False)
+        )
         point_list = []
         for surf in surf_list:
             for curve in surf.get_lines():
@@ -168,7 +170,9 @@ class Hole(LegacyClass):
 
         """
 
-        surf_list = self.build_geometry(lam=lam)
+        surf_list = self.build_geometry(
+            lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False)
+        )
         S = 0
         for surf in surf_list:
             S += surf.comp_surface()
@@ -176,18 +180,23 @@ class Hole(LegacyClass):
         return S
 
     # Inlined from Methods.Slot.Hole.convert_to_UD
-    def convert_to_UD(self, lam: Lamination | None = None):
+    def convert_to_UD(
+        self, lam: Lamination | None = None, lam_label: str | None = None
+    ):
         """Convert the hole to HoleUD
 
         Parameters
         ----------
         lam : Lamination, optional
             Lamination holding the hole (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
         """
         # Local import: avoids circular imports
         from .hole_ud import HoleUD
 
-        surf_list = self.build_geometry(lam=lam)
+        surf_list = self.build_geometry(lam=lam, lam_label=lam_label)
         magnet_dict = self.get_magnet_dict()
         magnetization_dict = self.comp_magnetization_dict(lam=lam)
 
@@ -382,6 +391,7 @@ class Hole(LegacyClass):
         is_show_fig: bool = True,
         is_all_hole: bool = False,
         lam: Lamination | None = None,
+        lam_label: str | None = None,
     ) -> tuple[Figure, Axes]:
         """Plot the Hole in a matplotlib fig
 
@@ -404,6 +414,9 @@ class Hole(LegacyClass):
             True to plot the Zh holes
         lam : Lamination, optional
             Lamination holding the hole (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -419,7 +432,7 @@ class Hole(LegacyClass):
         else:
             color = "w"
 
-        surf_hole = self.build_geometry(lam=lam)
+        surf_hole = self.build_geometry(lam=lam, lam_label=lam_label)
         if is_all_hole:
             # Duplicate the hole surfaces
             surf_hole = self.transform_hole_surf(

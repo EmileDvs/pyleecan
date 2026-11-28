@@ -426,6 +426,7 @@ class SlotW12(Slot):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ) -> Surface:
         """Return the full winding surface
 
@@ -439,6 +440,9 @@ class SlotW12(Slot):
             complex number for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -467,7 +471,9 @@ class SlotW12(Slot):
             Zmid = self.get_Rbo(lam=lam) + self.H0 + 2 * self.R1 + self.H1
         else:
             Zmid = self.get_Rbo(lam=lam) - self.H0 - 2 * self.R1 - self.H1
-        label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
+        if lam_label is None:
+            lam_label = lam.get_label()
+        label = lam_label + "_" + WIND_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
         # Apply transformation
@@ -482,6 +488,7 @@ class SlotW12(Slot):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ) -> list:
         """Return the list of surfaces defining the opening area of the Slot
 
@@ -495,6 +502,9 @@ class SlotW12(Slot):
             complex number for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -530,7 +540,9 @@ class SlotW12(Slot):
             Zmid = self.get_Rbo(lam=lam) + (self.H0 + self.R1 * 2) / 2
         else:
             Zmid = self.get_Rbo(lam=lam) - (self.H0 + self.R1 * 2) / 2
-        label = lam.get_label() + "_" + SOP_LAB + "_R0-T0-S0"
+        if lam_label is None:
+            lam_label = lam.get_label()
+        label = lam_label + "_" + SOP_LAB + "_R0-T0-S0"
         surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
         # Apply transformation
@@ -770,6 +782,7 @@ class SlotW12(Slot):
                     is_show_fig=False,
                     is_add_wedge=is_add_wedge,
                     lam=lam,
+                    lam_label=None if lam is None else lam.get_label(is_add_id=False),
                 )
             elif type_add_active == 2:  # Magnet
                 self.plot_active(
@@ -778,6 +791,7 @@ class SlotW12(Slot):
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
                     lam=lam,
+                    lam_label=None if lam is None else lam.get_label(is_add_id=False),
                 )
 
             # Zooming and cleaning

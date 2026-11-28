@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from ....Classes_new.machine.lamination import Lamination
 
 
-def build_geometry(self, alpha: float = 0, delta: complex = 0, lam: Lamination | None = None) -> list:
+def build_geometry(self, alpha: float = 0, delta: complex = 0, lam: Lamination | None = None, lam_label: str | None = None) -> list:
     """Compute the curve needed to plot the ventilations
 
     Parameters
@@ -23,6 +23,9 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, lam: Lamination |
         Complex for translation (Default value = 0)
     lam : Lamination
         Lamination of the hole (default: the parent of the hole)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -31,7 +34,8 @@ def build_geometry(self, alpha: float = 0, delta: complex = 0, lam: Lamination |
 
     """
     lam = container_or_parent(self, lam, "lam")
-    lam_label = lam.get_label()
+    if lam_label is None:
+        lam_label = lam.get_label()
     R_id, surf_type = self.get_R_id(lam=lam)
     RTS_id = "R" + str(R_id) + "-T0-S0"
     vent_label = lam_label + "_" + surf_type + "_" + RTS_id

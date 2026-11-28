@@ -52,6 +52,7 @@ class HoleUD(HoleMag):
         delta: complex = 0,
         is_simplified: bool = False,
         lam: Lamination | None = None,
+        lam_label: str | None = None,
     ) -> list:
         """Compute the curve (Segment) needed to plot the Hole.
         The ending point of a curve is the starting point of the next curve in
@@ -69,6 +70,9 @@ class HoleUD(HoleMag):
             True to avoid line superposition (not used)
         lam : Lamination
             Lamination of the hole (default: the parent of the hole)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -81,7 +85,8 @@ class HoleUD(HoleMag):
 
         # Get correct label for surfaces
         if lam is not None:
-            lam_label = lam.get_label()
+            if lam_label is None:
+                lam_label = lam.get_label()
         else:
             lam_label = LAM_LAB
         R_id, surf_type = self.get_R_id(lam=lam)

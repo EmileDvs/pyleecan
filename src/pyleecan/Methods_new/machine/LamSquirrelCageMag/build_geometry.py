@@ -39,7 +39,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
         label = "Lamination_Rotor"
 
     surf_list = LamSquirrelCage.build_geometry(
-        self, sym=sym, is_circular_radius=is_circular_radius, alpha=alpha, delta=delta
+        self, sym=sym, is_circular_radius=is_circular_radius, alpha=alpha, delta=delta, machine=machine
     )
 
     # Holes surface(s)
@@ -55,7 +55,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
         )  # For now only
         angle = 2 * np.pi / Zh
         # Create the first hole surface(s)
-        surf_hole = hole.build_geometry(alpha=np.pi / Zh)
+        surf_hole = hole.build_geometry(alpha=np.pi / Zh, lam=self, lam_label=self.get_label(machine=machine))
 
         hole_surf_list = list()
         # Copy the hole for Zh / sym

@@ -22,7 +22,7 @@ def comp_masses(self) -> dict:
     Mmag = 0
     for hole in self.get_hole_list():
         if hole.has_magnet():
-            Mmag += hole.Zh * hole.comp_mass_magnets()
+            Mmag += hole.Zh * hole.comp_mass_magnets(lam=self)
 
     M_dict["Mmag"] = Mmag
     M_dict["Mtot"] += Mmag

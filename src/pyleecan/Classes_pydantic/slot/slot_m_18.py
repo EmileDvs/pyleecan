@@ -263,6 +263,7 @@ class SlotM18(Slot):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ) -> Surface:
         """Return the full active surface
 
@@ -276,6 +277,9 @@ class SlotM18(Slot):
             complex number for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -284,7 +288,7 @@ class SlotM18(Slot):
         """
 
         # get the name of the lamination
-        st = self.get_name_lam(lam=lam)
+        st = self.get_name_lam(lam=lam, lam_label=lam_label)
         Rbo = self.get_Rbo(lam=lam)
 
         point_dict = self._comp_point_coordinate(lam=lam)
@@ -519,7 +523,13 @@ class SlotM18(Slot):
                     )
 
             if type_add_active == 1:
-                self.plot_active(fig=fig, ax=ax, is_show_fig=False, lam=lam)
+                self.plot_active(
+                    fig=fig,
+                    ax=ax,
+                    is_show_fig=False,
+                    lam=lam,
+                    lam_label=None if lam is None else lam.get_label(is_add_id=False),
+                )
             elif type_add_active == 2:
                 self.plot_active(
                     fig=fig,
@@ -527,6 +537,7 @@ class SlotM18(Slot):
                     is_show_fig=False,
                     enforced_default_color=self.MAGNET_COLOR,
                     lam=lam,
+                    lam_label=None if lam is None else lam.get_label(is_add_id=False),
                 )
 
             # Zooming and cleaning

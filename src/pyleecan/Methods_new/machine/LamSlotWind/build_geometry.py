@@ -35,7 +35,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
     """
     # getting the Lamination surface
     surf_lam = LamSlot.build_geometry(
-        self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius
+        self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius, machine=machine
     )
     surf_list = list()
     if self.slot is not None and self.slot.Zs != 0:
@@ -57,7 +57,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
                 Nrad=Nrad,
                 Ntan=Ntan,
                 alpha=alpha,
-                delta=delta, lam=self,
+                delta=delta, lam=self, lam_label=self.get_label(machine=machine),
             )
 
         st = self.get_label(machine=machine)
@@ -121,7 +121,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
                             )
         # Add wedges if any
         if self.slot.wedge_mat is not None:
-            wedge_list = self.slot.get_surface_wedges(lam=self)
+            wedge_list = self.slot.get_surface_wedges(lam=self, lam_label=st)
             for ii in range(Zs // sym):  # for each slot
                 # for each wedges surface in the slot
                 for surf in wedge_list:

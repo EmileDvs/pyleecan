@@ -153,11 +153,15 @@ class Machine(LegacyClass):
         if self.rotor.is_internal:
             # Adding the list of surfaces of the stator
             surf_list.extend(
-                self.stator.build_geometry(sym=sym, alpha=alpha, delta=delta)
+                self.stator.build_geometry(
+                    sym=sym, alpha=alpha, delta=delta, machine=self
+                )
             )
             # Adding the list of surfaces of the rotor
             surf_list.extend(
-                self.rotor.build_geometry(sym=sym, alpha=alpha, delta=delta)
+                self.rotor.build_geometry(
+                    sym=sym, alpha=alpha, delta=delta, machine=self
+                )
             )
             # Add the shaft only for Internal Rotor
             if self.rotor.Rint > 0:
@@ -167,11 +171,15 @@ class Machine(LegacyClass):
         else:
             # Adding the list of surfaces of the rotor
             surf_list.extend(
-                self.rotor.build_geometry(sym=sym, alpha=alpha, delta=delta)
+                self.rotor.build_geometry(
+                    sym=sym, alpha=alpha, delta=delta, machine=self
+                )
             )
             # Adding the list of surfaces of the stator
             surf_list.extend(
-                self.stator.build_geometry(sym=sym, alpha=alpha, delta=delta)
+                self.stator.build_geometry(
+                    sym=sym, alpha=alpha, delta=delta, machine=self
+                )
             )
 
         return surf_list
@@ -567,7 +575,7 @@ class Machine(LegacyClass):
         Mlam = 0
         for lam in self.get_lam_list():
             M = lam.comp_masses()
-            M_dict[lam.get_label()] = M
+            M_dict[lam.get_label(machine=self)] = M
             Mlam += M["Mtot"]
 
         Mtot = M_dict["Frame"] + M_dict["Shaft"] + Mlam
@@ -1136,6 +1144,7 @@ class Machine(LegacyClass):
                 is_add_arrow=is_add_arrow,
                 is_show_fig=False,
                 is_winding_connection=is_winding_connection,
+                machine=self,
             )
 
         if (
@@ -1165,6 +1174,7 @@ class Machine(LegacyClass):
                 edgecolor=COMP_EDGE_COLOR,
                 is_add_arrow=is_add_arrow,
                 is_show_fig=is_show_fig,
+                machine=comp_machine,
             )
             comp_machine.stator.plot(
                 fig,
@@ -1176,6 +1186,7 @@ class Machine(LegacyClass):
                 edgecolor=COMP_EDGE_COLOR,
                 is_add_arrow=is_add_arrow,
                 is_show_fig=is_show_fig,
+                machine=comp_machine,
             )
             patch_leg = [
                 Patch(facecolor=self.PATCH_COLOR_ALPHA, edgecolor="k"),
@@ -1265,7 +1276,7 @@ class Machine(LegacyClass):
 
         # The Lamination is centered in the figure
         Lim = (self.stator.Rext) * 1.5  # Axes limit for plot
-        Rsurf = self.rotor.build_geometry(sym=1, alpha=0, delta=0)
+        Rsurf = self.rotor.build_geometry(sym=1, alpha=0, delta=0, machine=self)
 
         # Rotation angle between each frame
         Dalpha = 2 * np.pi * Nrot / Nframe

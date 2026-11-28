@@ -119,6 +119,7 @@ class LamSlotWind(LamSlot):
             alpha=alpha,
             delta=delta,
             is_circular_radius=is_circular_radius,
+            machine=machine,
         )
         surf_list = []
         if self.slot is not None and self.slot.Zs != 0:
@@ -142,6 +143,7 @@ class LamSlotWind(LamSlot):
                     alpha=alpha,
                     delta=delta,
                     lam=self,
+                    lam_label=self.get_label(machine=machine),
                 )
 
             st = self.get_label(machine=machine)
@@ -205,7 +207,7 @@ class LamSlotWind(LamSlot):
                                 )
             # Add wedges if any
             if self.slot.wedge_mat is not None:
-                wedge_list = self.slot.get_surface_wedges(lam=self)
+                wedge_list = self.slot.get_surface_wedges(lam=self, lam_label=st)
                 for ii in range(Zs // sym):  # for each slot
                     # for each wedges surface in the slot
                     for surf in wedge_list:

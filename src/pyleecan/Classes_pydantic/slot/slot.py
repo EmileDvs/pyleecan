@@ -83,6 +83,7 @@ class Slot(LegacyModel):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ):
         """Split the slot active area in several zone
         This method assume that the active area is centered on X axis and symetrical
@@ -102,6 +103,9 @@ class Slot(LegacyModel):
             complex for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -113,7 +117,7 @@ class Slot(LegacyModel):
 
         assert Ntan in [1, 2]
 
-        surf_act = self.get_surface_active(lam=lam)
+        surf_act = self.get_surface_active(lam=lam, lam_label=lam_label)
 
         # Find the two intersection point with Ox axis
         inter_list = []
@@ -186,7 +190,9 @@ class Slot(LegacyModel):
                 surf_list.append(surf.copy())
 
         # Set all label
-        self.set_label(surf_list, Nrad, Ntan, lam.get_label())
+        if lam_label is None:
+            lam_label = lam.get_label()
+        self.set_label(surf_list, Nrad, Ntan, lam_label)
 
         # Apply transformation
         for surf in surf_list:
@@ -419,7 +425,9 @@ class Slot(LegacyModel):
 
         """
 
-        surf = self.get_surface_active(lam=lam)
+        surf = self.get_surface_active(
+            lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False)
+        )
 
         point_list = surf.discretize(Ndisc)
         point_list = abs(np.array(point_list))
@@ -560,7 +568,9 @@ class Slot(LegacyModel):
 
         """
 
-        surf = self.get_surface_active(lam=lam)
+        surf = self.get_surface_active(
+            lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False)
+        )
 
         return surf.comp_surface(Ndisc=Ndisc)
 
@@ -587,7 +597,9 @@ class Slot(LegacyModel):
 
         """
 
-        surf_list = self.get_surface_opening(lam=lam)
+        surf_list = self.get_surface_opening(
+            lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False)
+        )
 
         S = 0
         for surf in surf_list:
@@ -617,7 +629,9 @@ class Slot(LegacyModel):
 
         """
 
-        surf_list = self.get_surface_wedges(lam=lam)
+        surf_list = self.get_surface_wedges(
+            lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False)
+        )
 
         S = 0
         for surf in surf_list:
@@ -681,7 +695,9 @@ class Slot(LegacyModel):
             return abs(Z2 - Z1)
 
     # Inlined from Methods.Slot.Slot.convert_to_SlotUD2
-    def convert_to_SlotUD2(self, lam: Lamination | Notch | None = None) -> SlotUD2:
+    def convert_to_SlotUD2(
+        self, lam: Lamination | Notch | None = None, lam_label: str | None = None
+    ) -> SlotUD2:
         """Convert the slot to the equivalent SlotUD2
 
         Parameters
@@ -690,6 +706,9 @@ class Slot(LegacyModel):
             a Slot object
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -702,7 +721,7 @@ class Slot(LegacyModel):
         new_slot = SlotUD2()
         new_slot.Zs = self.Zs
         new_slot.line_list = self.build_geometry(lam=lam)
-        new_slot.active_surf = self.get_surface_active(lam=lam)
+        new_slot.active_surf = self.get_surface_active(lam=lam, lam_label=lam_label)
         new_slot.split_active_surf_dict = None
 
         return new_slot
@@ -732,7 +751,9 @@ class Slot(LegacyModel):
             raise ParentMissingError("Error: The slot is not inside a Lamination")
 
     # Inlined from Methods.Slot.Slot.get_name_lam
-    def get_name_lam(self, lam: Lamination | None = None) -> str:
+    def get_name_lam(
+        self, lam: Lamination | None = None, lam_label: str | None = None
+    ) -> str:
         """Return the name of the parent lamination
 
         Parameters
@@ -741,6 +762,9 @@ class Slot(LegacyModel):
             A Slot object
         lam : Lamination
             Lamination of the slot (default: the parent of the slot)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -748,6 +772,8 @@ class Slot(LegacyModel):
             The name of the parent lamination
 
         """
+        if lam_label is not None:
+            return lam_label
         lam = container_or_parent(self, lam, "lam")
 
         if lam is not None:
@@ -820,7 +846,9 @@ class Slot(LegacyModel):
         return surf
 
     # Inlined from Methods.Slot.Slot.get_surface_tooth
-    def get_surface_tooth(self, lam: Lamination | None = None) -> SurfLine:
+    def get_surface_tooth(
+        self, lam: Lamination | None = None, lam_label: str | None = None
+    ) -> SurfLine:
         """Returns the surface delimiting the tooth (including yoke part)
 
         Parameters
@@ -829,6 +857,9 @@ class Slot(LegacyModel):
             A Slot object
         lam : Lamination
             Lamination of the slot (default: the parent of the slot)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -879,7 +910,8 @@ class Slot(LegacyModel):
         curve_list.extend(top_list)
 
         if lam is not None:
-            lam_label = lam.get_label()
+            if lam_label is None:
+                lam_label = lam.get_label()
         else:
             lam_label = NO_LAM_LAB
         label = lam_label + "_" + TOOTH_LAB
@@ -891,6 +923,7 @@ class Slot(LegacyModel):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ) -> list:
         """Return the list of surfaces defining the wedges area of the Slot
 
@@ -904,6 +937,9 @@ class Slot(LegacyModel):
             complex number for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -922,19 +958,20 @@ class Slot(LegacyModel):
 
         # By default Wedge is the full opening surface
         if wedge_type == 0:
-            surf_list = self.get_surface_opening(lam=lam)
+            surf_list = self.get_surface_opening(lam=lam, lam_label=lam_label)
 
         elif wedge_type == 1:
-            surf_list = self.get_surface_wedge(lam=lam)
+            surf_list = self.get_surface_wedge(lam=lam, lam_label=lam_label)
 
         else:
             raise NotImplementedError
 
         if lam is not None:
             # Adapt label
-            lam_lab = lam.get_label()
+            if lam_label is None:
+                lam_label = lam.get_label()
             for surf in surf_list:
-                surf.label = lam_lab + "_" + WEDGE_LAB + "_R0-T0-S0"
+                surf.label = lam_label + "_" + WEDGE_LAB + "_R0-T0-S0"
 
         # Apply transformation
         for surf in surf_list:
@@ -1071,6 +1108,7 @@ class Slot(LegacyModel):
         delta: complex = 0,
         is_add_wedge: bool = False,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ):
         """Plot the active area of the lamination according to the wind_mat
 
@@ -1097,6 +1135,9 @@ class Slot(LegacyModel):
             True to add the wedges surfaces
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -1114,7 +1155,7 @@ class Slot(LegacyModel):
         qs_name = gen_name(qs)
 
         surf_list = self.build_geometry_active(
-            Nrad, Ntan, alpha=alpha, delta=delta, lam=lam
+            Nrad, Ntan, alpha=alpha, delta=delta, lam=lam, lam_label=lam_label
         )
 
         patches = []
@@ -1151,7 +1192,7 @@ class Slot(LegacyModel):
             if self.wedge_mat is None:
                 self.wedge_mat = Material()
                 to_clean = True
-            wedge_surf_list = self.get_surface_wedges(lam=lam)
+            wedge_surf_list = self.get_surface_wedges(lam=lam, lam_label=lam_label)
             for surf in wedge_surf_list:
                 for ii in range(Zs):
                     surf2 = surf.copy()

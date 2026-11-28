@@ -119,6 +119,7 @@ class HoleM54(Hole):
         delta: complex = 0,
         is_simplified: bool = False,
         lam: Lamination | None = None,
+        lam_label: str | None = None,
     ) -> list:
         """Compute the curve (Arc) needed to plot the Hole.
         The ending point of a curve is the starting point of the next curve in the
@@ -136,6 +137,9 @@ class HoleM54(Hole):
            True to avoid line superposition
         lam : Lamination
             Lamination of the hole (default: the parent of the hole)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -146,7 +150,8 @@ class HoleM54(Hole):
         lam = container_or_parent(self, lam, "lam")
 
         # Get correct label for surfaces
-        lam_label = lam.get_label()
+        if lam_label is None:
+            lam_label = lam.get_label()
         R_id, surf_type = self.get_R_id(lam=lam)
         vent_label = lam_label + "_" + surf_type + "_R" + str(R_id) + "-"
 
@@ -264,7 +269,9 @@ class HoleM54(Hole):
 
         Rext = self.get_Rext(lam=lam)
 
-        surf_list = self.build_geometry(lam=lam)
+        surf_list = self.build_geometry(
+            lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False)
+        )
         point_list = []
         for curve in surf_list[0].line_list:
             point_list.extend(curve.discretize())

@@ -50,7 +50,7 @@ def build_geometry(
     )
     # getting the LamSlot surface
     surf_list = LamSlot.build_geometry(
-        self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius
+        self, sym=sym, alpha=alpha, delta=delta, is_circular_radius=is_circular_radius, machine=machine
     )
 
     Zs = self.slot.Zs
@@ -64,7 +64,7 @@ def build_geometry(
             Nrad=Nrad,
             Ntan=Ntan,
             alpha=alpha,
-            delta=delta, lam=self,
+            delta=delta, lam=self, lam_label=st,
         )
 
         # for each magnet to draw

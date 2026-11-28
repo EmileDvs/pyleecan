@@ -317,7 +317,7 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=np.pi / self.Zs + 2 * np.pi / self.Zs, lam=lam,
+                alpha=np.pi / self.Zs + 2 * np.pi / self.Zs, lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False),
             )
             self.plot_active(
                 fig=fig,
@@ -325,7 +325,7 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=np.pi / self.Zs + 4 * np.pi / self.Zs, lam=lam,
+                alpha=np.pi / self.Zs + 4 * np.pi / self.Zs, lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False),
             )
             self.plot_active(
                 fig=fig,
@@ -333,7 +333,7 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=np.pi / self.Zs + 6 * np.pi / self.Zs, lam=lam,
+                alpha=np.pi / self.Zs + 6 * np.pi / self.Zs, lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False),
             )
             self.plot_active(
                 fig=fig,
@@ -341,14 +341,14 @@ def plot_schematics(
                 is_show_fig=False,
                 is_add_wedge=is_add_wedge,
                 wind_mat=np.ones((1, 2, self.Zs, 1)),
-                alpha=np.pi / self.Zs + 8 * np.pi / self.Zs, lam=lam,
+                alpha=np.pi / self.Zs + 8 * np.pi / self.Zs, lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False),
             )
 
         elif type_add_active == 2:  # Magnet
             self.plot_active(
                 fig=fig,
                 is_show_fig=False,
-                enforced_default_color=MAGNET_COLOR, lam=lam,
+                enforced_default_color=MAGNET_COLOR, lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False),
             )
 
         # Zooming and cleaning

@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None) -> list:
+def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = False, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None, lam_label: str | None = None) -> list:
     """Split the slot winding area in several zone
 
     Parameters
@@ -33,6 +33,9 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
         complex for translation (Default value = 0)
     lam : Lamination or Notch, optional
         Lamination (or notch) holding the slot (default: the parent)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -47,7 +50,8 @@ def build_geometry_active(self, Nrad: int, Ntan: int, is_simplified: bool = Fals
     self.check(lam=lam)
 
     # get the name of the lamination
-    lam_label = lam.get_label()
+    if lam_label is None:
+        lam_label = lam.get_label()
     line_dict = self._comp_line_dict(lam=lam)
 
     Ref1 = (line_dict["w3-w4"].get_begin() + line_dict["w1-w2"].get_begin()) / 2

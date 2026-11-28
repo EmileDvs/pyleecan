@@ -23,9 +23,9 @@ def comp_volumes(self) -> dict:
     Vhole = 0
     Vmag = 0
     for hole in self.get_hole_list():
-        Vhole += hole.Zh * hole.comp_surface() * Lt
+        Vhole += hole.Zh * hole.comp_surface(lam=self) * Lt
         if hole.has_magnet():
-            Vmag += hole.Zh * hole.comp_volume_magnets()
+            Vmag += hole.Zh * hole.comp_volume_magnets(lam=self)
 
     V_dict["Vmag"] = Vmag
     V_dict["Vhole"] = Vhole

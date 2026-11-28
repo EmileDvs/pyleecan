@@ -46,7 +46,7 @@ def _plot_arrow_mag(
             mag_id = int(magnet_name.split("_")[-1])
             mag = hole.get_magnet_by_id(mag_id)
             if mag is not None:
-                for surf in hole.build_geometry(lam=self):
+                for surf in hole.build_geometry(lam=self, lam_label=self.get_label(is_add_id=False)):
                     label_dict = decode_label(surf.label)
                     if (
                         HOLEM_LAB in label_dict["surf_type"]
@@ -87,7 +87,7 @@ def _plot_arrow_mag(
             mag_id = int(magnet_name.split("_")[-1])
             mag = hole.get_magnet_by_id(mag_id)
             if mag is not None:
-                for surf in hole.build_geometry(lam=self):
+                for surf in hole.build_geometry(lam=self, lam_label=self.get_label(is_add_id=False)):
                     label_dict = decode_label(surf.label)
                     if (
                         HOLEM_LAB in label_dict["surf_type"]

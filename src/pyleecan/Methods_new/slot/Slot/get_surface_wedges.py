@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from ....Classes_new.machine.notch import Notch
 
 
-def get_surface_wedges(self, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None) -> list:
+def get_surface_wedges(self, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None, lam_label: str | None = None) -> list:
     """Return the list of surfaces defining the wedges area of the Slot
 
     Parameters
@@ -20,6 +20,9 @@ def get_surface_wedges(self, alpha: float = 0, delta: complex = 0, lam: Laminati
         complex number for translation (Default value = 0)
     lam : Lamination or Notch, optional
         Lamination (or notch) holding the slot (default: the parent)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -38,19 +41,20 @@ def get_surface_wedges(self, alpha: float = 0, delta: complex = 0, lam: Laminati
 
     # By default Wedge is the full opening surface
     if wedge_type == 0:
-        surf_list = self.get_surface_opening(lam=lam)
+        surf_list = self.get_surface_opening(lam=lam, lam_label=lam_label)
 
     elif wedge_type == 1:
-        surf_list = self.get_surface_wedge(lam=lam)
+        surf_list = self.get_surface_wedge(lam=lam, lam_label=lam_label)
 
     else:
         raise NotImplementedError
 
     if lam is not None:
         # Adapt label
-        lam_lab = lam.get_label()
+        if lam_label is None:
+            lam_label = lam.get_label()
         for surf in surf_list:
-            surf.label = lam_lab + "_" + WEDGE_LAB + "_R0-T0-S0"
+            surf.label = lam_label + "_" + WEDGE_LAB + "_R0-T0-S0"
 
     # Apply transformation
     for surf in surf_list:

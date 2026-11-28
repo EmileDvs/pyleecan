@@ -32,7 +32,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
 
     """
     surf_list = LamSlotWind.build_geometry(
-        self, sym=sym, is_circular_radius=is_circular_radius, alpha=alpha, delta=delta
+        self, sym=sym, is_circular_radius=is_circular_radius, alpha=alpha, delta=delta, machine=machine
     )
 
     # Adapt the label

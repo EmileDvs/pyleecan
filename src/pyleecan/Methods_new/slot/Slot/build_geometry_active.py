@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from ....Classes_new.machine.notch import Notch
 
 
-def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None):
+def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None, lam_label: str | None = None):
     """Split the slot active area in several zone
     This method assume that the active area is centered on X axis and symetrical
     Otherwise a dedicated build_geometry_active method must be provided
@@ -26,6 +26,9 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
         complex for translation (Default value = 0)
     lam : Lamination or Notch, optional
         Lamination (or notch) holding the slot (default: the parent)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -37,7 +40,7 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
 
     assert Ntan in [1, 2]
 
-    surf_act = self.get_surface_active(lam=lam)
+    surf_act = self.get_surface_active(lam=lam, lam_label=lam_label)
 
     # Find the two intersection point with Ox axis
     inter_list = list()
@@ -107,7 +110,9 @@ def build_geometry_active(self, Nrad: int, Ntan: int, alpha: float = 0, delta: c
             surf_list.append(surf.copy())
 
     # Set all label
-    self.set_label(surf_list, Nrad, Ntan, lam.get_label())
+    if lam_label is None:
+        lam_label = lam.get_label()
+    self.set_label(surf_list, Nrad, Ntan, lam_label)
 
     # Apply transformation
     for surf in surf_list:

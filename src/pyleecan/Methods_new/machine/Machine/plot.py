@@ -122,6 +122,7 @@ def plot(
             is_add_arrow=is_add_arrow,
             is_show_fig=False,
             is_winding_connection=is_winding_connection,
+            machine=self,
         )
 
     if lam_list[0].Rint > 0 and self.shaft is not None and self.shaft.Drsh is not None:
@@ -147,6 +148,7 @@ def plot(
             edgecolor=COMP_EDGE_COLOR,
             is_add_arrow=is_add_arrow,
             is_show_fig=is_show_fig,
+            machine=comp_machine,
         )
         comp_machine.stator.plot(
             fig,
@@ -158,6 +160,7 @@ def plot(
             edgecolor=COMP_EDGE_COLOR,
             is_add_arrow=is_add_arrow,
             is_show_fig=is_show_fig,
+            machine=comp_machine,
         )
         patch_leg = [
             Patch(facecolor=PATCH_COLOR_ALPHA, edgecolor="k"),

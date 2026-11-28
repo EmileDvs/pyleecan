@@ -430,6 +430,7 @@ class SlotDC(Slot):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ) -> Surface:
         """Return the full winding surface
 
@@ -443,6 +444,9 @@ class SlotDC(Slot):
             complex number for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -451,7 +455,7 @@ class SlotDC(Slot):
         """
 
         # get the name of the lamination
-        st = self.get_name_lam(lam=lam)
+        st = self.get_name_lam(lam=lam, lam_label=lam_label)
 
         # Create curve list
         curve_list = self.build_geometry(lam=lam)[1:-1]

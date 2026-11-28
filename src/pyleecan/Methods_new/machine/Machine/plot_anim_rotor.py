@@ -34,7 +34,7 @@ def plot_anim_rotor(self, Nframe: int, Tanim: float, Nrot: float = 1, is_loop: b
 
     # The Lamination is centered in the figure
     Lim = (self.stator.Rext) * 1.5  # Axes limit for plot
-    Rsurf = self.rotor.build_geometry(sym=1, alpha=0, delta=0)
+    Rsurf = self.rotor.build_geometry(sym=1, alpha=0, delta=0, machine=self)
 
     # Rotation angle between each frame
     Dalpha = 2 * np.pi * Nrot / Nframe

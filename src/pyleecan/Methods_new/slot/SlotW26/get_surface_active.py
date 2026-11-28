@@ -10,7 +10,7 @@ if TYPE_CHECKING:
     from ....Classes_new.geometry.surface import Surface
 
 
-def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None) -> Surface:
+def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None, lam_label: str | None = None) -> Surface:
     """Return the full winding surface
 
     Parameters
@@ -23,6 +23,9 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
         complex number for translation (Default value = 0)
     lam : Lamination or Notch, optional
         Lamination (or notch) holding the slot (default: the parent)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -54,7 +57,9 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
         Zmid = self.get_Rbo(lam=lam) + self.R1 + self.H1 / 2
     else:
         Zmid = self.get_Rbo(lam=lam) - self.R1 - self.H1 / 2
-    label = lam.get_label() + "_" + WIND_LAB + "_R0-T0-S0"
+    if lam_label is None:
+        lam_label = lam.get_label()
+    label = lam_label + "_" + WIND_LAB + "_R0-T0-S0"
     surface = SurfLine(line_list=curve_list, label=label, point_ref=Zmid)
 
     # Apply transformation

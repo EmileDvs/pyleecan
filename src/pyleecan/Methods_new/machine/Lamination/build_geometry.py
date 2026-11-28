@@ -72,7 +72,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
     if self.axial_vent not in [None, []]:
         for vent in self.axial_vent:
             kwargs: dict[str, Any] = dict(alpha=0, delta=0)
-            vent_list = vent.build_geometry(**kwargs)
+            vent_list = vent.build_geometry(lam=self, lam_label=label, **kwargs)
             surf = Hole.transform_hole_surf(
                 hole_surf_list=vent_list, Zh=vent.Zh, sym=sym, is_split=True, **kwargs
             )
@@ -83,7 +83,7 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0, is_
     if self.notch is not None:
         for ii, notch in enumerate(self.notch):
             if notch.has_key():
-                surf_list.extend(notch.build_geometry_key(index=ii, sym=sym))
+                surf_list.extend(notch.build_geometry_key(index=ii, sym=sym, lam=self, lam_label=label))
 
     # Add the closing surfaces if requested
     if is_circular_radius:

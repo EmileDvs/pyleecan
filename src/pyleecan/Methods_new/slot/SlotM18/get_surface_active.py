@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from ....Classes_new.geometry.surface import Surface
 
 
-def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None) -> Surface:
+def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Lamination | Notch | None = None, lam_label: str | None = None) -> Surface:
     """Return the full active surface
 
     Parameters
@@ -26,6 +26,9 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
         complex number for translation (Default value = 0)
     lam : Lamination or Notch, optional
         Lamination (or notch) holding the slot (default: the parent)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -34,7 +37,7 @@ def get_surface_active(self, alpha: float = 0, delta: complex = 0, lam: Laminati
     """
 
     # get the name of the lamination
-    st = self.get_name_lam(lam=lam)
+    st = self.get_name_lam(lam=lam, lam_label=lam_label)
     Rbo = self.get_Rbo(lam=lam)
 
     point_dict = self._comp_point_coordinate(lam=lam)

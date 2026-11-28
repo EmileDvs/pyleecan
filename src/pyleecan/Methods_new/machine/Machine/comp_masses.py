@@ -33,7 +33,7 @@ def comp_masses(self) -> dict:
     Mlam = 0
     for lam in self.get_lam_list():
         M = lam.comp_masses()
-        M_dict[lam.get_label()] = M
+        M_dict[lam.get_label(machine=self)] = M
         Mlam += M["Mtot"]
 
     Mtot = M_dict["Frame"] + M_dict["Shaft"] + Mlam

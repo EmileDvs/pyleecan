@@ -245,7 +245,7 @@ class Lamination(LegacyClass):
         if self.axial_vent not in [None, []]:
             for vent in self.axial_vent:
                 kwargs: dict[str, Any] = dict(alpha=0, delta=0)
-                vent_list = vent.build_geometry(**kwargs)
+                vent_list = vent.build_geometry(lam=self, lam_label=label, **kwargs)
                 surf = Hole.transform_hole_surf(
                     hole_surf_list=vent_list,
                     Zh=vent.Zh,
@@ -260,7 +260,11 @@ class Lamination(LegacyClass):
         if self.notch is not None:
             for ii, notch in enumerate(self.notch):
                 if notch.has_key():
-                    surf_list.extend(notch.build_geometry_key(index=ii, sym=sym))
+                    surf_list.extend(
+                        notch.build_geometry_key(
+                            index=ii, sym=sym, lam=self, lam_label=label
+                        )
+                    )
 
         # Add the closing surfaces if requested
         if is_circular_radius:
@@ -606,7 +610,7 @@ class Lamination(LegacyClass):
 
         elif is_shape and not is_notch and not is_slot:
             # Bore/Yoke shape only
-            radius_lines = shape_obj.get_bore_line()
+            radius_lines = shape_obj.get_bore_line(lam=self)
             if sym > 1:  # Ox cut
                 lines = []
                 for line in radius_lines:
@@ -1232,12 +1236,12 @@ class Lamination(LegacyClass):
 
         # Surface of the external disk
         if ext_shape is not None:
-            S_ext = ext_shape.comp_surface()
+            S_ext = ext_shape.comp_surface(lam=self)
         else:
             S_ext = (self.Rext**2) * np.pi
         # Surface of the internal disk
         if int_shape is not None:
-            S_int = int_shape.comp_surface()
+            S_int = int_shape.comp_surface(lam=self)
         else:
             S_int = (self.Rint**2) * np.pi
 
@@ -1307,14 +1311,14 @@ class Lamination(LegacyClass):
             Label of the lamination
 
         """
-        machine = container_or_parent(self, machine, "machine")
-
         if self.is_stator:
             label = STATOR_LAB
         else:
             label = ROTOR_LAB
 
         if is_add_id:
+            # Only the index needs the machine
+            machine = container_or_parent(self, machine, "machine")
             if machine is not None:
                 try:
                     lam_list = machine.get_lam_list(is_int_to_ext=True, key=label)

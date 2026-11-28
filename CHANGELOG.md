@@ -265,6 +265,21 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   library, the GUI (hole pages, material selector, DXF dialogs) and the
   tests pass it. `Tests/New` is hand-maintained (frozen) and treats a parent
   fallback of its own calls as an error.
+- **Lamination label given to the slot geometry** (Step 16): the surface
+  builders of the slots and holes (`build_geometry` of the holes and
+  ventilations, `build_geometry_active`, `get_surface_active`,
+  `get_surface_opening`, `get_surface_wedge(s)`, `get_surface_tooth`,
+  `plot_active`, `get_name_lam`, `NotchEvenDist.build_geometry_key`) take
+  an optional `lam_label` (default `lam.get_label()`); the laminations pass
+  their label, so the slots no longer read the machine. The computations
+  that only need numbers (`comp_surface*`, `comp_height_active`,
+  `comp_radius`) and the schematics plots use the lamination type
+  (`get_label(is_add_id=False)`, which no longer looks for the machine).
+  The machine and lamination calls that dropped their container pass it
+  (`Machine.build_geometry` / `plot`, the base `build_geometry` calls of the
+  laminations, ventilations, notch keys, `LamH` surfaces and masses, bore
+  and yoke surfaces). Parent fallbacks of the machine geometry, plots and
+  masses of 6 reference machines: 206 -> 1.
 - `Winding.export_to_csv` / `WindingUD.import_from_csv`: `file_path` is
   required (its `None` default always failed).
 - The dataclass `model_validate` caches the type hints of each class (twice
@@ -415,7 +430,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 13. Custom property setters and getters (frozen) | done |
 | 14. Type hints, second pass (frozen) | in progress |
 | 15. Utility functions (frozen) | to do |
-| 16. Parent links, second pass (frozen) | done (2 points to decide) |
+| 16. Parent links, second pass (frozen) | done (1 point to decide: the slot of a notch) |
 | 17. GUI, second pass (frozen) | in progress (parent reads done; validation design left) |
 | 18. Backend comparison (benchmark) | in progress (micro benchmarks, machine files) |
 

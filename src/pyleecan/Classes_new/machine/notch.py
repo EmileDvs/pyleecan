@@ -60,7 +60,7 @@ class Notch(LegacyClass):
         lam = container_or_parent(self, lam, "lam")
 
         if lam is not None:
-            return lam.get_label()
+            return lam.get_label(is_add_id=is_add_id)
         else:
             raise ParentMissingError("Error: The notch is not inside a Lamination")
 

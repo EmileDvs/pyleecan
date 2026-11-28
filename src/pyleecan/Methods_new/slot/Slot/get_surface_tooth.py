@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from ....Classes_new.machine.lamination import Lamination
 
 
-def get_surface_tooth(self, lam: Lamination | None = None) -> SurfLine:
+def get_surface_tooth(self, lam: Lamination | None = None, lam_label: str | None = None) -> SurfLine:
     """Returns the surface delimiting the tooth (including yoke part)
 
     Parameters
@@ -22,6 +22,9 @@ def get_surface_tooth(self, lam: Lamination | None = None) -> SurfLine:
         A Slot object
     lam : Lamination
         Lamination of the slot (default: the parent of the slot)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -64,7 +67,8 @@ def get_surface_tooth(self, lam: Lamination | None = None) -> SurfLine:
     curve_list.extend(top_list)
 
     if lam is not None:
-        lam_label = lam.get_label()
+        if lam_label is None:
+            lam_label = lam.get_label()
     else:
         lam_label = NO_LAM_LAB
     label = lam_label + "_" + TOOTH_LAB

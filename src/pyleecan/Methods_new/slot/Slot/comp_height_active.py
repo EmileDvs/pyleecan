@@ -25,7 +25,7 @@ def comp_height_active(self, Ndisc: int = 200, lam: Lamination | Notch | None = 
 
     """
 
-    surf = self.get_surface_active(lam=lam)
+    surf = self.get_surface_active(lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False))
 
     point_list = surf.discretize(Ndisc)
     point_list = abs(np.array(point_list))

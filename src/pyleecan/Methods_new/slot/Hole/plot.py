@@ -25,7 +25,7 @@ def plot(
     is_add_arrow: bool = False,
     is_add_ref: bool = False,
     is_show_fig: bool = True,
-    is_all_hole: bool = False, lam: Lamination | None = None,
+    is_all_hole: bool = False, lam: Lamination | None = None, lam_label: str | None = None,
 ) -> tuple[Figure, Axes]:
     """Plot the Hole in a matplotlib fig
 
@@ -48,6 +48,9 @@ def plot(
         True to plot the Zh holes
     lam : Lamination, optional
         Lamination holding the hole (default: the parent)
+    lam_label : str, optional
+        Label of the lamination (default: lam.get_label(), which reads
+        the machine holding the lamination)
 
     Returns
     -------
@@ -63,7 +66,7 @@ def plot(
     else:
         color = "w"
 
-    surf_hole = self.build_geometry(lam=lam)
+    surf_hole = self.build_geometry(lam=lam, lam_label=lam_label)
     if is_all_hole:
         # Duplicate the hole surfaces
         surf_hole = self.transform_hole_surf(

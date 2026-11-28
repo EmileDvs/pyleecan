@@ -70,7 +70,7 @@ def build_radius_lines(self, is_bore: bool, sym: int = 1, is_reversed: bool = Fa
 
     elif is_shape and not is_notch and not is_slot:
         # Bore/Yoke shape only
-        radius_lines = shape_obj.get_bore_line()
+        radius_lines = shape_obj.get_bore_line(lam=self)
         if sym > 1:  # Ox cut
             lines = list()
             for line in radius_lines:

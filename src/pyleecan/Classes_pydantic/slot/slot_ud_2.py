@@ -99,6 +99,7 @@ class SlotUD2(Slot):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ):
         """Split the slot active area in several zone
         This method assume that the active area is centered on X axis and symetrical
@@ -120,6 +121,9 @@ class SlotUD2(Slot):
             complex for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
@@ -134,7 +138,9 @@ class SlotUD2(Slot):
             and key in self.split_active_surf_dict
         ):
             surf_list = [surf.copy() for surf in self.split_active_surf_dict[key]]
-            self.set_label(surf_list, Nrad, Ntan, self.get_name_lam(lam=lam))
+            self.set_label(
+                surf_list, Nrad, Ntan, self.get_name_lam(lam=lam, lam_label=lam_label)
+            )
             return surf_list
         else:
             return Slot.build_geometry_active(
@@ -144,6 +150,7 @@ class SlotUD2(Slot):
                 alpha=alpha,
                 delta=delta,
                 lam=lam,
+                lam_label=lam_label,
             )
 
     # Inlined from Methods.Slot.SlotUD2.check
@@ -181,6 +188,7 @@ class SlotUD2(Slot):
         alpha: float = 0,
         delta: complex = 0,
         lam: Lamination | Notch | None = None,
+        lam_label: str | None = None,
     ) -> Surface:
         """Return the full winding surface
 
@@ -194,13 +202,16 @@ class SlotUD2(Slot):
             complex number for translation (Default value = 0)
         lam : Lamination or Notch, optional
             Lamination (or notch) holding the slot (default: the parent)
+        lam_label : str, optional
+            Label of the lamination (default: lam.get_label(), which reads
+            the machine holding the lamination)
 
         Returns
         -------
         surf_wind: Surface
             Surface corresponding to the Winding Area
         """
-        st = self.get_name_lam(lam=lam)
+        st = self.get_name_lam(lam=lam, lam_label=lam_label)
         surface = self.active_surf.copy()
 
         surface.label = "Wind_" + st + "_R0_T0_S0"

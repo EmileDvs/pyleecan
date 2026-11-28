@@ -78,7 +78,7 @@ class LamH(Lamination):
 
         # The yoke is define the greater cylinder without holes
         for hole in self.get_hole_list():
-            (Rmin, Rmax) = hole.comp_radius()
+            (Rmin, Rmax) = hole.comp_radius(lam=self)
             if self.is_internal:
                 R = min(R, Rmin)
             else:
@@ -110,7 +110,7 @@ class LamH(Lamination):
         Mmag = 0
         for hole in self.get_hole_list():
             if hole.has_magnet():
-                Mmag += hole.Zh * hole.comp_mass_magnets()
+                Mmag += hole.Zh * hole.comp_mass_magnets(lam=self)
 
         M_dict["Mmag"] = Mmag
         M_dict["Mtot"] += Mmag
@@ -137,7 +137,7 @@ class LamH(Lamination):
         Rmax = self.Rint
         for hole in self.get_hole_list():
             if type(hole) is not Hole:
-                (Rmin_hole, Rmax_hole) = hole.comp_radius()
+                (Rmin_hole, Rmax_hole) = hole.comp_radius(lam=self)
                 Rmin = min(Rmin, Rmin_hole)
                 Rmax = max(Rmax, Rmax_hole)
         if self.is_internal:
@@ -167,9 +167,9 @@ class LamH(Lamination):
         Shole = 0
         Smag = 0
         for hole in self.get_hole_list():
-            Shole += hole.Zh * hole.comp_surface()
+            Shole += hole.Zh * hole.comp_surface(lam=self)
             if hole.has_magnet():
-                Smag += hole.Zh * hole.comp_surface_magnets()
+                Smag += hole.Zh * hole.comp_surface_magnets(lam=self)
 
         Ryoke = self.get_Ryoke()
         Hyoke = self.comp_height_yoke()
@@ -211,9 +211,9 @@ class LamH(Lamination):
         Vhole = 0
         Vmag = 0
         for hole in self.get_hole_list():
-            Vhole += hole.Zh * hole.comp_surface() * Lt
+            Vhole += hole.Zh * hole.comp_surface(lam=self) * Lt
             if hole.has_magnet():
-                Vmag += hole.Zh * hole.comp_volume_magnets()
+                Vmag += hole.Zh * hole.comp_volume_magnets(lam=self)
 
         V_dict["Vmag"] = Vmag
         V_dict["Vhole"] = Vhole

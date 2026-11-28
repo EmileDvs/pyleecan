@@ -25,9 +25,9 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0) -> 
 
     if self.rotor.is_internal:
         # Adding the list of surfaces of the stator
-        surf_list.extend(self.stator.build_geometry(sym=sym, alpha=alpha, delta=delta))
+        surf_list.extend(self.stator.build_geometry(sym=sym, alpha=alpha, delta=delta, machine=self))
         # Adding the list of surfaces of the rotor
-        surf_list.extend(self.rotor.build_geometry(sym=sym, alpha=alpha, delta=delta))
+        surf_list.extend(self.rotor.build_geometry(sym=sym, alpha=alpha, delta=delta, machine=self))
         # Add the shaft only for Internal Rotor
         if self.rotor.Rint > 0:
             surf_list.extend(
@@ -35,8 +35,8 @@ def build_geometry(self, sym: int = 1, alpha: float = 0, delta: complex = 0) -> 
             )
     else:
         # Adding the list of surfaces of the rotor
-        surf_list.extend(self.rotor.build_geometry(sym=sym, alpha=alpha, delta=delta))
+        surf_list.extend(self.rotor.build_geometry(sym=sym, alpha=alpha, delta=delta, machine=self))
         # Adding the list of surfaces of the stator
-        surf_list.extend(self.stator.build_geometry(sym=sym, alpha=alpha, delta=delta))
+        surf_list.extend(self.stator.build_geometry(sym=sym, alpha=alpha, delta=delta, machine=self))
 
     return surf_list

@@ -22,7 +22,7 @@ def comp_radius(self, lam: Lamination | None = None):
 
     """
 
-    surf_list = self.build_geometry(lam=lam)
+    surf_list = self.build_geometry(lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False))
     point_list = list()
     for surf in surf_list:
         for curve in surf.get_lines():

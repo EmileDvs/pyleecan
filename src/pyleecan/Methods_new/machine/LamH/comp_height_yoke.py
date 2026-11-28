@@ -20,7 +20,7 @@ def comp_height_yoke(self) -> float:
 
     # The yoke is define the greater cylinder without holes
     for hole in self.get_hole_list():
-        (Rmin, Rmax) = hole.comp_radius()
+        (Rmin, Rmax) = hole.comp_radius(lam=self)
         if self.is_internal:
             R = min(R, Rmin)
         else:

@@ -21,7 +21,7 @@ def comp_surface(self, lam: Lamination | None = None) -> float:
 
     """
 
-    surf_list = self.build_geometry(lam=lam)
+    surf_list = self.build_geometry(lam=lam, lam_label=None if lam is None else lam.get_label(is_add_id=False))
     S = 0
     for surf in surf_list:
         S += surf.comp_surface()
