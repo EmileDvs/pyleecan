@@ -93,7 +93,7 @@ with FEMM, forces, losses, structural, optimization, GUI in PySide6).
 | `legacy_fixes.py` | Fixes of legacy bugs, text replacements checked against the legacy source: methods (`LEGACY_FIXES`, applied to the `Methods_new` copies before modernization), GUI (`GUI_LEGACY_FIXES`), functions (`FUNCTION_LEGACY_FIXES`, applied by the functions generator when a legacy module is read, merges included) |
 | `container_arguments.py`, `parent_reads.py` | Step 11: container arguments replacing the parent reads (`CONTAINER_ARGUMENTS`, fallback `classes_common.parents.container_or_parent`); classification report of the parent reads |
 | `femm_object.py` | Interface objects gathering the functions of a folder: `femm_pyleecan` (`Functions/FEMM`, with the handler), `gmsh_pyleecan` (`Functions/GMSH`), `pv_plotter_pyleecan` (`Functions/Plot/Pyvista`) (static methods); aliases, callers |
-| `moved_functions.py` | Legacy functions moved to a class as methods (`MOVED_FUNCTIONS`), deprecated aliases at the old paths |
+| `moved_functions.py` | Legacy functions moved to a class as methods (`MOVED_FUNCTIONS`), deprecated aliases at the old paths; methods without legacy source (`NEW_METHODS`) and methods added by hand to the frozen `Methods_new` (`HAND_WRITTEN_METHODS`: a new module in a class folder is a method only once listed there, the method lists come from the CSV files) |
 | `generate_function_new_classes.py` | `Functions_new` |
 | `generate_function_pydantic.py` | `Functions_pydantic` from `Functions_new` |
 | `generate_gui_new.py` | `GUI_new` from `GUI` until the freeze (method pipeline, GUI imports redirected); still writes the `Gen_*` widget setup of `GUI_new` (from `ClassInfo` and the `gen_list.json` files) and `GUI_pydantic` from `GUI_new` (imports) |

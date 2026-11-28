@@ -356,6 +356,16 @@ NEW_METHODS = {
 method generator in Methods_new (legacy-style imports, as the other method
 modules)"""
 
+HAND_WRITTEN_METHODS = {
+    # Legacy bug: HoleMag.comp_surface_magnets / comp_volume_magnets /
+    # comp_mass_magnets call comp_surface_magnet_id, which HoleMLSRPM (one
+    # magnet, older comp_surface_magnet API) did not define
+    "HoleMLSRPM": ("comp_surface_magnet_id",),
+}
+"""{class: methods}: methods added by hand to the frozen Methods_new (Step 12),
+missing from the legacy CSV method lists; the class generator inlines them
+like the CSV methods"""
+
 
 def merged_sources():
     """Legacy modules merged into another module."""
@@ -740,7 +750,7 @@ def add_moved_methods(gen_dict, moved=None):
             if name not in methods:
                 methods.append(name)
     if moved is None:  # Methods without legacy source
-        for class_name, new_methods in NEW_METHODS.items():
+        for class_name, new_methods in (*NEW_METHODS.items(), *HAND_WRITTEN_METHODS.items()):
             if class_name in gen_dict:
                 methods = gen_dict[class_name]["methods"]
                 methods.extend(name for name in new_methods if name not in methods)

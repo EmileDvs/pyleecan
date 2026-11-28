@@ -1743,9 +1743,16 @@ Same signature rule as Step 11 (optional container argument, fallback through
         SCIM_006, SPMSM_003, Benchmark, SynRM_001, LSRPM_001): 206 -> 1
         (`BoreLSRPM` surface, fixed after the count). Test:
         `Tests/New/test_lam_label.py`. `ty` unchanged (slot 1, machine 10).
-        Found: `LSRPM_001.comp_masses()` fails on HEAD too
+        Found: `LSRPM_001.comp_masses()` failed, also in legacy
         (`HoleMLSRPM` has no `comp_surface_magnet_id`, called by
-        `HoleMag.comp_surface_magnets`).
+        `HoleMag.comp_surface_magnets`): fixed 2026-11-28, the method
+        written in `Methods_new/slot/HoleMLSRPM` (`comp_surface_magnet`
+        for its only magnet) and listed in the new
+        `moved_functions.HAND_WRITTEN_METHODS` ({class: methods} added by
+        hand to the frozen `Methods_new`, missing from the CSV method
+        lists; three legacy modules are not methods either, so the class
+        folders cannot give the lists). Test:
+        `Tests/New/test_hand_written_methods.py`.
   - [x] (2026-11-28) The slot of a notch (`NotchEvenDist.notch_shape`):
         its container was the Notch, whose `get_Rbo` / `get_Ryoke` /
         `is_outwards` / `get_label` need the notch's lamination (fallback to

@@ -304,6 +304,13 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
 
 ### Fixed
 
+- **`HoleMLSRPM` magnet totals**: `comp_surface_magnets`,
+  `comp_volume_magnets` and `comp_mass_magnets` (from `HoleMag`) called a
+  `comp_surface_magnet_id` that `HoleMLSRPM` did not define
+  (`AttributeError`, so `comp_masses` of an LSRPM machine failed): the
+  method is added (its only magnet, `comp_surface_magnet`). Methods added
+  by hand to the frozen `Methods_new` are listed in
+  `moved_functions.HAND_WRITTEN_METHODS` for the class generator.
 - **Legacy bugs found after the freeze (Steps 14 and 18)**, fixed in
   `Methods_new` / `Functions_new` / `Classes_pydantic` (they raised when
   run): `LamSlotMultiWind.plot_mmf_unit` and `SlotUD2.build_geometry_active`
