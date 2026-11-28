@@ -69,11 +69,11 @@ def build_radius_desc(self, is_bore: bool, sym: int = 1) -> list:
             notch for notch in self.notch if notch.notch_shape.is_bore == is_bore
         ]
         # Get description of first notch
-        notch_desc_list = notch_list[0].get_notch_desc_list(sym=sym)
+        notch_desc_list = notch_list[0].get_notch_desc_list(sym=sym, lam=self)
         # If more than one notch, we need to merge and order the description
         for ii in range(len(notch_list) - 1):
             notch_desc_list = self.merge_notch_list(
-                notch_desc_list, notch_list[ii + 1].get_notch_desc_list(sym=sym)
+                notch_desc_list, notch_list[ii + 1].get_notch_desc_list(sym=sym, lam=self)
             )
     else:
         notch_desc_list = list()

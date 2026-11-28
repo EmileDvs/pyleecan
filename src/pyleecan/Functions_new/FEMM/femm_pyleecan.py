@@ -400,7 +400,7 @@ class femm_pyleecan:
             # key mesh
             if lam.has_key():
                 notch = [notch for notch in lam.notch if notch.has_key()][0]
-                Hkey = notch.notch_shape.comp_height_active()
+                Hkey = notch.notch_shape.comp_height_active(lam=lam)
                 FEMM_dict["mesh"][label]["meshsize_key"] = Hkey / 4 / Kmesh_fineness
                 FEMM_dict["mesh"][label]["elementsize_key"] = Hkey / 4 / Kmesh_fineness
 
@@ -1991,7 +1991,7 @@ class femm_pyleecan:
                 # get_key_Ox_radius return None if no intersection
                 # Only one set can intersect with Ox
                 if notch.has_key() and Rint is None:
-                    Rint = notch.get_key_Ox_radius()
+                    Rint = notch.get_key_Ox_radius(lam=lam_int)
             # No key on Ox => Rbo (if notches, closing surface is added)
             if Rint is None:
                 Rint = lam_int.get_Rbo()
@@ -2009,7 +2009,7 @@ class femm_pyleecan:
                 # get_key_Ox_radius return None if no intersection
                 # Only one set can intersect with Ox
                 if notch.has_key() and Rext is None:
-                    Rext = notch.get_key_Ox_radius()
+                    Rext = notch.get_key_Ox_radius(lam=lam_ext)
             # No key on Ox => Rbo (if notches, closing surface is added)
             if Rext is None:
                 Rext = lam_ext.get_Rbo()

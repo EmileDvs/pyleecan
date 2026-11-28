@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, ClassVar
 
 import numpy as np
 
+from ...classes_common.parents import container_or_parent
 from ...Functions_new.utils.labels import KEY_LAB, YSNL_LAB, YSNR_LAB
 from ..slot.hole import Hole
 from ..slot.slot import Slot
@@ -78,10 +79,15 @@ class NotchEvenDist(Notch):
 
         surf_list = []
 
+        # The notch shape gets the lamination of the notch as its container: the
+        # Notch methods it would call (get_Rbo, is_outwards, get_label...) only
+        # forward to that lamination
+        lam = container_or_parent(self, lam, "lam")
+
         # Get the original surface
         if lam_label is None:
             lam_label = self.get_label(lam=lam)
-        Nsurf = self.notch_shape.get_surface_active(lam=self, lam_label=lam_label)
+        Nsurf = self.notch_shape.get_surface_active(lam=lam, lam_label=lam_label)
         Nsurf.label = lam_label + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
         Nsurf.rotate(angle=self.alpha)
         # Label definition
@@ -130,13 +136,15 @@ class NotchEvenDist(Notch):
         return self.notch_shape.Zs, False
 
     # Inlined from Methods.Machine.NotchEvenDist.comp_surface
-    def comp_surface(self) -> float:
+    def comp_surface(self, lam: Lamination | None = None) -> float:
         """Compute the surface of ALL THE NOTCHES
 
         Parameters
         ----------
         self : NotchEvenDist
             A NotchEvenDist object
+        lam : Lamination, optional
+            Lamination holding the notch (default: the parent)
 
         Returns
         -------
@@ -144,7 +152,11 @@ class NotchEvenDist(Notch):
             surface of ALL THE NOTCHES
         """
 
-        return self.notch_shape.Zs * self.notch_shape.comp_surface(lam=self)
+        # The notch shape gets the lamination of the notch as its container: the
+        # Notch methods it would call (get_Rbo, is_outwards, get_label...) only
+        # forward to that lamination
+        lam = container_or_parent(self, lam, "lam")
+        return self.notch_shape.Zs * self.notch_shape.comp_surface(lam=lam)
 
     # Inlined from Methods.Machine.NotchEvenDist.get_key_Ox_radius
     def get_key_Ox_radius(self, lam: Lamination | None = None) -> float | None:
@@ -185,7 +197,7 @@ class NotchEvenDist(Notch):
             return max(Rright)
 
     # Inlined from Methods.Machine.NotchEvenDist.get_notch_desc_list
-    def get_notch_desc_list(self, sym: int = 1) -> list:
+    def get_notch_desc_list(self, sym: int = 1, lam: Lamination | None = None) -> list:
         """Returns an ordered description of the notches
 
         Parameters
@@ -194,6 +206,8 @@ class NotchEvenDist(Notch):
             A NotchEvenDist object
         sym: int
             Number of symmetry
+        lam : Lamination, optional
+            Lamination holding the notch (default: the parent)
 
         Returns
         -------
@@ -206,8 +220,13 @@ class NotchEvenDist(Notch):
                 "label" : Radius/Notch/Slot
         """
 
+        # The notch shape gets the lamination of the notch as its container: the
+        # Notch methods it would call (get_Rbo, is_outwards, get_label...) only
+        # forward to that lamination
+        lam = container_or_parent(self, lam, "lam")
+
         notch_list = []
-        op = self.notch_shape.comp_angle_opening(lam=self)
+        op = self.notch_shape.comp_angle_opening(lam=lam)
         Zs = self.notch_shape.Zs
         # No need to rotate more than a notch pitch
         alpha = self.alpha % (2 * np.pi / Zs)
@@ -217,7 +236,7 @@ class NotchEvenDist(Notch):
             notch_dict["begin_angle"] = 2 * np.pi / Zs * ii + alpha - op / 2
             notch_dict["end_angle"] = 2 * np.pi / Zs * ii + alpha + op / 2
             notch_dict["obj"] = self.notch_shape
-            notch_dict["lines"] = self.notch_shape.build_geometry(lam=self)
+            notch_dict["lines"] = self.notch_shape.build_geometry(lam=lam)
             # Apply rotation
             for line in notch_dict["lines"]:
                 line.rotate((notch_dict["begin_angle"] + notch_dict["end_angle"]) / 2)
@@ -230,7 +249,7 @@ class NotchEvenDist(Notch):
             notch_dict["begin_angle"] = 2 * np.pi / Zs * (ii + 1) + alpha - op / 2
             notch_dict["end_angle"] = 2 * np.pi / Zs * (ii + 1) + alpha + op / 2
             notch_dict["obj"] = self.notch_shape
-            notch_dict["lines"] = self.notch_shape.build_geometry(lam=self)
+            notch_dict["lines"] = self.notch_shape.build_geometry(lam=lam)
             # Apply rotation
             for line in notch_dict["lines"]:
                 line.rotate((notch_dict["begin_angle"] + notch_dict["end_angle"]) / 2)

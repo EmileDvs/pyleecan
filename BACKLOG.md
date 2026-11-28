@@ -1746,12 +1746,28 @@ Same signature rule as Step 11 (optional container argument, fallback through
         Found: `LSRPM_001.comp_masses()` fails on HEAD too
         (`HoleMLSRPM` has no `comp_surface_magnet_id`, called by
         `HoleMag.comp_surface_magnets`).
-  - [ ] **To decide**: the slot of a notch (`NotchEvenDist.notch_shape`):
-        its container `lam` is the Notch, and `lam.get_Rbo()` /
-        `is_outwards()` of the notch need the notch's lamination, which the
-        slot does not see (fallback to the notch's parent). Options: the
-        notch passes a lamination-like view, or the Notch methods called by
-        the slot take the lamination as a second argument (`lam_of_notch`).
+  - [x] (2026-11-28) The slot of a notch (`NotchEvenDist.notch_shape`):
+        its container was the Notch, whose `get_Rbo` / `get_Ryoke` /
+        `is_outwards` / `get_label` need the notch's lamination (fallback to
+        the notch's parent). Settled without the two options considered (a
+        lamination-like view, a `lam_of_notch` argument): these Notch methods
+        only forward to the lamination (legacy: "to make
+        lam.notch[ii].notch_shape match lam.slot parent"), so the notch gives
+        its lamination to its shape as the container, as the notch page of
+        the GUI already does (`lam_notch.slot = notch_shape`). The
+        `NotchEvenDist` methods resolve their lamination once
+        (`build_geometry_key`, `get_notch_desc_list` and `comp_surface`, the
+        last two given a `lam` argument) and pass it to the shape; the
+        laminations pass themselves (`build_radius_desc`, `comp_surfaces`,
+        `get_notches_surf`, `LamSlot.comp_radius_mec`), `femm_pyleecan`
+        the lamination it draws (key mesh, `get_key_Ox_radius`). The Notch
+        forwards stay for the legacy fallback (the parent of a notch shape
+        is the notch), the hints keep `Lamination | Notch`. Found on the
+        way: `Lamination.comp_surface_axial_vent` did not pass the
+        lamination to the ventilations. Parent fallbacks of
+        `build_geometry`, `comp_masses` and the plots of Tesla_model_3 and
+        SPMSM_LamSlotMultiWind: 0. Test: `Tests/New/test_notch_container.py`
+        (same surfaces and lines as with the notch as container).
 - [x] (2026-11-22) No parent read left in `Methods_new` and `Functions_new`
       outside `container_or_parent` (and `ancestor_with`, its walk of an
       unknown depth); the parent links stay only in the legacy layer.
@@ -1908,6 +1924,7 @@ the fallback, the parent links, and makes the argument required.
 | `comp_coeff` of `LossModelJoule` / `LossModelWinding` / `LossModelProximity` | `output` / `simu` / `loss`, `simu` | Step 16 |
 | `get_shape_pol`, `get_shape_xyz`, `plot`, `plot_animated` of `Mode` | `meshsol` | Step 16 |
 | `XOutput.plot_pareto` | `solver` | Step 16 |
+| `NotchEvenDist.get_notch_desc_list`, `NotchEvenDist.comp_surface` | `lam` | Step 16 (slot of a notch) |
 | Parent of another object (`EEC.comp_fluxlinkage`, `MagElmer.solve_FEA`, the optimization solvers) | `container_or_parent(obj, None, ...)` | Step 16 |
 
 Full list: `container_arguments.fallback_methods(gen_dict, Methods_new)`.

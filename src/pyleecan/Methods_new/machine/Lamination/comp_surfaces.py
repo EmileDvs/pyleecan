@@ -43,7 +43,7 @@ def comp_surfaces(self) -> dict:
     Snotch = 0
     if self.notch is not None and len(self.notch) > 0:
         for notch in self.notch:
-            Snotch += notch.comp_surface()
+            Snotch += notch.comp_surface(lam=self)
 
     return {
         "Slam": Slam - Svent - Snotch,

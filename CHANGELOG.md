@@ -279,7 +279,12 @@ validated against it (Phase 1). The legacy code is removed in Phase 2.
   (`Machine.build_geometry` / `plot`, the base `build_geometry` calls of the
   laminations, ventilations, notch keys, `LamH` surfaces and masses, bore
   and yoke surfaces). Parent fallbacks of the machine geometry, plots and
-  masses of 6 reference machines: 206 -> 1.
+  masses of 6 reference machines: 206 -> 0.
+- **Slot of a notch** (Step 16): the notch shape gets the notch's lamination
+  as its container (the Notch methods it called only forward to it);
+  `NotchEvenDist.get_notch_desc_list` and `comp_surface` take `lam`, the
+  laminations and `femm_pyleecan` pass it. No parent fallback left in the
+  geometry, masses and plots of the machines with notches.
 - `Winding.export_to_csv` / `WindingUD.import_from_csv`: `file_path` is
   required (its `None` default always failed).
 - The dataclass `model_validate` caches the type hints of each class (twice
@@ -430,7 +435,7 @@ Phase 1 progress (see [PLAN.md](PLAN.md)):
 | 13. Custom property setters and getters (frozen) | done |
 | 14. Type hints, second pass (frozen) | in progress |
 | 15. Utility functions (frozen) | to do |
-| 16. Parent links, second pass (frozen) | done (1 point to decide: the slot of a notch) |
+| 16. Parent links, second pass (frozen) | done |
 | 17. GUI, second pass (frozen) | in progress (parent reads done; validation design left) |
 | 18. Backend comparison (benchmark) | in progress (micro benchmarks, machine files) |
 

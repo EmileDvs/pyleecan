@@ -45,7 +45,7 @@ def get_notches_surf(self, sym: int, machine: Machine | None = None):
         if notch.has_key():
             continue  # Key surface overlap closing surface
         # Get the original surface
-        Nsurf = notch.notch_shape.get_surface()
+        Nsurf = notch.notch_shape.get_surface(lam=self)
         Nsurf.label = self.get_label(machine=machine) + "_" + NOTCH_LAB + "_R" + str(ii) + "-T0-S0"
         Nsurf.rotate(angle=notch.alpha)
         # Label definition

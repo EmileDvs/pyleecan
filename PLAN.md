@@ -192,7 +192,7 @@ Methods receive their context explicitly instead, for example
 | 13. Custom property setters and getters | frozen | done (2026-11-22) |
 | 14. Type hints, second pass | frozen | in progress |
 | 15. Utility functions | frozen | to do |
-| 16. Parent links, second pass | frozen | done (the slot of a notch to decide) |
+| 16. Parent links, second pass | frozen | done |
 | 17. GUI, second pass | frozen | in progress (validation design left) |
 | 18. Backend comparison (benchmark) | frozen | in progress |
 
@@ -408,7 +408,8 @@ can be automated is left to the frozen steps.
 - [x] The machine down to the slot geometry labels: option (b), the
       laminations pass their label (`lam_label`) to the slot geometry
       (2026-11-28).
-- [ ] To decide (backlog): the slot of a notch.
+- [x] The slot of a notch: the notch gives its lamination to its shape (the
+      Notch methods it called only forward to it) (2026-11-28).
 
 ### Step 17: GUI, second pass (frozen)
 

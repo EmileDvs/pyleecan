@@ -412,11 +412,12 @@ class Lamination(LegacyModel):
                 notch for notch in self.notch if notch.notch_shape.is_bore == is_bore
             ]
             # Get description of first notch
-            notch_desc_list = notch_list[0].get_notch_desc_list(sym=sym)
+            notch_desc_list = notch_list[0].get_notch_desc_list(sym=sym, lam=self)
             # If more than one notch, we need to merge and order the description
             for ii in range(len(notch_list) - 1):
                 notch_desc_list = self.merge_notch_list(
-                    notch_desc_list, notch_list[ii + 1].get_notch_desc_list(sym=sym)
+                    notch_desc_list,
+                    notch_list[ii + 1].get_notch_desc_list(sym=sym, lam=self),
                 )
         else:
             notch_desc_list = []
@@ -1205,7 +1206,9 @@ class Lamination(LegacyModel):
         """
 
         if len(self.axial_vent) > 0:
-            return sum([vent.comp_surface() * vent.Zh for vent in self.axial_vent])
+            return sum(
+                [vent.comp_surface(lam=self) * vent.Zh for vent in self.axial_vent]
+            )
         else:
             return 0
 
@@ -1252,7 +1255,7 @@ class Lamination(LegacyModel):
         Snotch = 0
         if self.notch is not None and len(self.notch) > 0:
             for notch in self.notch:
-                Snotch += notch.comp_surface()
+                Snotch += notch.comp_surface(lam=self)
 
         return {
             "Slam": Slam - Svent - Snotch,
@@ -1383,7 +1386,7 @@ class Lamination(LegacyModel):
             if notch.has_key():
                 continue  # Key surface overlap closing surface
             # Get the original surface
-            Nsurf = notch.notch_shape.get_surface()
+            Nsurf = notch.notch_shape.get_surface(lam=self)
             Nsurf.label = (
                 self.get_label(machine=machine)
                 + "_"

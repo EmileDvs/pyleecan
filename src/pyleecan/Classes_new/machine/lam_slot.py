@@ -148,7 +148,7 @@ class LamSlot(Lamination):
         if self.notch is not None:
             for notch in self.notch:
                 if notch.has_key():
-                    (Rmin, Rmax) = notch.notch_shape.comp_radius()
+                    (Rmin, Rmax) = notch.notch_shape.comp_radius(lam=self)
                     if self.is_internal:  # inward Slot
                         Rmec = max(Rmec, Rmax)
                     else:

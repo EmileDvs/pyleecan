@@ -1,3 +1,4 @@
+from ....classes_common.parents import container_or_parent
 from ....Functions_new.utils.labels import KEY_LAB, YSNR_LAB, YSNL_LAB
 
 import numpy as np
@@ -38,10 +39,15 @@ def build_geometry_key(self, index: int = 0, sym: int = 1, alpha: float = 0, del
     from ....Classes_new.slot.hole import Hole
     surf_list = list()
 
+    # The notch shape gets the lamination of the notch as its container: the
+    # Notch methods it would call (get_Rbo, is_outwards, get_label...) only
+    # forward to that lamination
+    lam = container_or_parent(self, lam, "lam")
+
     # Get the original surface
     if lam_label is None:
         lam_label = self.get_label(lam=lam)
-    Nsurf = self.notch_shape.get_surface_active(lam=self, lam_label=lam_label)
+    Nsurf = self.notch_shape.get_surface_active(lam=lam, lam_label=lam_label)
     Nsurf.label = lam_label + "_" + KEY_LAB + "_R" + str(index) + "-T0-S0"
     Nsurf.rotate(angle=self.alpha)
     # Label definition
