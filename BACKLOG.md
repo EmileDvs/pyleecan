@@ -1701,18 +1701,51 @@ Same signature rule as Step 11 (optional container argument, fallback through
         -> `output=out` (6 modules). The `Validation` / `Tutorials` tests
         not run since may still hold a fallback, now an error: fix them
         when they run.
-  - [ ] **To decide**: the machine down to the slot geometry. The slot and
-        hole labels read `lam.get_label()`, which needs the machine (the
-        index of the lamination: `Stator-0`); the slot geometry methods
-        (`build_geometry`, `build_geometry_active`, `get_surface_active` /
-        `_opening` of the Slot family, the Hole `build_geometry`) do not
-        receive it, so they still fall back to the lamination's parent
-        (most of the fallbacks left). Options: (a) a `machine` argument
-        passed through the slot geometry too (the laminations pass theirs);
-        (b) the lamination passes its label (`lam_label`) instead, the slot
-        no longer reads the machine; (c) the lamination label stored on the
-        lamination when it is put in a machine. (b) is the smallest change
-        and keeps the slots independent of the machine.
+  - [x] (2026-11-28) The machine down to the slot geometry: option (b)
+        (decided by the maintainer), the lamination passes its label. The
+        slot and hole labels read `lam.get_label()`, which needs the
+        machine (the index of the lamination: `Stator-0`). Options were
+        (a) a `machine` argument through the slot geometry, (b) a
+        `lam_label` argument, (c) the label stored on the lamination.
+        - the surface builders (`build_geometry` of the Hole family and
+          the ventilations, `build_geometry_active`, `get_surface_active`,
+          `get_surface_opening`, `get_surface_wedge`, `get_surface_wedges`,
+          `get_surface_tooth`, `plot_active`, `Hole.plot`,
+          `convert_to_SlotUD2`, `Hole.convert_to_UD`, `get_name_lam`) take
+          `lam_label: str | None = None` (default `lam.get_label()`, read
+          only when needed) and pass it on: a tool on the frozen sources
+          (148 + 17 modules of `Methods_new/slot`, every override of the
+          family);
+        - the computations that only need numbers (`Slot.comp_height_active`,
+          `comp_surface_active`, `comp_surface_opening`,
+          `comp_surface_wedges`, `Hole.comp_surface`, `comp_radius`) and the
+          `plot_schematics*` give the lamination type,
+          `lam.get_label(is_add_id=False)`: `Lamination.get_label` looks for
+          the machine only for the index now, `Notch.get_label` passes
+          `is_add_id` on (it was dropped);
+        - the laminations pass `lam_label=self.get_label(machine=machine)`
+          (or the label they already computed), `NotchEvenDist.
+          build_geometry_key` takes `lam_label` too;
+        - calls that dropped their container, found by counting the
+          fallbacks: `Machine.build_geometry` / `plot_anim_rotor` / `plot`
+          (also the compared machine) pass `machine=self`; the base
+          `build_geometry` calls of the laminations (`LamSlot`,
+          `Lamination`, `LamSlotWind`, `LamSquirrelCage`) and
+          `get_surfaces_closing` pass `machine`; `Lamination.build_geometry`
+          passes `lam` to the ventilations and notch keys,
+          `LamSquirrelCageMag` / `LamSlotMultiWind` / `LamSlotMulti` to
+          their holes and slots; `LamH` surfaces, volumes, masses and yoke
+          radii pass `lam` to the holes; `Lamination.comp_surfaces` and
+          `build_radius_lines` to the bore and yoke; `Machine.comp_masses`
+          its machine to the lamination labels.
+        Parent fallbacks of `build_geometry`, `plot`, `comp_masses` and the
+        lamination geometry of 6 machines of `Data/Machine` (Toyota_Prius,
+        SCIM_006, SPMSM_003, Benchmark, SynRM_001, LSRPM_001): 206 -> 1
+        (`BoreLSRPM` surface, fixed after the count). Test:
+        `Tests/New/test_lam_label.py`. `ty` unchanged (slot 1, machine 10).
+        Found: `LSRPM_001.comp_masses()` fails on HEAD too
+        (`HoleMLSRPM` has no `comp_surface_magnet_id`, called by
+        `HoleMag.comp_surface_magnets`).
   - [ ] **To decide**: the slot of a notch (`NotchEvenDist.notch_shape`):
         its container `lam` is the Notch, and `lam.get_Rbo()` /
         `is_outwards()` of the notch need the notch's lamination, which the
@@ -1942,3 +1975,11 @@ Deprecated function aliases (already warn in Phase 1, removed in Phase 2):
   - the Inno Setup script (`pyleecan.iss`) and the icon are kept; the version
     is read from `pyproject.toml`.
 - [ ] Repository layout: see the table of PLAN.md.
+- [ ] snake_case package and module names (noted 2026-11-28, PLAN.md Phase
+      2): inventory of the CamelCase names left (the `Functions` folders,
+      the `Methods_new` class folders, the GUI dialogs, widgets and their
+      `.ui` / `Ui_*` files); one rename table old -> new used for the
+      deprecated aliases, the release note and the rename-only commits.
+- [ ] Type hints of the GUI (noted 2026-11-28, PLAN.md Phase 2): first `ty`
+      count on `GUI_new`, the PySide6 stubs, the `Ui_*` modules (excluded
+      or typed by their generator), then package by package as Step 14.

@@ -1,7 +1,7 @@
 # Pyleecan class refactoring plan
 
 Status of the migration from the legacy CSV-generated classes to modern Python
-class models. Branch: `switch_to_dataclass`. Last update: 2026-11-21.
+class models. Branch: `switch_to_dataclass`. Last update: 2026-11-28.
 
 - Detailed tasks of the remaining steps: [BACKLOG.md](BACKLOG.md).
 - What is done, in release-note form: [CHANGELOG.md](CHANGELOG.md).
@@ -146,11 +146,11 @@ containers) are written once in `pyleecan/classes_common`.
 | Generator first, then freeze | every change that can be automated is done by the generators (Steps 5–11) before the freeze (Step 12); the remaining work is done by hand (Steps 13–17) |
 | Test layout | one test tree, run against each implementation with `pytest --backend=dataclass\|pydantic` |
 | Support modules | shared between implementations (`classes_common`) |
-| Type hints | drafted from the docstrings by the generator, then completed by hand; checked with `ty` (Phase 1) |
+| Type hints | drafted from the docstrings by the generator, then completed by hand; checked with `ty` (Phase 1: classes, methods, functions; Phase 2: the GUI too) |
 | Class-specific functions | functions that depend on a single class's meaning or data become methods of that class; deprecated alias at the old path until Phase 2 |
 | Legacy bugs found on the way | fixed (not kept for parity), each listed under "Fixed" in the CHANGELOG |
 | Class organization | sub-packages following the legacy packages, lowercase; electrical, magnetics, force and structural taken out of simulation |
-| Repository layout | Python packaging standards, applied in Phase 2 (see below) |
+| Repository layout | Python packaging standards, applied in Phase 2 (see below), snake_case package and module names included |
 | smoot, swat_em | vendored unmodified under `pyleecan/_vendor/` (Phase 2) |
 | SciDataTool | a pyleecan subpackage sharing the class system; no longer a separate library (Phase 2) |
 | Executable | `Exe_gen` replaced by a uv-based release script (Phase 2) |
@@ -190,11 +190,11 @@ Methods receive their context explicitly instead, for example
 | 11. Parent links, first pass | generator | done (passes 1-6; 198 methods left for Step 16) |
 | 12. Freeze | gate | done (2026-11-22; shim kept) |
 | 13. Custom property setters and getters | frozen | done (2026-11-22) |
-| 14. Type hints, second pass | frozen | to do |
+| 14. Type hints, second pass | frozen | in progress |
 | 15. Utility functions | frozen | to do |
-| 16. Parent links, second pass | frozen | to do |
-| 17. GUI, second pass | frozen | to do |
-| 18. Backend comparison (benchmark) | frozen | to do |
+| 16. Parent links, second pass | frozen | done (the slot of a notch to decide) |
+| 17. GUI, second pass | frozen | in progress (validation design left) |
+| 18. Backend comparison (benchmark) | frozen | in progress |
 
 ### Step 0: separate the implementations in the generator — done
 
@@ -405,8 +405,10 @@ can be automated is left to the frozen steps.
       container arguments for the helpers (Slot, Hole, Winding, Bore,
       Notch, Lamination families); `ContainerFallbackWarning` on the
       fallback (2026-11-22).
-- [ ] To decide (backlog): the machine down to the slot geometry labels,
-      the slot of a notch; most of the fallbacks left come from them.
+- [x] The machine down to the slot geometry labels: option (b), the
+      laminations pass their label (`lam_label`) to the slot geometry
+      (2026-11-28).
+- [ ] To decide (backlog): the slot of a notch.
 
 ### Step 17: GUI, second pass (frozen)
 
@@ -445,6 +447,7 @@ packaging standards. Details (imports check, executable) in the backlog.
 |---|---|---|
 | `Tests/`, with `Tests/New` | `tests/` at the repository root | `Tests/New` becomes `tests/` once legacy is removed |
 | `Classes`, `Functions`, `GUI`, ... | lowercase package names (`classes`, `functions`, `gui`) | PEP 8; breaks user imports: release note, possibly one release of aliases |
+| CamelCase sub-packages and modules (`Functions/FEMM`, `GUI/Dialog/DMachineSetup/SWinding/SWinding.py`, `Methods_new/slot/SlotW10/`) | snake_case names (`functions/femm`, `gui/dialog/d_machine_setup/s_winding/s_winding.py`) | PEP 8, the rule of the class modules (`lam_slot_wind.py`); class names stay CamelCase; the Qt Designer `.ui` files and the generated `Ui_*` modules follow; same aliases and release note as the packages |
 | class-independent functions | `src/pyleecan/utils/` | |
 | `src/pyleecan/Generator` | removed | the classes become the source |
 | `Classes/_smoot`, `Classes/_swat_em`, their `Functions` parts and copies | `src/pyleecan/_vendor/smoot/`, `src/pyleecan/_vendor/swat_em/` | unmodified, with `LICENSE` (BSD-3, MIT) and a `VENDORED.md` (source fork, commit, local patches); imported, not generated |
@@ -456,6 +459,18 @@ packaging standards. Details (imports check, executable) in the backlog.
 | `Exe_gen/` | `tools/exe/` | uv-based release script |
 | none | `CHANGELOG.md`, `CONTRIBUTING.md` | the changelog carries the release notes |
 | `load` / `save` functions, `classes_common.retrocompatibility` | one class to load the pyleecan objects (retrocompatibility included) and one class to save them | decided 2026-11-21 (Step 8: the retrocompatibility is in `classes_common` for now) |
+
+Code standards for the release, with the layout:
+
+- [ ] Package and module names follow PEP 8 (snake_case) everywhere: the
+      class sub-packages and modules already do; the function, method and
+      GUI packages and modules are renamed (one mapping old -> new name,
+      used for the aliases, the release note and the git history, see
+      Challenges).
+- [ ] Type hints of the GUI (`GUI_new`, then the GUI kept): widgets,
+      dialogs and their slots, checked with `ty` like the classes and
+      functions; the generated Qt Designer modules (`Ui_*`) excluded or
+      typed by their generator.
 
 Vendored code is installed under the `pyleecan` namespace, not as top-level
 packages: top-level `smoot`, `swat_em` or `scidatatool` packages would clash with
